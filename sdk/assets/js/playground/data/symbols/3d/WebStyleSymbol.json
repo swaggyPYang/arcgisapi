@@ -1,0 +1,43 @@
+{
+  "className": "WebStyleSymbol",
+  "type": "Class",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "webStyleSymbol",
+  "description": "WebStyleSymbol is used to render features according to web style symbology.",
+  "summary": "used to render features according to web style symbology",
+  "path": "esri/symbols/WebStyleSymbol",
+  "removeProperties": [
+    "color"
+  ],
+  "autocastType": "web-style",
+  "properties": [
+    {
+      "name": "name",
+      "type": "String",
+      "summary": ""
+    },
+    {
+      "name": "styleUrl",
+      "type": "String",
+      "summary": ""
+    },
+    {
+      "name": "portal",
+      "type": "Object",
+      "summary": "portal url",
+      "properties": [
+        {
+          "name": "url",
+          "type": "String",
+          "summary": ""
+        }
+      ]
+    },
+    {
+      "name": "styleName",
+      "type": "String",
+      "summary": ""
+    }
+  ]
+}

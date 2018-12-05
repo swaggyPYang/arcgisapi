@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Visualize all features with the same symbol - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-legend {
+      background-color: black;
+      color: white;
+      opacity: 0.85;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend"
+      ],
+      function(
+        Map, MapView, FeatureLayer, Legend
+      ) {
+
+        /******************************************************************
+         *
+         * Set up renderer for visualizing all cities with a single symbol
+         *
+         ******************************************************************/
+
+        var citiesRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+            size: 10,
+            color: "#FF4000",
+            outline: { // autocasts as new SimpleLineSymbol()
+              color: [255, 64, 0, 0.4], // autocasts as new Color()
+              width: 7
+            }
+          }
+        };
+
+        var citiesLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/WorldCities/FeatureServer/0",
+          renderer: citiesRenderer
+        });
+
+        /******************************************************************
+         *
+         * Set up renderer for visualizing all highways with a single symbol
+         *
+         ******************************************************************/
+
+        var hwyRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-line", // autocasts as new SimpleLineSymbol()
+            width: 1,
+            color: [64, 255, 0]
+          }
+        };
+
+        var hwyLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Freeway_System/FeatureServer/2",
+          renderer: hwyRenderer,
+          minScale: 0,
+          maxScale: 0,
+          definitionExpression: "CLASS = 'O' OR CLASS = 'I' OR CLASS = 'U'"
+        });
+
+        /******************************************************************
+         *
+         * Set up renderer for visualizing all states with a single symbol
+         *
+         ******************************************************************/
+
+        var statesRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-fill", // autocasts as new SimpleFillSymbol()
+            color: [0, 255, 0, 0.1],
+            outline: {
+              color: [128, 128, 128],
+              width: 1
+            }
+          }
+        };
+
+        var statesLayer = new FeatureLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3",
+          renderer: statesRenderer
+        });
+
+        // Add the layers to the map
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [statesLayer, hwyLayer, citiesLayer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-76.925, 39.741638],
+          zoom: 7
+        });
+
+        /******************************************************************
+         *
+         * Add layers to layerInfos on the legend
+         *
+         ******************************************************************/
+
+        var legend = new Legend({
+          view: view,
+          layerInfos: [
+          {
+            layer: citiesLayer,
+            title: "Major Cities"
+          }, {
+            layer: hwyLayer,
+            title: "Major Highways"
+          }, {
+            layer: statesLayer,
+            title: "State Boundaries"
+          }]
+        });
+
+        view.ui.add(legend, "bottom-left");
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

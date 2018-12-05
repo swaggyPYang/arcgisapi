@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>Disable all zooming on the view - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView"
+    ], function(WebMap, MapView) {
+
+      var map = new WebMap({
+        portalItem: { // autocasts as new PortalItem()
+          id: "8765c14627064b609de662d13131fa96"
+        }
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map
+      });
+
+      view.when(disableZooming);
+
+      /**
+       * Disables all zoom gestures on the given view instance.
+       *
+       * @param {esri/views/MapView} view - The MapView instance on which to
+       *                                  disable zooming gestures.
+       */
+      function disableZooming(view) {
+        view.popup.dockEnabled = true;
+
+        // Removes the zoom action on the popup
+        view.popup.actions = [];
+
+        // stops propagation of default behavior when an event fires
+        function stopEvtPropagation(event) {
+          event.stopPropagation();
+        }
+
+        // exlude the zoom widget from the default UI
+        view.ui.components = ["attribution"];
+
+        // disable mouse wheel scroll zooming on the view
+        view.on("mouse-wheel", stopEvtPropagation);
+
+        // disable zooming via double-click on the view
+        view.on("double-click", stopEvtPropagation);
+
+        // disable zooming out via double-click + Control on the view
+        view.on("double-click", ["Control"], stopEvtPropagation);
+
+        // disables pinch-zoom and panning on the view
+        view.on("drag", stopEvtPropagation);
+
+        // disable the view's zoom box to prevent the Shift + drag
+        // and Shift + Control + drag zoom gestures.
+        view.on("drag", ["Shift"], stopEvtPropagation);
+        view.on("drag", ["Shift", "Control"], stopEvtPropagation);
+
+        // prevents zooming with the + and - keys
+        view.on("key-down", function(event) {
+          var prohibitedKeys = ["+", "-", "Shift", "_", "="];
+          var keyPressed = event.key;
+          if (prohibitedKeys.indexOf(keyPressed) !== -1) {
+            event.stopPropagation();
+          }
+        });
+
+        return view;
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

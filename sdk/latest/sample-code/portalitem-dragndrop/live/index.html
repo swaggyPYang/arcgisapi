@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Load portal items via drag & drop - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/layers/Layer",
+      "esri/portal/PortalItem",
+      "esri/core/lang",
+      "esri/core/promiseUtils",
+
+      // IE11 shim for Array
+      "@dojo/framework/shim/array"
+    ], function(
+      WebMap, MapView,
+      Layer,
+      PortalItem,
+      esriLang,
+      promiseUtils
+    ) {
+
+      /************************************************************
+       * Creates a template to display Portal Item Information.
+       * Any values enclosed in "{}" will be parsed with properties
+       * from an object using the utility method esri/lang::substitute
+       ************************************************************/
+      var template =
+        '<div data-itemid="{id}" class="card block" draggable="true">' +
+        '<figure class="card-image-wrap"><img class="card-image" src="{thumbnailUrl}" alt="Card Thumbnail">' +
+        '<figcaption class="card-image-caption">{title}</figcaption>' +
+        '</figure>' +
+        '<div class="card-content">' +
+        '<ul>' +
+        '<li>Published Date:</li>' +
+        '{created}' +
+        '<li>Owner:</li>' +
+        '{owner}' +
+        '</ul>' +
+        '</div>' +
+        '</div>';
+      // Array of Portal Items for Layers!
+      var layerItems = [
+        "f535a6242eca4f6bad8405be9e41aba4", // brewery locations
+        "48c86debf28a401c8858d714cf85e859" // accidental deaths
+      ];
+      /************************************************************
+       * Creates a new WebMap instance. A WebMap must reference
+       * a PortalItem ID that represents a WebMap saved to
+       * arcgis.com or an on-premise portal.
+       *
+       * To load a WebMap from an on-premise portal, set the portal
+       * url with esriConfig.portalUrl.
+       ************************************************************/
+      var webmap = new WebMap({
+        portalItem: { // autocasts as new PortalItem()
+          id: "2e5f696b97e7424fb5d6ffe001da36b0"
+        }
+      });
+      /************************************************************
+       * Set the WebMap instance to the map property in a MapView.
+       ************************************************************/
+      var view = new MapView({
+        map: webmap, // The WebMap instance created above
+        container: "viewDiv"
+      });
+      /************************************************************
+       * Wait for the MapView to finish loading and create an array
+       * of PortalItems.
+       ************************************************************/
+      view.when(function() {
+        var portalItems = layerItems.map(function(itemid) {
+          /************************************************************
+           * We want to load the PortalItem right away so that we can
+           * read the data, such as "id", "owner", "title", and "created".
+           * This does not load the Layer itself, but returns a Promise.
+           ************************************************************/
+          return (new PortalItem({
+            id: itemid
+          })).load();
+        });
+        /************************************************************
+         * Use promiseUtils.eachAlways to wait for all of the
+         * PortalItem Promises to complete loading.
+         ************************************************************/
+        promiseUtils.eachAlways(portalItems).then(function(items) {
+          /************************************************************
+           * Create a DocumentFragment to hold our list elements
+           * until we are ready to add them to the page.
+           ************************************************************/
+          var docFrag = document.createDocumentFragment();
+          items.map(function(result) {
+            var item = result.value;
+            /************************************************************
+             * Use esri/core/lang::substitute will create a new string
+             * using properties from the PortalItem.
+             ************************************************************/
+            var card = esriLang.substitute(item, template);
+            /************************************************************
+             * Create a "div" element to hold the new string from the
+             * template and get the new node from that element to append
+             * it to the DocumentFragment.
+             ************************************************************/
+            var elem = document.createElement("div");
+            elem.innerHTML = card;
+            // This is a technique to turn a DOM string to a DOM element.
+            var target = elem.firstChild;
+            docFrag.appendChild(target);
+            /************************************************************
+             * Listen for the "dragstart" event on the list item.
+             ************************************************************/
+            target.addEventListener("dragstart", function(event) {
+              /************************************************************
+               * Get the data attribute from the element and pass it along
+               * as the data being transferred in the drag event.
+               ************************************************************/
+              var id = event.currentTarget.getAttribute(
+                "data-itemid");
+              event.dataTransfer.setData("text", id);
+            });
+          });
+          /************************************************************
+           * Append the list item to the page.
+           ************************************************************/
+          document.querySelector(".cards-list").appendChild(docFrag);
+          /************************************************************
+           * Listen for "drop" and "dragover" events on the container
+           * of the View.
+           ************************************************************/
+          view.container.addEventListener("dragover", function(
+            event) {
+            event.preventDefault();
+            /************************************************************
+             * On "dragover", you need to specify the dropEffect to drop
+             * items to an element while dragging.
+             ************************************************************/
+            event.dataTransfer.dropEffect = "copy";
+          });
+          view.container.addEventListener("drop", function(event) {
+            event.preventDefault();
+            /************************************************************
+             * Element has been dropped into container. Get the "id"
+             * that was transferred and find it in the item list.
+             ************************************************************/
+            var id = event.dataTransfer.getData("text");
+            var resultItem = items.find(function(x) {
+              return x.value.id === id;
+            });
+            var item = resultItem.value;
+            /************************************************************
+             * If the item is a Layer item, create a Layer using
+             * Layer.fromPortalItem.
+             ************************************************************/
+            if (item && item.isLayer) {
+              Layer.fromPortalItem({
+                portalItem: item
+              }).then(function(layer) {
+                /************************************************************
+                 * Add the layer to the map and zoom to its extent.
+                 ************************************************************/
+                webmap.add(layer);
+                view.extent = item.extent;
+              });
+            }
+          });
+        });
+      });
+
+    });
+  </script>
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0 !important;
+      height: 100%;
+      width: 100%;
+    }
+
+    #viewDiv {
+      position: absolute;
+      right: 0;
+      left: 300px;
+      top: 0;
+      bottom: 0;
+    }
+
+    #itemDiv {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      overflow-y: auto;
+    }
+
+    .description {
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px;
+    }
+
+    h6 {
+      margin: 0 !important;
+    }
+
+    .card {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      position: relative;
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 0 16px 0 rgba(0, 0, 0, 0.05);
+      margin-bottom: 1.55rem;
+    }
+
+    .block {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      margin-left: 0.75rem;
+      margin-right: 0.75rem;
+      min-width: 0;
+      -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+      flex-grow: 0;
+      -ms-flex-negative: 1;
+      flex-shrink: 1;
+    }
+
+    .card-image-wrap {
+      width: 100%;
+      position: relative;
+      margin-bottom: 0;
+      -webkit-box-flex: 0 0 auto;
+      -ms-flex: 0 0 auto;
+      flex: 0 0 auto;
+    }
+
+    figure {
+      display: block;
+      margin: 0 0 1.55rem 0;
+    }
+
+    .card-image {
+      width: 100%;
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .card-image-caption {
+      background: #eeeeee7a;
+      color: #4c4c4c;
+      font-style: normal;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      position: absolute;
+      bottom: 0;
+      font-size: 0.875rem;
+      line-height: 1.55rem;
+      padding: .35rem 1.25rem .35rem 1.25rem;
+    }
+
+    .card-content {
+      padding: 1rem;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="itemDiv">
+    <label class="description"><b>Instructions:</b><br /></label>
+    <label class="description">Drag portal items to the Map<br /></label>
+    <label class="description"></label>
+    <div class="cards-list">
+    </div>
+  </div>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+{
+  "className": "PictureFillSymbol",
+  "type": "Class",
+  "baseClass": "FillSymbol",
+  "baseLocation": "symbols/2d/FillSymbol.json",
+  "variable": "fill",
+  "description": "Fill symbols are used to draw polygon features on the graphics layer. PictureFillSymbol uses an image in a repeating pattern. In addition, the symbol can have an optional outline, which is defined by a line symbol. ",
+  "summary": "draw polygons",
+  "path": "esri/symbols/PictureFillSymbol",
+  "removeProperties": [
+    "color"
+  ],
+  "autocastType": "picture-fill",
+  "properties": [
+    {
+      "name": "url",
+      "type": "String",
+      "required": true,
+      "summary": "URL of the image"
+    },
+    {
+      "name": "width",
+      "type": "Number",
+      "default": 12,
+      "summary": "Width of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "height",
+      "type": "Number",
+      "default": 12,
+      "summary": "Height of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the y-axis in pixels"
+    },
+    {
+      "name": "xscale",
+      "type": "Number",
+      "default": 1,
+      "summary": "Scale factor in x direction"
+    },
+    {
+      "name": "yscale",
+      "type": "Number",
+      "default": 1,
+      "summary": "Scale factor in y direction"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Generate a class breaks visualization - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #infoDiv{
+      padding: 8px;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/renderers/smartMapping/creators/color",
+      "esri/widgets/Legend",
+      "esri/widgets/BasemapToggle"
+    ], function(
+      Map, MapView, FeatureLayer, colorRendererCreator, Legend, BasemapToggle
+    ) {
+
+      var fieldSelect, classSelect, numClassesInput;
+
+      var layer = new FeatureLayer({
+        title: "Puget Sound block groups",
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Puget_Sound_BG_demographics/FeatureServer/0",
+        popupTemplate: {  // autocast as esri/PopupTemplate
+          title: "Block Group {FID_Block_Group}",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "EDUCBASECY",
+              label: "Adults 25+",
+              format: {
+                digitSeparator: true,
+                places: 0
+              }
+            }, {
+              fieldName: "NOHS_CY",
+              label: "No high school diploma",
+              format: {
+                digitSeparator: true,
+                places: 0
+              }
+            }, {
+              fieldName: "HSGRAD_CY",
+              label: "High school dipolma",
+              format: {
+                digitSeparator: true,
+                places: 0
+              }
+            }, {
+              fieldName: "NO_COL_DEG",
+              label: "No college degree",
+              format: {
+                digitSeparator: true,
+                places: 0
+              }
+            }, {
+              fieldName: "COL_DEG",
+              label: "College degree",
+              format: {
+                digitSeparator: true,
+                places: 0
+              }
+            }]
+          }]
+        },
+        definitionExpression: "EDUCBASECY > 0",
+      });
+
+      var map = new Map({
+        basemap: "gray"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-122.3487846, 47.589070],
+        zoom: 12
+      });
+
+      // Set up UI elements
+
+      view.ui.add(new Legend({
+        view: view
+      }), "bottom-left");
+
+      var basemapToggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "national-geographic"
+      });
+      view.ui.add(basemapToggle, "bottom-right");
+      basemapToggle.on("toggle", generateRenderer);
+
+      view.ui.add("infoDiv", "top-right");
+
+      // Generate a new renderer each time the user changes an input paramter
+      view.when(function(){
+
+        fieldSelect = document.getElementById("field-select");
+        fieldSelect.addEventListener("change", generateRenderer);
+
+        classSelect = document.getElementById("class-select");
+        classSelect.addEventListener("change", generateRenderer);
+
+        numClassesInput = document.getElementById("num-classes");
+        numClassesInput.addEventListener("change", generateRenderer);
+
+        generateRenderer();
+      });
+
+      function generateRenderer(){
+        var fieldLabel = fieldSelect.options[fieldSelect.selectedIndex].text;
+
+        var params = {
+          layer: layer,
+          field: fieldSelect.value,
+          normalizationField: "EDUCBASECY",
+          basemap: map.basemap,
+          classificationMethod: classSelect.value,
+          numClasses: parseInt(numClassesInput.value),
+          legendOptions: {
+            title: "% population with " + fieldLabel
+          }
+        };
+
+        // generate the renderer and set it on the layer
+        colorRendererCreator.createClassBreaksRenderer(params)
+          .then(function(response){
+            layer.renderer = response.renderer;
+
+            if(!map.layers.includes(layer)){
+              map.add(layer);
+            }
+          });
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="infoDiv" class="esri-widget">
+    Select Field:
+    <select id="field-select" class="esri-widget">
+      <option value="NOHS_CY">no high school diploma</option>
+      <option value="NO_COL_DEG" selected>no college degree</option>
+      <option value="HSGRAD_CY">high school diploma</option>
+      <option value="COL_DEG">college degree</option>
+    </select>
+    Classification:
+    <select id="class-select" class="esri-widget">
+      <option value="equal-interval" selected>Equal interval</option>
+      <option value="quantile">Quantile</option>
+      <option value="natural-breaks">Natual Breaks</option>
+      <option value="standard-deviation">Standard Deviation</option>
+    </select>
+    Breaks: <input type="number" id="num-classes" class="esri-widget" value="5">
+  </div>
+</body>
+
+</html>

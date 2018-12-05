@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - label sublayer features - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/MapImageLayer"
+    ], function(
+      Map, MapView, MapImageLayer
+    ) {
+
+      /*****************************************************************
+       * Create renderers for each sublayer
+       *****************************************************************/
+
+      var citiesRenderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          size: 0.5,
+          color: "white",
+          style: "circle",
+          outline: null
+        },
+        label: "Cities"
+      };
+
+      var statesRenderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-fill", // autocasts as new SimpleFillSymbol()
+          style: "none",
+          outline: {
+            width: 2,
+            color: "white"
+          }
+        },
+        label: "State boundaries"
+      };
+
+      var countiesRenderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          style: "none",
+          outline: {
+            width: 0.5,
+            color: "white"
+          }
+        },
+        label: "County boundaries"
+      };
+
+      /*****************************************************************
+       * Create a MapImageLayer instance and set up dynamic labels on each
+       * sublayer.
+       *****************************************************************/
+
+      var layer = new MapImageLayer({
+        url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+        sublayers: [{
+          id: 3,
+          renderer: countiesRenderer,
+          opacity: 0.5,
+          minScale: 9250000,
+          // labelingInfo autocasts to an array of LabelClass objects
+          labelingInfo: [{
+            labelExpression: "[name]",
+            labelPlacement: "always-horizontal",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: [255, 255, 255, 0.7],
+              haloColor: [0, 0, 0, 0.7],
+              haloSize: 1,
+              font: {
+                size: 11
+              }
+            },
+            minScale: 2400000,
+            maxScale: 73000
+          }]
+        }, {
+          id: 2,
+          renderer: statesRenderer,
+          opacity: 0.7,
+          // labelingInfo autocasts to an array of LabelClass objects
+          // this sublayer has two label classes. The first sets the
+          // label as the state abbreviation at small scales. When the view
+          // zooms to larger scales the whole state name is used instead
+          labelingInfo: [{
+            labelExpression: "[state_abbr]",
+            labelPlacement: "always-horizontal",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: [255, 255, 255, 0.85],
+              font: {
+                size: 16,
+                weight: "bolder"
+              }
+            },
+            minScale: 18500000,
+            maxScale: 9250000
+          }, {
+            labelExpression: "[state_name]",
+            labelPlacement: "always-horizontal",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: [255, 255, 255, 0.85],
+              haloColor: "gray",
+              haloSize: 1,
+              font: {
+                size: 14,
+                weight: "bold"
+              }
+            },
+            minScale: 9250000,
+            maxScale: 2400000
+          }]
+        }, {
+          // sublayer with three label classes for labeling
+          // cities with different symbols at various scale
+          // levels.
+          id: 0,
+          renderer: citiesRenderer,
+          labelingInfo: [{
+            where: "pop2000 > 500000",
+            labelExpression: "[areaname]",
+            labelPlacement: "above-right",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: "white",
+              font: {
+                size: 10
+              },
+              backgroundColor: [0, 0, 0, 0.5]
+            },
+            minScale: 18500000,
+            maxScale: 4800000
+          }, {
+            where: "pop2000 > 500000",
+            labelExpression: "[areaname]",
+            labelPlacement: "above-right",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: "white",
+              font: {
+                size: 16
+              },
+              backgroundColor: [0, 0, 0, 0.5]
+            },
+            minScale: 4800000
+          }, {
+            where: "pop2000 <= 500000",
+            labelExpression: "[areaname]",
+            labelPlacement: "above-right",
+            symbol: {
+              type: "text", // autocasts as new TextSymbol()
+              color: "white",
+              font: {
+                size: 7
+              },
+              backgroundColor: [0, 0, 0, 0.5]
+            },
+            minScale: 4800000
+          }]
+        }]
+      });
+
+      /*****************************************************************
+       * Add the layer to a map
+       *****************************************************************/
+
+      var map = new Map({
+        basemap: "satellite",
+        layers: [layer]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 5,
+        center: [-100, 39]
+      });
+
+    });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query Elevation (points) - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #paneDiv {
+      position: absolute;
+      top: 12px;
+      left: 62px;
+      width: 80%;
+      padding: 0 12px 0 12px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 1px solid white;
+      color: black;
+    }
+
+    #resultsDiv {
+      font-size: 1.2em;
+      text-align: center;
+      border-bottom: 1px solid gray;
+      padding: 10px 0px;
+    }
+
+    #activeElevationLayerDiv {
+      margin: 10px 0;
+    }
+
+    ul #red {
+      color: rgb(150, 26, 15);
+    }
+
+    ul #green {
+      color: rgb(21, 150, 15);
+    }
+
+    ul span {
+      color: black;
+    }
+
+    ul {
+      margin: 0 0 10px 0;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/Graphic",
+      "esri/geometry/Polyline",
+      "esri/layers/ElevationLayer",
+      "esri/core/promiseUtils"
+    ], function (
+      Map, SceneView, Graphic, Polyline, ElevationLayer,
+      promiseUtils
+    ) {
+
+      // Create elevation layers
+      var beforeLandslideUrl =
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/OsoLandslide/OsoLandslide_Before_3DTerrain/ImageServer/";
+      var afterLandslideUrl =
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/OsoLandslide/OsoLandslide_After_3DTerrain/ImageServer/";
+
+      var beforeLandslideLayer = new ElevationLayer({
+        url: beforeLandslideUrl
+      });
+      var afterLandslideLayer = new ElevationLayer({
+        url: afterLandslideUrl
+      });
+
+      // Create Map and View
+      var map = new Map({
+        basemap: "satellite",
+        ground: {
+          layers: [beforeLandslideLayer, afterLandslideLayer]
+        }
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          // initial view:
+          heading: 332.8,
+          tilt: 65.5,
+          position: {
+            x: -13563643,
+            y: 6153016,
+            z: 577,
+            spatialReference: {
+              wkid: 3857
+            }
+          }
+        }
+      });
+
+      // Initialize symbols
+      var afterPointSymbol = {
+        type: "point-3d", // autocasts as new PointSymbol3D()
+        symbolLayers: [{
+          type: "object", // autocasts as new ObjectSymbol3DLayer()
+          material: {
+            color: [150, 26, 15]
+          },
+          resources: {
+            primitive: "sphere"
+          },
+          width: 8
+        }]
+      };
+
+      var beforePointSymbol = {
+        type: "point-3d", // autocasts as new PointSymbol3D()
+        symbolLayers: [{
+          type: "object", // autocasts as new ObjectSymbol3DLayer()
+          material: {
+            color: [21, 150, 15]
+          },
+          resources: {
+            primitive: "sphere"
+          },
+          width: 8
+        }]
+      };
+
+      var lineSymbol = {
+        type: "line-3d", // autocasts as new LineSymbol3D()
+        symbolLayers: [{
+          type: "line", // autocasts as new LineSymbol3DLayer()
+          material: {
+            color: [150, 26, 15]
+          },
+          size: 1
+        }]
+      };
+
+      var resultsContainer = document.getElementById("resultsDiv");
+
+      view.on("click", function (event) {
+        resultsContainer.innerHTML = "Querying elevation...";
+
+        // Query both elevation layers for the elevation at the clicked map position
+        var position = event.mapPoint;
+        var queryBeforeLandslide = beforeLandslideLayer.queryElevation(position);
+        var queryAfterLandslide = afterLandslideLayer.queryElevation(position);
+
+        // When both query promises resolve execute the following code
+        promiseUtils.eachAlways([queryBeforeLandslide, queryAfterLandslide])
+          .then(function (results) {
+            var posBeforeLandslide = results[0].value.geometry;
+            var posAfterLandslide = results[1].value.geometry;
+
+            // Clear graphics from previous result (if applicable)
+            view.graphics.removeAll();
+
+            // Draw a point graphic for position before landslide
+            view.graphics.add(new Graphic({
+              geometry: posBeforeLandslide,
+              symbol: beforePointSymbol
+            }));
+
+            // Draw a point graphic for position after landslide
+            view.graphics.add(new Graphic({
+              geometry: posAfterLandslide,
+              symbol: afterPointSymbol
+            }));
+
+            // Draw a vertical line that illustrates the elevation difference
+            var lineGeometry = new Polyline({
+              spatialReference: posBeforeLandslide.spatialReference,
+              hasZ: true
+            });
+            lineGeometry.addPath([posBeforeLandslide, posAfterLandslide]);
+            view.graphics.add(new Graphic({
+              geometry: lineGeometry,
+              symbol: lineSymbol
+            }));
+
+            // Compute and display the difference in elevation
+            var elevationDifference = Math.abs(posBeforeLandslide.z - posAfterLandslide.z);
+            resultsContainer.innerHTML = "Elevation difference: " + elevationDifference.toFixed(
+              2) + " m";
+          })
+          .catch(function (error) {
+            resultsContainer.innerHTML = "Elevation query failed (" + error.message + ")";
+          });
+      });
+
+      // When both elevation layers are set "visible", the surface is defined by the latter layer (afterLandslideLayer).
+      // Thus we can toggle between "before" and "after" by toggling the visibility of afterLandslideLayer.
+      document.getElementById("elevAfter").addEventListener("change", function (event) {
+        afterLandslideLayer.visible = event.target.checked;
+        beforeOrAfter = event.target.checked ? "after" : "before";
+      });
+    });
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="paneDiv">
+    <div id="resultsDiv">Click on the map to see the difference in elevation
+      before and after the landslide.</div>
+    <div id="activeElevationLayerDiv">
+      Legend:
+      <ul>
+        <li id="green">
+          <span>Surface point before landslide</span>
+        </li>
+        <li id="red">
+          <span>Surface point after landslide</span>
+        </li>
+      </ul>
+      <input type="checkbox" id="elevAfter" checked>
+      <label for="elevAfter">Show surface after landslide</label>
+    </div>
+  </div>
+</body>
+
+</html>

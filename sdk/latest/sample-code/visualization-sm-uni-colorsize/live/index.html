@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>Generate univariate continuous size and color visualization in 3D -
+    4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/dijit/themes/claro/claro.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #containerDiv {
+      background-color: white;
+      padding: 3px;
+      text-align: center;
+    }
+
+    #title {
+      font-size: 14pt;
+      font-weight: 500;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer",
+      "esri/renderers/smartMapping/creators/univariateColorSize",
+      "esri/renderers/smartMapping/statistics/histogram",
+      "esri/widgets/UnivariateColorSizeSlider",
+      "esri/core/lang"
+    ], function(
+      Map, SceneView, FeatureLayer, colorAndSizeRendererCreator, histogram,
+      UnivariateColorSizeSlider, lang
+    ) {
+
+      var map = new Map({
+        basemap: "topo"
+      });
+
+      // The minSize and maxSize of volumetric symbols are determined
+      // based on the view/camera the data will be displayed in.
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          tilt: 52.09457445834279,
+          heading: 355.8,
+          position: {
+            x: 1431052,
+            y: 4394025,
+            z: 922291,
+            spatialReference: {
+              wkid: 3857
+            }
+          }
+        }
+      });
+
+      // Create FeatureLayer instance with popupTemplate
+
+      var povLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Enriched%20World%20Cities/FeatureServer/0",
+        outFields: ["CITY_NAME", "CNTRY_NAME", "POP"],
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{CITY_NAME}, {CNTRY_NAME}",
+          content: "Total population: {POP}",
+          fieldInfos: [{
+            fieldName: "POP",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }]
+        }
+      });
+
+      // configure parameters for the renderer generator.
+      // the layer must be specified along with a field name
+      // or arcade expression. The basemap and other properties determine
+      // the appropriate default color and size schemes.
+
+      var params = {
+        layer: povLayer,
+        basemap: map.basemap,
+        field: "POP",
+        view: view,
+        symbolType: "3d-volumetric",
+        minValue: 0
+      };
+
+      // Initialize the object containing slider properties.
+      var sliderParams = {
+        container: "slider"
+      };
+
+      // Generate a renderer visualizing a single variable
+      // with continuous color and size based on the
+      // statistics of the data in the provided layer
+      // and field name.
+      //
+      // This resolves to an object containing several helpful
+      // properties, including size/color schemes, statistics,
+      // the renderer, and visual variables
+
+      colorAndSizeRendererCreator.createContinuousRenderer(params)
+        .then(function(response) {
+
+          // set generated renderer on the layer and add it to the map
+
+          povLayer.renderer = response.renderer;
+          map.add(povLayer);
+
+          // set the queried statistics and generated visual variable
+          // to the slider parameters
+
+          var sizeVVs = lang.clone(response.size.visualVariables);
+          var colorVV = lang.clone(response.color.visualVariable);
+
+          var sliderVisualVariables = sizeVVs;
+          sliderVisualVariables.push(colorVV);
+
+          sliderParams.statistics = response.statistics;
+          sliderParams.visualVariables = sliderVisualVariables;
+
+          // generate a histogram for use in the slider. Input the layer
+          // and field name to generate it.
+          // You can also use an arcade expression instead of
+          // a field and normalization field
+
+          return histogram({
+            layer: povLayer,
+            field: params.field
+          });
+        })
+        .then(function(histogram) {
+
+          // when the promise resolves, set the histogram in the slider parameters
+          sliderParams.histogram = histogram;
+
+          // input the slider parameters in the slider's constructor
+          // and add it to the view's UI
+
+          var slider = new UnivariateColorSizeSlider(sliderParams);
+          view.ui.add("containerDiv", "bottom-left");
+
+          // when the user slides the handle(s), update the renderer
+          // with the updated color and size visual variable objects
+
+          slider.on("data-change", function() {
+            var renderer = povLayer.renderer.clone();
+            renderer.visualVariables = lang.clone(slider.visualVariables);
+            povLayer.renderer = renderer;
+          });
+
+        })
+        .catch(function(error) {
+          console.log("there was an error: ", error);
+        });
+
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="containerDiv"><span id="title">Total population</span>
+    <div id="slider"></div>
+  </div>
+</body>
+
+</html>

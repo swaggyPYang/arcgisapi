@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Chaining Promises - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #results {
+      top: 20px;
+      right: 20px;
+      position: absolute;
+      z-index: 99;
+      background-color: white;
+      border-radius: 8px;
+      padding: 10px;
+      opacity: 0.75;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9"></script>
+
+  <script>
+    require([
+      "esri/geometry/geometryEngineAsync",
+      "esri/geometry/Point",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/Map",
+      "esri/views/SceneView"
+    ], function(geometryEngineAsync, Point, Graphic, GraphicsLayer, Map,
+      SceneView) {
+
+      // Define semi-transparent red point symbol
+      var pointSym = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        style: "circle",
+        color: [255, 0, 0, 0.5],
+        size: 6,
+        outline: { // autocasts as new SimpleLineSymbol()
+          style: "solid",
+          color: [255, 255, 255, 0.5]
+        }
+      };
+
+      // Define semi-transparent white symbol for buffers
+      var polySym = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        style: "solid",
+        color: [255, 255, 255, 0.5],
+        outline: { // autocasts as new SimpleLineSymbol()
+          style: "solid",
+          color: [0, 0, 0],
+          width: 2
+        }
+      };
+
+      // Create the map and the SceneView
+      var map = new Map({
+        basemap: "hybrid",
+        ground: "world-elevation"
+      });
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map
+      });
+
+      // Create layer to store graphics and add to map
+      var layer = new GraphicsLayer();
+      map.add(layer);
+
+      // Location of meteor crater centroid in Arizona desert
+      var meteorPoint = new Point({
+        longitude: -111.022887,
+        latitude: 35.027410
+      });
+
+      view.when(function() {
+        var startButton = document.getElementById("startBtn");
+        startButton.addEventListener("click", function() {
+          // Buffer crater point and chain promise to additional functions
+          geometryEngineAsync.geodesicBuffer(meteorPoint, 700,
+              "yards")
+            .then(addGraphics) // When geodesicBuffer() resolves, send buffer to addGraphics()
+            .then(zoomTo) // When addGraphics() resolves, send response to zoomTo()
+            .then(calculateArea) // When zoomTo() resolves, send response to calculateArea()
+            .then(printArea); // When calculateArea() resolves, send response to printArea()
+        });
+      });
+
+      // Adds the point and buffer graphics to the layer
+      function addGraphics(buffer) {
+        layer.add(new Graphic({
+          geometry: meteorPoint,
+          symbol: pointSym
+        }));
+        layer.add(new Graphic({
+          geometry: buffer,
+          symbol: polySym
+        }));
+
+        return buffer; // returned in order to be used in the next promise in the promise chain
+      }
+
+      // Zooms to the buffer location
+      function zoomTo(geom) {
+        // When the view is ready
+        return view.when(function() {
+          // Zoom to the buffer geometry
+          return view.goTo({
+            target: geom,
+            scale: 24000,
+            tilt: 0,
+            heading: 0
+          });
+        }).then(function() {
+          // resolve promise with geometry
+          return geom;
+        });
+      }
+
+      // Calculates the area of the buffer in acres
+      function calculateArea(polyGeom) {
+        return geometryEngineAsync.geodesicArea(polyGeom, "acres");
+      }
+
+      // Prints the buffer area
+      function printArea(area) {
+        var areaSpan = document.getElementById("areaSpan");
+        areaSpan.innerHTML = "<br><br>Area = " + Math.round(area) +
+          " acres";
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="results">
+      <button id="startBtn">Start Promise Chain</button>
+      <span id="areaSpan"></span>
+    </div>
+  </div>
+</body>
+
+</html>

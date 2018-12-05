@@ -1,0 +1,18 @@
+{
+  "className": "ExtrudeSymbol3DLayer",
+  "type": "Class",
+  "baseClass": "Symbol3DLayer",
+  "baseLocation": "symbols/3d/Symbol3DLayer.json",
+  "variable": "iconSym3DLayer",
+  "description": "ExtrudeSymbol3DLayer is used to render Polygon geometries by extruding them upward from the ground, creating a 3D volumetric object.",
+  "summary": "used to render Polygon geometries by extruding them upward from the ground",
+  "path": "esri/symbols/ExtrudeSymbol3DLayer",
+  "autocastType": "extrude",
+  "properties": [
+    {
+      "name": "size",
+      "type": "Number",
+      "summary": "Size of the icon in pixels"
+    }
+  ]
+}

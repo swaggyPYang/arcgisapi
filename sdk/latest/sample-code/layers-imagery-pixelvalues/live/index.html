@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>ImageryLayer - client side pixel filter - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/ImageryLayer",
+      "esri/layers/support/RasterFunction",
+      "esri/layers/support/DimensionalDefinition",
+      "esri/layers/support/MosaicRule",
+      "esri/core/watchUtils"
+    ], function(
+      Map, MapView, ImageryLayer,
+      RasterFunction, DimensionalDefinition, MosaicRule, watchUtils
+    ) {
+
+      // The URL to an image layer representing sea temperature
+      var url =
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/ScientificData/SeaTemperature/ImageServer";
+
+      var map = new Map({
+        basemap: "dark-gray"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 3,
+        center: [-32, 28],
+        popup: {
+          actions: []
+        },
+      });
+
+      /**********************************************************************************************
+       * Variable water_temp describes the water temperature, it has both depth and time dimensions.
+       * This snippet sets water_temp to a specific depth and a specific time by defining the
+       * multidimensionalDefinition property of a MosaicRule object.
+       **********************************************************************************************/
+
+      var dimInfo = []; // Define dimensional definition as array
+
+      // Multidimensional information of image service can be viewed at thisService/multiDimensionalInfo
+      // DEPTH: show only temperatures at sea surface
+      dimInfo.push(new DimensionalDefinition({
+        dimensionName: "StdZ", // Water depth
+        values: [0], // Sea surface or 0ft
+        isSlice: true
+      }));
+      // TIME: only show temperatures for the week of April 7, 2014
+      dimInfo.push(new DimensionalDefinition({
+        dimensionName: "StdTime", // time temp was recorded
+        values: [1396828800000], // Week of April 7, 2014
+        isSlice: true
+      }));
+
+      var mr = new MosaicRule({
+        multidimensionalDefinition: dimInfo
+      });
+
+      /******************************************
+       * Set the rendering rule to the
+       * "None" raster function. This will allow
+       * us to gain access to the temperature
+       * value assigned to each pixel
+       *****************************************/
+
+      var rf = new RasterFunction({
+        functionName: "None"
+      });
+
+      /**********************************************************
+       * The PixelFilter. This function is used to color the
+       * pixels. By default, each pixel has one band containing
+       * a temperature value. Without the pixelFilter
+       * the layer would render in a grayscale. We will
+       * replace the single band with three bands - red,
+       * green, and blue to give color to the layer. This
+       * will overwrite the original temperature value. See
+       * the getTemp() function for converting the RGB values
+       * back to the original temperature value.
+       *********************************************************/
+
+      function colorize(pixelData) {
+        var pixelBlock, factor, minValue, maxValue;
+
+        if (pixelData === null || pixelData.pixelBlock === null ||
+          pixelData.pixelBlock.pixels === null) {
+          return;
+        }
+
+        // The pixelBlock stores the values of all pixels visible in the view
+        pixelBlock = pixelData.pixelBlock;
+
+        // Get the min and max values of the data in the current view
+        minValue = pixelBlock.statistics[0].minValue;
+        maxValue = pixelBlock.statistics[0].maxValue;
+
+        // The pixels visible in the view
+        var pixels = pixelBlock.pixels;
+
+        // The number of pixels in the pixelBlock
+        var numPixels = pixelBlock.width * pixelBlock.height;
+
+        // Calculate the factor by which to determine the red and blue
+        // values in the colorized version of the layer
+        factor = 255.0 / (maxValue - minValue);
+
+        // Get the pixels containing temperature values in the only band of the data
+        var tempBand = pixels[0];
+
+        // Create empty arrays for each of the RGB bands to set on the pixelBlock
+        var rBand = [];
+        var gBand = [];
+        var bBand = [];
+
+        // Loop through all the pixels in the view
+        for (i = 0; i < numPixels; i++) {
+          // Get the pixel value (the temperature) recorded at the pixel location
+          var tempValue = tempBand[i];
+          // Calculate the red value based on the factor
+          var red = (tempValue - minValue) * factor;
+
+          // Sets a color between blue (coldest) and red (warmest) in each band
+          rBand[i] = red;
+          gBand[i] = 0;
+          bBand[i] = 255 - red;
+        }
+
+        // Set the new pixel values on the pixelBlock
+        pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
+        pixelData.pixelBlock.pixelType = "U8"; // U8 is used for color
+      }
+
+      var layer = new ImageryLayer({
+        url: url,
+        renderingRule: rf,
+        pixelFilter: colorize,
+        mosaicRule: mr,
+        // The popup will display the temperature at the clicked location
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "Sea Surface Temperature",
+          content: "{Raster.ServicePixelValue}° Celsius"
+        }
+      });
+
+      // Add sea temperature layer to the map
+      map.add(layer);
+
+      // Display popup when the layer view loads
+      view.whenLayerView(layer).then(function(layerView) {
+        watchUtils.whenFalseOnce(layerView, "updating", function(newVal) {
+          view.popup.open({
+            title: "Sea Surface Temperature",
+            content: "Click anywhere in the oceans to view the sea temperature at that location.",
+            location: view.center
+          });
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

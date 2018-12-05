@@ -1,0 +1,18 @@
+{
+  "className": "LineSymbol3DLayer",
+  "type": "Class",
+  "baseClass": "Symbol3DLayer",
+  "baseLocation": "symbols/3d/Symbol3DLayer.json",
+  "variable": "iconSym3DLayer",
+  "description": "LineSymbol3DLayer renders Polyline geometries using a flat 2D line with a LineSymbol3D.",
+  "summary": "renders Polyline geometries using a flat 2D line",
+  "path": "esri/symbols/LineSymbol3DLayer",
+  "autocastType": "line",
+  "properties": [
+    {
+      "name": "size",
+      "type": "Number",
+      "summary": "Size of the icon in pixels"
+    }
+  ]
+}

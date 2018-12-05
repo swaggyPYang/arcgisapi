@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Set realistic environment settings in a SceneView - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "require",
+
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/SceneLayer",
+        "esri/widgets/Home",
+        "./Clock.js"
+      ],
+      function(
+        require,
+        Map, SceneView,
+        SceneLayer,
+        Home,
+        Clock
+      ) {
+
+        var map = new Map({
+          basemap: "satellite",
+          ground: "world-elevation",
+          layers: [
+            new SceneLayer({
+              portalItem: {
+                id: "b343e14455fe45b98a2c20ebbceec0b0"
+              }
+            })
+          ]
+        });
+
+        var view = new SceneView({
+          map: map,
+          container: "viewDiv",
+
+          // position in Brest, France
+          camera: { // autocasts as esri/Camera
+            position: { // autocasts as esri/geometry/Point
+              x: -500180.363,
+              y: 6170505.212,
+              z: 27.623,
+              spatialReference: { // autocasts as esri/geometry/SpatialReference
+                wkid: 102100
+              }
+            },
+            heading: 204.85,
+            tilt: 104.94,
+            fov: 80
+          },
+
+          environment: {
+            atmosphere: { // creates a realistic view of the atmosphere
+              quality: "high"
+            },
+            lighting: {
+              date: new Date(),
+              directShadowsEnabled: true,
+              // don't update the view time when user pans.
+              // The clock widget drives the time
+              cameraTrackingEnabled: false
+            }
+          },
+
+          ui: {
+            components: ["attribution"]
+          }
+        });
+
+        // configure the UI
+
+        var homeWidget = new Home({
+          view: view
+        });
+        view.ui.add(homeWidget, "top-right");
+
+        view.ui.add("timeInfo", "top-left");
+
+        var clock = new Clock({
+          el: "clock",
+          skin: require.toUrl("./clock.svg"),
+          time: view.environment.lighting.date.getTime()
+        });
+        view.ui.add("clock", "bottom-right");
+
+        // update the time of the view when the clock time changes
+        var timeField = document.getElementById("timeField");
+        var updateTimefield = function() {
+          timeField.innerHTML = view.environment.lighting.date.toLocaleString();
+        };
+        updateTimefield();
+        clock.on("time-change", function(time) {
+          view.environment.lighting.date = time;
+          updateTimefield();
+        });
+      });
+  </script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #timeInfo {
+      color: white;
+      font-family: Lucida Grande, Helvetica, sans-serif;
+    }
+
+    #timeField {
+      font-size: 40px;
+    }
+
+    #timeLocation {
+      font-size: 60px;
+    }
+
+    #clock {
+      width: 220px;
+      height: 220px;
+    }
+
+    .esri-ui-corner .esri-component {
+      box-shadow: inherit;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="timeInfo">
+      <span id="timeLocation">Brest, France</span>
+      <br />
+      <span id="timeField"></span>
+    </div>
+    <div id="clock"></div>
+  </div>
+</body>
+</html>

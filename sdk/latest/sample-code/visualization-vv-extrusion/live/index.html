@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Data-driven extrusion - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(
+      Map, SceneView, FeatureLayer, Legend
+    ) {
+
+      // limit visualization to southeast U.S. counties
+      var defExp = ["STATE = 'LA'", "STATE = 'AL'", "STATE = 'AR'",
+        "STATE = 'MS'", "STATE = 'TN'", "STATE = 'GA'",
+        "STATE = 'FL'", "STATE = 'SC'", "STATE = 'NC'",
+        "STATE = 'VA'", "STATE = 'KY'", "STATE = 'WV'"
+      ];
+
+      /*****************************************************************
+       * In this case we set two visual variables on the renderer. Since
+       * we're defining both size and color based on data values, there's
+       * no need to specify defaults in the `symbol` property of the
+       * renderer. In 3D it is easier to visually perceive size differences
+       * when they are combined with color. Therefore we set up both a
+       * size and a color visual variable based on the values of the same
+       * field.
+       *
+       * Notice that the data value ramps for each is slightly different.
+       * Color allows us to see the spatial trend in a tight range, whereas
+       * size can be used to observe nuances between features of the same
+       * color.
+       *****************************************************************/
+
+      var renderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "polygon-3d", // autocasts as new PolygonSymbol3D()
+          symbolLayers: [{
+            type: "extrude" // autocasts as new ExtrudeSymbol3DLayer()
+          }]
+        },
+        visualVariables: [{
+          type: "size",
+          field: "POP_POVERTY",
+          stops: [
+          {
+            value: 1000,
+            size: 10000,
+            label: "1,000"
+          },
+          {
+            value: 150000,
+            size: 300000,
+            label: ">150,000"
+          }]
+        }, {
+          type: "color",
+          field: "POP_POVERTY",
+          normalizationField: "TOTPOP_CY",
+          legendOptions: {
+            title: "% population with income below poverty level"
+          },
+          stops: [
+          {
+            value: 0.10,
+            color: "#FFFCD4",
+            label: "<15%"
+          },
+          {
+            value: 0.35,
+            color: [153, 83, 41],
+            label: ">35%"
+          }]
+        }]
+      };
+
+      var povLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/counties_politics_poverty/FeatureServer/0",
+        renderer: renderer,
+        title: "Population living in poverty by county",
+        outFields: ["*"],
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{COUNTY}, {STATE}",
+          content: "{POP_POVERTY} of {TOTPOP_CY} people live below the poverty line.",
+          fieldInfos: [
+          {
+            fieldName: "POP_POVERTY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }, {
+            fieldName: "TOTPOP_CY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }]
+        },
+        definitionExpression: defExp.join(" OR ") // only display counties from states in defExp
+      });
+
+      var map = new Map({
+        basemap: "gray",
+        layers: [povLayer]
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            latitude: 18.24237,
+            longitude: -88.72943,
+            z: 1534560
+          },
+          tilt: 45,
+          heading: 10
+        }
+      });
+
+      var legend = new Legend({
+        view: view
+      });
+
+      view.ui.add(legend, "bottom-right");
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

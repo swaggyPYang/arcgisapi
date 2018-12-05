@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Swap web maps in the same view - 4.9</title>
+
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #viewDiv {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 60px;
+      bottom: 0;
+    }
+
+    .header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 10%;
+    }
+
+    .btns {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    }
+
+    .btn-switch {
+      flex-grow: 4;
+      background-color: rgba(34, 111, 14, 0.5);
+      color: #FFF;
+      margin: 1px;
+      width: 50%;
+      padding: 20px;
+      overflow: auto;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.7em;
+    }
+
+    .active-map {
+      color: #fff;
+      background-color: rgba(34, 111, 14, 1);
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/views/MapView",
+      "esri/WebMap"
+    ], function(
+      MapView, WebMap
+    ) {
+
+      var webmapids = [
+        "ad5759bf407c4554b748356ebe1886e5",
+        "71ba2a96c368452bb73d54eadbd59faa",
+        "45ded9b3e0e145139cc433b503a8f5ab"
+      ];
+
+      /************************************************************
+       * Create multiple WebMap instances
+       ************************************************************/
+      var webmaps = webmapids.map(function(webmapid) {
+        return new WebMap({
+          portalItem: { // autocasts as new PortalItem()
+            id: webmapid
+          }
+        });
+      });
+
+      /************************************************************
+       * Initialize the View with the first WebMap
+       ************************************************************/
+      var view = new MapView({
+        map: webmaps[0],
+        container: "viewDiv"
+      });
+
+      document.querySelector(".btns").addEventListener("click", function(
+        event) {
+        /************************************************************
+         * On a button click, change the map of the View
+         ************************************************************/
+        var id = event.target.getAttribute("data-id");
+        if (id) {
+          var webmap = webmaps[id];
+          view.map = webmap;
+          var nodes = document.querySelectorAll(".btn-switch");
+          for (var idx = 0; idx < nodes.length; idx++) {
+            var node = nodes[idx];
+            var mapIndex = node.getAttribute("data-id");
+            if (mapIndex === id) {
+              node.classList.add("active-map");
+            } else {
+              node.classList.remove("active-map");
+            }
+          }
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <section class="header">
+    <div class="btns">
+      <div class="btn-switch active-map" data-id="0">Missing Migrants</div>
+      <div class="btn-switch" data-id="1">Refugee Routes</div>
+      <div class="btn-switch" data-id="2">2015 European Sea Arrivals</div>
+    </div>
+  </section>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

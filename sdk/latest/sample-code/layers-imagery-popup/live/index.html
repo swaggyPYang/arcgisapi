@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>ImageryLayer - server side raster function - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/ImageryLayer",
+        "esri/layers/support/RasterFunction"
+      ],
+      function(
+        Map, MapView, ImageryLayer,
+        RasterFunction
+      ) {
+        /***************************************
+         * Set up popup template of image layer
+         **************************************/
+
+        var imagePopupTemplate = { // autocasts as new PopupTemplate()
+          title: "Data from {SensorName} satellite",
+          content: "Rendered RGB values: <b>{Raster.ServicePixelValue} </b>" +
+            "<br>Original values (B, G, R, NIR): <b>{Raster.ItemPixelValue} </b>"
+        };
+
+        /*******************************************************************
+         * Create image layer with server defined raster function templates
+         ******************************************************************/
+
+        var serviceRFT = new RasterFunction({
+          functionName: "TorontoFalseColor",
+          variableName: "Raster"
+        });
+
+        var layer = new ImageryLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Toronto/ImageServer",
+          renderingRule: serviceRFT,
+          popupTemplate: imagePopupTemplate
+        });
+
+        /*************************
+         * Add image layer to map
+         ************************/
+
+        var map = new Map({
+          basemap: "hybrid",
+          layers: [layer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: { // autocasts as esri/geometry/Point
+            x: -8836932.6501,
+            y: 5411004.902699997,
+            spatialReference: 3857
+          },
+          zoom: 13,
+          popup: {
+            actions: []
+          },
+        });
+      }
+    );
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

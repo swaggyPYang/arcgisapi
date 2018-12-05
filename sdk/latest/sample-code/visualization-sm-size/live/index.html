@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Generate data-driven continuous size visualization - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/dijit/themes/claro/claro.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #containerDiv {
+      background-color: white;
+      padding: 3px;
+      text-align: center;
+    }
+
+    #title {
+      font-size: 14pt;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/renderers/smartMapping/creators/size",
+      "esri/renderers/smartMapping/statistics/histogram",
+      "esri/widgets/SizeSlider",
+      "esri/widgets/Legend",
+      "esri/core/lang"
+    ], function(
+      Map, MapView, FeatureLayer, sizeRendererCreator, histogram,
+      SizeSlider, Legend, lang
+    ) {
+
+      // Create a map and add it to a MapView
+
+      var map = new Map({
+        basemap: "gray"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-85.050200, 33.125524],
+        zoom: 6
+      });
+
+      // Create FeatureLayer instance with popupTemplate
+
+      var povLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/counties_politics_poverty/FeatureServer/0",
+        outFields: ["POP_POVERTY", "TOTPOP_CY", "COUNTY", "STATE"],
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{COUNTY}, {STATE}",
+          content: "{POP_POVERTY} of {TOTPOP_CY} people live below the poverty line.",
+          fieldInfos: [
+          {
+            fieldName: "POP_POVERTY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }, {
+            fieldName: "TOTPOP_CY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }]
+        }
+      });
+
+      // configure parameters for the size renderer generator
+      // the layer must be specified along with a field name.
+      // The basemap and then determine
+      // the appropriate default size scheme.
+
+      var sizeParams = {
+        layer: povLayer,
+        basemap: map.basemap,
+        field: "POP_POVERTY",
+        normalizationField: "TOTPOP_CY",
+        legendOptions: {
+          title: "Ratio of people living in poverty"
+        },
+        minValue: 0.15
+      };
+
+      // Initialize the object containing size slider properties.
+      var sliderParams = {
+        container: "slider"
+      };
+
+      // Generate a continuous size renderer based on the
+      // statistics of the data in the provided layer
+      // and field.
+      //
+      // This resolves to an object containing several helpful
+      // properties, including size scheme, statistics,
+      // the renderer, and visual variable
+
+      sizeRendererCreator.createContinuousRenderer(sizeParams)
+        .then(function(response) {
+
+          // set generated renderer on the layer and add it to the map
+
+          povLayer.renderer = response.renderer;
+          map.add(povLayer);
+
+          // set the queried statistics and generated visual variable
+          // to the slider parameters
+
+          sliderParams.statistics = response.statistics;
+          sliderParams.visualVariable = lang.clone(response.visualVariables[
+            0]);
+
+          // Create a legend and add it to the view's UI
+
+          var legend = new Legend({
+            view: view,
+            layerInfos: [
+            {
+              layer: povLayer,
+              title: "Poverty in the southeast U.S."
+            }]
+          });
+          view.ui.add(legend, "bottom-right");
+
+          // generate a histogram for use in the slider. Input the layer
+          // and field name to generate it.
+
+          return histogram({
+            layer: povLayer,
+            field: sizeParams.field,
+            normalizationField: sizeParams.normalizationField,
+            minValue: sizeParams.minValue
+          });
+
+        })
+        .then(function(histogram) {
+
+          // when the promise resolves, set the histogram in the slider parameters
+
+          sliderParams.histogram = histogram;
+
+          // input the slider parameters in the slider's constructor
+          // and add it to the view's UI
+
+          sizeSlider = new SizeSlider(sliderParams);
+          view.ui.add("containerDiv", "bottom-left");
+
+          // when the user slides the handle(s), update the renderer
+          // with the updated color visual variable object
+
+          sizeSlider.on("data-change", function() {
+            var renderer = povLayer.renderer.clone();
+            renderer.visualVariables = [lang.clone(sizeSlider.visualVariable)];
+            povLayer.renderer = renderer;
+          });
+        })
+        .catch(function(error) {
+          console.log("there was an error: ", error);
+        });
+
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="containerDiv"><span id="title">Ratio of population in poverty</span>
+    <div id="slider"></div>
+  </div>
+</body>
+
+</html>

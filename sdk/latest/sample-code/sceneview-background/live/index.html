@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom background for SceneView - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Avenir Next W01', 'Helvetica Neue', 'Helvetica', sans-serif;
+    }
+
+    body {
+      background-image: linear-gradient(45deg, #e9e6ef 25%, transparent 25%, transparent 75%, #e9e6ef 75%),
+      linear-gradient(45deg, #e9e6ef 25%, transparent 25%, transparent 75%, #e9e6ef 75%);
+      background-size:51px 51px;
+      background-position: 0 0, 25px 25px;
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      right: 0;
+      text-align: right;
+      max-width: 400px;
+      padding-right: 20px;
+      color: #61399b;
+      line-height: 1.5em;
+    }
+
+    span {
+      font-weight: bold;
+    }
+
+    #backgroundSetting {
+      padding: 10px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/config"
+    ], function(WebScene, SceneView, esriConfig) {
+
+      const map = new WebScene({
+        portalItem: {
+          id: "9c90786e1a1d4102adf9d53655c2843d"
+        }
+      });
+
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        alphaCompositingEnabled: true,
+        environment: {
+          // set a transparent background
+          background: {
+            type: "color",
+            color: [255, 252, 244, 0]
+          },
+          lighting: {
+            date: "Sun Jul 15 2018 08:00:00 GMT+0200 (W. Europe Daylight Time)",
+          },
+          // disable stars
+          starsEnabled: false,
+          // disable atmosphere
+          atmosphereEnabled: false
+        },
+        // limit zooming in and out
+        constraints: {
+          altitude: {
+            min: 20000000,
+            max: 25000000
+          }
+        },
+        ui: {
+          components: ["attribution"]
+        },
+        padding: {
+          top: 100
+        }
+      });
+
+      const backgroundCheckbox = document.getElementById("background");
+      backgroundCheckbox.addEventListener("change", function(event) {
+        const backgroundColor = view.environment.background.color.clone();
+        backgroundColor.a = event.target.checked ? 0 : 1;
+        view.environment.background.color = backgroundColor;
+      });
+
+      view.ui.add("backgroundSetting", "bottom-left");
+    });
+  </script>
+</head>
+
+<body>
+  <header>
+    <h2>World's biggest cities</h2>
+    <p><span>Shanghai</span> is the most populated city in the world with 24
+      million inhabitants,
+      followed by <span>Beijing</span> with 21 million.
+      On third place is the city of <span>Delhi</span> with 16 million people.
+    </p>
+  </header>
+  <div id="viewDiv"></div>
+  <div id="backgroundSetting" class="esri-widget">
+    <input type="checkbox" id="background" checked><label for="background">Transparent
+      background</label>
+  </div>
+</body>
+</html>

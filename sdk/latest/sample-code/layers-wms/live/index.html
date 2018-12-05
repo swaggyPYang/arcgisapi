@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>WMSLayer - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/WMSLayer"
+    ], function(
+      Map,
+      SceneView,
+      WMSLayer
+    ) {
+
+      var layer = new WMSLayer({
+        url: "https://ows.terrestris.de/osm/service",
+        sublayers: [{
+          name: "OSM-WMS"
+        }]
+      });
+
+      var map = new Map({
+        basemap: {
+          baseLayers: [layer]
+        }
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map
+      });
+
+    });
+    /***********************************
+     * Data attribution:
+     *  OpenStreetMap WMS by terrestris GmbH and Co. KG. Following sources were used:
+     *  (c) OpenStreetMap contributors (http://www.openstreetmap.org/copyright)
+     *  (c) OpenStreetMap Data (http://openstreetmapdata.com)
+     *  (c) Natural Earth Data (http://www.naturalearthdata.com)
+     *  (c) ASTER GDEM 30m (https://asterweb.jpl.nasa.gov/gdem.asp)
+     *  (c) SRTM 450m by ViewfinderPanoramas (http://viewfinderpanoramas.org/)
+     *  (c) Great Lakes Bathymetry by NGDC (http://www.ngdc.noaa.gov/mgg/greatlakes/)
+     *  (c) SRTM 30m by NASA EOSDIS Land Processes Distributed Active Archive Center (LP DAAC, https://lpdaac.usgs.gov/)
+     *********************************/
+  </script>
+
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

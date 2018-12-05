@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Intro to MapImageLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/MapImageLayer"
+      ],
+      function(
+        Map, SceneView, MapImageLayer
+      ) {
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing data about pool permits in Southern California.
+         *****************************************************************/
+        var permitsLayer = new MapImageLayer({
+          portalItem: { // autocasts as new PortalItem()
+            id: "d7892b3c13b44391992ecd42bfa92d01"
+          }
+        });
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [permitsLayer]
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map
+        });
+
+        /*****************************************************************
+         * Animate to the layer's full extent when the layer loads.
+         *****************************************************************/
+        permitsLayer.when(function() {
+          view.goTo(permitsLayer.fullExtent);
+        });
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

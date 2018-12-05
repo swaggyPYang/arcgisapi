@@ -1,0 +1,44 @@
+{
+  "className": "MarkerSymbol",
+  "type": "baseClass",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "symbol",
+  "description": "Marker symbols are used to draw points and multipoints on the graphics layer.",
+  "summary": "used to draw points and multipoints on the graphics layer",
+  "path": "esri/symbols/MarkerSymbol",
+  "properties": [
+    {
+      "name": "angle",
+      "type": "Number",
+      "default": 0,
+      "attributes": {
+        "min": -360,
+        "max": 360,
+        "step": 1
+      },
+      "summary": "The angle of the marker"
+    },
+    {
+      "name": "size",
+      "type": "Number",
+      "default": 12,
+      "attributes": {
+        "min": 0
+      },
+      "summary": "Size of the marker in pixels"
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the y-axis in pixels"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>ScaleBar widget - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/ScaleBar"
+    ], function(
+      Map, MapView, ScaleBar
+    ) {
+      var map = new Map({
+        basemap: "gray-vector"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [139.68, 35.68],
+        zoom: 9
+      });
+
+      var scaleBar = new ScaleBar({
+        view: view,
+        unit: "dual" // The scale bar displays both metric and non-metric units.
+      });
+
+      // Add the widget to the bottom left corner of the view
+      view.ui.add(scaleBar, {
+        position: "bottom-left"
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

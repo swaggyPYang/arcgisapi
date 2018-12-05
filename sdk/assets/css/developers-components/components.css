@@ -1,0 +1,135 @@
+developers-sign-in {
+  display: block;
+  min-height: 380px; }
+  developers-sign-in .alert {
+    width: 96%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto; }
+
+developers-search .top-nav-search {
+  margin-top: 14px;
+  display: inline-block;
+  float: left;
+  width: auto; }
+
+developers-search .top-nav-filter {
+  margin-right: -20px;
+  margin-top: 14px;
+  display: inline-block;
+  float: left;
+  width: auto; }
+
+developers-search .top-nav-search-form {
+  position: relative;
+  float: left;
+  width: auto;
+  display: inline-block; }
+
+developers-account-notifications .alert {
+  max-width: 100%;
+  border-left: none;
+  border-right: none; }
+
+developers-account-notifications .alert:first-of-type {
+  border-top: none; }
+
+developers-account-notifications .alert + .alert {
+  border-top: none; }
+
+developers-user-navigation {
+  display: block;
+  z-index: 1;
+  position: relative; }
+  developers-user-navigation a.tooltip.top-nav-link {
+    padding-bottom: 0; }
+
+developers-blog-feed {
+  display: block; }
+
+developers-community-events-map {
+  background: #f8f8f8;
+  display: block;
+  position: relative;
+  height: 60vh; }
+  developers-community-events-map .esri-view .esri-bitmap {
+    width: auto;
+    height: auto;
+    max-width: inherit; }
+  developers-community-events-map .esri-ui-top-right {
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    bottom: 0; }
+  developers-community-events-map .esri-search {
+    max-width: 360px;
+    width: 100%;
+    flex: 0 0 auto;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 360px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.125); }
+  developers-community-events-map .esri-search .esri-search__input {
+    height: auto; }
+  developers-community-events-map .esri-search__submit-button .esri-icon-search:before {
+    padding: 0; }
+  developers-community-events-map .developers-community-events-list {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    bottom: 10px;
+    width: 360px;
+    max-width: 360px;
+    width: auto;
+    flex: 1 1 auto;
+    box-sizing: border-box;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.125);
+    overflow: auto; }
+
+.esri-zoom .esri-icon:before {
+  padding: 0; }
+
+.expand {
+  display: none; }
+  .expand.is-active {
+    display: block; }
+
+template {
+  display: none; }
+
+developers-sign-out,
+developers-download-button {
+  color: #0079c1;
+  cursor: pointer;
+  text-decoration: none; }
+  developers-sign-out:hover,
+  developers-download-button:hover {
+    color: #005e95;
+    text-decoration: underline; }
+
+developers-toc {
+  display: block; }
+  developers-toc > ol {
+    margin: 0; }
+  developers-toc li {
+    margin-top: 0.625rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.125rem; }
+  developers-toc li:last-child {
+    margin-bottom: 0; }
+
+developers-nav-filter #filterContent li {
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  margin-left: 0;
+  padding: 0.66rem 0.5rem;
+  list-style-position: inside; }
+  developers-nav-filter #filterContent li:nth-child(even) {
+    background-color: #f8f8f8; }
+    developers-nav-filter #filterContent li:nth-child(even) a {
+      color: #005e95; }
+  developers-nav-filter #filterContent li a {
+    margin-left: 0.5rem; }

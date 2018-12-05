@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>PointCloudLayer - intensity color modulation - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #paneDiv {
+      padding: 12px 12px 12px 12px;
+      background-color: rgba(255, 255, 255, 1);
+    }
+    label {
+      font-size: 18px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/PointCloudLayer"
+    ], function(
+      Map, SceneView, PointCloudLayer
+    ) {
+
+      /******************************************************************
+       *
+       * Load point cloud layer and display it using classification. Colors
+       * assigned in the classification renderer will be modulated by the
+       * INTENSITY field.
+       *
+       ******************************************************************/
+
+      // Intensity values can vary between 0 and 255. The values set here are
+      // minimum and maximum values of the Intensity field of the point cloud layer.
+      var colorModulation = {
+        field: "INTENSITY",
+        minValue: 35, // colors of points with this intensity value will be displayed darker
+        maxValue: 211 // colors of points with maximum intensity value will be displayed the same
+      };
+
+      var pcLayer = new PointCloudLayer({
+        url: "https://tiles.arcgis.com/tiles/Imiq6naek6ZWdour/arcgis/rest/services/PointCloud_urban/SceneServer",
+        renderer: {
+          type: "point-cloud-unique-value",  // autocasts as new pointCloudUniqueValueRenderer()
+          field: "CLASS_CODE", // field containing data for standard LAS classification
+          colorModulation: colorModulation,
+          pointSizeAlgorithm: {
+            type: "fixed-size",
+            useRealWorldSymbolSizes: false,
+            size: 3
+          },
+          pointsPerInch: 35,
+          colorUniqueValueInfos: [
+          {
+            values: ["1"],
+            label: "Unassigned",
+            color: [178, 178, 178]
+          },
+          {
+            values: ["2"],
+            label: "Ground",
+            color: [168, 112, 0]
+          },
+          {
+            values: ["5"],
+            label: "High vegetation",
+            color: [205, 245, 121]
+          },
+          {
+            values: ["6"],
+            label: "Building",
+            color: [229, 75, 65]
+          },
+          {
+            values: ["7"],
+            label: "Low Point",
+            color: [229, 0, 0]
+          }]
+        },
+        elevationInfo: {
+          mode: "absolute-height",
+          offset: 2
+        }
+      });
+
+      // Create Map and View
+      var map = new Map({
+        basemap: "gray-vector",
+        ground: "world-elevation",
+        layers: [pcLayer]
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          heading: 321,
+          tilt: 65,
+          position: {
+            x: -13660884.75182009,
+            y: 4641370.954907834,
+            z: 174.2508678585291,
+            spatialReference: {
+              wkid: 3857
+            }
+          }
+        }
+      });
+
+      // switch between a renderer with colorModulation and one without
+      var modulation = document.getElementById("modulation");
+      modulation.addEventListener("click", function(event) {
+        var renderer = pcLayer.renderer.clone();
+        renderer.colorModulation = event.target.checked ? colorModulation : null;
+        pcLayer.renderer = renderer;
+      });
+
+      view.ui.add("paneDiv", "bottom-left");
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="paneDiv">
+    <label>Color modulation based on intensity:</label> <input type="checkbox"
+      name="modulation" id="modulation" checked>
+  </div>
+</body>
+
+</html>

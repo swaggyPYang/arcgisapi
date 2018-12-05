@@ -1,0 +1,29 @@
+{
+  "className": "MeshSymbol3D",
+  "type": "Class",
+  "baseClass": "Symbol3D",
+  "baseLocation": "symbols/3d/Symbol3D.json",
+  "variable": "meshSymbol3D",
+  "description": "MeshSymbol3D is used to render 3D mesh features.",
+  "summary": "used to render 3D mesh features",
+  "path": "esri/symbols/MeshSymbol3D",
+  "autocastType": "mesh-3d",
+  "properties": [
+    {
+      "name": "symbolLayers",
+      "type": "Array",
+      "options": {
+        "type": "Object",
+        "values": [
+          {
+            "className": "FillSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/FillSymbol3DLayer.json"
+          }
+        ]
+      },
+      "properties": [],
+      "summary": "array of symbol layers"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Print widget - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+        "esri/views/MapView",
+        "esri/widgets/Print",
+        "esri/WebMap"
+      ],
+      function(
+        MapView, Print, WebMap
+      ) {
+
+        var webmap = new WebMap({
+          portalItem: { // autocasts as new PortalItem()
+            id: "d6d830a7184f4971b8a2f42cd774d9a7"
+          }
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: webmap
+        });
+
+        view.when(function() {
+          var print = new Print({
+            view: view,
+            // specify your own print service
+            printServiceUrl: "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          });
+
+          // Add widget to the top right corner of the view
+          view.ui.add(print, "top-right");
+        });
+      });
+  </script>
+</head>
+
+<body class="calcite">
+  <div id="viewDiv"></div>
+</body>
+</html>

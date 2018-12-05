@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Add multiple label classes to a layer - 4.9</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
+
+<style>
+  html,
+  body,
+  #viewDiv {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+<!--
+Arcade expression that determines the compass direction wind
+is blowing based on a field indicating the compass degrees
+of the wind direction. This is appended to the wind speed
+-->
+<script type="text/plain" id="wind-direction">
+  var DEG = $feature.WIND_DIRECT;
+  var SPEED = $feature.WIND_SPEED;
+  var DIR = When( SPEED == 0, "",
+    (DEG < 22.5 && DEG >= 0) || DEG > 337.5, "N",
+    DEG >= 22.5 && DEG < 67.5, "NE",
+    DEG >= 67.5 && DEG < 112.5, "E",
+    DEG >= 112.5 && DEG < 157.5, "SE",
+    DEG >= 157.5 && DEG < 202.5, "S",
+    DEG >= 202.5 && DEG < 247.5, "SW",
+    DEG >= 247.5 && DEG < 292.5, "W",
+    DEG >= 292.5 && DEG < 337.5, "NW", "" );
+  return SPEED + " mph " + DIR;
+</script>
+
+<script>
+  require([
+    "esri/WebMap",
+    "esri/views/MapView",
+    "esri/layers/FeatureLayer",
+    "esri/widgets/Bookmarks"
+  ], function (WebMap, MapView, FeatureLayer, Bookmarks
+  ) {
+
+    const minScale = 2500000;
+
+    const view = new MapView({
+      container: "viewDiv",
+      map: new WebMap({
+        portalItem: {
+          id: "f0e331d7986041ba8267298f579b3afe"
+        }
+      })
+    });
+
+    /////////////////////////////////
+    ////                         ////
+    //// temperature label class ////
+    ////                         ////
+    /////////////////////////////////
+
+    // Arcade expression that converts the temperature to a
+    // string and concatenates it with the degree symbol and units
+
+    const tempArcade = "Round($feature.TEMP) + '° F';";
+
+    const lowTempClass = {
+      labelExpressionInfo: {
+        expression: tempArcade
+      },
+      labelPlacement: "above-left",
+      where: "TEMP <= 32"
+    };
+    lowTempClass.symbol = createTextSymbol("#4792c1");
+
+    const highTempClass = {
+      labelExpressionInfo: {
+        expression: tempArcade
+      },
+      labelPlacement: "above-left",
+      where: "TEMP > 32"
+    };
+    highTempClass.symbol = createTextSymbol("#f47742");
+
+    //////////////////////////
+    ////                  ////
+    //// wind label class ////
+    ////                  ////
+    //////////////////////////
+
+    // Arcade expression that determines the compass direction wind
+    // is blowing based on a field indicating the compass degrees
+    // of the wind direction. This is appended to the wind speed
+
+    const windArcade = document.getElementById("wind-direction").text;
+
+    const windClass = {
+      labelExpressionInfo: {
+        expression: windArcade
+      },
+      labelPlacement: "above-right",
+      minScale: minScale
+    };
+    windClass.symbol = createTextSymbol("#3ba53f");
+
+    //////////////////////////////
+    ////                      ////
+    //// humidity label class ////
+    ////                      ////
+    //////////////////////////////
+
+    // Arcade expression that converts the humidity value
+    // to a string and appends it to a % symbol
+
+    const humidityArcade = "$feature.R_HUMIDITY + '% RH'";
+
+    const humidityClass = {
+      labelExpressionInfo: {
+        expression: humidityArcade
+      },
+      labelPlacement: "below-left",
+      minScale: minScale
+    };
+    humidityClass.symbol = createTextSymbol("#c17c47");
+
+    //////////////////////////////////
+    ////                          ////
+    //// station name label class ////
+    ////                          ////
+    //////////////////////////////////
+
+    // Arcade expression that outputs the name of the station
+    // based on the STATION_NAME field
+
+    const nameArcade = "$feature.STATION_NAME";
+    const nameClass = {
+      labelPlacement: "below-right",
+      labelExpressionInfo: {
+        expression: nameArcade
+      },
+      minScale: minScale
+    };
+    nameClass.symbol = createTextSymbol("black");
+
+    // Create the layer and add it to the map
+
+    const serviceUrl = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/weather_stations_010417/FeatureServer/0";
+    const layer = new FeatureLayer({
+      url: serviceUrl,
+      renderer: {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          color: [255, 255, 255, 0.6],
+          size: 4,
+          outline: {
+            color: [0, 0, 0, 0.4],
+            width: 0.5
+          }
+        }
+      },
+      labelingInfo: [ nameClass, humidityClass, lowTempClass, highTempClass, windClass ]
+    });
+
+    view.map.add(layer);
+
+    // function for creating a text symbol to be used in a label class
+
+    function createTextSymbol(color) {
+      return {
+        type: "text",  // autocasts as new TextSymbol()
+        font: {
+          size: 12,
+          weight: "bold"
+        },
+        color: "white",
+        haloColor: color,
+        haloSize: 1
+      };
+    }
+
+    const bookmarks = new Bookmarks({
+      view: view
+    });
+
+    // Add the widget to the top-right corner of the view
+    view.ui.add(bookmarks, {
+      position: "top-right"
+    });
+
+  });
+
+</script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

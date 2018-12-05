@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Multi-line labels - 4.9</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
+
+<style>
+  html,
+  body,
+  #viewDiv {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+<script type="text/plain" id="label-expression">
+  var DEG = $feature.WIND_DIRECT;
+  var SPEED = $feature.WIND_SPEED;
+  var DIR = When( SPEED == 0, null,
+    (DEG < 22.5 && DEG >= 0) || DEG > 337.5, 'N',
+    DEG >= 22.5 && DEG < 67.5, 'NE',
+    DEG >= 67.5 && DEG < 112.5, 'E',
+    DEG >= 112.5 && DEG < 157.5, 'SE',
+    DEG >= 157.5 && DEG < 202.5, 'S',
+    DEG >= 202.5 && DEG < 247.5, 'SW',
+    DEG >= 247.5 && DEG < 292.5, 'W',
+    DEG >= 292.5 && DEG < 337.5, 'NW', null );
+  var WIND = SPEED + ' mph ' + DIR;
+  var TEMP = Round($feature.TEMP) + '° F';
+  var RH = $feature.R_HUMIDITY + '% RH';
+  var NAME = $feature.STATION_NAME;
+  var labels = [ NAME, TEMP, WIND, RH ];
+  return Concatenate(labels, TextFormatting.NewLine);
+</script>
+
+<script>
+  require([
+    "esri/WebMap",
+    "esri/views/MapView",
+    "esri/layers/FeatureLayer"
+  ], function (
+    WebMap, MapView, FeatureLayer
+  ) {
+
+    const minScale = 250000000;
+    const serviceUrl = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/weather_stations_010417/FeatureServer/0";
+
+    const view = new MapView({
+      container: "viewDiv",
+      map: new WebMap({
+        portalItem: {
+          id: "372b7caa8fe340b0a6300df93ef18a7e"
+        },
+        layers: [
+          new FeatureLayer({
+            url: serviceUrl,
+            renderer: {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [ 75, 75, 75, 0.7 ],
+                size: 4,
+                outline: null
+              }
+            },
+            labelingInfo: [{
+              labelExpressionInfo: {
+                expression: document.getElementById("label-expression").text
+              },
+              labelPlacement: "center-right",
+              minScale: minScale,
+              symbol: {
+                type: "text",  // autocasts as new TextSymbol()
+                font: {
+                  size: 9,
+                  family: "Noto Sans"
+                },
+                horizontalAlignment: "left",
+                color: "#2b2b2b"
+              }
+            }]
+          })
+        ]
+      }),
+      center: [ -117.842, 33.799 ],
+      zoom: 10
+    });
+
+  });
+
+</script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

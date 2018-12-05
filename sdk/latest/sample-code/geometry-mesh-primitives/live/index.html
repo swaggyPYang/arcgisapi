@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Working with 3D mesh primitives - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/Graphic",
+        "esri/views/SceneView",
+        "esri/geometry/Mesh",
+        "esri/geometry/Point",
+        "esri/geometry/SpatialReference",
+        "esri/geometry/support/meshUtils"
+      ],
+      function(
+        Map, Graphic,
+        SceneView,
+        Mesh, Point, SpatialReference,
+        meshUtils
+      ) {
+
+        var map = new Map({
+          basemap: "satellite",
+          ground: "world-elevation"
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          environment: {
+            atmosphere: {
+              quality: "high"
+            },
+            lighting: {
+              directShadowsEnabled: true,
+              ambientOcclusionEnabled: true
+            }
+          },
+          camera: {
+            position: [7.8233347, 46.3409284, 2032.93599],
+            heading: 19.72,
+            tilt: 86.007
+          }
+        });
+
+        function createPyramid(pt, params) {
+          var height = params.size.height;
+          var halfWidth = params.size.width / 2;
+          var halfDepth = params.size.depth / 2;
+
+          // Vertex locations that make up the pyramid,
+          // the first triple represents the top of the pyramid,
+          // while the remaining 4 triples represent the base
+          // of the pyramid
+          var position = [
+            pt.x, pt.y, pt.z + height,
+            pt.x - halfWidth, pt.y - halfDepth, pt.z,
+            pt.x + halfWidth, pt.y - halfDepth, pt.z,
+            pt.x + halfWidth, pt.y + halfDepth, pt.z,
+            pt.x - halfWidth, pt.y + halfDepth, pt.z
+          ];
+
+          // The UV coordinates will be used to map an
+          // image material to the mesh. The coordinates are
+          // setup such that the top of the pyramid has (0.5, 0),
+          // while the base of the pyramid alternates between
+          // (0, 1) and (1, 1). This is sufficient for the linear
+          // gradient image that we want to map to the pyramids.
+          var uv = [0.5, 0, 0, 1, 1, 1, 0, 1, 1, 1];
+
+          var pyramid = new Mesh({
+            // The vertex attributes of the mesh
+            vertexAttributes: {
+              position: position,
+              uv: uv
+            },
+
+            // The four triangles that make up the pyramid
+            components: [
+            {
+              faces: [0, 1, 2],
+              material: params.material
+            },
+            {
+              faces: [0, 2, 3],
+              material: params.material
+            },
+            {
+              faces: [0, 3, 4],
+              material: params.material
+            },
+            {
+              faces: [0, 4, 1],
+              material: params.material
+            }],
+
+            spatialReference: pt.spatialReference
+          });
+
+          return pyramid;
+        }
+
+        /**
+         * Creates a canvas that will be used to color the leaf
+         * geometry (the pyramids) of the tree. Here we generate
+         * a light-to-dark green gradient in a 32x32 px
+         * canvas.
+         */
+        function createLeaveCanvas() {
+          var canvas = document.createElement("canvas");
+          canvas.width = 32;
+          canvas.height = 32;
+
+          var ctx = canvas.getContext("2d");
+
+          // Create the linear gradient with which to fill the canvas
+          var gradient = ctx.createLinearGradient(0, 0, 0, 32);
+          gradient.addColorStop(0, "#00ff00");
+          gradient.addColorStop(1, "#009900");
+
+          // Fill the canvas with the gradient pattern
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, 32, 32);
+
+          return canvas;
+        }
+
+        /**
+         * Creates a tree geometry at the specified location.
+         */
+        function createTreeGeometry(pt) {
+          var treeMaterial = {
+            color: createLeaveCanvas()
+          };
+          var trunkMaterial = {
+            color: "orange"
+          };
+
+          // Create the different parts that make up the tree. In this case
+          // we use a number of pyramids to represent the leaves and a
+          // box to represent the trunk.
+          var bottom = createPyramid(pt, {
+            size: {
+              width: 10,
+              depth: 10,
+              height: 5
+            },
+            material: treeMaterial
+          });
+          var middle = createPyramid(pt, {
+            size: {
+              width: 8,
+              depth: 8,
+              height: 3
+            },
+            material: treeMaterial
+          });
+          var top = createPyramid(pt, {
+            size: {
+              width: 6,
+              depth: 6,
+              height: 3
+            },
+            material: treeMaterial
+          });
+          var trunk = Mesh.createBox(pt, {
+            size: {
+              width: 1,
+              depth: 1,
+              height: 5
+            },
+            material: trunkMaterial
+          });
+
+          // Offset the parts on the Z-axis to create the appearance of a tree
+          bottom.offset(0, 0, 4)
+          middle.offset(0, 0, 7);
+          top.offset(0, 0, 9);
+
+          // Finally, merge the separate parts into a single mesh geometry
+          return meshUtils.merge([trunk, bottom, middle, top]);
+        }
+
+        function createSnowManGeometry(pt) {
+          var whiteMaterial = {
+            color: "white"
+          };
+          var blackMaterial = {
+            color: "black"
+          };
+          var orangeMaterial = {
+            color: "orange"
+          };
+
+          // Create the different parts that make up the snowman. In this
+          // case we use a number of spheres for the body and eyes, and a
+          // top-collapsed cylinder (i.e. a cone) to represent the nose.
+          var lowerBody = Mesh.createSphere(pt, {
+            size: 5,
+            material: whiteMaterial
+          });
+          var upperBody = Mesh.createSphere(pt, {
+            size: 4,
+            material: whiteMaterial
+          });
+          var head = Mesh.createSphere(pt, {
+            size: 3,
+            material: whiteMaterial
+          });
+          var rightEye = Mesh.createSphere(pt, {
+            size: 0.6,
+            material: blackMaterial
+          });
+          var leftEye = Mesh.createSphere(pt, {
+            size: 0.6,
+            material: blackMaterial
+          });
+          var nose = Mesh.createCylinder(pt, {
+            size: {
+              width: 0.8,
+              depth: 0.8,
+              height: 3
+            },
+            material: orangeMaterial
+          });
+
+          // Collapse the top of the cylinder to make a cone
+          var nosePosition = nose.vertexAttributes.position;
+
+          for (let i = 0; i < nosePosition.length / 2; i += 3) {
+            nosePosition[i + 0] = pt.x;
+            nosePosition[i + 1] = pt.y;
+          }
+
+          // Generated normals are no longer valid, but for this example we also
+          // don't actually need them. We can simply set them to null and obtain
+          // flat shading of the nose.
+          nose.vertexAttributes.normal = null;
+
+          // Because we modified the geometry of the cylinder in-place, we need
+          // to let the mesh geometry now its vertex attributes have changed. This
+          // will clear cached values that depend on the vertex attributes (such as the
+          // extent of the Mesh).
+          nose.vertexAttributesChanged();
+
+          // Place individual parts to make up the snow man
+          upperBody.offset(0, 0, 4.5);
+          head.offset(0, 0, 8);
+
+          rightEye
+            .offset(0, 1.3, 9.6)
+            .rotate(0, 0, -240, {
+              origin: pt
+            });
+
+          leftEye
+            .offset(0, 1.3, 9.6)
+            .rotate(0, 0, -190, {
+              origin: pt
+            });
+
+          nose
+            .rotate(-90, 0, -90)
+            .offset(2, 0, 8)
+            .rotate(0, 0, -125, {
+              origin: pt
+            });
+
+          // Finally, merge the separate parts into a single mesh geometry
+          return meshUtils.merge([lowerBody, upperBody, head, rightEye,
+            leftEye, nose
+          ]);
+        }
+
+        // A basic 3d fill symbol. Here we will use the material colors that are set
+        // on the geometries. We use a white fill symbology (the symbology color
+        // is mixed into the intrinsic geometry materials and pure white will have no effect).
+        var symbol = {
+          type: "mesh-3d",
+          symbolLayers: [{
+            type: "fill"
+          }]
+        };
+
+        // One snow man
+        var snowManLocation = new Point({
+          x: 870934.67356809,
+          y: 5835285.101616,
+          z: 2013.60,
+          spatialReference: SpatialReference.WebMercator
+        });
+
+        // A couple of trees
+        var treeLocations = [
+          new Point({
+            x: 870948.1109645499,
+            y: 5835340.97953185,
+            z: 2022.10,
+            spatialReference: SpatialReference.WebMercator
+          }),
+
+          new Point({
+            x: 870917.1665520248,
+            y: 5835321.648520845,
+            z: 2027.02,
+            spatialReference: SpatialReference.WebMercator
+          }),
+
+          new Point({
+            x: 871003.3214365735,
+            y: 5835349.059825734,
+            z: 2011.96,
+            spatialReference: SpatialReference.WebMercator
+          }),
+
+          new Point({
+            x: 870965.2794487729,
+            y: 5835289.441932107,
+            z: 2005.77,
+            spatialReference: SpatialReference.WebMercator
+          })
+        ];
+
+        // Create and add the snowman geometry
+        var snowManGeometry = createSnowManGeometry(snowManLocation);
+        view.graphics.add(new Graphic(snowManGeometry, symbol));
+
+        // Create and add multiple tree geometries
+        for (let i = 0; i < treeLocations.length; i++) {
+          var treeGeometry = createTreeGeometry(treeLocations[i]);
+          view.graphics.add(new Graphic(treeGeometry, symbol));
+        }
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

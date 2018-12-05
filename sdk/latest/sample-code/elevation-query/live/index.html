@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query Elevation (lines) - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #ascDiv,
+    #descDiv,
+    #distanceDiv {
+      padding: 0;
+      margin: 0;
+      width: 30%;
+      float: left;
+      font-weight: 900;
+    }
+
+    #ascDiv p,
+    #descDiv p,
+    #distanceDiv p {
+      padding: 0;
+      margin: 0.2em;
+    }
+
+    #paneDiv {
+      position: absolute;
+      top: 12px;
+      left: 62px;
+      width: 80%;
+      padding: 0 12px 0 12px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 1px solid white;
+      color: black;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/tasks/RouteTask",
+      "esri/tasks/support/RouteParameters",
+      "esri/tasks/support/FeatureSet",
+      "esri/core/urlUtils"
+    ], function(
+      Map, SceneView, Graphic, GraphicsLayer, RouteTask, RouteParameters,
+      FeatureSet, urlUtils
+    ) {
+
+      // Proxy the route requests to avoid prompt for log in
+      urlUtils.addProxyRule({
+        urlPrefix: "route.arcgis.com",
+        proxyUrl: "/sproxy/"
+      });
+
+      // Point the URL to a valid route service
+      var routeTask = new RouteTask({
+        url: "https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World"
+      });
+
+      // The stops and route result will be stored in this layer
+      var routeLayer = new GraphicsLayer();
+
+      var map = new Map({
+        basemap: "topo",
+        ground: "world-elevation",
+        layers: [routeLayer] // Add the route layer to the map
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        center: [7.9878, 46.3159],
+        zoom: 16
+      });
+
+      // prepare the route task parameters
+      var routeParams = new RouteParameters({
+        stops: new FeatureSet(),
+        outSpatialReference: { // autocasts as new SpatialReference()
+          wkid: 3857
+        }
+      });
+
+      // the symbol used to mark stops on the route
+      var markerSymbol = {
+        type: "point-3d", // autocasts as new PointSymbol3D()
+        symbolLayers: [{
+          type: "object", // autocasts as new ObjectSymbol3DLayer()
+          width: 35,
+          resource: {
+            primitive: "sphere"
+          },
+          material: {
+            color: [255, 0, 0]
+          }
+        }]
+      };
+
+      // the symbol used to mark the paths between stops
+      var pathSymbol = {
+        type: "line-3d", // autocasts as new LineSymbol3D()
+        symbolLayers: [{
+          type: "path", // autocasts as new PathSymbol3DLayer()
+          size: 17,
+          material: {
+            color: [255, 128, 0]
+          }
+        }]
+      };
+
+      // Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
+      view.on("click", addStop);
+
+      function addStop(event) {
+        if (!event.mapPoint) {
+          return;
+        }
+
+        // Add a marker at the location of the map click
+        var stop = new Graphic({
+          geometry: event.mapPoint,
+          symbol: markerSymbol
+        });
+        routeLayer.add(stop);
+
+        // Update the route task and execute it if 2 or more stops are input
+        routeParams.stops.features.push(stop);
+        if (routeParams.stops.features.length >= 2) {
+          routeTask.solve(routeParams)
+            .then(onRouteUpdated)
+            .catch(function(error) {
+              // if the task fails, print the error to the console and remove the recently added point
+              routeLayer.remove(stop);
+              routeParams.stops.features.pop();
+              console.error(error);
+            });
+        }
+      }
+
+      function onRouteUpdated(data) {
+        var route = data.routeResults[0].route
+        var geometry = route.geometry;
+
+        // do the actual elevation query
+        var elevationPromise = map.ground.queryElevation(geometry);
+
+        elevationPromise.then(function(result) {
+          // compute the total ascent and descent
+          var path = result.geometry.paths[0];
+          var ascent = 0;
+          var descent = 0;
+
+          for (var i = 1; i < path.length; i++) {
+            var d = path[i][2] - path[i - 1][2];
+            if (d > 0) {
+              ascent += d;
+            }
+            else {
+              descent -= d;
+            }
+          }
+
+          // update the text fields
+          document.getElementById("distanceDiv").innerHTML =
+            "<p>total distance: " + Math.round(
+              route.attributes.Total_Kilometers * 1000) / 1000 +
+            " km</p>";
+          document.getElementById("ascDiv").innerHTML =
+            "<p>total ascent: " + Math.round(
+              ascent * 100) / 100 + " m</p>";
+          document.getElementById("descDiv").innerHTML =
+            "<p>total descent: " + Math.round(
+              descent * 100) / 100 + " m</p>";
+
+          // add a path symbol following the calculated route to the scene
+          routeLayer.add(new Graphic({
+            geometry: result.geometry,
+            symbol: pathSymbol
+          }));
+
+        }, function(error) {
+          console.error(error);
+        })
+      }
+
+    });
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+  <div id="paneDiv">
+    <p>Click on the map to add stops. The route along the stops is calculated
+      and elevation values are queried
+      to update the following route statistics:
+    </p>
+    <div id="distanceDiv">
+      <p>total distance: 0 km</p>
+    </div>
+    <div id="ascDiv">
+      <p>total ascent: 0 m</p>
+    </div>
+    <div id="descDiv">
+      <p>total descent: 0 m</p>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Measurement in 3D - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #topbar {
+      background: #fff;
+      padding: 10px;
+    }
+
+    .action-button {
+      font-size: 16px;
+      background-color: transparent;
+      border: 1px solid #D3D3D3;
+      color: #6e6e6e;
+      height: 32px;
+      width: 32px;
+      text-align: center;
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-button:hover,
+    .action-button:focus {
+      background: #0079c1;
+      color: #e4e4e4;
+    }
+
+    .active {
+      background: #0079c1;
+      color: #e4e4e4;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/widgets/DirectLineMeasurement3D",
+      "esri/widgets/AreaMeasurement3D"
+    ], function (
+      WebScene,
+      SceneView,
+      DirectLineMeasurement3D,
+      AreaMeasurement3D
+    ) {
+
+      var activeWidget = null;
+
+      // load a webscene
+      var webscene = new WebScene({
+        portalItem: {
+          id: "b6c889ff1f684cd7a65301984b80b93d"
+        }
+      });
+
+      // create the scene view
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webscene
+      });
+
+      // add the toolbar for the measurement widgets
+      view.ui.add("topbar", "top-right");
+
+      document.getElementById("distanceButton").addEventListener("click",
+        function () {
+          setActiveWidget(null);
+          if (!this.classList.contains('active')) {
+            setActiveWidget('distance');
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+      document.getElementById("areaButton").addEventListener("click",
+        function () {
+          setActiveWidget(null);
+          if (!this.classList.contains('active')) {
+            setActiveWidget('area');
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+      function setActiveWidget(type) {
+        switch (type) {
+          case "distance":
+            activeWidget = new DirectLineMeasurement3D({
+              view: view
+            });
+            view.ui.add(activeWidget, "top-right");
+            setActiveButton(document.getElementById('distanceButton'));
+            break;
+          case "area":
+            activeWidget = new AreaMeasurement3D({
+              view: view
+            });
+            view.ui.add(activeWidget, "top-right");
+            setActiveButton(document.getElementById('areaButton'));
+            break;
+          case null:
+            if (activeWidget) {
+              view.ui.remove(activeWidget);
+              activeWidget.destroy();
+              activeWidget = null;
+            }
+            break;
+        }
+      }
+
+      function setActiveButton(selectedButton) {
+        // focus the view to activate keyboard shortcuts for sketching
+        view.focus();
+        var elements = document.getElementsByClassName("active");
+        for (var i = 0; i < elements.length; i++) {
+          elements[i].classList.remove("active");
+        }
+        if (selectedButton) {
+          selectedButton.classList.add("active");
+        }
+      }
+
+    });
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="topbar">
+    <button class="action-button esri-icon-minus" id="distanceButton" type="button"
+      title="Measure distance between two points"></button>
+    <button class="action-button esri-icon-polygon" id="areaButton" type="button"
+      title="Measure area"></button>
+  </div>
+</body>
+
+</html>

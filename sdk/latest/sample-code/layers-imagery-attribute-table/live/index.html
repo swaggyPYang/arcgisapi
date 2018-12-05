@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>ImageryLayer - raster attribute table - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/ImageryLayer"
+      ],
+      function(
+        Map, MapView,
+        ImageryLayer
+      ) {
+
+        var rasterAttributes;
+
+        /********************
+         * Create image layer
+         ********************/
+
+        var layer = new ImageryLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/NLCDLandCover2001/ImageServer",
+          pixelFilter: colorize // Applies color to the layer
+        });
+
+        /**************************
+         * Add image layer to map
+         *************************/
+
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [layer]
+        });
+
+        view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-112.6, 39.6],
+          zoom: 6
+        });
+
+        /**********************************************************
+         * Get the raster attribute table to add color to
+         * the image layer once the layer loads.
+         *
+         * Raster attribute tables contain preclassified information
+         * about raster values. Each value has several attributes
+         * containing additional information about the pixel
+         * value including its color, classification, etc.
+         *********************************************************/
+        var fields;
+
+        layer.when(function() {
+          rasterAttributes = layer.rasterAttributeTable.features;
+
+          // Get the objects storing field information for
+          // pixels classified as Barren Land and "Shrub/Scrub"
+          fields = rasterAttributes.filter(function(item, i) {
+            var className = item.attributes.ClassName;
+            return className === "Barren Land" || className ===
+              "Shrub/Scrub";
+          });
+        });
+
+        /**********************************************************
+         * Apply the RGB values stored for each pixel value to the
+         * pixel in a three-band array using the pixelFilter
+         *********************************************************/
+
+        function colorize(pixelData) {
+          if (pixelData === null || pixelData.pixelBlock === null ||
+            pixelData.pixelBlock.pixels ===
+            null) {
+            return;
+          }
+
+          // The pixelBlock stores the values of all pixels visible in the view
+          var pixelBlock = pixelData.pixelBlock;
+
+          // The pixels visible in the view
+          var pixels = pixelBlock.pixels;
+
+          // Get the pixels from the only band of the data
+          var band1 = pixels[0];
+
+          // Create empty arrays for each of the RGB bands to set on the pixelBlock
+          var rBand = [];
+          var gBand = [];
+          var bBand = [];
+
+          // the mask will be used to filter unwanted data
+          var mask = [];
+
+          // The number of pixels in the pixelBlock
+          var numPixels = pixelBlock.width * pixelBlock.height;
+
+          // for each pixel in the block
+          for (var i = 0; i < numPixels; i++) {
+            var val = band1[i]; // get the current pixel value
+
+            // if the pixel value matches the first field (Barren Land)
+            // then assign it its preset RGB values
+            if (val === fields[0].attributes.Value) {
+
+              mask[i] = 1;
+              rBand[i] = fields[0].attributes.Red;
+              gBand[i] = fields[0].attributes.Green;
+              bBand[i] = fields[0].attributes.Blue;
+
+              // if the pixel value matches the second field (Shrub/Scrub)
+              // then assign it its preset RGB values
+            } else if (val === fields[1].attributes.Value) {
+
+              mask[i] = 1;
+              rBand[i] = fields[1].attributes.Red;
+              gBand[i] = fields[1].attributes.Green;
+              bBand[i] = fields[1].attributes.Blue;
+
+            } else {
+              // if the pixel value does not match the desired values
+              // then exclude it from the mask so it doesn't display
+              mask[i] = 0;
+              rBand[i] = 0;
+              gBand[i] = 0;
+              bBand[i] = 0;
+            }
+          }
+
+          // Set the new pixel values on the pixelBlock
+          pixelData.pixelBlock.pixels = [rBand, gBand, bBand];
+          pixelData.pixelBlock.statistics = null;
+          pixelData.pixelBlock.pixelType = "U8"; // U8 is used for color
+          pixelData.pixelBlock.mask = mask;
+        }
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

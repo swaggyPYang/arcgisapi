@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Bookmarks widget - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/widgets/Bookmarks"
+    ], function(
+      WebMap, MapView, Bookmarks
+    ) {
+
+      const webmap = new WebMap({
+        portalItem: { // autocasts as new PortalItem()
+          id: "aa1d3f80270146208328cf66d022e09c"
+        }
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: webmap
+      });
+
+      const bookmarks = new Bookmarks({
+        view: view
+      });
+
+      // Add the widget to the top-right corner of the view
+      view.ui.add(bookmarks, {
+        position: "top-right"
+      });
+
+      // bonus - how many bookmarks in the webmap?
+      webmap.when(function() {
+        if (webmap.bookmarks && webmap.bookmarks.length) {
+          console.log("Bookmarks: ", webmap.bookmarks.length);
+        } else {
+          console.log("No bookmarks in this webmap.");
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{
+  "className": "Symbol",
+  "type": "baseClass",
+  "variable": "symbol",
+  "description": "Symbols are used to display points, lines, and polygons on the graphics layer. ",
+  "summary": "used to display points, lines, and polygons on the graphics layer",
+  "path": "esri/symbols/Symbol",
+  "properties": [
+    {
+      "name": "color",
+      "type": "Color",
+      "summary": "Symbol color",
+      "defaults": [
+        {
+          "name": "SimpleMarkerSymbol",
+          "value": [
+            255,
+            255,
+            255,
+            0.25
+          ]
+        },
+        {
+          "name": "TextSymbol",
+          "value": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "SimpleLineSymbol",
+          "value": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "CartographicLineSymbol",
+          "value": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "SimpleFillSymbol",
+          "value": [
+            0,
+            0,
+            0,
+            0.25
+          ]
+        },
+        {
+          "name": "PointSymbol3D",
+          "value": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "name": "fromJSON",
+      "parameters": [
+        {
+          "name": "json",
+          "type": "json"
+        }
+      ],
+      "summary": "Creates new instance from json"
+    },
+    {
+      "name": "toJson",
+      "parameters": [],
+      "summary": "Converts object to its ArcGIS Server JSON representation"
+    }
+  ]
+}

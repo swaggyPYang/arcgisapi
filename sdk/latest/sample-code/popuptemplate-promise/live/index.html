@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>PopupTemplate with promise - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/tasks/QueryTask",
+        "esri/Graphic",
+        "esri/tasks/support/Query",
+        "esri/tasks/support/StatisticDefinition",
+        "esri/Basemap"
+      ],
+      function(
+        Map, MapView, FeatureLayer, QueryTask, Graphic,
+        Query, StatisticDefinition, Basemap
+      ) {
+
+        // Query electric charging stations that intersect a county that was clicked
+        var queryChargingStationsTask = new QueryTask({
+          url: "http://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/Alternative_Fuel_Stations/FeatureServer/0"
+        });
+
+        // USA counties layer
+        var countiesLayer = new FeatureLayer({
+          portalItem: { // autocasts as new PortalItem()
+            id: "cd13d0ed1c8f4b0ea0914366b4ed5bd6"
+          },
+          outFields: ["*"],
+          minScale: 0,
+          maxScale: 0,
+          // create a new popupTemplate for the layer
+          popupTemplate: { // autocasts as new PopupTemplate()
+            title: "County of {NAME}",
+            content: queryChargingStations
+          }
+        });
+
+        /*****************************************************************
+        * Query electric charging stations that intersect the county
+        * that was clicked for statistics. Statistics query will return
+        * number of charging stations that intersect the county, and break
+        * down the total number by types of stations (level 1, 2, or 3).
+        * Results will be returned to popupTemplate's content.
+        /*****************************************************************/
+
+        function queryChargingStations(target) {
+          // count and types of electric charging stations that intersect the county
+          var countLevel1 = new StatisticDefinition({
+            statisticType: "count",
+            onStatisticField: "EV_Level1_EVSE_Num",
+            outStatisticFieldName: "numLevel_1"
+          });
+
+          var countLevel2 = new StatisticDefinition({
+            statisticType: "count",
+            onStatisticField: "EV_Level2_EVSE_Num",
+            outStatisticFieldName: "numLevel_2"
+          });
+
+          var countLevel3 = new StatisticDefinition({
+            statisticType: "count",
+            onStatisticField: "EV_DC_Fast_Count",
+            outStatisticFieldName: "numLevel_3"
+          });
+
+          var query = new Query({
+            geometry: target.graphic.geometry,
+            outFields: ["*"],
+            spatialRelationship: "intersects",
+            outStatistics: [countLevel1, countLevel2, countLevel3]
+          });
+
+          // execute the query task
+          return queryChargingStationsTask.execute(query).then(function(
+            result) {
+            var stats = result.features[0].attributes;
+
+            // format the query result for the counties popupTemplate's content.
+            return "<b>" + (stats.numLevel_1 + stats.numLevel_2 + stats.numLevel_3) +
+              "</b> electric charging stations intersect the boundary of {NAME}. <br><br>" +
+              "The number and type of stations: <br>" +
+              "<ul>" +
+              "<li> Level 1 Charging Stations (120V, AC): " + (stats.numLevel_1) +
+              "</li>" +
+              "<li> Level 2 Charging Stations (240V, AC): " + (stats.numLevel_2) +
+              "</li>" +
+              "<li> Level 3 Charging Stations (480V, DC): " + (stats.numLevel_3) +
+              "</li>" +
+              "</ul>";
+          });
+        }
+
+        var map = new Map({
+          basemap: new Basemap({
+            portalItem: { // autocasts as new PortalItem()
+              id: "3582b744bba84668b52a16b0b6942544"
+            }
+          }),
+          layers: [countiesLayer]
+        });
+
+        // Create the MapView
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 5,
+          center: [-107.3567, 37.7705]
+        });
+
+        view.popup.watch("selectedFeature", function(e) {
+          view.graphics.removeAll();
+          if (e && e.geometry) {
+            view.graphics.add(new Graphic({
+              geometry: e.geometry,
+              symbol: {
+                type: "simple-fill",
+                style: "none",
+                outline: {
+                  color: "#6600FF",
+                  width: 2
+                }
+              }
+            }));
+          }
+        });
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

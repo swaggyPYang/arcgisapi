@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom widgets with Vue - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #info {
+      padding: 1em;
+    }
+  </style>
+  <script>
+    window.dojoConfig = {
+      packages: [
+      {
+        name: "vue",
+        location: "https://unpkg.com/vue/dist/",
+        main: "vue"
+      }]
+    };
+  </script>
+  <script src="https://js.arcgis.com/4.9"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/core/watchUtils",
+      "vue"
+    ], function(
+      Map, SceneView,
+      watchUtils,
+      Vue
+    ) {
+
+      var map = new Map({
+        basemap: "hybrid",
+        ground: "world-elevation"
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: [7.654, 45.919, 5184],
+          tilt: 80
+        }
+      });
+
+      // Create a Vue component
+      Vue.component("camera-info", {
+        props: ["camera"],
+        template: [
+          "<div>",
+          "<h2>Camera Details</h2>",
+          "<p><strong>Heading</strong>: {{ camera.heading.toFixed(3) }}</p>",
+          "<p><strong>Tilt</strong>: {{ camera.tilt.toFixed(3) }}</p>",
+          "<p><strong>Latitude</strong>: {{ camera.position.latitude.toFixed(3) }}</p>",
+          "<p><strong>Longitude</strong>: {{ camera.position.longitude.toFixed(3) }}</p>",
+          "<button v-on:click='reset'>Reset Camera</button>",
+          "</div>"
+        ].join(""),
+        methods: {
+          reset: function() {
+            var camera = this.camera.clone();
+            camera.set({
+              position: [7.654, 45.919, 5184],
+              tilt: 80
+            });
+            view.goTo(camera);
+          }
+        }
+      });
+
+      view.when(function() {
+        var info = new Vue({
+          el: "#info",
+          data: {
+            camera: view.camera
+          }
+        });
+        view.ui.add(info.$el, "top-right");
+        watchUtils.watch(view, "camera", function() {
+          info.camera = view.camera;
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="info" class="esri-widget">
+    <camera-info v-bind:camera="camera"></camera-info>
+  </div>
+  <div id="viewDiv"></div>
+</body>
+</html>

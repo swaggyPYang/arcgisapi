@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - Toggle sublayer visibility - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer"
+      ],
+      function(
+        Map, MapView, MapImageLayer
+      ) {
+
+        /*****************************************************************
+         * Create a renderer for the dynamic data layer (table).
+         *****************************************************************/
+
+        var renderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-line", // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 255, 0.5],
+            width: 0.75,
+            style: "long-dash-dot-dot"
+          }
+        };
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing data about US Cities, Counties, States and Highways.
+         * Define sublayers with visibility for each layer in Map Service.
+         *****************************************************************/
+        var layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+          sublayers: [
+          {
+            id: 2,
+            visible: true
+          }, {
+            id: 4,
+            visible: false,
+            title: "Railroads",
+            renderer: renderer,
+            source: {
+              // indicates the source of the sublayer is a dynamic data layer
+              type: "data-layer",
+              // this object defines the data source of the layer
+              // in this case it's a feature class table from a file geodatabase
+              dataSource: {
+                type: "table",
+                // workspace name
+                workspaceId: "MyDatabaseWorkspaceIDSSR2",
+                // table name
+                dataSourceName: "ss6.gdb.Railroads"
+              }
+            }
+          }, {
+            id: 1,
+            visible: true
+          }, {
+            id: 0,
+            visible: true
+          }]
+        });
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [layer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 4,
+          center: [-99, 39]
+        });
+
+        /*****************************************************************
+         * Wait for Layer to load and update the page to refelect which
+         * layers are visible in the Map Service.
+         *****************************************************************/
+        layer.when(function() {
+          layer.sublayers.map(function(sublayer) {
+            var id = sublayer.id;
+            var visible = sublayer.visible;
+            var node = document.querySelector(
+              ".sublayers-item[data-id='" + id + "']");
+            if (visible) {
+              node.classList.add("visible-layer");
+            }
+          });
+        });
+
+        /*****************************************************************
+         * Listen for when buttons on the page have been clicked to turn
+         * layers on and off in the Map Service.
+         *****************************************************************/
+        var sublayersElement = document.querySelector(".sublayers");
+        sublayersElement.addEventListener("click", function(event) {
+          var id = event.target.getAttribute("data-id");
+          if (id) {
+            var sublayer = layer.findSublayerById(parseInt(id));
+            var node = document.querySelector(".sublayers-item[data-id='" +
+              id + "']");
+            sublayer.visible = !sublayer.visible;
+            node.classList.toggle("visible-layer");
+          }
+        });
+      });
+  </script>
+
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #viewDiv {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 60px;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      height: 60px;
+      width: 100%;
+    }
+
+    .sublayers {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    }
+
+    .sublayers-item {
+      flex-grow: 4;
+      background-color: rgba(34, 111, 14, .5);
+      color: #FFF;
+      margin: 1px;
+      width: 50%;
+      padding: 20px;
+      overflow: auto;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.7em;
+    }
+
+    .visible-layer {
+      color: #fff;
+      background-color: #226F0E;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div class="footer">
+    <div class="sublayers">
+      <div class="sublayers-item" data-id="0">Cities</div>
+      <div class="sublayers-item" data-id="1">Highways</div>
+      <div class="sublayers-item" data-id="4">Railroads</div>
+      <div class="sublayers-item" data-id="2">States</div>
+    </div>
+  </div>
+</body>
+
+</html>

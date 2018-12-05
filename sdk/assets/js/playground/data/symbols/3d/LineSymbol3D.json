@@ -1,0 +1,34 @@
+{
+  "className": "LineSymbol3D",
+  "type": "Class",
+  "baseClass": "Symbol3D",
+  "baseLocation": "symbols/3d/Symbol3D.json",
+  "variable": "lineSymbol3D",
+  "description": "LineSymbol3D is used to render features with Polyline geometry.",
+  "summary": "used to render features with Polyline geometry",
+  "path": "esri/symbols/LineSymbol3D",
+  "autocastType": "line-3d",
+  "properties": [
+    {
+      "name": "symbolLayers",
+      "type": "Array",
+      "options": {
+        "type": "Object",
+        "values": [
+          {
+            "className": "LineSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/LineSymbol3DLayer.json"
+          },
+          {
+            "className": "PathSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/PathSymbol3DLayer.json"
+          }
+        ]
+      },
+      "properties": [],
+      "summary": "array of symbol layers"
+    }
+  ]
+}

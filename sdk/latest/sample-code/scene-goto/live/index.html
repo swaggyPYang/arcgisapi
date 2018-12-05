@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>SceneView - goTo() - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #optionsDiv {
+      position: absolute;
+      bottom: 17px;
+      width: 100%;
+      padding: 20px 0;
+      z-index: 1;
+      text-align: center;
+    }
+
+    button {
+      background: white;
+      padding: 7px;
+      border: 1px solid #005e95;
+      font-size: 0.9em;
+      margin: 5px;
+      color: #005e95;
+      font-family: "Avenir Next W01", "Arial", sans-serif;
+    }
+
+    button:hover {
+      background: #005e95;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView"
+      ],
+      function(
+        Map, SceneView
+      ) {
+
+        var map = new Map({
+          basemap: "dark-gray"
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          zoom: 4
+        });
+
+        /*****************************************************************
+         *
+         * Add event listeners to go to a target point using animation options
+         *
+         *****************************************************************/
+
+        // The target point is a new camera obtained by shifting the current camera 30 degrees to the east
+
+        function shiftCamera(deg) {
+          var camera = view.camera.clone();
+          camera.position.longitude += deg;
+          return camera;
+        }
+
+        document.getElementById("default").addEventListener("click", function() {
+          // Don't set any animation options for a default camera flight
+          view.goTo(shiftCamera(60));
+        });
+
+        document.getElementById("linearSlow").addEventListener("click",
+          function() {
+            view.goTo(shiftCamera(60),
+              // Animation options for a slow linear camera flight
+              {
+                speedFactor: 0.1,
+                easing: "linear"
+              });
+          });
+
+        document.getElementById("linearFast").addEventListener("click",
+          function() {
+            view.goTo(shiftCamera(60),
+              // Animation options for a fast linear camera flight
+              {
+                speedFactor: 6,
+                easing: "linear"
+              });
+          });
+
+        document.getElementById("expoIncrease").addEventListener("click",
+          function() {
+            view.goTo(shiftCamera(60),
+              // Animation options for a camera flight with an increasing speed
+              {
+                duration: 4000,
+                easing: "in-expo"
+              });
+          });
+
+        document.getElementById("fixedDuration").addEventListener("click",
+          function() {
+            view.goTo(shiftCamera(30), {
+              duration: 10000,
+              maxDuration: 10000 // Make sure to set maxDuration if the duration is bigger than 8000 ms
+            });
+          });
+
+        // Define your own function for the easing option
+        function customEasing(t) {
+          return 1 - Math.abs(Math.sin(-1.7 + t * 4.5 * Math.PI)) * Math.pow(
+            0.5, t * 10);
+        }
+
+        document.getElementById("bounceBerlin").addEventListener("click",
+          function() {
+            view.goTo({
+              position: {
+                x: 13.40,
+                y: 52.52,
+                z: 700000,
+                spatialReference: {
+                  wkid: 4326
+                }
+              },
+              heading: 0,
+              tilt: 0
+            }, {
+              speedFactor: 0.3,
+              easing: customEasing
+            });
+          });
+
+      });
+  </script>
+</head>
+
+<body>
+  <div id="optionsDiv">
+    <button id="default">Default flight</button>
+    <button id="linearSlow">Linear slow flight</button>
+    <button id="linearFast">Linear fast flight</button>
+    <button id="expoIncrease">Exponentially increasing speed flight</button>
+    <button id="fixedDuration">10 seconds flight</button>
+    <button id="bounceBerlin">Bounce to Berlin</button>
+  </div>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

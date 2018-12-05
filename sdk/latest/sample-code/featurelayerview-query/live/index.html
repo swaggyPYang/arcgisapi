@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query features from a FeatureLayerView - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer"
+      ],
+      function(
+        Map, MapView,
+        FeatureLayer
+      ) {
+
+        const map = new Map({
+          basemap: "dark-gray"
+        });
+
+        const view = new MapView({
+          container: "sceneDiv",
+          map: map,
+          center: [-73.950, 40.702],
+          zoom: 13,
+          padding: {
+            right: 300
+          }
+        });
+
+        const listNode = document.getElementById("nyc_graphics");
+
+        /********************
+         * Add feature layer
+         ********************/
+
+        // Create the PopupTemplate
+        const popupTemplate = { // autocasts as new PopupTemplate()
+          title: "Marriage in NY, Zip Code: {ZIP}",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "MARRIEDRATE",
+              label: "% Married",
+              format: {
+                places: 0,
+                digitSeparator: true
+              }
+            }, {
+              fieldName: "MARRIED_CY",
+              label: "Total Married",
+              format: {
+                places: 0,
+                digitSeparator: true
+              }
+            }, {
+              fieldName: "NEVMARR_CY",
+              label: "Never Married",
+              format: {
+                places: 0,
+                digitSeparator: true
+              }
+            }, {
+              fieldName: "DIVORCD_CY",
+              label: "Total Divorced",
+              format: {
+                places: 0,
+                digitSeparator: true
+              }
+            }]
+          }]
+        };
+
+        // Create the FeatureLayer using the popupTemplate
+        const featureLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/NYCDemographics1/FeatureServer/0",
+          outFields: ["*"],
+          popupTemplate: popupTemplate
+        });
+        map.add(featureLayer);
+
+        let graphics;
+
+        view.whenLayerView(featureLayer).then(function(layerView) {
+          layerView.watch("updating", function(value) {
+            if (!value) { // wait for the layer view to finish updating
+
+              // query all the features available for drawing.
+              layerView.queryFeatures({
+                geometry: view.extent,
+                returnGeometry: true
+              }).then(function(results) {
+
+                graphics = results.features;
+
+                const fragment = document.createDocumentFragment();
+
+                graphics.forEach(function(result, index) {
+                  const attributes = result.attributes;
+                  const name = attributes.ZIP + " (" +
+                    attributes.PO_NAME + ")"
+
+                  // Create a list zip codes in NY
+                  const li = document.createElement("li");
+                  li.classList.add("panel-result");
+                  li.tabIndex = 0;
+                  li.setAttribute("data-result-id", index);
+                  li.textContent = name;
+
+                  fragment.appendChild(li);
+                });
+                // Empty the current list
+                listNode.innerHTML = "";
+                listNode.appendChild(fragment);
+              }).catch(function(error) {
+                console.error("query failed: ", error);
+              });
+            }
+          });
+        });
+
+        // listen to click event on the zip code list
+        listNode.addEventListener("click", onListClickHandler);
+
+        function onListClickHandler(event) {
+          const target = event.target;
+          const resultId = target.getAttribute("data-result-id");
+
+          // get the graphic corresponding to the clicked zip code
+          const result = resultId && graphics && graphics[parseInt(resultId,
+            10)];
+
+          if (result) {
+            // open the popup at the centroid of zip code polygon
+            // and set the popup's features which will populate popup content and title.
+
+            view.goTo(result.geometry.extent.expand(2))
+              .then(function() {
+                view.popup.open({
+                  features: [result],
+                  location: result.geometry.centroid
+                });
+              });
+
+          }
+        }
+
+      });
+  </script>
+
+  <style>
+    html,
+    body,
+    #sceneDiv {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    .panel-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .panel-side {
+      padding: 2px;
+      box-sizing: border-box;
+      width: 300px;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.6);
+      overflow: auto;
+      z-index: 60;
+    }
+
+    .panel-side h2 {
+      padding: 0 20px;
+      margin: 20px 0;
+    }
+
+    .panel-side ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .panel-side li {
+      list-style: none;
+      padding: 10px 20px;
+    }
+
+    .panel-result {
+      cursor: pointer;
+      margin: 2px 0;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-result:hover,
+    .panel-result:focus {
+      color: orange;
+      background-color: rgba(0, 0, 0, 0.75);
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="panel-container">
+    <div class="panel-side">
+      <h2>Marriage in NY by Zip</h2>
+      <ul id="nyc_graphics">
+        <li>Loading&hellip;</li>
+      </ul>
+    </div>
+    <div id="sceneDiv"></div>
+  </div>
+</body>
+
+</html>

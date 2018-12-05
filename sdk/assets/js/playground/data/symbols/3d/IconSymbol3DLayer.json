@@ -1,0 +1,82 @@
+{
+  "className": "IconSymbol3DLayer",
+  "type": "Class",
+  "baseClass": "Symbol3DLayer",
+  "baseLocation": "symbols/3d/Symbol3DLayer.json",
+  "variable": "iconSym3DLayer",
+  "description": "IconSymbol3DLayer is used to symbolize points using an image or a simple 2D shape.",
+  "summary": "used to symbolize points using an image or a simple 2D shape",
+  "path": "esri/symbols/IconSymbol3DLayer",
+  "autocastType": "icon",
+  "properties": [
+    {
+      "name": "anchor",
+      "type": "String",
+      "summary": "positioning of the icon relative to the point geometry",
+      "options": {
+        "type": "String",
+        "values": [
+          "center",
+          "left",
+          "right",
+          "top",
+          "bottom",
+          "top-left",
+          "top-right",
+          "bottom-left",
+          "bottom-right"
+        ]
+      }
+    },
+    {
+      "name": "outline",
+      "type": "Object",
+      "summary": "outline of the icon primitive",
+      "properties": [
+        {
+          "name": "color",
+          "type": "Color",
+          "summary": "Fill color of the icon"
+        },
+        {
+          "name": "size",
+          "type": "Number",
+          "summary": "Width of the outline in pixels"
+        }
+      ]
+    },
+    {
+      "name": "resource",
+      "type": "Object",
+      "summary": "The shape (primitive) or image URL (href) used to visualize the points",
+      "properties": [
+        {
+          "name": "primitive",
+          "type": "String",
+          "summary": "Use a built-in shape",
+          "default": "circle",
+          "options": {
+            "type": "String",
+            "values": [
+              "circle",
+              "square",
+              "cross",
+              "x",
+              "kite"
+            ]
+          }
+        },
+        {
+          "name": "href",
+          "type": "String",
+          "summary": "URL of the image"
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "type": "Number",
+      "summary": "Size of the icon in pixels"
+    }
+  ]
+}

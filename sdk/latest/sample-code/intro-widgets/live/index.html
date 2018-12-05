@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Intro to widgets using BasemapToggle - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/widgets/BasemapToggle"
+      ],
+      function(Map, MapView, BasemapToggle) {
+
+        // Create the Map with an initial basemap
+        var map = new Map({
+          basemap: "topo"
+        });
+
+        // Create the MapView and reference the Map in the instance
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-86.049, 38.485],
+          zoom: 3
+        });
+
+        // 1 - Create the widget
+        var toggle = new BasemapToggle({
+          // 2 - Set properties
+          view: view, // view that provides access to the map's 'topo' basemap
+          nextBasemap: "hybrid" // allows for toggling to the 'hybrid' basemap
+        });
+
+        // Add widget to the top right corner of the view
+        view.ui.add(toggle, "top-right");
+      });
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

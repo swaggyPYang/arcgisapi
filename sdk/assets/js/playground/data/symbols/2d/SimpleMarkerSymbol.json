@@ -1,0 +1,48 @@
+{
+  "className": "SimpleMarkerSymbol",
+  "type": "Class",
+  "baseClass": "MarkerSymbol",
+  "baseLocation": "symbols/2d/MarkerSymbol.json",
+  "variable": "marker",
+  "description": "Marker symbols are used to draw points and multipoints on the graphics layer. SimpleMarkerSymbol is used to display points as a simple shape, for example, a circle. In addition, the symbol can have an optional outline, which is defined by a line symbol.",
+  "summary": "draw points and multipoints",
+  "path": "esri/symbols/SimpleMarkerSymbol",
+  "autocastType": "simple-marker",
+  "properties": [
+    {
+      "name": "style",
+      "type": "String",
+      "default": "circle",
+      "summary": "The marker style",
+      "options": {
+        "type": "String",
+        "values": [
+          "circle",
+          "cross",
+          "diamond",
+          "path",
+          "square",
+          "x"
+        ]
+      }
+    },
+    {
+      "name": "outline",
+      "type": "Object",
+      "summary": "Outline of the marker",
+      "location": "symbols/2d/SimpleLineSymbol.json",
+      "exclude": true
+    },
+    {
+      "name": "path",
+      "type": "String",
+      "required": true,
+      "default": "M1,1v30h30V1H1zM17.326,24.398c0,2.92-1.712,4.248-4.209,4.248c-2.255,0-3.564-1.168-4.229-2.576l0,0l0,0l0,0l2.296-1.391c0.443,0.777,0.846,1.442,1.812,1.442c0.926,0,1.511-0.354,1.511-1.771V14.77h2.819V24.398zM23.992,28.646c-2.618,0-4.311-1.248-5.135-2.879l2.295-1.328c0.604,0.979,1.39,1.711,2.779,1.711c1.168,0,1.904-0.584,1.904-1.396c0-0.966-0.766-1.311-2.054-1.865L23.08,22.58c-2.034-0.865-3.383-1.953-3.383-4.249c0-2.114,1.604-3.726,4.128-3.726c1.792,0,3.081,0.625,4.008,2.254l-2.19,1.406c-0.479-0.861-1.006-1.209-1.812-1.209c-0.825,0-1.353,0.521-1.353,1.209c0,0.852,0.521,1.188,1.729,1.711l0.704,0.309c2.396,1.021,3.746,2.07,3.746,4.43C28.664,27.259,26.671,28.646,23.992,28.646z",
+      "summary": "SVG path the marker",
+      "visibility": {
+        "name": "style",
+        "value": "path"
+      }
+    }
+  ]
+}

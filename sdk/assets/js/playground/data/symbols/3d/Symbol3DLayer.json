@@ -1,0 +1,45 @@
+{
+  "className": "Symbol3DLayer",
+  "type": "baseClass",
+  "variable": "symbol",
+  "description": "3D symbol layers are used to define the visualization of points, lines, polygons, and meshes on the GraphicsLayer, FeatureLayer, or SceneLayer in a SceneView.",
+  "summary": "used to define the visualization of points, lines, polygons, and meshes",
+  "path": "esri/symbols/Symbol",
+  "properties": [
+    {
+      "name": "material",
+      "type": "Object",
+      "summary": "material used for visualization of the point",
+      "properties": [
+        {
+          "name": "color",
+          "type": "Color",
+          "default": [
+            255,
+            255,
+            255,
+            1
+          ],
+          "summary": "Fill color of the icon"
+        }
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "name": "fromJSON",
+      "parameters": [
+        {
+          "name": "json",
+          "type": "json"
+        }
+      ],
+      "summary": "Creates new instance from json"
+    },
+    {
+      "name": "toJson",
+      "parameters": [],
+      "summary": "Converts object to its ArcGIS Server JSON representation"
+    }
+  ]
+}

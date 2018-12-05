@@ -1,0 +1,1417 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="content-language" content="en"><meta name="last-modified" content="Mon Sep 24 2018 13:38:29 GMT-0700 (Pacific Daylight Time)"><meta name="product" content="js-api-arcgis"><meta name="version" content="4.x"><meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="subject_label" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="sub_category" content="JavaScript API"><meta name="sub_category_label" content="ArcGIS API for JavaScript"><meta name="content_type" content="Guide"><meta name="content_type_label" content="Guide"><meta name="search-collection" content="help"><meta name="search-category" content="help-api,help-api-guide"><title>Esri Icon Font (Calcite theme) | ArcGIS API for JavaScript 4.9</title><link rel="shortcut icon" href="../../../assets/img/favicon.ico"><link rel="stylesheet" href="../../../assets/css/default.css"><style>/* // --------------------------------------------------------------------
+         * // Programmatically insert contents of
+         * // esri/themes/base/icons/style.css
+         * // --------------------------------------------------------------------
+         */
+        @font-face {
+  font-family: 'CalciteWebCoreIcons';
+  src:
+    url('../../../assets/fonts/CalciteWebCoreIcons.ttf?im9r4h') format('truetype'),
+    url('../../../assets/fonts/CalciteWebCoreIcons.woff?im9r4h') format('woff'),
+    url('../../../assets/fonts/CalciteWebCoreIcons.svg?im9r4h#CalciteWebCoreIcons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="esri-icon-"], [class*=" esri-icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'CalciteWebCoreIcons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.esri-icon-close:before {
+  content: "\e600";
+  color: inherit;
+}
+.esri-icon-drag-horizontal:before {
+  content: "\e601";
+  color: inherit;
+}
+.esri-icon-drag-vertical:before {
+  content: "\e602";
+  color: inherit;
+}
+.esri-icon-handle-horizontal:before {
+  content: "\e603";
+  color: inherit;
+}
+.esri-icon-handle-vertical:before {
+  content: "\e604";
+  color: inherit;
+}
+.esri-icon-check-mark:before {
+  content: "\e605";
+  color: inherit;
+}
+.esri-icon-left-triangle-arrow:before {
+  content: "\e606";
+  color: inherit;
+}
+.esri-icon-right-triangle-arrow:before {
+  content: "\e607";
+  color: inherit;
+}
+.esri-icon-down-arrow:before {
+  content: "\e608";
+  color: inherit;
+}
+.esri-icon-up-arrow:before {
+  content: "\e609";
+  color: inherit;
+}
+.esri-icon-overview-arrow-bottom-left:before {
+  content: "\e60a";
+  color: inherit;
+}
+.esri-icon-overview-arrow-bottom-right:before {
+  content: "\e60b";
+  color: inherit;
+}
+.esri-icon-overview-arrow-top-left:before {
+  content: "\e60c";
+  color: inherit;
+}
+.esri-icon-overview-arrow-top-right:before {
+  content: "\e60d";
+  color: inherit;
+}
+.esri-icon-maximize:before {
+  content: "\e60e";
+  color: inherit;
+}
+.esri-icon-minimize:before {
+  content: "\e60f";
+  color: inherit;
+}
+.esri-icon-checkbox-unchecked:before {
+  content: "\e610";
+  color: inherit;
+}
+.esri-icon-checkbox-checked:before {
+  content: "\e611";
+  color: inherit;
+}
+.esri-icon-radio-unchecked:before {
+  content: "\e612";
+  color: inherit;
+}
+.esri-icon-radio-checked:before {
+  content: "\e613";
+  color: inherit;
+}
+.esri-icon-up-arrow-circled:before {
+  content: "\e614";
+  color: inherit;
+}
+.esri-icon-down-arrow-circled:before {
+  content: "\e615";
+  color: inherit;
+}
+.esri-icon-left-arrow-circled:before {
+  content: "\e616";
+  color: inherit;
+}
+.esri-icon-right-arrow-circled:before {
+  content: "\e617";
+  color: inherit;
+}
+.esri-icon-zoom-out-fixed:before {
+  content: "\e618";
+  color: inherit;
+}
+.esri-icon-zoom-in-fixed:before {
+  content: "\e619";
+  color: inherit;
+}
+.esri-icon-refresh:before {
+  content: "\e61a";
+  color: inherit;
+}
+.esri-icon-edit:before {
+  content: "\e61b";
+  color: inherit;
+}
+.esri-icon-authorize:before {
+  content: "\e61c";
+  color: inherit;
+}
+.esri-icon-map-pin:before {
+  content: "\e61d";
+  color: inherit;
+}
+.esri-icon-blank-map-pin:before {
+  content: "\e61e";
+  color: inherit;
+}
+.esri-icon-table:before {
+  content: "\e61f";
+  color: inherit;
+}
+.esri-icon-plus:before {
+  content: "\e620";
+  color: inherit;
+}
+.esri-icon-minus:before {
+  content: "\e621";
+  color: inherit;
+}
+.esri-icon-beginning:before {
+  content: "\e622";
+  color: inherit;
+}
+.esri-icon-reverse:before {
+  content: "\e623";
+  color: inherit;
+}
+.esri-icon-pause:before {
+  content: "\e624";
+  color: inherit;
+}
+.esri-icon-play:before {
+  content: "\e625";
+  color: inherit;
+}
+.esri-icon-forward:before {
+  content: "\e626";
+  color: inherit;
+}
+.esri-icon-end:before {
+  content: "\e627";
+  color: inherit;
+}
+.esri-icon-erase:before {
+  content: "\e628";
+  color: inherit;
+}
+.esri-icon-up-down-arrows:before {
+  content: "\e629";
+  color: inherit;
+}
+.esri-icon-left:before {
+  content: "\e62a";
+  color: inherit;
+}
+.esri-icon-right:before {
+  content: "\e62b";
+  color: inherit;
+}
+.esri-icon-announcement:before {
+  content: "\e62c";
+  color: inherit;
+}
+.esri-icon-notice-round:before {
+  content: "\e62d";
+  color: inherit;
+}
+.esri-icon-notice-triangle:before {
+  content: "\e62e";
+  color: inherit;
+}
+.esri-icon-home:before {
+  content: "\e62f";
+  color: inherit;
+}
+.esri-icon-locate:before {
+  content: "\e630";
+  color: inherit;
+}
+.esri-icon-expand:before {
+  content: "\e631";
+  color: inherit;
+}
+.esri-icon-collapse:before {
+  content: "\e632";
+  color: inherit;
+}
+.esri-icon-layer-list:before {
+  content: "\e633";
+  color: inherit;
+}
+.esri-icon-basemap:before {
+  content: "\e634";
+  color: inherit;
+}
+.esri-icon-globe:before {
+  content: "\e635";
+  color: inherit;
+}
+.esri-icon-applications:before {
+  content: "\e636";
+  color: inherit;
+}
+.esri-icon-arrow-up-circled:before {
+  content: "\e637";
+  color: inherit;
+}
+.esri-icon-arrow-down-circled:before {
+  content: "\e638";
+  color: inherit;
+}
+.esri-icon-arrow-left-circled:before {
+  content: "\e639";
+  color: inherit;
+}
+.esri-icon-arrow-right-circled:before {
+  content: "\e63a";
+  color: inherit;
+}
+.esri-icon-minus-circled:before {
+  content: "\e63b";
+  color: inherit;
+}
+.esri-icon-plus-circled:before {
+  content: "\e63c";
+  color: inherit;
+}
+.esri-icon-add-attachment:before {
+  content: "\e63d";
+  color: inherit;
+}
+.esri-icon-attachment:before {
+  content: "\e63e";
+  color: inherit;
+}
+.esri-icon-calendar:before {
+  content: "\e63f";
+  color: inherit;
+}
+.esri-icon-close-circled:before {
+  content: "\e640";
+  color: inherit;
+}
+.esri-icon-browser:before {
+  content: "\e641";
+  color: inherit;
+}
+.esri-icon-collection:before {
+  content: "\e642";
+  color: inherit;
+}
+.esri-icon-comment:before {
+  content: "\e643";
+  color: inherit;
+}
+.esri-icon-configure-popup:before {
+  content: "\e644";
+  color: inherit;
+}
+.esri-icon-contact:before {
+  content: "\e645";
+  color: inherit;
+}
+.esri-icon-dashboard:before {
+  content: "\e646";
+  color: inherit;
+}
+.esri-icon-deny:before {
+  content: "\e647";
+  color: inherit;
+}
+.esri-icon-description:before {
+  content: "\e648";
+  color: inherit;
+}
+.esri-icon-directions:before {
+  content: "\e649";
+  color: inherit;
+}
+.esri-icon-directions2:before {
+  content: "\e64a";
+  color: inherit;
+}
+.esri-icon-documentation:before {
+  content: "\e64b";
+  color: inherit;
+}
+.esri-icon-duplicate:before {
+  content: "\e64c";
+  color: inherit;
+}
+.esri-icon-review:before {
+  content: "\e64d";
+  color: inherit;
+}
+.esri-icon-environment-settings:before {
+  content: "\e64e";
+  color: inherit;
+}
+.esri-icon-error:before {
+  content: "\e64f";
+  color: inherit;
+}
+.esri-icon-error2:before {
+  content: "\e650";
+  color: inherit;
+}
+.esri-icon-experimental:before {
+  content: "\e651";
+  color: inherit;
+}
+.esri-icon-feature-layer:before {
+  content: "\e652";
+  color: inherit;
+}
+.esri-icon-filter:before {
+  content: "\e653";
+  color: inherit;
+}
+.esri-icon-grant:before {
+  content: "\e654";
+  color: inherit;
+}
+.esri-icon-group:before {
+  content: "\e655";
+  color: inherit;
+}
+.esri-icon-key:before {
+  content: "\e656";
+  color: inherit;
+}
+.esri-icon-labels:before {
+  content: "\e657";
+  color: inherit;
+}
+.esri-icon-tag:before {
+  content: "\e658";
+  color: inherit;
+}
+.esri-icon-layers:before {
+  content: "\e659";
+  color: inherit;
+}
+.esri-icon-left-arrow:before {
+  content: "\e65a";
+  color: inherit;
+}
+.esri-icon-right-arrow:before {
+  content: "\e65b";
+  color: inherit;
+}
+.esri-icon-link-external:before {
+  content: "\e65c";
+  color: inherit;
+}
+.esri-icon-link:before {
+  content: "\e65d";
+  color: inherit;
+}
+.esri-icon-loading-indicator:before {
+  content: "\e65e";
+  color: inherit;
+}
+.esri-icon-maps:before {
+  content: "\e65f";
+  color: inherit;
+}
+.esri-icon-marketplace:before {
+  content: "\e660";
+  color: inherit;
+}
+.esri-icon-media:before {
+  content: "\e661";
+  color: inherit;
+}
+.esri-icon-media2:before {
+  content: "\e662";
+  color: inherit;
+}
+.esri-icon-menu:before {
+  content: "\e663";
+  color: inherit;
+}
+.esri-icon-mobile:before {
+  content: "\e664";
+  color: inherit;
+}
+.esri-icon-phone:before {
+  content: "\e665";
+  color: inherit;
+}
+.esri-icon-navigation:before {
+  content: "\e666";
+  color: inherit;
+}
+.esri-icon-pan:before {
+  content: "\e667";
+  color: inherit;
+}
+.esri-icon-printer:before {
+  content: "\e668";
+  color: inherit;
+}
+.esri-icon-pie-chart:before {
+  content: "\e669";
+  color: inherit;
+}
+.esri-icon-chart:before {
+  content: "\e66a";
+  color: inherit;
+}
+.esri-icon-line-chart:before {
+  content: "\e66b";
+  color: inherit;
+}
+.esri-icon-question:before {
+  content: "\e66c";
+  color: inherit;
+}
+.esri-icon-resend-invitation:before {
+  content: "\e66d";
+  color: inherit;
+}
+.esri-icon-rotate:before {
+  content: "\e66e";
+  color: inherit;
+}
+.esri-icon-save:before {
+  content: "\e66f";
+  color: inherit;
+}
+.esri-icon-settings:before {
+  content: "\e670";
+  color: inherit;
+}
+.esri-icon-settings2:before {
+  content: "\e671";
+  color: inherit;
+}
+.esri-icon-share:before {
+  content: "\e672";
+  color: inherit;
+}
+.esri-icon-sign-out:before {
+  content: "\e673";
+  color: inherit;
+}
+.esri-icon-support:before {
+  content: "\e674";
+  color: inherit;
+}
+.esri-icon-user:before {
+  content: "\e675";
+  color: inherit;
+}
+.esri-icon-time-clock:before {
+  content: "\e676";
+  color: inherit;
+}
+.esri-icon-trash:before {
+  content: "\e677";
+  color: inherit;
+}
+.esri-icon-upload:before {
+  content: "\e678";
+  color: inherit;
+}
+.esri-icon-download:before {
+  content: "\e679";
+  color: inherit;
+}
+.esri-icon-zoom-in-magnifying-glass:before {
+  content: "\e67a";
+  color: #6e6e6e; }
+
+.esri-icon-search:before {
+  content: "\e67b";
+  color: inherit;
+}
+.esri-icon-zoom-out-magnifying-glass:before {
+  content: "\e67c";
+  color: #6e6e6e; }
+
+.esri-icon-locked:before {
+  content: "\e67d";
+  color: inherit;
+}
+.esri-icon-unlocked:before {
+  content: "\e67e";
+  color: inherit;
+}
+.esri-icon-favorites:before {
+  content: "\e67f";
+  color: inherit;
+}
+.esri-icon-compass:before {
+  content: "\e680";
+  color: inherit;
+}
+.esri-icon-down:before {
+  content: "\e681";
+  color: inherit;
+}
+.esri-icon-up:before {
+  content: "\e682";
+  color: inherit;
+}
+.esri-icon-chat:before {
+  content: "\e683";
+  color: inherit;
+}
+.esri-icon-dock-bottom:before {
+  content: "\e684";
+  color: inherit;
+}
+.esri-icon-dock-left:before {
+  content: "\e685";
+  color: inherit;
+}
+.esri-icon-dock-right:before {
+  content: "\e686";
+  color: inherit;
+}
+.esri-icon-organization:before {
+  content: "\e687";
+  color: inherit;
+}
+.esri-icon-north-navigation:before {
+  content: "\e688";
+  color: inherit;
+}
+.esri-icon-locate-circled:before {
+  content: "\e689";
+  color: inherit;
+}
+.esri-icon-dial:before {
+  content: "\e68a";
+  color: inherit;
+}
+.esri-icon-polygon:before {
+  content: "\e68b";
+  color: inherit;
+}
+.esri-icon-polyline:before {
+  content: "\e68c";
+  color: inherit;
+}
+.esri-icon-visible:before {
+  content: "\e68d";
+  color: inherit;
+}
+.esri-icon-non-visible:before {
+  content: "\e68e";
+  color: inherit;
+}
+.esri-icon-link-vertical:before {
+  content: "\e68f";
+  color: inherit;
+}
+.esri-icon-unlocked-link-vertical:before {
+  content: "\e690";
+  color: inherit;
+}
+.esri-icon-link-horizontal:before {
+  content: "\e691";
+  color: inherit;
+}
+.esri-icon-unlocked-link-horizontal:before {
+  content: "\e692";
+  color: inherit;
+}
+.esri-icon-swap:before {
+  content: "\e693";
+  color: inherit;
+}
+.esri-icon-cta-link-external:before {
+  content: "\e694";
+  color: inherit;
+}
+.esri-icon-reply:before {
+  content: "\e695";
+  color: inherit;
+}
+.esri-icon-public:before {
+  content: "\e696";
+  color: inherit;
+}
+.esri-icon-share2:before {
+  content: "\e697";
+  color: inherit;
+}
+.esri-icon-launch-link-external:before {
+  content: "\e698";
+  color: inherit;
+}
+.esri-icon-rotate-back:before {
+  content: "\e699";
+  color: inherit;
+}
+.esri-icon-pan2:before {
+  content: "\e69a";
+  color: inherit;
+}
+.esri-icon-tracking:before {
+  content: "\e69b";
+  color: inherit;
+}
+.esri-icon-expand2:before {
+  content: "\e69c";
+  color: inherit;
+}
+.esri-icon-arrow-down:before {
+  content: "\e69d";
+  color: inherit;
+}
+.esri-icon-arrow-up:before {
+  content: "\e69e";
+  color: inherit;
+}
+.esri-icon-hollow-eye:before {
+  content: "\e69f";
+  color: inherit;
+}
+.esri-icon-play-circled:before {
+  content: "\e6a0";
+  color: inherit;
+}
+.esri-icon-volume-off:before {
+  content: "\e6a1";
+  color: inherit;
+}
+.esri-icon-volume-on:before {
+  content: "\e6a2";
+  color: inherit;
+}
+.esri-icon-bookmark:before {
+  content: "\e900";
+  color: inherit;
+}
+.esri-icon-lightbulb:before {
+  content: "\e901";
+  color: inherit;
+}
+.esri-icon-sketch-rectangle:before {
+  content: "\e902";
+  color: inherit;
+}
+.esri-icon-north-navigation-filled:before {
+  content: "\e903";
+  color: inherit;
+}
+.esri-icon-default-action:before {
+  content: "\e904";
+  color: inherit;
+}
+
+        /* // --------------------------------------------------------------------
+         * // Manual insert in order to override calcite-web so
+         * // Esri Calcite Theme fonts display properly
+         * // --------------------------------------------------------------------
+         */
+        [class^="esri-icon-"]:before,
+        [class*=" esri-icon-"]:before {
+          font-family: "CalciteWebCoreIcons";
+        }</style></head><body><developers-account-notifications></developers-account-notifications><div class="wrapper"><header class="top-nav top-nav-hover-top"><div class="grid-container"><div class="column-24 tablet-show"><div class="dropdown js-dropdown left"><a href="#" class="icon-ui-menu top-nav-title js-drawer-toggle top-nav-title-tablet" data-drawer="top-nav">ArcGIS API for JavaScript</a></div></div><div class="column-24 leader-1 trailer-1 tablet-leader-0">Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a></div></div></header><header class="sub-nav sub-nav-purple"><div class="grid-container"><nav class="breadcrumbs breadcrumbs-white clearfix padding-leader-1"><a href="/web-api/" class="crumb">ArcGIS Web API</a> <a href="../../.." class="crumb">JavaScript API</a> <a href="../../.." class="crumb">4.9</a> <a href="../../../latest/guide/index.html" class="crumb">Guide</a></nav><h1 class="sub-nav-title text-white leader-1">ArcGIS API for JavaScript</h1><nav class="sub-nav-list leader-0 tablet-hide"><a class="sub-nav-link" href="../../../index.html">Home</a> <a class="sub-nav-link is-active" href="../../../latest/guide/index.html">Guide</a> <a class="sub-nav-link" href="../../../latest/api-reference/index.html">API Reference</a> <a class="sub-nav-link" href="../../../latest/sample-code/index.html">Sample Code</a> <a class="sub-nav-link" href="../../../support/index.html">Support</a></nav><select class="select-full trailer-half tablet-show js-select-nav"><option value="../../../index.html">Home</option><option selected="selected" value="../../../latest/guide/index.html">Guide</option><option value="../../../latest/api-reference/index.html">API Reference</option><option value="../../../latest/sample-code/index.html">Sample Code</option><option value="../../../support/index.html">Support</option></select></div></header><div id="skip-to-content"><div class="grid-container leader-1"><div class="column-6 trailer-2 tablet-hide"><aside class="accordion side-nav column-6 js-accordion guide"><div class="accordion-section"><h4 class="accordion-title">Get Started</h4><nav class="accordion-content"><a href="../../../latest/guide/index.html" class="side-nav-link">Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/release-notes/index.html" class="side-nav-link">Release notes</a></nav><nav class="accordion-content"><a href="../../../latest/guide/get-api/index.html" class="side-nav-link">Get the API</a></nav><nav class="accordion-content"><a href="../../../latest/guide/system-requirements/index.html" class="side-nav-link">System requirements</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from 3.x</h4><nav class="accordion-content"><a href="../../../latest/guide/choose-version/index.html" class="side-nav-link">Choose a version</a></nav><nav class="accordion-content"><a href="../../../latest/guide/migrating/index.html" class="side-nav-link">Migrating from 3.x to 4.9</a></nav><nav class="accordion-content"><a href="../../../latest/guide/functionality-matrix/index.html" class="side-nav-link">3.x to 4.x functionality matrix</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from other APIs</h4><nav class="accordion-content"><a href="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html" class="side-nav-link">Migrating from Google Maps API</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Working with the API</h4><nav class="accordion-content"><a href="../../../latest/guide/working-with-props/index.html" class="side-nav-link">Properties</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-promises/index.html" class="side-nav-link">Promises</a></nav><nav class="accordion-content"><a href="../../../latest/guide/arcade/index.html" class="side-nav-link">Arcade</a></nav><nav class="accordion-content"><a href="../../../latest/guide/labeling/index.html" class="side-nav-link">Labeling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/view-ui/index.html" class="side-nav-link">View UI</a></nav><nav class="accordion-content"><a href="../../../latest/guide/autocasting/index.html" class="side-nav-link">Autocasting</a></nav><nav class="accordion-content"><a href="../../../latest/guide/loadable/index.html" class="side-nav-link">Loadable</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-fromjson/index.html" class="side-nav-link">Using fromJSON()</a></nav><nav class="accordion-content"><a href="../../../latest/guide/typescript-setup/index.html" class="side-nav-link">TypeScript Setup</a></nav><nav class="accordion-content"><a href="../../../latest/guide/custom-widget/index.html" class="side-nav-link">Widget Development</a></nav><nav class="accordion-content"><a href="../../../latest/guide/implementing-accessor/index.html" class="side-nav-link">Implementing Accessor</a></nav><nav class="accordion-content"><a href="../../../latest/guide/styling/index.html" class="side-nav-link">Styling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-platform/index.html" class="side-nav-link">Working with the ArcGIS platform</a></nav><nav class="accordion-content"><a href="../../../latest/guide/secure-resources/index.html" class="side-nav-link">Access Secure Resources</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-frameworks/index.html" class="side-nav-link">Using Frameworks</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-npm/index.html" class="side-nav-link">Using npm</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-webpack/index.html" class="side-nav-link">Using webpack</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-phonegap/index.html" class="side-nav-link">Using PhoneGap</a></nav><nav class="accordion-content"><a href="../../../latest/guide/intro-workflows/index.html" class="side-nav-link">Intro to Workflow Manager</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-scene-layers/index.html" class="side-nav-link">Working with scene layers</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Visualization</h4><nav class="accordion-content"><a href="../../../latest/guide/visualization-overview/index.html" class="side-nav-link">Visualization Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/creating-visualizations-manually/index.html" class="side-nav-link">Creating visualizations manually</a></nav><nav class="accordion-content"><a href="../../../latest/guide/visualizing-points-3d/index.html" class="side-nav-link">Visualizing points with 3D symbols</a></nav></div><div class="accordion-section is-active"><h4 class="accordion-title">Reference</h4><nav class="accordion-content"><a href="../../../latest/guide/cors/index.html" class="side-nav-link">CORS</a></nav><nav class="accordion-content"><a href="../../../latest/guide/proxies/index.html" class="side-nav-link">Proxy pages</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-icon-font/index.html" class="side-nav-link is-active">Esri Icon Font</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-web-style-symbols/index.html" class="side-nav-link">Esri Web Style Symbols</a></nav><nav class="accordion-content"><a href="../../../latest/guide/localization/index.html" class="side-nav-link">Localization</a></nav><nav class="accordion-content"><a href="../../../latest/guide/licensing/index.html" class="side-nav-link">Licensing &amp; Attribution</a></nav><nav class="accordion-content"><a href="../../../latest/guide/faq/index.html" class="side-nav-link">FAQ</a></nav></div></aside><div class="column-6 js-sticky scroll-show tablet-hide" data-top="46"><a href="#" class="btn btn-fill btn-clear">Back to Top</a></div></div><div class="column-24 trailer-1 tablet-show"><select class="select-full trailer-half js-select-nav"><optgroup label="Get Started"><option value="../../../latest/guide/index.html">Overview</option><option value="../../../latest/guide/release-notes/index.html">Release notes</option><option value="../../../latest/guide/get-api/index.html">Get the API</option><option value="../../../latest/guide/system-requirements/index.html">System requirements</option></optgroup><optgroup label="Migrating from 3.x"><option value="../../../latest/guide/choose-version/index.html">Choose a version</option><option value="../../../latest/guide/migrating/index.html">Migrating from 3.x to 4.9</option><option value="../../../latest/guide/functionality-matrix/index.html">3.x to 4.x functionality matrix</option></optgroup><optgroup label="Migrating from other APIs"><option value="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html">Migrating from Google Maps API</option></optgroup><optgroup label="Working with the API"><option value="../../../latest/guide/working-with-props/index.html">Properties</option><option value="../../../latest/guide/working-with-promises/index.html">Promises</option><option value="../../../latest/guide/arcade/index.html">Arcade</option><option value="../../../latest/guide/labeling/index.html">Labeling</option><option value="../../../latest/guide/view-ui/index.html">View UI</option><option value="../../../latest/guide/autocasting/index.html">Autocasting</option><option value="../../../latest/guide/loadable/index.html">Loadable</option><option value="../../../latest/guide/using-fromjson/index.html">Using fromJSON()</option><option value="../../../latest/guide/typescript-setup/index.html">TypeScript Setup</option><option value="../../../latest/guide/custom-widget/index.html">Widget Development</option><option value="../../../latest/guide/implementing-accessor/index.html">Implementing Accessor</option><option value="../../../latest/guide/styling/index.html">Styling</option><option value="../../../latest/guide/working-with-platform/index.html">Working with the ArcGIS platform</option><option value="../../../latest/guide/secure-resources/index.html">Access Secure Resources</option><option value="../../../latest/guide/using-frameworks/index.html">Using Frameworks</option><option value="../../../latest/guide/using-npm/index.html">Using npm</option><option value="../../../latest/guide/using-webpack/index.html">Using webpack</option><option value="../../../latest/guide/using-phonegap/index.html">Using PhoneGap</option><option value="../../../latest/guide/intro-workflows/index.html">Intro to Workflow Manager</option><option value="../../../latest/guide/working-with-scene-layers/index.html">Working with scene layers</option></optgroup><optgroup label="Visualization"><option value="../../../latest/guide/visualization-overview/index.html">Visualization Overview</option><option value="../../../latest/guide/creating-visualizations-manually/index.html">Creating visualizations manually</option><option value="../../../latest/guide/visualizing-points-3d/index.html">Visualizing points with 3D symbols</option></optgroup><optgroup label="Reference"><option value="../../../latest/guide/cors/index.html">CORS</option><option value="../../../latest/guide/proxies/index.html">Proxy pages</option><option value="../../../latest/guide/esri-icon-font/index.html" selected="selected">Esri Icon Font</option><option value="../../../latest/guide/esri-web-style-symbols/index.html">Esri Web Style Symbols</option><option value="../../../latest/guide/localization/index.html">Localization</option><option value="../../../latest/guide/licensing/index.html">Licensing &amp; Attribution</option><option value="../../../latest/guide/faq/index.html">FAQ</option></optgroup></select></div><main class="column-17 tablet-column-12 pre-1 content-face"><article><div class="js-container-guide"><h1 id="esri-icon-font-calcite-theme">Esri Icon Font (Calcite theme)</h1><p>The Esri Icon Font is a monochromatic icon set used at Esri for a consistent Esri branded theme.</p><p>Icon fonts have several advantages such as the ability to quickly change their color, and the fact that icon fonts size themselves to be proportional to text placed with them.</p><p>These <a href="https://github.com/Esri/arcgis-js-api/tree/master/themes/calcite/icons/fonts">icons are available</a> as a True Type Font, <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/WOFF">Web Open Font Format</a>, and <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVG</a>. For more information on web development and fonts see the <a href="https://developer.mozilla.org/en-US/Learn/CSS/Styling_text/Fundamentals">Fundamental text and font styling</a> and <a href="https://developer.mozilla.org/en-US/Learn/CSS/Styling_text/Web_fonts">Web Fonts</a> Mozilla Developer Network articles.</p><h3 id="using-the-esri-icon-fonts-as-a-graphics-symbol">Using the Esri Icon Fonts as a graphic's symbol</h3><p>When the ArcGIS API for JavaScript stylesheet <code>https://js.arcgis.com/4.9/esri/css/main.css</code> is included in a web page, the Esri Icon Fonts are immediately available for use. One potential use of the Esri Icon Fonts is to use them as <a href="../../api-reference/esri-Graphic.html#symbol">symbol</a> property of <a href="../../api-reference/esri-Graphic.html">Graphic</a>. In the code snippet below a <a href="../../api-reference/esri-symbols-TextSymbol.html">TextSymbol</a> is created by specifying the <a href="../../api-reference/esri-symbols-TextSymbol.html#color">color</a>, <a href="../../api-reference/esri-symbols-TextSymbol.html#text">text</a>, and <a href="../../api-reference/esri-symbols-TextSymbol.html#font">font</a>. The <a href="../../api-reference/esri-symbols-TextSymbol.html#font">font</a> property is created by <a href="../../guide/autocasting/index.html">autocasting</a> the <a href="../../api-reference/esri-symbols-Font.html">Font</a> Class.</p><p>For more information see the <a href="../../sample-code/styling-icon-fonts/index.html">Using Esri Icon Fonts with map graphics</a> sample. See the <a href="#esri-icon-fonts">CSS class names and Unicode values</a> section of this topic for a complete list of unicode values.</p><pre><code class="JavaScript"><span class="hljs-keyword">var</span> textSymbol = <span class="hljs-keyword">new</span> TextSymbol({
+    <span class="hljs-attr">color</span>: <span class="hljs-string">'#7A003C'</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">'\ue61d'</span>, <span class="hljs-comment">// esri-icon-map-pin</span>
+    font: { <span class="hljs-comment">// autocast as esri/symbols/Font</span>
+        size: <span class="hljs-number">20</span>,
+        <span class="hljs-attr">family</span>: <span class="hljs-string">'CalciteWebCoreIcons'</span>
+    }
+});
+</code></pre><h3 id="using-the-esri-icon-font-on-pages-that-do-not-load-the-arcgis-api-for-javascript">Using the Esri Icon Font on pages that do not load the ArcGIS API for JavaScript</h3><p><strong>Note</strong>: If you create any web pages that are attempting to use the Esri Icon Font, but do not load the ArcGIS API for JavaScript stylesheet then you will need to include the <strong>Required CSS for using the Esri Icon Font</strong> code section into your web page.</p><p>To add an icon to a page, just add a class to an element, like this:</p><pre><code class="html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"esri-icon-close"</span> <span class="hljs-attr">aria-label</span>=<span class="hljs-string">"close icon"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+</code></pre><p>This will automatically add the icon to the page. In the icon font, the icon will be added as a <code>::before</code> pseudo element in the same color and size as the text you're currently using.</p><aside class="js-accordion accordion trailer-1"><div class="accordion-section"><h4 class="accordion-title"><strong>Sample Code</strong>: Required CSS for using the Esri Icon Font</h4><div class="accordion-content"><pre><code class="css">@<span class="hljs-keyword">font-face</span> {
+  <span class="hljs-attribute">font-family</span>: <span class="hljs-string">'CalciteWebCoreIcons'</span>;
+  <span class="hljs-attribute">src</span>:
+    <span class="hljs-built_in">url</span>(<span class="hljs-string">'https://raw.githubusercontent.com/Esri/arcgis-js-api/master/themes/calcite/icons/fonts/CalciteWebCoreIcons.ttf?im9r4h'</span>) <span class="hljs-built_in">format</span>(<span class="hljs-string">'truetype'</span>),
+    <span class="hljs-built_in">url</span>(<span class="hljs-string">'https://raw.githubusercontent.com/Esri/arcgis-js-api/master/themes/calcite/icons/fonts/CalciteWebCoreIcons.woff?im9r4h'</span>) <span class="hljs-built_in">format</span>(<span class="hljs-string">'woff'</span>),
+    <span class="hljs-built_in">url</span>(<span class="hljs-string">'https://raw.githubusercontent.com/Esri/arcgis-js-api/master/themes/calcite/icons/fonts/CalciteWebCoreIcons.svg?im9r4h#CalciteWebCoreIcons'</span>) <span class="hljs-built_in">format</span>(<span class="hljs-string">'svg'</span>);
+  <span class="hljs-attribute">font-weight</span>: normal;
+  <span class="hljs-attribute">font-style</span>: normal;
+}
+
+<span class="hljs-selector-attr">[class^="esri-icon-"]</span>, <span class="hljs-selector-attr">[class*=" esri-icon-"]</span> {
+  <span class="hljs-comment">/* use !important to prevent issues with browser extensions that change fonts */</span>
+  <span class="hljs-attribute">font-family</span>: <span class="hljs-string">'CalciteWebCoreIcons'</span> <span class="hljs-meta">!important</span>;
+  <span class="hljs-attribute">speak</span>: none;
+  <span class="hljs-attribute">font-style</span>: normal;
+  <span class="hljs-attribute">font-weight</span>: normal;
+  <span class="hljs-attribute">font-variant</span>: normal;
+  <span class="hljs-attribute">text-transform</span>: none;
+  <span class="hljs-attribute">line-height</span>: <span class="hljs-number">1</span>;
+
+  <span class="hljs-comment">/* Better Font Rendering =========== */</span>
+  <span class="hljs-attribute">-webkit-font-smoothing</span>: antialiased;
+  <span class="hljs-attribute">-moz-osx-font-smoothing</span>: grayscale;
+}
+
+<span class="hljs-selector-class">.esri-icon-close</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e600"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-drag-horizontal</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e601"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-drag-vertical</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e602"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-handle-horizontal</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e603"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-handle-vertical</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e604"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-check-mark</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e605"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-left-triangle-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e606"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-right-triangle-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e607"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-down-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e608"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-up-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e609"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-overview-arrow-bottom-left</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-overview-arrow-bottom-right</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-overview-arrow-top-left</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-overview-arrow-top-right</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-maximize</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-minimize</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e60f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-checkbox-unchecked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e610"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-checkbox-checked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e611"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-radio-unchecked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e612"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-radio-checked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e613"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-up-arrow-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e614"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-down-arrow-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e615"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-left-arrow-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e616"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-right-arrow-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e617"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-zoom-out-fixed</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e618"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-zoom-in-fixed</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e619"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-refresh</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-edit</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-authorize</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-map-pin</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-blank-map-pin</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-table</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e61f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-plus</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e620"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-minus</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e621"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-beginning</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e622"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-reverse</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e623"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-pause</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e624"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-play</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e625"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-forward</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e626"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-end</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e627"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-erase</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e628"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-up-down-arrows</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e629"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-left</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-right</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-announcement</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-notice-round</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-notice-triangle</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-home</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e62f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-locate</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e630"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-expand</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e631"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-collapse</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e632"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-layer-list</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e633"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-basemap</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e634"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-globe</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e635"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-applications</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e636"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-up-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e637"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-down-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e638"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-left-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e639"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-right-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-minus-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-plus-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-add-attachment</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-attachment</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-calendar</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e63f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-close-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e640"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-browser</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e641"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-collection</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e642"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-comment</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e643"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-configure-popup</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e644"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-contact</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e645"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-dashboard</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e646"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-deny</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e647"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-description</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e648"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-directions</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e649"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-directions2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-documentation</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-duplicate</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-review</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-environment-settings</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-error</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e64f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-error2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e650"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-experimental</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e651"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-feature-layer</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e652"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-filter</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e653"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-grant</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e654"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-group</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e655"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-key</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e656"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-labels</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e657"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-tag</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e658"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-layers</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e659"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-left-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-right-arrow</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-link-external</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-link</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-loading-indicator</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-maps</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e65f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-marketplace</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e660"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-media</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e661"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-media2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e662"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-menu</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e663"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-mobile</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e664"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-phone</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e665"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-navigation</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e666"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-pan</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e667"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-printer</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e668"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-pie-chart</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e669"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-chart</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-line-chart</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-question</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-resend-invitation</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-rotate</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-save</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e66f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-settings</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e670"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-settings2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e671"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-share</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e672"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-sign-out</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e673"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-support</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e674"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-user</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e675"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-time-clock</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e676"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-trash</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e677"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-upload</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e678"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-download</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e679"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-zoom-in-magnifying-glass</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67a"</span>;
+  <span class="hljs-attribute">color</span>: <span class="hljs-number">#6e6e6e</span>; }
+
+<span class="hljs-selector-class">.esri-icon-search</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-zoom-out-magnifying-glass</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67c"</span>;
+  <span class="hljs-attribute">color</span>: <span class="hljs-number">#6e6e6e</span>; }
+
+<span class="hljs-selector-class">.esri-icon-locked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-unlocked</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-favorites</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e67f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-compass</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e680"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-down</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e681"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-up</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e682"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-chat</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e683"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-dock-bottom</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e684"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-dock-left</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e685"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-dock-right</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e686"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-organization</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e687"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-north-navigation</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e688"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-locate-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e689"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-dial</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-polygon</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-polyline</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-visible</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-non-visible</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-link-vertical</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e68f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-unlocked-link-vertical</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e690"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-link-horizontal</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e691"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-unlocked-link-horizontal</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e692"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-swap</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e693"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-cta-link-external</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e694"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-reply</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e695"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-public</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e696"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-share2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e697"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-launch-link-external</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e698"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-rotate-back</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e699"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-pan2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69a"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-tracking</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69b"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-expand2</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69c"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-down</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69d"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-arrow-up</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69e"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-hollow-eye</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e69f"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-play-circled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e6a0"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-volume-off</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e6a1"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-volume-on</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e6a2"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-bookmark</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e900"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-lightbulb</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e901"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-sketch-rectangle</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e902"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-north-navigation-filled</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e903"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}
+<span class="hljs-selector-class">.esri-icon-default-action</span><span class="hljs-selector-pseudo">:before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">"\e904"</span>;
+  <span class="hljs-attribute">color</span>: inherit;
+}</code></pre></div></div></aside><p><a id="esri-icon-fonts"></a></p><h3 id="css-class-names-and-unicode-values">CSS class names and Unicode values</h3><p>The following list of Esri Icon Fonts display a preview of the font, the CSS class name required to use the icon font, and the CSS unicode value necessary to specify the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/content"><code>content</code> CSS property</a> used with the <code>::before</code> and <code>::after</code> pseudo-elements to generate content in an element or the value of the <a href="../../api-reference/esri-symbols-TextSymbol.html#text">TextSymbol.text</a> property.</p><div class="block-group block-group-3-up table-block-group-2-up phone-block-group-1-up"><div class="block"><span class="font-size-3 esri-icon-close" aria-label="close icon"></span><div class="leader-half"><code>esri-icon-close</code></div><div class="leader-half"><code>\ue600</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-drag-horizontal" aria-label="drag-horizontal icon"></span><div class="leader-half"><code>esri-icon-drag-horizontal</code></div><div class="leader-half"><code>\ue601</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-drag-vertical" aria-label="drag-vertical icon"></span><div class="leader-half"><code>esri-icon-drag-vertical</code></div><div class="leader-half"><code>\ue602</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-handle-horizontal" aria-label="handle-horizontal icon"></span><div class="leader-half"><code>esri-icon-handle-horizontal</code></div><div class="leader-half"><code>\ue603</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-handle-vertical" aria-label="handle-vertical icon"></span><div class="leader-half"><code>esri-icon-handle-vertical</code></div><div class="leader-half"><code>\ue604</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-check-mark" aria-label="check-mark icon"></span><div class="leader-half"><code>esri-icon-check-mark</code></div><div class="leader-half"><code>\ue605</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-left-triangle-arrow" aria-label="left-triangle-arrow icon"></span><div class="leader-half"><code>esri-icon-left-triangle-arrow</code></div><div class="leader-half"><code>\ue606</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-right-triangle-arrow" aria-label="right-triangle-arrow icon"></span><div class="leader-half"><code>esri-icon-right-triangle-arrow</code></div><div class="leader-half"><code>\ue607</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-down-arrow" aria-label="down-arrow icon"></span><div class="leader-half"><code>esri-icon-down-arrow</code></div><div class="leader-half"><code>\ue608</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-up-arrow" aria-label="up-arrow icon"></span><div class="leader-half"><code>esri-icon-up-arrow</code></div><div class="leader-half"><code>\ue609</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-overview-arrow-bottom-left" aria-label="overview-arrow-bottom-left icon"></span><div class="leader-half"><code>esri-icon-overview-arrow-bottom-left</code></div><div class="leader-half"><code>\ue60a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-overview-arrow-bottom-right" aria-label="overview-arrow-bottom-right icon"></span><div class="leader-half"><code>esri-icon-overview-arrow-bottom-right</code></div><div class="leader-half"><code>\ue60b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-overview-arrow-top-left" aria-label="overview-arrow-top-left icon"></span><div class="leader-half"><code>esri-icon-overview-arrow-top-left</code></div><div class="leader-half"><code>\ue60c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-overview-arrow-top-right" aria-label="overview-arrow-top-right icon"></span><div class="leader-half"><code>esri-icon-overview-arrow-top-right</code></div><div class="leader-half"><code>\ue60d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-maximize" aria-label="maximize icon"></span><div class="leader-half"><code>esri-icon-maximize</code></div><div class="leader-half"><code>\ue60e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-minimize" aria-label="minimize icon"></span><div class="leader-half"><code>esri-icon-minimize</code></div><div class="leader-half"><code>\ue60f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-checkbox-unchecked" aria-label="checkbox-unchecked icon"></span><div class="leader-half"><code>esri-icon-checkbox-unchecked</code></div><div class="leader-half"><code>\ue610</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-checkbox-checked" aria-label="checkbox-checked icon"></span><div class="leader-half"><code>esri-icon-checkbox-checked</code></div><div class="leader-half"><code>\ue611</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-radio-unchecked" aria-label="radio-unchecked icon"></span><div class="leader-half"><code>esri-icon-radio-unchecked</code></div><div class="leader-half"><code>\ue612</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-radio-checked" aria-label="radio-checked icon"></span><div class="leader-half"><code>esri-icon-radio-checked</code></div><div class="leader-half"><code>\ue613</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-up-arrow-circled" aria-label="up-arrow-circled icon"></span><div class="leader-half"><code>esri-icon-up-arrow-circled</code></div><div class="leader-half"><code>\ue614</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-down-arrow-circled" aria-label="down-arrow-circled icon"></span><div class="leader-half"><code>esri-icon-down-arrow-circled</code></div><div class="leader-half"><code>\ue615</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-left-arrow-circled" aria-label="left-arrow-circled icon"></span><div class="leader-half"><code>esri-icon-left-arrow-circled</code></div><div class="leader-half"><code>\ue616</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-right-arrow-circled" aria-label="right-arrow-circled icon"></span><div class="leader-half"><code>esri-icon-right-arrow-circled</code></div><div class="leader-half"><code>\ue617</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-zoom-out-fixed" aria-label="zoom-out-fixed icon"></span><div class="leader-half"><code>esri-icon-zoom-out-fixed</code></div><div class="leader-half"><code>\ue618</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-zoom-in-fixed" aria-label="zoom-in-fixed icon"></span><div class="leader-half"><code>esri-icon-zoom-in-fixed</code></div><div class="leader-half"><code>\ue619</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-refresh" aria-label="refresh icon"></span><div class="leader-half"><code>esri-icon-refresh</code></div><div class="leader-half"><code>\ue61a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-edit" aria-label="edit icon"></span><div class="leader-half"><code>esri-icon-edit</code></div><div class="leader-half"><code>\ue61b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-authorize" aria-label="authorize icon"></span><div class="leader-half"><code>esri-icon-authorize</code></div><div class="leader-half"><code>\ue61c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-map-pin" aria-label="map-pin icon"></span><div class="leader-half"><code>esri-icon-map-pin</code></div><div class="leader-half"><code>\ue61d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-blank-map-pin" aria-label="blank-map-pin icon"></span><div class="leader-half"><code>esri-icon-blank-map-pin</code></div><div class="leader-half"><code>\ue61e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-table" aria-label="table icon"></span><div class="leader-half"><code>esri-icon-table</code></div><div class="leader-half"><code>\ue61f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-plus" aria-label="plus icon"></span><div class="leader-half"><code>esri-icon-plus</code></div><div class="leader-half"><code>\ue620</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-minus" aria-label="minus icon"></span><div class="leader-half"><code>esri-icon-minus</code></div><div class="leader-half"><code>\ue621</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-beginning" aria-label="beginning icon"></span><div class="leader-half"><code>esri-icon-beginning</code></div><div class="leader-half"><code>\ue622</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-reverse" aria-label="reverse icon"></span><div class="leader-half"><code>esri-icon-reverse</code></div><div class="leader-half"><code>\ue623</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-pause" aria-label="pause icon"></span><div class="leader-half"><code>esri-icon-pause</code></div><div class="leader-half"><code>\ue624</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-play" aria-label="play icon"></span><div class="leader-half"><code>esri-icon-play</code></div><div class="leader-half"><code>\ue625</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-forward" aria-label="forward icon"></span><div class="leader-half"><code>esri-icon-forward</code></div><div class="leader-half"><code>\ue626</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-end" aria-label="end icon"></span><div class="leader-half"><code>esri-icon-end</code></div><div class="leader-half"><code>\ue627</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-erase" aria-label="erase icon"></span><div class="leader-half"><code>esri-icon-erase</code></div><div class="leader-half"><code>\ue628</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-up-down-arrows" aria-label="up-down-arrows icon"></span><div class="leader-half"><code>esri-icon-up-down-arrows</code></div><div class="leader-half"><code>\ue629</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-left" aria-label="left icon"></span><div class="leader-half"><code>esri-icon-left</code></div><div class="leader-half"><code>\ue62a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-right" aria-label="right icon"></span><div class="leader-half"><code>esri-icon-right</code></div><div class="leader-half"><code>\ue62b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-announcement" aria-label="announcement icon"></span><div class="leader-half"><code>esri-icon-announcement</code></div><div class="leader-half"><code>\ue62c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-notice-round" aria-label="notice-round icon"></span><div class="leader-half"><code>esri-icon-notice-round</code></div><div class="leader-half"><code>\ue62d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-notice-triangle" aria-label="notice-triangle icon"></span><div class="leader-half"><code>esri-icon-notice-triangle</code></div><div class="leader-half"><code>\ue62e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-home" aria-label="home icon"></span><div class="leader-half"><code>esri-icon-home</code></div><div class="leader-half"><code>\ue62f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-locate" aria-label="locate icon"></span><div class="leader-half"><code>esri-icon-locate</code></div><div class="leader-half"><code>\ue630</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-expand" aria-label="expand icon"></span><div class="leader-half"><code>esri-icon-expand</code></div><div class="leader-half"><code>\ue631</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-collapse" aria-label="collapse icon"></span><div class="leader-half"><code>esri-icon-collapse</code></div><div class="leader-half"><code>\ue632</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-layer-list" aria-label="layer-list icon"></span><div class="leader-half"><code>esri-icon-layer-list</code></div><div class="leader-half"><code>\ue633</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-basemap" aria-label="basemap icon"></span><div class="leader-half"><code>esri-icon-basemap</code></div><div class="leader-half"><code>\ue634</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-globe" aria-label="globe icon"></span><div class="leader-half"><code>esri-icon-globe</code></div><div class="leader-half"><code>\ue635</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-applications" aria-label="applications icon"></span><div class="leader-half"><code>esri-icon-applications</code></div><div class="leader-half"><code>\ue636</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-up-circled" aria-label="arrow-up-circled icon"></span><div class="leader-half"><code>esri-icon-arrow-up-circled</code></div><div class="leader-half"><code>\ue637</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-down-circled" aria-label="arrow-down-circled icon"></span><div class="leader-half"><code>esri-icon-arrow-down-circled</code></div><div class="leader-half"><code>\ue638</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-left-circled" aria-label="arrow-left-circled icon"></span><div class="leader-half"><code>esri-icon-arrow-left-circled</code></div><div class="leader-half"><code>\ue639</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-right-circled" aria-label="arrow-right-circled icon"></span><div class="leader-half"><code>esri-icon-arrow-right-circled</code></div><div class="leader-half"><code>\ue63a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-minus-circled" aria-label="minus-circled icon"></span><div class="leader-half"><code>esri-icon-minus-circled</code></div><div class="leader-half"><code>\ue63b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-plus-circled" aria-label="plus-circled icon"></span><div class="leader-half"><code>esri-icon-plus-circled</code></div><div class="leader-half"><code>\ue63c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-add-attachment" aria-label="add-attachment icon"></span><div class="leader-half"><code>esri-icon-add-attachment</code></div><div class="leader-half"><code>\ue63d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-attachment" aria-label="attachment icon"></span><div class="leader-half"><code>esri-icon-attachment</code></div><div class="leader-half"><code>\ue63e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-calendar" aria-label="calendar icon"></span><div class="leader-half"><code>esri-icon-calendar</code></div><div class="leader-half"><code>\ue63f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-close-circled" aria-label="close-circled icon"></span><div class="leader-half"><code>esri-icon-close-circled</code></div><div class="leader-half"><code>\ue640</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-browser" aria-label="browser icon"></span><div class="leader-half"><code>esri-icon-browser</code></div><div class="leader-half"><code>\ue641</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-collection" aria-label="collection icon"></span><div class="leader-half"><code>esri-icon-collection</code></div><div class="leader-half"><code>\ue642</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-comment" aria-label="comment icon"></span><div class="leader-half"><code>esri-icon-comment</code></div><div class="leader-half"><code>\ue643</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-configure-popup" aria-label="configure-popup icon"></span><div class="leader-half"><code>esri-icon-configure-popup</code></div><div class="leader-half"><code>\ue644</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-contact" aria-label="contact icon"></span><div class="leader-half"><code>esri-icon-contact</code></div><div class="leader-half"><code>\ue645</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-dashboard" aria-label="dashboard icon"></span><div class="leader-half"><code>esri-icon-dashboard</code></div><div class="leader-half"><code>\ue646</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-deny" aria-label="deny icon"></span><div class="leader-half"><code>esri-icon-deny</code></div><div class="leader-half"><code>\ue647</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-description" aria-label="description icon"></span><div class="leader-half"><code>esri-icon-description</code></div><div class="leader-half"><code>\ue648</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-directions" aria-label="directions icon"></span><div class="leader-half"><code>esri-icon-directions</code></div><div class="leader-half"><code>\ue649</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-directions2" aria-label="directions2 icon"></span><div class="leader-half"><code>esri-icon-directions2</code></div><div class="leader-half"><code>\ue64a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-documentation" aria-label="documentation icon"></span><div class="leader-half"><code>esri-icon-documentation</code></div><div class="leader-half"><code>\ue64b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-duplicate" aria-label="duplicate icon"></span><div class="leader-half"><code>esri-icon-duplicate</code></div><div class="leader-half"><code>\ue64c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-review" aria-label="review icon"></span><div class="leader-half"><code>esri-icon-review</code></div><div class="leader-half"><code>\ue64d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-environment-settings" aria-label="environment-settings icon"></span><div class="leader-half"><code>esri-icon-environment-settings</code></div><div class="leader-half"><code>\ue64e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-error" aria-label="error icon"></span><div class="leader-half"><code>esri-icon-error</code></div><div class="leader-half"><code>\ue64f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-error2" aria-label="error2 icon"></span><div class="leader-half"><code>esri-icon-error2</code></div><div class="leader-half"><code>\ue650</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-experimental" aria-label="experimental icon"></span><div class="leader-half"><code>esri-icon-experimental</code></div><div class="leader-half"><code>\ue651</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-feature-layer" aria-label="feature-layer icon"></span><div class="leader-half"><code>esri-icon-feature-layer</code></div><div class="leader-half"><code>\ue652</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-filter" aria-label="filter icon"></span><div class="leader-half"><code>esri-icon-filter</code></div><div class="leader-half"><code>\ue653</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-grant" aria-label="grant icon"></span><div class="leader-half"><code>esri-icon-grant</code></div><div class="leader-half"><code>\ue654</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-group" aria-label="group icon"></span><div class="leader-half"><code>esri-icon-group</code></div><div class="leader-half"><code>\ue655</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-key" aria-label="key icon"></span><div class="leader-half"><code>esri-icon-key</code></div><div class="leader-half"><code>\ue656</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-labels" aria-label="labels icon"></span><div class="leader-half"><code>esri-icon-labels</code></div><div class="leader-half"><code>\ue657</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-tag" aria-label="tag icon"></span><div class="leader-half"><code>esri-icon-tag</code></div><div class="leader-half"><code>\ue658</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-layers" aria-label="layers icon"></span><div class="leader-half"><code>esri-icon-layers</code></div><div class="leader-half"><code>\ue659</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-left-arrow" aria-label="left-arrow icon"></span><div class="leader-half"><code>esri-icon-left-arrow</code></div><div class="leader-half"><code>\ue65a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-right-arrow" aria-label="right-arrow icon"></span><div class="leader-half"><code>esri-icon-right-arrow</code></div><div class="leader-half"><code>\ue65b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-link-external" aria-label="link-external icon"></span><div class="leader-half"><code>esri-icon-link-external</code></div><div class="leader-half"><code>\ue65c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-link" aria-label="link icon"></span><div class="leader-half"><code>esri-icon-link</code></div><div class="leader-half"><code>\ue65d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-loading-indicator" aria-label="loading-indicator icon"></span><div class="leader-half"><code>esri-icon-loading-indicator</code></div><div class="leader-half"><code>\ue65e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-maps" aria-label="maps icon"></span><div class="leader-half"><code>esri-icon-maps</code></div><div class="leader-half"><code>\ue65f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-marketplace" aria-label="marketplace icon"></span><div class="leader-half"><code>esri-icon-marketplace</code></div><div class="leader-half"><code>\ue660</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-media" aria-label="media icon"></span><div class="leader-half"><code>esri-icon-media</code></div><div class="leader-half"><code>\ue661</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-media2" aria-label="media2 icon"></span><div class="leader-half"><code>esri-icon-media2</code></div><div class="leader-half"><code>\ue662</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-menu" aria-label="menu icon"></span><div class="leader-half"><code>esri-icon-menu</code></div><div class="leader-half"><code>\ue663</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-mobile" aria-label="mobile icon"></span><div class="leader-half"><code>esri-icon-mobile</code></div><div class="leader-half"><code>\ue664</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-phone" aria-label="phone icon"></span><div class="leader-half"><code>esri-icon-phone</code></div><div class="leader-half"><code>\ue665</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-navigation" aria-label="navigation icon"></span><div class="leader-half"><code>esri-icon-navigation</code></div><div class="leader-half"><code>\ue666</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-pan" aria-label="pan icon"></span><div class="leader-half"><code>esri-icon-pan</code></div><div class="leader-half"><code>\ue667</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-printer" aria-label="printer icon"></span><div class="leader-half"><code>esri-icon-printer</code></div><div class="leader-half"><code>\ue668</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-pie-chart" aria-label="pie-chart icon"></span><div class="leader-half"><code>esri-icon-pie-chart</code></div><div class="leader-half"><code>\ue669</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-chart" aria-label="chart icon"></span><div class="leader-half"><code>esri-icon-chart</code></div><div class="leader-half"><code>\ue66a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-line-chart" aria-label="line-chart icon"></span><div class="leader-half"><code>esri-icon-line-chart</code></div><div class="leader-half"><code>\ue66b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-question" aria-label="question icon"></span><div class="leader-half"><code>esri-icon-question</code></div><div class="leader-half"><code>\ue66c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-resend-invitation" aria-label="resend-invitation icon"></span><div class="leader-half"><code>esri-icon-resend-invitation</code></div><div class="leader-half"><code>\ue66d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-rotate" aria-label="rotate icon"></span><div class="leader-half"><code>esri-icon-rotate</code></div><div class="leader-half"><code>\ue66e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-save" aria-label="save icon"></span><div class="leader-half"><code>esri-icon-save</code></div><div class="leader-half"><code>\ue66f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-settings" aria-label="settings icon"></span><div class="leader-half"><code>esri-icon-settings</code></div><div class="leader-half"><code>\ue670</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-settings2" aria-label="settings2 icon"></span><div class="leader-half"><code>esri-icon-settings2</code></div><div class="leader-half"><code>\ue671</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-share" aria-label="share icon"></span><div class="leader-half"><code>esri-icon-share</code></div><div class="leader-half"><code>\ue672</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-sign-out" aria-label="sign-out icon"></span><div class="leader-half"><code>esri-icon-sign-out</code></div><div class="leader-half"><code>\ue673</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-support" aria-label="support icon"></span><div class="leader-half"><code>esri-icon-support</code></div><div class="leader-half"><code>\ue674</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-user" aria-label="user icon"></span><div class="leader-half"><code>esri-icon-user</code></div><div class="leader-half"><code>\ue675</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-time-clock" aria-label="time-clock icon"></span><div class="leader-half"><code>esri-icon-time-clock</code></div><div class="leader-half"><code>\ue676</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-trash" aria-label="trash icon"></span><div class="leader-half"><code>esri-icon-trash</code></div><div class="leader-half"><code>\ue677</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-upload" aria-label="upload icon"></span><div class="leader-half"><code>esri-icon-upload</code></div><div class="leader-half"><code>\ue678</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-download" aria-label="download icon"></span><div class="leader-half"><code>esri-icon-download</code></div><div class="leader-half"><code>\ue679</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-zoom-in-magnifying-glass" aria-label="zoom-in-magnifying-glass icon"></span><div class="leader-half"><code>esri-icon-zoom-in-magnifying-glass</code></div><div class="leader-half"><code>\ue67a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-search" aria-label="search icon"></span><div class="leader-half"><code>esri-icon-search</code></div><div class="leader-half"><code>\ue67b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-zoom-out-magnifying-glass" aria-label="zoom-out-magnifying-glass icon"></span><div class="leader-half"><code>esri-icon-zoom-out-magnifying-glass</code></div><div class="leader-half"><code>\ue67c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-locked" aria-label="locked icon"></span><div class="leader-half"><code>esri-icon-locked</code></div><div class="leader-half"><code>\ue67d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-unlocked" aria-label="unlocked icon"></span><div class="leader-half"><code>esri-icon-unlocked</code></div><div class="leader-half"><code>\ue67e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-favorites" aria-label="favorites icon"></span><div class="leader-half"><code>esri-icon-favorites</code></div><div class="leader-half"><code>\ue67f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-compass" aria-label="compass icon"></span><div class="leader-half"><code>esri-icon-compass</code></div><div class="leader-half"><code>\ue680</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-down" aria-label="down icon"></span><div class="leader-half"><code>esri-icon-down</code></div><div class="leader-half"><code>\ue681</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-up" aria-label="up icon"></span><div class="leader-half"><code>esri-icon-up</code></div><div class="leader-half"><code>\ue682</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-chat" aria-label="chat icon"></span><div class="leader-half"><code>esri-icon-chat</code></div><div class="leader-half"><code>\ue683</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-dock-bottom" aria-label="dock-bottom icon"></span><div class="leader-half"><code>esri-icon-dock-bottom</code></div><div class="leader-half"><code>\ue684</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-dock-left" aria-label="dock-left icon"></span><div class="leader-half"><code>esri-icon-dock-left</code></div><div class="leader-half"><code>\ue685</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-dock-right" aria-label="dock-right icon"></span><div class="leader-half"><code>esri-icon-dock-right</code></div><div class="leader-half"><code>\ue686</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-organization" aria-label="organization icon"></span><div class="leader-half"><code>esri-icon-organization</code></div><div class="leader-half"><code>\ue687</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-north-navigation" aria-label="north-navigation icon"></span><div class="leader-half"><code>esri-icon-north-navigation</code></div><div class="leader-half"><code>\ue688</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-locate-circled" aria-label="locate-circled icon"></span><div class="leader-half"><code>esri-icon-locate-circled</code></div><div class="leader-half"><code>\ue689</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-dial" aria-label="dial icon"></span><div class="leader-half"><code>esri-icon-dial</code></div><div class="leader-half"><code>\ue68a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-polygon" aria-label="polygon icon"></span><div class="leader-half"><code>esri-icon-polygon</code></div><div class="leader-half"><code>\ue68b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-polyline" aria-label="polyline icon"></span><div class="leader-half"><code>esri-icon-polyline</code></div><div class="leader-half"><code>\ue68c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-visible" aria-label="visible icon"></span><div class="leader-half"><code>esri-icon-visible</code></div><div class="leader-half"><code>\ue68d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-non-visible" aria-label="non-visible icon"></span><div class="leader-half"><code>esri-icon-non-visible</code></div><div class="leader-half"><code>\ue68e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-link-vertical" aria-label="link-vertical icon"></span><div class="leader-half"><code>esri-icon-link-vertical</code></div><div class="leader-half"><code>\ue68f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-unlocked-link-vertical" aria-label="unlocked-link-vertical icon"></span><div class="leader-half"><code>esri-icon-unlocked-link-vertical</code></div><div class="leader-half"><code>\ue690</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-link-horizontal" aria-label="link-horizontal icon"></span><div class="leader-half"><code>esri-icon-link-horizontal</code></div><div class="leader-half"><code>\ue691</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-unlocked-link-horizontal" aria-label="unlocked-link-horizontal icon"></span><div class="leader-half"><code>esri-icon-unlocked-link-horizontal</code></div><div class="leader-half"><code>\ue692</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-swap" aria-label="swap icon"></span><div class="leader-half"><code>esri-icon-swap</code></div><div class="leader-half"><code>\ue693</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-cta-link-external" aria-label="cta-link-external icon"></span><div class="leader-half"><code>esri-icon-cta-link-external</code></div><div class="leader-half"><code>\ue694</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-reply" aria-label="reply icon"></span><div class="leader-half"><code>esri-icon-reply</code></div><div class="leader-half"><code>\ue695</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-public" aria-label="public icon"></span><div class="leader-half"><code>esri-icon-public</code></div><div class="leader-half"><code>\ue696</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-share2" aria-label="share2 icon"></span><div class="leader-half"><code>esri-icon-share2</code></div><div class="leader-half"><code>\ue697</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-launch-link-external" aria-label="launch-link-external icon"></span><div class="leader-half"><code>esri-icon-launch-link-external</code></div><div class="leader-half"><code>\ue698</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-rotate-back" aria-label="rotate-back icon"></span><div class="leader-half"><code>esri-icon-rotate-back</code></div><div class="leader-half"><code>\ue699</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-pan2" aria-label="pan2 icon"></span><div class="leader-half"><code>esri-icon-pan2</code></div><div class="leader-half"><code>\ue69a</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-tracking" aria-label="tracking icon"></span><div class="leader-half"><code>esri-icon-tracking</code></div><div class="leader-half"><code>\ue69b</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-expand2" aria-label="expand2 icon"></span><div class="leader-half"><code>esri-icon-expand2</code></div><div class="leader-half"><code>\ue69c</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-down" aria-label="arrow-down icon"></span><div class="leader-half"><code>esri-icon-arrow-down</code></div><div class="leader-half"><code>\ue69d</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-arrow-up" aria-label="arrow-up icon"></span><div class="leader-half"><code>esri-icon-arrow-up</code></div><div class="leader-half"><code>\ue69e</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-hollow-eye" aria-label="hollow-eye icon"></span><div class="leader-half"><code>esri-icon-hollow-eye</code></div><div class="leader-half"><code>\ue69f</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-play-circled" aria-label="play-circled icon"></span><div class="leader-half"><code>esri-icon-play-circled</code></div><div class="leader-half"><code>\ue6a0</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-volume-off" aria-label="volume-off icon"></span><div class="leader-half"><code>esri-icon-volume-off</code></div><div class="leader-half"><code>\ue6a1</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-volume-on" aria-label="volume-on icon"></span><div class="leader-half"><code>esri-icon-volume-on</code></div><div class="leader-half"><code>\ue6a2</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-bookmark" aria-label="bookmark icon"></span><div class="leader-half"><code>esri-icon-bookmark</code></div><div class="leader-half"><code>\ue900</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-lightbulb" aria-label="lightbulb icon"></span><div class="leader-half"><code>esri-icon-lightbulb</code></div><div class="leader-half"><code>\ue901</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-sketch-rectangle" aria-label="sketch-rectangle icon"></span><div class="leader-half"><code>esri-icon-sketch-rectangle</code></div><div class="leader-half"><code>\ue902</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-north-navigation-filled" aria-label="north-navigation-filled icon"></span><div class="leader-half"><code>esri-icon-north-navigation-filled</code></div><div class="leader-half"><code>\ue903</code></div><hr></div><div class="block"><span class="font-size-3 esri-icon-default-action" aria-label="default-action icon"></span><div class="leader-half"><code>esri-icon-default-action</code></div><div class="leader-half"><code>\ue904</code></div><hr></div></div></div></article></main></div><div class="footnote feedback right trailer-1"><a class="icon-ui-contact hide js-feedback" href="mailto:js_feedback@esri.com?subject=Feedback%20on%204.9%20-%20guide:%20Esri%20Icon%20Font%20(Calcite%20theme)&body=Hello,%0A%0AI%20was%20reading%20the%20ArcGIS%20API%20for%20JavaScript%20version%204.9%20documentation%20and%20have%20some%20feedback.%0A%0ADocumentation%20details:%0APage%20title:%20%7BREPLACE_TITLE%7D%0APage%20URL:%20%7BREPLACE_URL%7D%0A%0A">Feedback on this topic?</a></div></div></div><footer class="footer leader- link-dark-gray" role="contentinfo"><div class="grid-container"><nav class="column-6"><h6>ArcGIS for Developers</h6><ul class="list-plain"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/documentation/">Documentation</a></li><li><a href="/support/">Support</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/startups/">Startups</a></li><li><a href="https://blogs.esri.com/esri/arcgis/category/developer/">Blog</a></li></ul></nav><nav class="column-6"><h6>ArcGIS Platform</h6><ul class="list-plain"><li><a href="http://arcgis.com">ArcGIS Online</a></li><li><a href="http://desktop.arcgis.com">ArcGIS Desktop</a></li><li><a href="http://server.arcgis.com">ArcGIS Enterprise</a></li><li><a href="http://developers.arcgis.com">ArcGIS for Developers</a></li><li><a href="http://solutions.arcgis.com">ArcGIS Solutions</a></li><li><a href="http://marketplace.arcgis.com">ArcGIS Marketplace</a></li></ul></nav><nav class="column-6"><h6>About Esri</h6><ul class="list-plain"><li><a href="http://www.esri.com/about-esri/">About Us</a></li><li><a href="http://www.esri.com/careers/">Careers</a></li><li><a href="https://blogs.esri.com/esri/esri-insider/">Insiders Blog</a></li><li><a href="http://www.esri.com/events/user-conference/index.html">User Conference</a></li><li><a href="http://www.esri.com/events/devsummit/index.html">Developer Summit</a></li></ul></nav><nav class="column-6"><a class="esri-logo" href="http://esri.com" aria-label="Esri Home"></a><div class="footer-social-nav leader-1"><a class="icon-social-twitter" aria-label="Esri on Twitter" href="https://twitter.com/Esri/"></a> <a class="icon-social-facebook" aria-label="Esri on Facebook" href="https://www.facebook.com/esrigis/"></a> <a class="icon-social-github" aria-label="Esri on GitHub" href="http://esri.github.com/"></a> <a class="icon-social-contact" aria-label="Contact Esri" href="http://www.esri.com/about-esri/contact/"></a></div></nav><div class="column-24 leader-1"><p><small><a href="http://www.esri.com/legal/copyright-trademarks">Copyright © 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="http://www.esri.com/legal/software-license">Terms of use</a> | <a href="/terms/faq/">FAQ</a></small></p></div></div></footer><script></script><script>var relativePath=document.URL.replace(/[-\w\d]*\.(html|css|js).*/,"../../..")</script><script src="../../../assets/js/config.js"></script><script src="../../../assets/js/preparse.js"></script><div class="js-modal modal-overlay modifier-class" data-modal="modal-keyboard-shortcuts"><div class="modal-content column-8" aria-label="modal" role="dialog"><a class="js-modal-toggle right" href="#" aria-label="close-modal"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 32 32" class="svg-icon"><path d="M18.404 16l9.9 9.9-2.404 2.404-9.9-9.9-9.9 9.9L3.696 25.9l9.9-9.9-9.9-9.898L6.1 3.698l9.9 9.899 9.9-9.9 2.404 2.406-9.9 9.898z"/></svg></a><h4>Keyboard shortcuts</h4><hr class="leader-0 trailer-half"><div><table class="table-plain keyboard-mappings"><thead><tr><th></th><th>Site wide shortcuts</th></tr></thead><tbody><tr><td><kbd>?</kbd></td><td>Bring up this help dialog</td></tr><tr><td><kbd>esc</kbd></td><td>Dismiss this help dialog</td></tr><tr><td><kbd>g</kbd><kbd>h</kbd></td><td>Go to Home</td></tr><tr><td><kbd>g</kbd><kbd>g</kbd></td><td>Go to Guide</td></tr><tr><td><kbd>g</kbd><kbd>a</kbd></td><td>Go to API Reference</td></tr><tr><td><kbd>g</kbd><kbd>s</kbd></td><td>Go to Sample Code</td></tr><tr><td><kbd>g</kbd><kbd>t</kbd></td><td>Scroll to top of page</td></tr><tr><td><kbd>spacebar</kbd></td><td>Scroll page down</td></tr><tr><td><kbd>shift spacebar</kbd></td><td>Scroll page up</td></tr><tr><td><kbd>g</kbd><kbd>b</kbd></td><td>Scroll to bottom of page</td></tr></tbody></table></div></div></div><script src="../../../assets/js/libs/url-search-params.js"></script><script src="../../../assets/js/calcite-web.js"></script><script src="../../../assets/js/calcite-web-extend.js"></script><script src="../../../assets/js/libs/mousetrap.js"></script><script>"function"==typeof Mousetrap&&"object"==typeof calcite&&"function"==typeof Mousetrap&&"object"==typeof calcite&&Mousetrap.bind(["g h","g g","g a","g s","?","g t","g b"],function(e,t){calcite.bus.emit("keyboard:mousetrap",{event:e,combination:t,navigation:{h:"../../../index.html",g:"../../../latest/guide/index.html",a:"../../../latest/api-reference/index.html",s:"../../../latest/sample-code/index.html"}})})</script></body></html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Directions widget - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/Directions",
+      "esri/core/urlUtils"
+    ], function(
+      Map,
+      MapView,
+      Directions,
+      urlUtils) {
+
+      // Proxy the route requests to avoid prompt for log in
+      urlUtils.addProxyRule({
+        urlPrefix: "route.arcgis.com",
+        proxyUrl: "/sproxy/"
+      });
+
+      var map = new Map({
+        basemap: "topo-vector"
+      });
+
+      var view = new MapView({
+        scale: 123456789,
+        container: "viewDiv",
+        map: map
+      });
+
+      var directionsWidget = new Directions({
+        view: view
+      });
+
+      // Add the Directions widget to the top right corner of the view
+      view.ui.add(directionsWidget, {
+        position: "top-right"
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

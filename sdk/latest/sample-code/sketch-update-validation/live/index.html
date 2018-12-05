@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Sketch update validation - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: verdana;
+    }
+
+    #instructions {
+      width: 300px;
+      background: #fff;
+      padding: 20px;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/widgets/Sketch/SketchViewModel",
+      "esri/Graphic",
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/layers/GraphicsLayer",
+      "esri/geometry/Polygon",
+      "esri/geometry/geometryEngine",
+      "esri/widgets/Expand"
+    ], function(
+      SketchViewModel, Graphic, Map, MapView, FeatureLayer,
+      GraphicsLayer, Polygon, geometryEngine, Expand
+    ) {
+
+      let view, sketchViewModel, graphicsLayer, boundaryPolygon,
+        validSymbol,
+        invalidSymbol, bufferLayer, buffers, newDevelopmentGraphic,
+        instructionsExpand;
+      let intersects = false,
+        contains = true;
+
+      // creates new view and map, adds featurelayers and graphicslayer to the view
+      setUpView();
+
+      view.when(function() {
+        // Query all buffer features from the school buffers featurelayer
+        bufferLayer.queryFeatures().then(function(results) {
+          buffers = results.features[0].geometry;
+        });
+
+        // Add the boundary polygon and new lot polygon graphics
+        addGraphics();
+
+        // New development polygon can be selected from the click event
+        setUpGraphicClickHandler();
+
+        // Create a new instance of sketchViewModel and set its required properties
+        sketchViewModel = new SketchViewModel({
+          view: view,
+          layer: graphicsLayer
+        });
+
+        // Listen to sketchViewModel events to make sure that the graphic does not
+        // intersect school buffers or is contained by the boundary polygon. If it does,
+        // change the graphic symbol to an invalid symbol and give the user a chance
+        // to correct the invalid update.
+        sketchViewModel.on("update-init", checkGraphicUpdate);
+        sketchViewModel.on("move-start", checkGraphicUpdate);
+        sketchViewModel.on("move", checkGraphicUpdate);
+        sketchViewModel.on("move-complete", checkGraphicUpdate);
+        sketchViewModel.on("scale-start", checkGraphicUpdate);
+        sketchViewModel.on("scale", checkGraphicUpdate);
+        sketchViewModel.on("scale-complete", checkGraphicUpdate);
+        sketchViewModel.on("rotate-start", checkGraphicUpdate);
+        sketchViewModel.on("rotate", checkGraphicUpdate);
+        sketchViewModel.on("rotate-complete", checkGraphicUpdate);
+        sketchViewModel.on("reshape-start", checkGraphicUpdate);
+        sketchViewModel.on("reshape", checkGraphicUpdate);
+        sketchViewModel.on("reshape-complete", checkGraphicUpdate);
+        sketchViewModel.on("update", checkGraphicUpdate);
+        sketchViewModel.on("undo", checkGraphicUpdate);
+        sketchViewModel.on("redo", checkGraphicUpdate);
+
+        // Event handler for update-cancel and update-complete events
+        sketchViewModel.on("update-cancel", graphicUpdateEnded);
+        sketchViewModel.on("update-complete", graphicUpdateEnded);
+      });
+
+      // Called from various sketchViewModel update events
+      function checkGraphicUpdate(event) {
+        // update the new development graphic geometry to match the update geometry
+        newDevelopmentGraphic.geometry = event.geometry;
+
+        // Check if the new development graphic geometry intersects school buffers
+        // or the boundary polygon. If it does, change the graphic symbol to indicate
+        // the update is invalid.
+        intersects = geometryEngine.intersects(buffers,
+          newDevelopmentGraphic.geometry);
+        contains = geometryEngine.contains(boundaryPolygon,
+          newDevelopmentGraphic.geometry);
+        newDevelopmentGraphic.symbol = (intersects) || (!contains) ?
+          invalidSymbol : validSymbol
+      }
+
+      // Called from sketchViewModel's update-cancel and update-complete events.
+      function graphicUpdateEnded(event) {
+        // If the updated graphic intersects school buffers or is not contained
+        // by the boundary polygon, change the graphic symbol and Pass the invalid
+        // graphic to sketchViewModel.update method.
+        if ((!contains) || (intersects)) {
+          newDevelopmentGraphic.symbol = invalidSymbol;
+          sketchViewModel.update(newDevelopmentGraphic);
+        }
+      }
+
+      // This function is called when a user clicks on the view.
+      function setUpGraphicClickHandler() {
+        view.on("click", function(event) {
+          view.hitTest(event).then(function(response) {
+            var results = response.results;
+            // Check if the new development graphic was clicked and pass
+            // the graphic to sketchViewModel.update.
+            results.forEach(function(result) {
+              if (result.graphic.attributes && result.graphic.attributes
+                .newDevelopment) {
+                sketchViewModel.update(result.graphic);
+              }
+            });
+          });
+        });
+      }
+
+      // Add new development polygon graphic and boundary polygon graphics
+      function addGraphics() {
+        const vertices = [
+          [-13040270.324055556, 4040357.7882640623],
+          [-13038653.725694647, 4040689.513023534],
+          [-13038063.204863824, 4038017.2028549737],
+          [-13040097.818223165, 4037990.629044359],
+          [-13040270.324055556, 4040357.7882640623]
+        ]
+
+        const polygon = createGeometry(vertices);
+        validSymbol = createSymbol([0, 170, 255, 0.8], "solid", 2, [255,
+          255, 255
+        ]);
+        newDevelopmentGraphic = new Graphic({
+          geometry: polygon,
+          symbol: validSymbol,
+          attributes: {
+            newDevelopment: "new store"
+          }
+        });
+
+        const boundaryVertices = [
+          [-13048353.166569024, 4041363.935436187],
+          [-13036929.861699322, 4041363.935436187],
+          [-13036929.861699322, 4030232.5692555667],
+          [-13048353.166569024, 4030232.5692555667],
+          [-13048353.166569024, 4041363.935436187],
+        ];
+
+        boundaryPolygon = createGeometry(boundaryVertices);
+        const boundarySymbol = createSymbol("white", "none", 2, [255, 255,
+          255
+        ]);
+        const boundaryGraphic = new Graphic({
+          geometry: boundaryPolygon,
+          symbol: boundarySymbol
+        });
+        graphicsLayer.addMany([boundaryGraphic, newDevelopmentGraphic]);
+      }
+
+      function createGeometry(vertices) {
+        return new Polygon({
+          rings: vertices,
+          spatialReference: view.spatialReference
+        });
+      }
+
+      function createSymbol(color, style, width, outlineColor) {
+        return {
+          type: "simple-fill",
+          style: style,
+          color: color,
+          outline: {
+            color: outlineColor,
+            width: width
+          }
+        }
+      }
+
+      // Create new view, map and layers... set up the view
+      function setUpView() {
+        const schoolsLayer = new FeatureLayer({
+          portalItem: {
+            id: "47f194aaa40d41be94fcdf1921801c57"
+          }
+        });
+
+        bufferLayer = new FeatureLayer({
+          portalItem: {
+            id: "a1fc918a654648eb833826d1c198922e"
+          }
+        });
+
+        graphicsLayer = new GraphicsLayer();
+
+        const map = new Map({
+          basemap: "streets-night-vector",
+          layers: [bufferLayer, schoolsLayer, graphicsLayer]
+        });
+
+        view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 12,
+          center: [-117.1708, 34.0574]
+        });
+
+        // Instructions expand widget
+        const sampleInstructions = document.getElementById("instructions");
+        instructionsExpand = new Expand({
+          expandIconClass: "esri-icon-question",
+          expandTooltip: "How to use this sample",
+          expanded: true,
+          view: view,
+          content: sampleInstructions
+        });
+        view.ui.add(instructionsExpand, "top-left");
+
+        // hide the instructions expand widget when the view becomes focused
+        view.watch("focused", function(newValue, oldValue, property, object) {
+          if (newValue) {
+            instructionsExpand.expanded = false;
+          }
+        });
+        invalidSymbol = createSymbol([255, 0, 0], "diagonal-cross", 4, [255,
+          0, 0
+        ]);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="instructions">
+    <b>Instructions</b>
+    <br />
+    <b>Click</b> the
+    <b>blue polygon</b> graphic.
+    <br /> Rotate, scale, move or reshape the graphic.
+    <br />
+    <br /> Update operation can only be completed if the graphic does not
+    intersect school buffers and is inside the boundary polygon.
+  </div>
+</body>
+
+</html>

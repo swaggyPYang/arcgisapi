@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Coloring options for textured buildings - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #colorMixMode {
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: white;
+      padding: 20px;
+      font-size: 0.8em;
+    }
+
+    #colorMixMode label {
+      padding-right: 10px;
+      cursor: pointer;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/layers/SceneLayer",
+      "esri/widgets/Legend"
+    ], function (
+      WebScene, SceneView, SceneLayer,
+      Legend
+    ) {
+
+      // Load a webscene and add it to the view
+      var webscene = new WebScene({
+        portalItem: { // autocasts as new PortalItem()
+          id: "03a9607d96244883af64c7f8c7e5de1b"
+        }
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webscene
+      });
+
+      // Create SceneLayer with textured buildings
+      var layer = new SceneLayer({
+        portalItem: {
+          id: "5ecba5273b2d41ff9f6f1eb33f238d18"
+        },
+        title: "Buildings in Helsinki"
+      });
+
+      function getUniqueValueRenderer(color, colorMixMode) {
+        return {
+          type: "unique-value", // autocasts as new UniqueValueRenderer()
+          field: "usage",
+          defaultSymbol: {
+            type: "mesh-3d", // autocasts as new MeshSymbol3D()
+            symbolLayers: [{
+              type: "fill", // autocasts as new FillSymbol3DLayer()
+              material: {
+                color: [230, 230, 230, 0.7],
+                // We are not interested in these buildings, but we keep them for context
+                // We want to remove the texture so we set the colorMixMode to replace
+                colorMixMode: "replace"
+              }
+            }]
+          },
+          uniqueValueInfos: [{
+            value: "general or commercial",
+            label: "commercial buildings",
+            symbol: {
+              type: "mesh-3d", // autocasts as new MeshSymbol3D()
+              symbolLayers: [{
+                type: "fill", // autocasts as new FillSymbol3DLayer()
+                material: {
+                  color: color,
+                  colorMixMode: colorMixMode
+                }
+              }]
+            }
+          }],
+          legendOptions: {
+            title: "Usage"
+          }
+        };
+      }
+
+      // This function sets a new renderer on the layer depending on selected option
+      function setRenderer(type) {
+        if (type === "original") {
+          layer.renderer = null;
+        } else if (type === "select") {
+          // In this case we want to keep the texture unmodified for the buildings we are interested in
+          // color and colorMixMode should be set to null, otherwise they default to "white" and "multiply"
+          layer.renderer = getUniqueValueRenderer(null, null);
+        } else if (type === "emphasize") {
+          // We apply a color to make buildings stand out, but we also want to keep the texture, so we use tint
+          layer.renderer = getUniqueValueRenderer("#F5D5A9", "tint");
+        } else {
+          // Applying a white color with tint option will desaturate the texture
+          // Use replace if the texture should be removed
+          var colorMixMode = (type === "desaturate") ? "tint" : "replace";
+
+          // Create a SimpleRenderer and apply it to the layer
+          var locationRenderer = {
+            type: "simple", // autocasts as new SimpleRenderer()
+            symbol: {
+              type: "mesh-3d", // autocasts as new MeshSymbol3D()
+              symbolLayers: [{
+                type: "fill", // autocasts as new FillSymbol3DLayer()
+                material: {
+                  color: "white",
+                  colorMixMode: colorMixMode
+                }
+              }]
+            }
+          };
+          layer.renderer = locationRenderer;
+        }
+      }
+
+      webscene.add(layer);
+
+      // Add event listener on the buttons to change the renderer and the colorMixMode
+      document.getElementById("colorMixMode").addEventListener("change", function (event) {
+        setRenderer(event.target.id);
+      });
+
+      view.ui.add("colorMixMode", "bottom-left");
+
+    });
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="colorMixMode">
+    <input type="radio" id="original" name="mode" checked>
+    <label for="original">Buildings with original texture</label>
+    <br>
+    <input type="radio" id="select" name="mode">
+    <label for="select">Show commercial buildings</label>
+    <br>
+    <input type="radio" id="emphasize" name="mode">
+    <label for="emphasize">Emphasize commercial buildings</label>
+    <br>
+    <input type="radio" id="desaturate" name="mode">
+    <label for="desaturate">Desaturate texture</label>
+    <br>
+    <input type="radio" id="replace" name="mode">
+    <label for="replace">Remove texture</label>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query SceneLayerView - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #infoDiv {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+    }
+
+    h3 {
+      border-bottom: 1px solid black;
+    }
+
+    img {
+      max-height: 200px;
+      max-width: 200px;
+    }
+  </style>
+
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/tasks/support/Query"
+    ], function(WebScene, SceneView, Query) {
+
+      // load web scene from ArcGIS Online
+      var webScene = new WebScene({
+        portalItem: { // autocasts as new PortalItem()
+          id: "bde8e884a5064f48bcf3440964d748e2"
+        }
+      });
+
+      // create the scene view
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webScene,
+        environment: {
+          lighting: {
+            ambientOcclusionEnabled: true
+          }
+        }
+      });
+
+      // wait until the webscene finished loading
+      webScene.when(function() {
+
+        // retrieve the scene layer from the webscene - in this case it is the first layer
+        var sceneLayer = webScene.layers.getItemAt(0);
+
+        // retrieve the layer view of the scene layer
+        view.whenLayerView(sceneLayer)
+          .then(function(sceneLayerView) {
+
+            // register a click event on the view
+            view.on("click", function(event) {
+              // use hitTest to find if any graphics were clicked
+              view.hitTest(event)
+                .then(function(response) {
+
+                  // check if a graphic is returned from the hitTest
+                  if (response.results[0].graphic) {
+
+                    // Create query object
+                    //
+                    // by specifying objectIds, the query will return results only for
+                    // the feature matching the graphic's objectid
+                    var query = new Query({
+                      objectIds: [response.results[0].graphic
+                        .attributes.OBJECTID
+                      ],
+                      // indicates the query should return all attributes
+                      outFields: ["*"]
+                    });
+
+                    // queryExtent() will return the 3D extent of the feature that satisfies the query
+                    sceneLayerView.queryExtent(query)
+                      .then(function(result) {
+                        view.goTo({
+                          target: result.extent.expand(2),
+                          tilt: 60
+                        }, {
+                          duration: 1000,
+                          easing: "out-expo"
+                        });
+                      });
+
+                    // queryFeatures() will return the feature that satisfies the query - we can then get all the attributes of the feature
+                    sceneLayerView.queryFeatures(query)
+                      .then(function(result) {
+                        showInfo(result.features[0].attributes);
+                      });
+                  }
+                });
+            })
+          });
+      });
+
+      // function that displays some of the attributes of the feature in an HTML element
+      function showInfo(attributes) {
+        document.getElementById("infoDiv").innerHTML = "<h3>" + attributes.Building_N +
+          "</h3>" +
+          "<p> Address: " + attributes.Address + "</p>" +
+          "<p> City: " + attributes.City + "</p>" +
+          "<p> Construction year: " + attributes.Construction + "</p>" +
+          "<img src='" + attributes.AA2_Photo + "' alt=''>";
+      }
+
+      // add HTML element to the view
+      view.ui.add(document.getElementById("infoDiv"), "top-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="infoDiv">Click on a building to zoom to it and get more information</div>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

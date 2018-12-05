@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Label features using Arcade expressions - 4.9</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
+
+<style>
+  html,
+  body,
+  #viewDiv {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+    <!--
+    Arcade expression that determines the compass direction wind
+    is blowing based on a field indicating the compass degrees
+    of the wind direction. This is appended to the wind speed
+    -->
+    <script type="text/plain" id="wind-direction">
+      var DEG = $feature.WIND_DIRECT;
+      var SPEED = $feature.WIND_SPEED;
+      var DIR = When( SPEED == 0, "",
+        (DEG < 22.5 && DEG >= 0) || DEG > 337.5, "N",
+        DEG >= 22.5 && DEG < 67.5, "NE",
+        DEG >= 67.5 && DEG < 112.5, "E",
+        DEG >= 112.5 && DEG < 157.5, "SE",
+        DEG >= 157.5 && DEG < 202.5, "S",
+        DEG >= 202.5 && DEG < 247.5, "SW",
+        DEG >= 247.5 && DEG < 292.5, "W",
+        DEG >= 292.5 && DEG < 337.5, "NW", "" );
+      return SPEED + " mph " + DIR;
+    </script>
+
+    <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer"
+    ], function(Map, SceneView, FeatureLayer
+    ) {
+
+      var map = new Map({
+        basemap: "topo"
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            x: -10930027,
+            y: 5458284,
+            z: 126663,
+            spatialReference: {
+              wkid: 102100
+            }
+          },
+          heading: 63,
+          tilt: 73
+        },
+        constraints: {
+          altitude: {
+            min: 100000
+          }
+        }
+      });
+
+      //////////////////////////
+      ////                  ////
+      //// wind label class ////
+      ////                  ////
+      //////////////////////////
+
+      // get Arcade expression as string from script element
+      var windArcade = document.getElementById("wind-direction").text;
+
+      // store colors for the label classes in this array
+      var windClasses = [
+        {min: 0, max: 67.5, color: "#4c82c4"},
+        {min: 67.5, max: 157.5, color: "#6c4cc4"},
+        {min: 157.5, max: 247.5, color: "#ae4cc4"},
+        {min: 247.5, max: 337.5, color: "#c44c88"},
+        {min: 337.5, max: 360, color: "#4c82c4"}
+      ];
+
+      // create the array of classes that will be used for the labelingInfo
+      var windLabelClasses = windClasses.map(function(windClass) {
+        return {
+          labelExpressionInfo: {
+            // set the Arcade expression in this property
+            expression: windArcade
+          },
+          where: "WIND_DIRECT > " + windClass.min + " AND WIND_DIRECT <= " + windClass.max,
+          labelPlacement: "above-center",
+          symbol: {
+            type: "label-3d",
+            symbolLayers: [{
+              type: "text",
+              material: { color: "white" },
+              halo: {
+                color: windClass.color,
+                size: 1
+              },
+              size: 12
+            }]
+          }
+        };
+      });
+
+      // Create the layer and add it to the map
+      var layer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/weather_stations_010417/FeatureServer/0",
+        elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 1000
+        },
+        renderer: {
+          type: "simple",
+          symbol: {
+            type: "point-3d",
+            symbolLayers: [{
+              type: "object",
+              material: { color: "#a38a8a" },
+              resource: { primitive: "tetrahedron" },
+              width: 10000,
+              depth: 20000,
+              height: 1000
+            }]
+          },
+          visualVariables: [{
+            type: "rotation",
+            // the tetrahedron points south by default, so we need to subtract 180 degrees
+            valueExpression: "$feature.WIND_DIRECT - 180",
+            axis: "heading"
+          }]
+        },
+        // labelingInfo can contain multiple classes to symbolize features differently in the same layer,
+        // but you can't use multiple labels on the same feature. Each feature will always have a single
+        // label that satisfies the where query in the label class
+        labelingInfo: windLabelClasses,
+        opacity: 1
+      });
+
+      map.add(layer);
+    });
+
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

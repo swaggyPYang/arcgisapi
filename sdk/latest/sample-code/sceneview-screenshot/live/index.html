@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Take a screenshot of a SceneView - 4.9</title>
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+
+    #screenshotDiv {
+      flex: 0.5;
+      text-align: center;
+      background-color: #efeaf2;
+      font-size: 1.1em;
+      padding: 1em;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .download-link {
+      display: block;
+    }
+
+    #viewDiv {
+      flex: 0.5;
+    }
+
+    .screenshotCursor {
+      cursor: crosshair;
+    }
+
+    .action-button {
+      padding: 10px;
+      border: none;
+      text-align: center;
+    }
+
+    .action-button:hover,
+    .action-button:focus {
+      background: #0079c1;
+      color: #e4e4e4;
+    }
+
+    #maskDiv {
+      position: absolute;
+      display: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px dashed rgb(255, 255, 255);
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView"
+    ], function(WebScene, SceneView) {
+
+      const webscene = new WebScene({
+        portalItem: {
+          id: "f19c17eb035a471fb7c6cded65eab9f0"
+        }
+      });
+
+      const view = new SceneView({
+        map: webscene,
+        container: "viewDiv"
+      });
+
+      const titleInput = document.getElementById("titleInput");
+      const screenshotButton = document.getElementById("screenshotButton");
+      const maskDiv = document.getElementById("maskDiv");
+
+      // replace the navigation elements with screenshot UI elements
+      view.ui.empty("top-left");
+      view.ui.add([titleInput, screenshotButton], "top-left");
+
+      screenshotButton.addEventListener("click", function() {
+
+        screenshotButton.classList.add("active");
+        view.container.classList.add("screenshotCursor");
+        let area = null;
+
+        const dragHandler = view.on("drag", function(event) {
+
+          // prevent navigation in the view
+          event.stopPropagation();
+
+          // when the user starts dragging or is dragging
+          if (event.action !== "end") {
+            // calculate the extent of the area selected by dragging the cursor
+            const xmin = clamp(Math.min(event.origin.x, event.x), 0, view.width);
+            const xmax = clamp(Math.max(event.origin.x, event.x), 0, view.width);
+            const ymin = clamp(Math.min(event.origin.y, event.y), 0, view.height);
+            const ymax = clamp(Math.max(event.origin.y, event.y), 0, view.height);
+            area = {
+                x: xmin,
+                y: ymin,
+                width: xmax - xmin,
+                height: ymax - ymin
+            };
+            // set the position of the div element that marks the selected area
+            setMaskPosition(area);
+          }
+          // when the user stops dragging
+          else {
+            // remove the drag event listener from the SceneView
+            dragHandler.remove();
+            // the screenshot of the selected area is taken
+            view.takeScreenshot({ area: area })
+              .then(function(screenshot) {
+                createImage(screenshot);
+                // the screenshot mode is disabled
+                screenshotButton.classList.remove("active");
+                view.container.classList.remove("screenshotCursor");
+                setMaskPosition(null);
+              });
+          }
+        });
+
+        // creates an image from the title and the screenshot of the view
+        function createImage(screenshot) {
+
+          const title = titleInput.value;
+          const imageData = screenshot.data;
+
+          // create canvas
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          canvas.height = imageData.height;
+          canvas.width = imageData.width;
+
+          // add the image to the canvas
+          context.putImageData(imageData, 0, 0);
+
+          // add the text from the titleInput element
+          context.font = "20px Arial";
+          context.fillStyle = "white";
+          context.fillText(title, 20, 50);
+
+          // add image to the DOM and create a download button
+          const fileName = title;
+          const screenshotImage = document.getElementsByClassName("js-screenshot-image")[0];
+          screenshotImage.width = imageData.width;
+          screenshotImage.height = imageData.height;
+          screenshotImage.src =  canvas.toDataURL();
+          const screenshotLink = document.getElementsByClassName("js-screenshot-link")[0];
+          screenshotLink.href = canvas.toDataURL();
+          screenshotLink.download = fileName + ".png";
+          document.getElementsByClassName("js-screenshot-description")[0].classList.add("hide");
+          document.getElementsByClassName("js-screenshot-result")[0].classList.remove("hide");
+        }
+
+        function setMaskPosition(area) {
+          if (area) {
+            maskDiv.style.display = "block";
+            maskDiv.style.left = area.x + "px";
+            maskDiv.style.top = area.y + "px";
+            maskDiv.style.width = area.width + "px";
+            maskDiv.style.height = area.height + "px";
+          }
+          else {
+            maskDiv.style.display = "none";
+          }
+        }
+
+        function clamp(value, from, to) {
+          return value < from ? from : value > to ? to : value;
+        }
+
+      });
+    });
+    </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <button id="screenshotButton" class="esri-icon-media action-button esri-widget"
+      aria-label="Select screenshot area" title="Select screenshot area"></button>
+    <input type="text" value="Set an image title" id="titleInput" autofocus>
+  </div>
+  <div id="screenshotDiv">
+    <div class="js-screenshot-description">
+      <p>Click on the screenshot button to activate it and then drag to select
+        a screenshot area.</p>
+      <p>You can also set a title for the image.</p>
+    </div>
+    <div class="hide js-screenshot-result">
+      <img class="js-screenshot-image">
+      <a class="download-link js-screenshot-link">Download image</a>
+    </div>
+  </div>
+  <div id="maskDiv" class="screenshotCursor"></div>
+</body>
+</html>

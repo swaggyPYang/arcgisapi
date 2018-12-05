@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Toggle ground elevation - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #elevationDiv {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView"
+    ], function(Map, SceneView) {
+
+      // Create the Map
+      var map = new Map({
+        basemap: "hybrid",
+        ground: "world-elevation"
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: [7.654, 45.919, 5184],
+          tilt: 80
+        }
+      });
+
+      view.when(function() {
+        document.getElementById("elevationInput").addEventListener("change", updateElevation);
+
+        function updateElevation(ev) {
+          // Turn ground layers visibility on/off
+          map.ground.layers.forEach(function(layer) {
+            layer.visible = ev.target.checked;
+          });
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="elevationDiv">
+    <label>Elevation:
+      <input id="elevationInput" type="checkbox" checked="yes">
+    </label>
+  </div>
+</body>
+</html>

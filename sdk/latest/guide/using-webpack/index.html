@@ -1,0 +1,234 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="content-language" content="en"><meta name="last-modified" content="Tue Sep 04 2018 14:34:41 GMT-0700 (Pacific Daylight Time)"><meta name="product" content="js-api-arcgis"><meta name="version" content="4.x"><meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="subject_label" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="sub_category" content="JavaScript API"><meta name="sub_category_label" content="ArcGIS API for JavaScript"><meta name="content_type" content="Guide"><meta name="content_type_label" content="Guide"><meta name="search-collection" content="help"><meta name="search-category" content="help-api,help-api-guide"><title>Using webpack for Custom Builds | ArcGIS API for JavaScript 4.9</title><link rel="shortcut icon" href="../../../assets/img/favicon.ico"><link rel="stylesheet" href="../../../assets/css/default.css"></head><body><developers-account-notifications></developers-account-notifications><div class="wrapper"><header class="top-nav top-nav-hover-top"><div class="grid-container"><div class="column-24 tablet-show"><div class="dropdown js-dropdown left"><a href="#" class="icon-ui-menu top-nav-title js-drawer-toggle top-nav-title-tablet" data-drawer="top-nav">ArcGIS API for JavaScript</a></div></div><div class="column-24 leader-1 trailer-1 tablet-leader-0">Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a></div></div></header><header class="sub-nav sub-nav-purple"><div class="grid-container"><nav class="breadcrumbs breadcrumbs-white clearfix padding-leader-1"><a href="/web-api/" class="crumb">ArcGIS Web API</a> <a href="../../.." class="crumb">JavaScript API</a> <a href="../../.." class="crumb">4.9</a> <a href="../../../latest/guide/index.html" class="crumb">Guide</a></nav><h1 class="sub-nav-title text-white leader-1">ArcGIS API for JavaScript</h1><nav class="sub-nav-list leader-0 tablet-hide"><a class="sub-nav-link" href="../../../index.html">Home</a> <a class="sub-nav-link is-active" href="../../../latest/guide/index.html">Guide</a> <a class="sub-nav-link" href="../../../latest/api-reference/index.html">API Reference</a> <a class="sub-nav-link" href="../../../latest/sample-code/index.html">Sample Code</a> <a class="sub-nav-link" href="../../../support/index.html">Support</a></nav><select class="select-full trailer-half tablet-show js-select-nav"><option value="../../../index.html">Home</option><option selected="selected" value="../../../latest/guide/index.html">Guide</option><option value="../../../latest/api-reference/index.html">API Reference</option><option value="../../../latest/sample-code/index.html">Sample Code</option><option value="../../../support/index.html">Support</option></select></div></header><div id="skip-to-content"><div class="grid-container leader-1"><div class="column-6 trailer-2 tablet-hide"><aside class="accordion side-nav column-6 js-accordion guide"><div class="accordion-section"><h4 class="accordion-title">Get Started</h4><nav class="accordion-content"><a href="../../../latest/guide/index.html" class="side-nav-link">Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/release-notes/index.html" class="side-nav-link">Release notes</a></nav><nav class="accordion-content"><a href="../../../latest/guide/get-api/index.html" class="side-nav-link">Get the API</a></nav><nav class="accordion-content"><a href="../../../latest/guide/system-requirements/index.html" class="side-nav-link">System requirements</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from 3.x</h4><nav class="accordion-content"><a href="../../../latest/guide/choose-version/index.html" class="side-nav-link">Choose a version</a></nav><nav class="accordion-content"><a href="../../../latest/guide/migrating/index.html" class="side-nav-link">Migrating from 3.x to 4.9</a></nav><nav class="accordion-content"><a href="../../../latest/guide/functionality-matrix/index.html" class="side-nav-link">3.x to 4.x functionality matrix</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from other APIs</h4><nav class="accordion-content"><a href="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html" class="side-nav-link">Migrating from Google Maps API</a></nav></div><div class="accordion-section is-active"><h4 class="accordion-title">Working with the API</h4><nav class="accordion-content"><a href="../../../latest/guide/working-with-props/index.html" class="side-nav-link">Properties</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-promises/index.html" class="side-nav-link">Promises</a></nav><nav class="accordion-content"><a href="../../../latest/guide/arcade/index.html" class="side-nav-link">Arcade</a></nav><nav class="accordion-content"><a href="../../../latest/guide/labeling/index.html" class="side-nav-link">Labeling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/view-ui/index.html" class="side-nav-link">View UI</a></nav><nav class="accordion-content"><a href="../../../latest/guide/autocasting/index.html" class="side-nav-link">Autocasting</a></nav><nav class="accordion-content"><a href="../../../latest/guide/loadable/index.html" class="side-nav-link">Loadable</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-fromjson/index.html" class="side-nav-link">Using fromJSON()</a></nav><nav class="accordion-content"><a href="../../../latest/guide/typescript-setup/index.html" class="side-nav-link">TypeScript Setup</a></nav><nav class="accordion-content"><a href="../../../latest/guide/custom-widget/index.html" class="side-nav-link">Widget Development</a></nav><nav class="accordion-content"><a href="../../../latest/guide/implementing-accessor/index.html" class="side-nav-link">Implementing Accessor</a></nav><nav class="accordion-content"><a href="../../../latest/guide/styling/index.html" class="side-nav-link">Styling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-platform/index.html" class="side-nav-link">Working with the ArcGIS platform</a></nav><nav class="accordion-content"><a href="../../../latest/guide/secure-resources/index.html" class="side-nav-link">Access Secure Resources</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-frameworks/index.html" class="side-nav-link">Using Frameworks</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-npm/index.html" class="side-nav-link">Using npm</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-webpack/index.html" class="side-nav-link is-active">Using webpack</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-phonegap/index.html" class="side-nav-link">Using PhoneGap</a></nav><nav class="accordion-content"><a href="../../../latest/guide/intro-workflows/index.html" class="side-nav-link">Intro to Workflow Manager</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-scene-layers/index.html" class="side-nav-link">Working with scene layers</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Visualization</h4><nav class="accordion-content"><a href="../../../latest/guide/visualization-overview/index.html" class="side-nav-link">Visualization Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/creating-visualizations-manually/index.html" class="side-nav-link">Creating visualizations manually</a></nav><nav class="accordion-content"><a href="../../../latest/guide/visualizing-points-3d/index.html" class="side-nav-link">Visualizing points with 3D symbols</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Reference</h4><nav class="accordion-content"><a href="../../../latest/guide/cors/index.html" class="side-nav-link">CORS</a></nav><nav class="accordion-content"><a href="../../../latest/guide/proxies/index.html" class="side-nav-link">Proxy pages</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-icon-font/index.html" class="side-nav-link">Esri Icon Font</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-web-style-symbols/index.html" class="side-nav-link">Esri Web Style Symbols</a></nav><nav class="accordion-content"><a href="../../../latest/guide/localization/index.html" class="side-nav-link">Localization</a></nav><nav class="accordion-content"><a href="../../../latest/guide/licensing/index.html" class="side-nav-link">Licensing &amp; Attribution</a></nav><nav class="accordion-content"><a href="../../../latest/guide/faq/index.html" class="side-nav-link">FAQ</a></nav></div></aside><div class="column-6 js-sticky scroll-show tablet-hide" data-top="46"><a href="#" class="btn btn-fill btn-clear">Back to Top</a></div></div><div class="column-24 trailer-1 tablet-show"><select class="select-full trailer-half js-select-nav"><optgroup label="Get Started"><option value="../../../latest/guide/index.html">Overview</option><option value="../../../latest/guide/release-notes/index.html">Release notes</option><option value="../../../latest/guide/get-api/index.html">Get the API</option><option value="../../../latest/guide/system-requirements/index.html">System requirements</option></optgroup><optgroup label="Migrating from 3.x"><option value="../../../latest/guide/choose-version/index.html">Choose a version</option><option value="../../../latest/guide/migrating/index.html">Migrating from 3.x to 4.9</option><option value="../../../latest/guide/functionality-matrix/index.html">3.x to 4.x functionality matrix</option></optgroup><optgroup label="Migrating from other APIs"><option value="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html">Migrating from Google Maps API</option></optgroup><optgroup label="Working with the API"><option value="../../../latest/guide/working-with-props/index.html">Properties</option><option value="../../../latest/guide/working-with-promises/index.html">Promises</option><option value="../../../latest/guide/arcade/index.html">Arcade</option><option value="../../../latest/guide/labeling/index.html">Labeling</option><option value="../../../latest/guide/view-ui/index.html">View UI</option><option value="../../../latest/guide/autocasting/index.html">Autocasting</option><option value="../../../latest/guide/loadable/index.html">Loadable</option><option value="../../../latest/guide/using-fromjson/index.html">Using fromJSON()</option><option value="../../../latest/guide/typescript-setup/index.html">TypeScript Setup</option><option value="../../../latest/guide/custom-widget/index.html">Widget Development</option><option value="../../../latest/guide/implementing-accessor/index.html">Implementing Accessor</option><option value="../../../latest/guide/styling/index.html">Styling</option><option value="../../../latest/guide/working-with-platform/index.html">Working with the ArcGIS platform</option><option value="../../../latest/guide/secure-resources/index.html">Access Secure Resources</option><option value="../../../latest/guide/using-frameworks/index.html">Using Frameworks</option><option value="../../../latest/guide/using-npm/index.html">Using npm</option><option value="../../../latest/guide/using-webpack/index.html" selected="selected">Using webpack</option><option value="../../../latest/guide/using-phonegap/index.html">Using PhoneGap</option><option value="../../../latest/guide/intro-workflows/index.html">Intro to Workflow Manager</option><option value="../../../latest/guide/working-with-scene-layers/index.html">Working with scene layers</option></optgroup><optgroup label="Visualization"><option value="../../../latest/guide/visualization-overview/index.html">Visualization Overview</option><option value="../../../latest/guide/creating-visualizations-manually/index.html">Creating visualizations manually</option><option value="../../../latest/guide/visualizing-points-3d/index.html">Visualizing points with 3D symbols</option></optgroup><optgroup label="Reference"><option value="../../../latest/guide/cors/index.html">CORS</option><option value="../../../latest/guide/proxies/index.html">Proxy pages</option><option value="../../../latest/guide/esri-icon-font/index.html">Esri Icon Font</option><option value="../../../latest/guide/esri-web-style-symbols/index.html">Esri Web Style Symbols</option><option value="../../../latest/guide/localization/index.html">Localization</option><option value="../../../latest/guide/licensing/index.html">Licensing &amp; Attribution</option><option value="../../../latest/guide/faq/index.html">FAQ</option></optgroup></select></div><main class="column-17 tablet-column-12 pre-1 content-face"><article><div class="js-container-guide"><h1 id="using-webpack-for-custom-builds">Using webpack for Custom Builds</h1><p><a href="https://webpack.js.org/">webpack</a> is a module bundler for JavaScript. It can basically process the code in your application and bundle it up, not only into a single file, but bundled files that can be dynamically loaded as needed at runtime, for example, in an application that might have multiple routes. You can use webpack to build applications that use the ArcGIS API for JavaScript by using the <a href="https://www.npmjs.com/package/@arcgis/webpack-plugin">@arcgis/webpack-plugin</a>.</p><p>To learn more about webpack, please refer to the <a href="https://webpack.js.org/concepts/">concepts</a> and <a href="https://webpack.js.org/guides/">guides</a> pages from webpack.</p><div class="panel is-active trailer-1"><span class="icon icon-ui-notice-triangle"><strong>Note</strong></span>: See the <a href="#prereq">prerequisites</a> section on configuring your system before proceeding. If your system is already configured with Node.js, you may proceed to the <a href="#get-started">Getting Started</a> section.</div><ul><li><a href="#prereq">Prerequisites</a></li><li><a href="#get-started">Getting started</a></li><li><a href="#usage">Understanding webpack</a></li><li><a href="#build-webpack">Building your app</a></li></ul><p><a name="prereq"></a></p><h2 id="prerequisites">Prerequisites</h2><ol><li><a href="https://nodejs.org/en">Node.js</a> version <code>8.x.x</code> or higher (includes npm, the node package manager)</li></ol><p>To check if these are installed:</p><pre><code class="bash">node --version
+</code></pre><p><a name="get-started"></a></p><h2 id="getting-started">Getting Started</h2><p>We provide a <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack">sample application</a> hosted on Github under the webpack directory in the <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack">jsapi-resources</a> repository for you to get started.</p><pre><code class="shell">jsapi-resources/4.x/webpack/demo
+├── README.md
+├── package-lock.json
+├── package.json
+├── src
+│   ├── assets
+│   │   ├── favicon.ico
+│   │   ├── green-blue-small.png
+│   │   └── icons
+│   │       └── icon.png
+│   ├── components
+│   │   ├── header.tsx
+│   │   └── webmapview.tsx
+│   ├── config.ts
+│   ├── css
+│   │   ├── index.scss
+│   │   └── main.scss
+│   ├── index.html
+│   └── index.tsx
+├── tsconfig.json
+└── webpack.config.js
+</code></pre><p>However, if you prefer to start from scratch you can install the <a href="https://github.com/Esri/arcgis-webpack-plugin">@arcgis/webpack-plugin</a> yourself.</p><pre><code class="bash">npm install --save-dev @arcgis/webpack-plugin@^4.8.2
+</code></pre><p>You can also clone the jsapi-resources repository (code below) to your local machine or <a href="https://github.com/Esri/jsapi-resources/archive/master.zip">download the repository</a> to your local machine.</p><pre><code class="bash">git <span class="hljs-built_in">clone</span> https://github.com/Esri/jsapi-resources.git
+</code></pre><p><a name="usage"></a></p><h2 id="understanding-webpack">Understanding webpack</h2><p>In the provided <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack">webpack sample</a>, you are given some npm scripts in the <code>package.json</code> as shortcuts for your development environment.</p><blockquote><p>Note: If you are new to node and are unfamiliar or need a refresher on what is contained in a <a href="https://docs.npmjs.com/files/package.json">package.json</a> file, please refer to the documentation.</p><ul><li><code>package.json</code> - <a href="https://docs.npmjs.com/files/package.json#scripts">scripts</a></li><li><code>package.json</code> - <a href="https://docs.npmjs.com/files/package.json#dependencies">dependencies</a></li><li><code>package.json</code> - <a href="https://docs.npmjs.com/files/package.json#devdependencies">devDependencies</a></li><li><code>package.json</code> - <a href="https://docs.npmjs.com/misc/scripts">npm-scripts</a></li></ul></blockquote><p>Your <code>package.json</code> will look something like this.</p><pre><code class="js">{
+  <span class="hljs-string">"name"</span>: <span class="hljs-string">"arcgis-webpack-plugin-sample"</span>,
+  ...
+  <span class="hljs-string">"dependencies"</span>: {
+    <span class="hljs-string">"@arcgis/webpack-plugin"</span>: <span class="hljs-string">"^4.8.2"</span>
+  }
+}
+</code></pre><p>What this file is saying is that when you do <code>npm install</code> it will install the latest version of the <code>@arcgis/webpack-plugin</code>, which has a dependency on version 4.9 of the ArcGIS API for JavaScript that it will also install locally. This tells node to download any <a href="https://docs.npmjs.com/files/package.json#dependencies"><code>dependencies</code></a> and/or <code>devDependencies</code> listed in the <code>package.json</code> file.</p><p>The <code>scripts</code> field in the <code>package.json</code> file is used to issue commands to build your application. The <a href="https://github.com/webpack/webpack-dev-server">webpack-dev-server</a> is a useful development server that also provides live reloading of your application as you write your code.</p><pre><code class="js">{
+  ...
+  <span class="hljs-string">"scripts"</span>: {
+    <span class="hljs-string">"start"</span>: <span class="hljs-string">"webpack-dev-server --mode development --open"</span>,
+    <span class="hljs-string">"build"</span>: <span class="hljs-string">"webpack --mode production"</span>
+  }
+  ...
+}
+</code></pre><p>See the <a href="https://github.com/Esri/jsapi-resources/blob/master/4.x/webpack/demo/package.json">package.json</a> file in the <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack/demo">webpack</a> sample for more information.</p><p><a name="build-webpack"></a></p><h2 id="building-your-app">Building your app</h2><p>For both options (clone or download), you need to copy the source files from <code>https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack/demo</code> to a new directory. In the following steps, we'll name the new directory <code>esrijs-webpack</code>.</p><p>The contents of your directory should appear as follows:</p><pre><code class="shell">esrijs-webpack
+├── README.md
+├── package-lock.json
+├── package.json
+├── src
+│   ├── assets
+│   │   ├── favicon.ico
+│   │   ├── green-blue-small.png
+│   │   └── icons
+│   │       └── icon.png
+│   ├── components
+│   │   ├── header.tsx
+│   │   └── webmapview.tsx
+│   ├── config.ts
+│   ├── css
+│   │   ├── index.scss
+│   │   └── main.scss
+│   ├── index.html
+│   └── index.tsx
+├── tsconfig.json
+└── webpack.config.js
+</code></pre><ol><li>Open a terminal window or shell command window</li><li>Change directory to <code>esrijs-webpack</code><ul><li>In the terminal window run: <code>npm install</code></li><li>The first time this is run it may take a while</li></ul></li><li>In the terminal window type <code>npm start</code> and press return</li><li>The command will run the webpack bundler using the <code>@arcgis/webpack-plugin</code></li><li>Your application will be available at <code>http://localhost:8080/</code></li><li>You can build a deployable version of your app by running <code>npm run build</code>.</li><li>This will take a little longer and build a deployable version of your application in a <code>dist</code> folder.</li></ol><p>The critical portion of creating your application is going to be your <code>webpack.config.js</code>.</p><blockquote><p>Note: To learn more about webpack, please refer to the <a href="https://webpack.js.org/concepts/">concepts</a> and <a href="https://webpack.js.org/guides/">guides</a> pages from webpack.</p><p>See the <a href="https://webpack.js.org/configuration/#options">configuration</a> section of the webpack documentation for details on each of the options available in the configuration file.</p></blockquote><pre><code class="js"><span class="hljs-keyword">const</span> ArcGISPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">"@arcgis/webpack-plugin"</span>);
+<span class="hljs-keyword">const</span> CleanWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">"clean-webpack-plugin"</span>);
+<span class="hljs-keyword">const</span> HtmlWebPackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">"html-webpack-plugin"</span>);
+<span class="hljs-keyword">const</span> MiniCssExtractPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">"mini-css-extract-plugin"</span>);
+
+<span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">"path"</span>);
+<span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">"webpack"</span>);
+
+<span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-attr">entry</span>: {
+    <span class="hljs-attr">index</span>: <span class="hljs-string">"./src/index.tsx"</span>
+  },
+  <span class="hljs-attr">output</span>: {
+    <span class="hljs-attr">filename</span>: <span class="hljs-string">"[name].bundle.js"</span>,
+    <span class="hljs-attr">publicPath</span>: <span class="hljs-string">""</span>
+  },
+  <span class="hljs-attr">module</span>: {
+    <span class="hljs-attr">rules</span>: [
+      {
+        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.tsx?$/</span>,
+        <span class="hljs-attr">loader</span>: <span class="hljs-string">"ts-loader"</span>,
+        <span class="hljs-attr">options</span>: {
+          <span class="hljs-attr">transpileOnly</span>: <span class="hljs-literal">true</span>
+        }
+      },
+      {
+        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.html$/</span>,
+        <span class="hljs-attr">use</span>: [
+          {
+            <span class="hljs-attr">loader</span>: <span class="hljs-string">"html-loader"</span>,
+            <span class="hljs-attr">options</span>: { <span class="hljs-attr">minimize</span>: <span class="hljs-literal">false</span> }
+          }
+        ],
+        <span class="hljs-attr">exclude</span>: <span class="hljs-regexp">/node_modules/</span>
+      },
+      {
+        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.scss$/</span>,
+        <span class="hljs-attr">use</span>: [MiniCssExtractPlugin.loader, <span class="hljs-string">"css-loader"</span>, <span class="hljs-string">"sass-loader"</span>]
+      }
+    ]
+  },
+  <span class="hljs-attr">plugins</span>: [
+    <span class="hljs-comment">// Be sure to have the @arcgis/webpack-plugin run first in the list</span>
+    <span class="hljs-keyword">new</span> CleanWebpackPlugin([<span class="hljs-string">"dist"</span>]),
+    <span class="hljs-keyword">new</span> ArcGISPlugin(),
+    <span class="hljs-keyword">new</span> HtmlWebPackPlugin({
+      <span class="hljs-attr">template</span>: <span class="hljs-string">"./src/index.html"</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">"./index.html"</span>,
+      <span class="hljs-attr">chunksSortMode</span>: <span class="hljs-string">"none"</span>
+    }),
+    <span class="hljs-keyword">new</span> MiniCssExtractPlugin({
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">"[name].css"</span>,
+      <span class="hljs-attr">chunkFilename</span>: <span class="hljs-string">"[id].css"</span>
+    })
+  ],
+  <span class="hljs-attr">resolve</span>: {
+    <span class="hljs-attr">modules</span>: [path.resolve(__dirname, <span class="hljs-string">"/src"</span>), <span class="hljs-string">"node_modules/"</span>],
+    <span class="hljs-attr">extensions</span>: [<span class="hljs-string">".ts"</span>, <span class="hljs-string">".tsx"</span>, <span class="hljs-string">".js"</span>, <span class="hljs-string">".scss"</span>]
+  },
+  <span class="hljs-attr">externals</span>: [
+    <span class="hljs-function">(<span class="hljs-params">context, request, callback</span>) =&gt;</span> {
+      <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/pe-wasm$/</span>.test(request)) {
+        <span class="hljs-keyword">return</span> callback(<span class="hljs-literal">null</span>, <span class="hljs-string">"amd "</span> + request);
+      }
+      callback();
+    }
+  ],
+  <span class="hljs-attr">node</span>: {
+    <span class="hljs-attr">process</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">global</span>: <span class="hljs-literal">false</span>
+  }
+};
+</code></pre><p>In the current version of the <code>@arcgis/webpack-plugin</code>, you need to configure the application to use the workers of the ArcGIS API for JavaScript from the <a href="../get-api/index.html#cdn">cdn</a>. The workers configuration for this <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/webpack">sample application</a> is located under <code>jsapi-resources/4.x/webpack/demo/src/config.ts</code>.</p><pre><code class="ts"><span class="hljs-keyword">import</span> esriConfig = <span class="hljs-built_in">require</span>(<span class="hljs-string">"esri/config"</span>);
+
+<span class="hljs-keyword">const</span> DEFAULT_WORKER_URL = <span class="hljs-string">"https://js.arcgis.com/4.9/"</span>;
+<span class="hljs-keyword">const</span> DEFAULT_LOADER_URL = <span class="hljs-string">`<span class="hljs-subst">${DEFAULT_WORKER_URL}</span>dojo/dojo-lite.js`</span>;
+
+(esriConfig.workers <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).loaderUrl = DEFAULT_LOADER_URL;
+esriConfig.workers.loaderConfig = {
+  baseUrl: <span class="hljs-string">`<span class="hljs-subst">${DEFAULT_WORKER_URL}</span>dojo`</span>,
+  packages: [
+    { name: <span class="hljs-string">"esri"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"esri"</span> },
+    { name: <span class="hljs-string">"dojo"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"dojo"</span> },
+    { name: <span class="hljs-string">"dojox"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"dojox"</span> },
+    { name: <span class="hljs-string">"dijit"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"dijit"</span> },
+    { name: <span class="hljs-string">"dstore"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"dstore"</span> },
+    { name: <span class="hljs-string">"moment"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"moment"</span> },
+    { name: <span class="hljs-string">"@dojo"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"@dojo"</span> },
+    {
+      name: <span class="hljs-string">"cldrjs"</span>,
+      location: DEFAULT_WORKER_URL + <span class="hljs-string">"cldrjs"</span>,
+      main: <span class="hljs-string">"dist/cldr"</span>
+    },
+    {
+      name: <span class="hljs-string">"globalize"</span>,
+      location: DEFAULT_WORKER_URL + <span class="hljs-string">"globalize"</span>,
+      main: <span class="hljs-string">"dist/globalize"</span>
+    },
+    {
+      name: <span class="hljs-string">"maquette"</span>,
+      location: DEFAULT_WORKER_URL + <span class="hljs-string">"maquette"</span>,
+      main: <span class="hljs-string">"dist/maquette.umd"</span>
+    },
+    {
+      name: <span class="hljs-string">"maquette-css-transitions"</span>,
+      location: DEFAULT_WORKER_URL + <span class="hljs-string">"maquette-css-transitions"</span>,
+      main: <span class="hljs-string">"dist/maquette-css-transitions.umd"</span>
+    },
+    {
+      name: <span class="hljs-string">"maquette-jsx"</span>,
+      location: DEFAULT_WORKER_URL + <span class="hljs-string">"maquette-jsx"</span>,
+      main: <span class="hljs-string">"dist/maquette-jsx.umd"</span>
+    },
+    { name: <span class="hljs-string">"tslib"</span>, location: DEFAULT_WORKER_URL + <span class="hljs-string">"tslib"</span>, main: <span class="hljs-string">"tslib"</span> }
+  ]
+} <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>;
+
+</code></pre><h3 id="best-practices">Best Practices</h3><p>When working with CSS, you can load the files directly from your application and let the <a href="https://github.com/jantimon/html-webpack-plugin"><code>html-webpack-plugin</code></a> and <a href="https://github.com/webpack-contrib/mini-css-extract-plugin"><code>mini-css-extract-plugin</code></a> output the CSS file and inject the file location directly into your output HTML file.</p><pre><code class="ts"><span class="hljs-comment">// index.tsx</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">"./css/main.scss"</span>;
+</code></pre><pre><code class="js"><span class="hljs-comment">// webpack.config.js</span>
+  ...
+  module: {
+    <span class="hljs-attr">rules</span>: [
+      ...
+      {
+        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.html$/</span>,
+        <span class="hljs-attr">use</span>: [
+          {
+            <span class="hljs-attr">loader</span>: <span class="hljs-string">"html-loader"</span>,
+            <span class="hljs-attr">options</span>: { <span class="hljs-attr">minimize</span>: <span class="hljs-literal">false</span> }
+          }
+        ],
+        <span class="hljs-attr">exclude</span>: <span class="hljs-regexp">/node_modules/</span>
+      },
+      {
+        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.scss$/</span>,
+        <span class="hljs-attr">use</span>: [MiniCssExtractPlugin.loader, <span class="hljs-string">"css-loader"</span>, <span class="hljs-string">"sass-loader"</span>]
+      }
+    ]
+  },
+  <span class="hljs-attr">plugins</span>: [
+    ...
+    <span class="hljs-comment">// will copy your index.html file</span>
+    <span class="hljs-comment">// and inject assets for you</span>
+    <span class="hljs-keyword">new</span> HtmlWebPackPlugin({
+      <span class="hljs-attr">template</span>: <span class="hljs-string">"./src/index.html"</span>,
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">"./index.html"</span>,
+      <span class="hljs-attr">chunksSortMode</span>: <span class="hljs-string">"none"</span>
+    }),
+    <span class="hljs-comment">// will output a css file that you</span>
+    <span class="hljs-comment">// imported in your application</span>
+    <span class="hljs-keyword">new</span> MiniCssExtractPlugin({
+      <span class="hljs-attr">filename</span>: <span class="hljs-string">"[name].css"</span>,
+      <span class="hljs-attr">chunkFilename</span>: <span class="hljs-string">"[id].css"</span>
+    })
+  ]
+  ...
+</code></pre><p>However, if you would like to use the <a href="https://github.com/webpack-contrib/style-loader"><code>style-loader</code></a> to load your styles at runtime, you will need to modify your code.</p><pre><code class="ts"><span class="hljs-comment">// index.ts</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">"css!./css/main.scss"</span>;
+</code></pre><pre><code class="js"><span class="hljs-comment">// webpack.config.js</span>
+...
+  plugins: [
+    ...
+    <span class="hljs-comment">// For plugins registered after the ArcGISPlugin, data.request has been normalized and</span>
+    <span class="hljs-comment">// resolved to an absMid and other mappings and aliases have been applied.</span>
+    <span class="hljs-comment">// You will need to update the loader plugin appropriately.</span>
+    <span class="hljs-keyword">new</span> webpack.NormalModuleReplacementPlugin(<span class="hljs-regexp">/^css!/</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+      data.request = data.request.replace(
+        <span class="hljs-regexp">/^css!/</span>,
+        <span class="hljs-string">"!style-loader!css-loader!sass-loader?indentedSyntax=false"</span>
+      );
+    })
+...
+</code></pre><p>Please note, we have tested the <code>@arcgis/webpack-plugin</code> with numerous other plugins, but cannot guarantee that other webpack plugins may not cause some unexpected behavior.</p></div></article></main></div><div class="footnote feedback right trailer-1"><a class="icon-ui-contact hide js-feedback" href="mailto:js_feedback@esri.com?subject=Feedback%20on%204.9%20-%20guide:%20Using%20webpack%20for%20Custom%20Builds&body=Hello,%0A%0AI%20was%20reading%20the%20ArcGIS%20API%20for%20JavaScript%20version%204.9%20documentation%20and%20have%20some%20feedback.%0A%0ADocumentation%20details:%0APage%20title:%20%7BREPLACE_TITLE%7D%0APage%20URL:%20%7BREPLACE_URL%7D%0A%0A">Feedback on this topic?</a></div></div></div><footer class="footer leader- link-dark-gray" role="contentinfo"><div class="grid-container"><nav class="column-6"><h6>ArcGIS for Developers</h6><ul class="list-plain"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/documentation/">Documentation</a></li><li><a href="/support/">Support</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/startups/">Startups</a></li><li><a href="https://blogs.esri.com/esri/arcgis/category/developer/">Blog</a></li></ul></nav><nav class="column-6"><h6>ArcGIS Platform</h6><ul class="list-plain"><li><a href="http://arcgis.com">ArcGIS Online</a></li><li><a href="http://desktop.arcgis.com">ArcGIS Desktop</a></li><li><a href="http://server.arcgis.com">ArcGIS Enterprise</a></li><li><a href="http://developers.arcgis.com">ArcGIS for Developers</a></li><li><a href="http://solutions.arcgis.com">ArcGIS Solutions</a></li><li><a href="http://marketplace.arcgis.com">ArcGIS Marketplace</a></li></ul></nav><nav class="column-6"><h6>About Esri</h6><ul class="list-plain"><li><a href="http://www.esri.com/about-esri/">About Us</a></li><li><a href="http://www.esri.com/careers/">Careers</a></li><li><a href="https://blogs.esri.com/esri/esri-insider/">Insiders Blog</a></li><li><a href="http://www.esri.com/events/user-conference/index.html">User Conference</a></li><li><a href="http://www.esri.com/events/devsummit/index.html">Developer Summit</a></li></ul></nav><nav class="column-6"><a class="esri-logo" href="http://esri.com" aria-label="Esri Home"></a><div class="footer-social-nav leader-1"><a class="icon-social-twitter" aria-label="Esri on Twitter" href="https://twitter.com/Esri/"></a> <a class="icon-social-facebook" aria-label="Esri on Facebook" href="https://www.facebook.com/esrigis/"></a> <a class="icon-social-github" aria-label="Esri on GitHub" href="http://esri.github.com/"></a> <a class="icon-social-contact" aria-label="Contact Esri" href="http://www.esri.com/about-esri/contact/"></a></div></nav><div class="column-24 leader-1"><p><small><a href="http://www.esri.com/legal/copyright-trademarks">Copyright © 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="http://www.esri.com/legal/software-license">Terms of use</a> | <a href="/terms/faq/">FAQ</a></small></p></div></div></footer><script></script><script>var relativePath=document.URL.replace(/[-\w\d]*\.(html|css|js).*/,"../../..")</script><script src="../../../assets/js/config.js"></script><script src="../../../assets/js/preparse.js"></script><div class="js-modal modal-overlay modifier-class" data-modal="modal-keyboard-shortcuts"><div class="modal-content column-8" aria-label="modal" role="dialog"><a class="js-modal-toggle right" href="#" aria-label="close-modal"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 32 32" class="svg-icon"><path d="M18.404 16l9.9 9.9-2.404 2.404-9.9-9.9-9.9 9.9L3.696 25.9l9.9-9.9-9.9-9.898L6.1 3.698l9.9 9.899 9.9-9.9 2.404 2.406-9.9 9.898z"/></svg></a><h4>Keyboard shortcuts</h4><hr class="leader-0 trailer-half"><div><table class="table-plain keyboard-mappings"><thead><tr><th></th><th>Site wide shortcuts</th></tr></thead><tbody><tr><td><kbd>?</kbd></td><td>Bring up this help dialog</td></tr><tr><td><kbd>esc</kbd></td><td>Dismiss this help dialog</td></tr><tr><td><kbd>g</kbd><kbd>h</kbd></td><td>Go to Home</td></tr><tr><td><kbd>g</kbd><kbd>g</kbd></td><td>Go to Guide</td></tr><tr><td><kbd>g</kbd><kbd>a</kbd></td><td>Go to API Reference</td></tr><tr><td><kbd>g</kbd><kbd>s</kbd></td><td>Go to Sample Code</td></tr><tr><td><kbd>g</kbd><kbd>t</kbd></td><td>Scroll to top of page</td></tr><tr><td><kbd>spacebar</kbd></td><td>Scroll page down</td></tr><tr><td><kbd>shift spacebar</kbd></td><td>Scroll page up</td></tr><tr><td><kbd>g</kbd><kbd>b</kbd></td><td>Scroll to bottom of page</td></tr></tbody></table></div></div></div><script src="../../../assets/js/libs/url-search-params.js"></script><script src="../../../assets/js/calcite-web.js"></script><script src="../../../assets/js/calcite-web-extend.js"></script><script src="../../../assets/js/libs/mousetrap.js"></script><script>"function"==typeof Mousetrap&&"object"==typeof calcite&&"function"==typeof Mousetrap&&"object"==typeof calcite&&Mousetrap.bind(["g h","g g","g a","g s","?","g t","g b"],function(e,t){calcite.bus.emit("keyboard:mousetrap",{event:e,combination:t,navigation:{h:"../../../index.html",g:"../../../latest/guide/index.html",a:"../../../latest/api-reference/index.html",s:"../../../latest/sample-code/index.html"}})})</script></body></html>

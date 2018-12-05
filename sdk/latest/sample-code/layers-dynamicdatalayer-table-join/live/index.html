@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - dynamic data layer with table join - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/MapImageLayer",
+        "esri/widgets/Legend"
+      ],
+      function(
+        Map, SceneView, MapImageLayer, Legend
+      ) {
+
+        // helper function to create a symbol
+        function createSymbol(color) {
+          return {
+            type: "simple-fill", // autocasts as new SimpleFillSymbol()
+            color: color,
+            outline: {
+              width: 0.5,
+              color: [255, 255, 255, 0.4]
+            },
+            style: "solid"
+          };
+        }
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing US state boundary geometries. A sublayer is added to
+         * the layer with a dynamic data layer source. The dynamic layer
+         * is created by joining a table with demographic attributes to an
+         * existing map service layer with geometries (states).
+         *
+         * The data exist in a registered workspace in the map service.
+         *****************************************************************/
+
+        var layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+          title: "United States Population",
+          sublayers: [{
+            title: "Share of population with Norwegian Ancestry",
+            id: 0,
+            opacity: 0.75,
+            source: {
+              // indicates the source of the sublayer is a dynamic data layer
+              type: "data-layer",
+              // this object defines the data source of the layer
+              // in this case it's a joined table
+              dataSource: {
+                type: "join-table",
+                // for joined tables you need to define a left table source
+                // and a right table source. In this case, the left table
+                // is the map layer containing feature geometries. The ID
+                // is the layer ID of the sublayer in the service.
+                leftTableSource: {
+                  type: "map-layer",
+                  mapLayerId: 3
+                },
+                // The right table source is another data layer object.
+                // In this case it is a plain table that resides in the
+                // workspace. Simply indicate the ID of the workspace and
+                // the name of the table
+                rightTableSource: {
+                  type: "data-layer",
+                  dataSource: {
+                    type: "table",
+                    workspaceId: "CensusFileGDBWorkspaceID",
+                    dataSourceName: "ancestry"
+                  }
+                },
+                // For the joint to be complete, you must indicate the
+                // primary key and the foreign key to match the table
+                // records from each respective source. In this case
+                // we will match table records with the state name.
+                // So we must indicate the field in each table containing
+                // the state name.
+                leftTableKey: "STATE_NAME",
+                rightTableKey: "State",
+                // Indicates the join type. In this case all records from
+                // the map layer are retained even if they don't have
+                // matching records in the ancestry table.
+                joinType: "left-outer-join"
+              }
+            },
+            popupTemplate: { // autocasts as new PopupTemplate()
+              title: "{states.STATE_NAME}",
+              content: [{
+                type: "fields",
+                fieldInfos: [{
+                  fieldName: "states.POP2007",
+                  label: "Total population",
+                  visible: true,
+                  format: {
+                    digitSeparator: true,
+                    places: 0
+                  }
+                }, {
+                  fieldName: "ancestry.Norwegian",
+                  label: "Norwegian population",
+                  visible: true,
+                  format: {
+                    digitSeparator: true,
+                    places: 0
+                  }
+                }]
+              }]
+            }
+          }]
+        });
+
+        /*****************************************************************
+         * Create a renderer for the dynamic layer. Note the field names
+         * must be prefixed by the table name for the renderer to read
+         * field values. In this sample we are visualizing the number of
+         * people with Norwegian ancestry (from the ancestry table) and
+         * normalizing by the total population (from the states map layer).
+         *****************************************************************/
+
+        var renderer = {
+          type: "class-breaks", // autocasts as new ClassBreaksRenderer()
+          field: "ancestry.Norwegian",
+          normalizationField: "states.POP2007",
+          normalizationType: "field",
+          classBreakInfos: [{
+            minValue: 0,
+            maxValue: 0.0126,
+            symbol: createSymbol("#f8e3c2"),
+            label: "0 - 1.26%"
+          }, {
+            minValue: 0.0126,
+            maxValue: 0.026,
+            symbol: createSymbol("#e5998c"),
+            label: "1.26 - 2.6%"
+          }, {
+            minValue: 0.026,
+            maxValue: 0.15,
+            symbol: createSymbol("#d86868"),
+            label: "2.6 - 15%"
+          }, {
+            minValue: 0.15,
+            maxValue: 0.50,
+            symbol: createSymbol("#9b3557"),
+            label: "15 - 50%"
+          }]
+        };
+
+        // Get the sublayer to apply the renderer to
+        var norwegianSublayer = layer.sublayers.find(function(sublayer) {
+          return sublayer.title ===
+            "Share of population with Norwegian Ancestry";
+        });
+        // set the renderer on the sublayer
+        norwegianSublayer.renderer = renderer;
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+
+        var map = new Map({
+          basemap: "hybrid",
+          layers: [layer]
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          zoom: 5,
+          center: [-101.088, 40.969]
+        });
+
+        view.when(function() {
+          var legend = new Legend({
+            view: view
+          });
+          view.ui.add(legend, "bottom-left");
+        });
+
+      });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

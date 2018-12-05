@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>GeometryEngine - geodesic buffers - 4.9</title>
+
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+
+    .viewDivBase {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 49.9%;
+    }
+
+    #viewDiv2d {
+      float: left;
+    }
+
+    #viewDiv3d {
+      float: right;
+    }
+
+    #info {
+      color: #444;
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 5px;
+      margin: 5px;
+      width: 120px;
+      text-align: center;
+      border: solid 2px #666;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+
+    .chkLabel {
+      font-size: 12px;
+    }
+  </style>
+
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/views/MapView",
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic",
+      "esri/geometry/geometryEngine"
+    ], function(
+      Map,
+      SceneView,
+      MapView,
+      GraphicsLayer,
+      Graphic,
+      geometryEngine
+    ) {
+
+      // Create a 2D MapView and a 3D SceneView
+      // each referencing the same map with two
+      // graphics layers
+
+      var map = new Map({
+        basemap: "satellite"
+      });
+
+      // Add two graphics layers to map: one for points, another for buffers
+
+      var bufferLayer = new GraphicsLayer();
+      var pointLayer = new GraphicsLayer();
+      map.addMany([bufferLayer, pointLayer]);
+
+      var viewOptions = {
+        map: map,
+        zoom: 3,
+        center: [0, 60]
+      };
+
+      var view3d = new SceneView(viewOptions);
+      view3d.container = "viewDiv3d";
+      view3d.ui.add("info", "top-right");
+
+      var view2d = new MapView(viewOptions);
+      view2d.container = "viewDiv2d";
+
+      var polySym = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: [140, 140, 222, 0.5],
+        outline: {
+          color: [0, 0, 0, 0.5],
+          width: 2
+        }
+      };
+
+      var pointSym = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        color: [255, 0, 0],
+        outline: {
+          color: [255, 255, 255],
+          width: 1
+        },
+        size: 7
+      };
+
+      // Indicates whether buffering is enabled
+
+      var bufferEnabled = false;
+
+      /**
+       * When the space bar is tapped, then buffering is enabled.
+       * @param {Object} event - The event object associated with the
+       *   key-down event.
+       */
+      function keyDownListener(event) {
+        var keyInput = event.key;
+        bufferEnabled = (keyInput === " " || keyInput === "Spacebar") && !
+          bufferEnabled;
+        if (bufferEnabled) {
+          document.getElementById("mode").innerHTML = "navigation";
+        } else {
+          document.getElementById("mode").innerHTML = "buffering";
+        }
+      }
+
+      view2d.on("key-down", keyDownListener);
+      view3d.on("key-down", keyDownListener);
+
+      view2d.on("pointer-move", function(event) {
+        if (bufferEnabled) {
+          createBuffer(event, view2d);
+        }
+      });
+
+      view3d.on("pointer-move", function(event) {
+        if (bufferEnabled) {
+          createBuffer(event, view3d);
+        }
+      });
+
+      view2d.on("click", function(event) {
+        bufferPoint(event.mapPoint);
+      });
+
+      view3d.on("click", function(event) {
+        bufferPoint(event.mapPoint);
+      });
+
+      /**
+       * Stops propagation on the given event and constructs a point for
+       * buffering.
+       *
+       * @param {Object}   event - Event object containing XY screen coordinates.
+       * @param {Mapview | SceneView} view - View instance from which the point was obtained.
+       */
+      function createBuffer(event, view) {
+        // prevent further propagation of the current event bubbling up the event chain.
+        // in this case, it will prevent default `drag` event behavior for the MapView
+        // which is to move around the view by dragging the pointer.
+        event.stopPropagation();
+
+        // convert screen coordinates to map coordinates
+        var point = view.toMap({
+          x: event.x,
+          y: event.y
+        });
+
+        if (point) {
+          bufferPoint(point);
+        }
+
+      }
+
+      /**
+       * Buffers the given point by 560 kilometers.
+       *
+       * @param {esri/geometry/Point} point - A point instance to buffer.
+       */
+      function bufferPoint(point) {
+        if (!bufferEnabled) {
+          console.log(
+            "buffering not enabled. Hit the space bar key and click/drag to buffer."
+          );
+          return;
+        }
+
+        clearGraphics();
+
+        // removes z values from the point when taken from a SceneView.
+        // GeometryEngine does not support 3D geometries.
+        point.hasZ = false;
+        point.z = undefined;
+
+        pointLayer.add(new Graphic({
+          geometry: point,
+          symbol: pointSym
+        }));
+
+        /********************************************************************
+         * Geodesic buffer calculates the true distance to buffer a point,
+         * minimizing the distortion that exists when buffering points away
+         * from a projection's line of tangency. This distortion is evident
+         * in the 2D view of this application. This map uses a Web Mercator
+         * spatial reference, which has a line of tangency at the equator.
+         * Buffers created on the equator have very little distortion in their
+         * shape. The further buffers are created away from the equator, the
+         * more distorted they will be in their shape.
+         *
+         * If using a standard planar buffer, the shape of the buffers won't
+         * distort in 2D views, but their size and areas will be very distorted
+         * as they move away from the equator.
+         ********************************************************************/
+
+        var buffer = geometryEngine.geodesicBuffer(point, 560, "kilometers");
+        bufferLayer.add(new Graphic({
+          geometry: buffer,
+          symbol: polySym
+        }));
+      }
+
+      /**
+       * Clears all graphics from all GraphicsLayers
+       */
+      function clearGraphics() {
+        pointLayer.removeAll();
+        bufferLayer.removeAll();
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div class="viewDivBase" id="viewDiv2d"></div>
+  <div class="viewDivBase" id="viewDiv3d">
+    <div id="info">
+      <label class="chkLabel">Press
+        <strong>space bar</strong> to enable
+        <strong>
+          <span id="mode">buffering</span>.</strong>
+        Then click or move the mouse to buffer.
+      </label>
+      <br>
+    </div>
+  </div>
+</body>
+
+</html>

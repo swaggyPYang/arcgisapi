@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Watch for changes - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #outputMessages {
+      position: absolute;
+      z-index: 70;
+      top: 0px;
+      right: 0;
+      bottom: 0;
+      box-sizing: border-box;
+      padding: 20px;
+      height: 100%;
+      width: 350px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 14px;
+      line-height: 30px;
+      overflow: auto
+    }
+
+    #outputMessages span {
+      color: #F7BE81;
+      font-weight: bold;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/views/MapView",
+      "esri/WebMap",
+      "esri/core/watchUtils"
+    ], function(MapView,
+      WebMap, watchUtils, dom) {
+
+      // Load a webmap from ArcGIS Online
+      var webmap = new WebMap({
+        portalItem: { // autocasts as new PortalItem()
+          id: "974c6641665a42bf8a57da08e607bb6f"
+        }
+      });
+
+      // Create a view and set view's map to the webmap
+      const view = new MapView({
+        container: "viewDiv",
+        map: webmap,
+        padding: {
+          right: 350
+        }
+      });
+
+      var outputMessages = document.getElementById("outputMessages");
+
+      //*******************************************************************
+      // Working with promises
+      // 1. WebMap
+      // 2. View
+      //*******************************************************************
+      // Call then methods on WebMap and View to check if these classes are
+      // properly loaded or fail.
+      webmap.when(function() {
+          // This function will execute once the promise is resolved
+          displayMessage(
+            "<span> webmap.when </span> - web map loaded successfully");
+        })
+        .catch(errorHandler);
+
+      view.when(function() {
+          // This function will execute once the promise is resolved
+          displayMessage(
+            "<br> <span> view.when </span> --- view loaded successfully"
+          );
+        })
+        .catch(errorHandler)
+        .always(function() {
+          var info =
+            "<br> <span> view.always </span> - adds a single callback to operate in the case of" +
+            " resolution or rejection";
+          displayMessage(info);
+        });
+
+      //*******************************************************************
+      // Listening to events
+      // 1. Layer change event on layers collection
+      // 2. layerview-create event on the view
+      // 3. click event on the view.
+      //*******************************************************************
+
+      // Listen to layer change events on all of map's layers
+      // Only listening to layer added event in this case.
+      view.map.allLayers.on("change", function(event) {
+        // change event fires after an item has been added, moved or removed from the collection.
+        // event.moved - an array of moved layers
+        // event.removed - an array of removed layers
+        // event.added returns an array of added layers
+        if (event.added.length > 0) {
+          event.added.forEach(function(layer) {
+            var info = "<br> <span> layer added: </span> " + layer.title;
+            displayMessage(info);
+          });
+        }
+      });
+
+      // Listen to layerview create event for the layers
+      view.on("layerview-create", function(event) {
+        var info = "<br> <span> layerview-create </span> - " +
+          event.layer.title + " is " + event.layer.loadStatus;
+        displayMessage(info);
+      });
+
+      // Listen the view's click event.
+      view.on("click", function(event) {
+        var info = "<br> <span> view click event: </span> x: " +
+          event.mapPoint.x.toFixed(2) + " y: " + event.mapPoint.y.toFixed(
+            2);
+        displayMessage(info);
+      });
+
+      //*******************************************************************
+      // Watching properties for changes
+      // 1. Watch view.stationary property
+      // 2. Watch visible property of popup
+      //*******************************************************************
+      // Watch view's stationary property for becoming true.
+      watchUtils.whenTrue(view, "stationary", function() {
+        // Get the new center of the view only when view is stationary.
+        if (view.center) {
+          var info = "<br> <span> the view center changed. </span> x: " +
+            view.center.x.toFixed(2) + " y: " + view.center.y.toFixed(2);
+          displayMessage(info);
+        }
+
+        // Get the new extent of the view only when view is stationary.
+        if (view.extent) {
+          var info = "<br> <span> the view extent changed: </span>" +
+            "<br> xmin:" + view.extent.xmin.toFixed(2) + " xmax: " +
+            view.extent.xmax.toFixed(
+              2) +
+            "<br> ymin:" + view.extent.ymin.toFixed(2) + " ymax: " +
+            view.extent.ymax.toFixed(
+              2);
+          displayMessage(info);
+        }
+      });
+
+      // watch popup's visible property to determine when the popup is
+      // visible or not visible.
+      view.popup.watch("visible", function(visible) {
+        var info = "<br>" + "<span> view popup visible </span> = " +
+          visible;
+        displayMessage(info);
+      });
+
+      function displayMessage(info) {
+        outputMessages.innerHTML += info;
+        outputMessages.scrollTop = outputMessages.scrollHeight;
+      }
+
+      // This function will execute if the promise is rejected
+      function errorHandler(error) {
+        if (error.name && error.message) {
+          var info = "<br><span style=\" color: red;\">" + error.name +
+            error.message + "</span>";
+        } else {
+          var info = "<br><span style=\" color: red;\">" + error +
+            "</span>";
+        }
+        displayMessage(info);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="outputMessages"></div>
+  </div>
+</body>
+
+</html>

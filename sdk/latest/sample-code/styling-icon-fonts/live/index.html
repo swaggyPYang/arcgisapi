@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Using Esri Icon Fonts with map graphics - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/PopupTemplate",
+      "esri/views/MapView",
+      "esri/Graphic",
+      "esri/geometry/Point"
+    ], function(
+      Map, PopupTemplate, MapView,
+      Graphic, Point
+    ) {
+
+      var map = new Map({
+        basemap: "gray"
+      });
+
+      var view = new MapView({
+        center: [-117.19, 34.05],
+        container: "viewDiv",
+        map: map,
+        zoom: 12
+      });
+
+      /**********************
+       * Create a point graphic
+       **********************/
+
+      // First create a point geometry
+      var point = new Point({
+        longitude: -117.19,
+        latitude: 34.05
+      });
+
+      // Create a symbol for drawing the point
+      var textSymbol = {
+        type: "text", // autocasts as new TextSymbol()
+        color: "#7A003C",
+        text: "\ue61d", // esri-icon-map-pin
+        font: { // autocasts as new Font()
+          size: 30,
+          family: "CalciteWebCoreIcons"
+        }
+      };
+
+      // Create a graphic and add the geometry and symbol to it
+      var pointGraphic = new Graphic({
+        geometry: point,
+        symbol: textSymbol
+      });
+
+      // Add the graphics to the view's graphics layer
+      view.graphics.add(pointGraphic);
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Track widget simulation - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <script>
+    var dojoConfig = {
+      packages: [{
+        name: "geolocate",
+        location: "//2gis.github.io/mock-geolocation/dist",
+        main: "geolocate"
+      }]
+    }
+  </script>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "geolocate", // geolocation simulator (https://github.com/2gis/mock-geolocation)
+      "esri/widgets/Track",
+      "esri/views/SceneView",
+      "esri/Map"
+    ], function(
+      geolocate,
+      Track,
+      SceneView,
+      Map
+    ) {
+
+      // geolocation simulator
+      stubGeolocation();
+
+      var map = new Map({
+        basemap: "topo"
+      });
+
+      var view = new SceneView({
+        map: map,
+        container: "viewDiv",
+        center: [-117.1870380, 34.0573220],
+        zoom: 18,
+        ui: {
+          components: ["attribution"] // replace default set of UI components
+        }
+      });
+
+      var track = new Track({
+        view: view,
+        goToLocationEnabled: false // disable this since we want to control what happens after our location is acquired
+      });
+      view.ui.add(track, "top-left");
+
+      view.when(function() {
+
+        var prevLocation = view.center;
+
+        track.on("track", function() {
+          var location = track.graphic.geometry;
+
+          view.goTo({
+            center: location,
+            tilt: 50,
+            scale: 2500,
+            heading: 360 - getHeading(location, prevLocation)
+          });
+
+          prevLocation = location.clone();
+        });
+
+        track.start();
+      });
+
+      function getHeading(point, oldPoint) {
+        // get angle between two points
+        var angleInDegrees = Math.atan2(point.y - oldPoint.y, point.x -
+            oldPoint.x) * 180 /
+          Math.PI;
+
+        // move heading north
+        return -90 + angleInDegrees;
+      }
+
+      // geolocation simulator
+      function stubGeolocation() {
+        var coords = [
+          {
+            lat: 34.05648363780692,
+            lng: -117.19565501782613
+          },
+          {
+            lng: -117.19565880345007,
+            lat: 34.05682230352545
+          },
+          {
+            lng: -117.19566258907402,
+            lat: 34.05716096924398
+          },
+          {
+            lng: -117.19566637469796,
+            lat: 34.05749963496251
+          },
+          {
+            lng: -117.19567016032191,
+            lat: 34.05783830068104
+          },
+          {
+            lng: -117.19567394594586,
+            lat: 34.05817696639957
+          },
+          {
+            lng: -117.1956777315698,
+            lat: 34.0585156321181
+          },
+          {
+            lng: -117.19568151719375,
+            lat: 34.05885429783663
+          },
+          {
+            lng: -117.1956853028177,
+            lat: 34.05919296355516
+          },
+          {
+            lat: 34.059192963555134,
+            lng: -117.19568530281771
+          },
+          {
+            lat: 34.05920092649827,
+            lng: -117.19575894615099
+          },
+          {
+            lng: -117.19575574232981,
+            lat: 34.058861053180614
+          },
+          {
+            lng: -117.19575253850863,
+            lat: 34.05852117986296
+          },
+          {
+            lng: -117.19574933468745,
+            lat: 34.0581813065453
+          },
+          {
+            lng: -117.19574613086627,
+            lat: 34.057841433227644
+          },
+          {
+            lng: -117.19574292704509,
+            lat: 34.05750155990999
+          },
+          {
+            lng: -117.19573972322391,
+            lat: 34.05716168659233
+          },
+          {
+            lng: -117.19573651940273,
+            lat: 34.056821813274674
+          },
+          {
+            lng: -117.19573331558155,
+            lat: 34.05648193995702
+          },
+          {
+            lat: 34.05648193995701,
+            lng: -117.19573331558153
+          },
+          {
+            lng: -117.19569416670383,
+            lat: 34.056482788881965
+          },
+          {
+            lng: -117.19565501782613,
+            lat: 34.05648363780692
+          }],
+          currentCoordIndex = 0;
+
+        geolocate.use();
+
+        setInterval(function() {
+          geolocate.change(coords[currentCoordIndex]);
+          currentCoordIndex = (currentCoordIndex + 1) % coords.length;
+        }, 1500);
+
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

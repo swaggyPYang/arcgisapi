@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Symbols",
+    "list": [
+      {
+        "name": "SimpleMarkerSymbol",
+        "type": "2d",
+        "location": "symbols/2d/SimpleMarkerSymbol.json",
+        "message": "outline style, offset, path not implemented in 3D"
+      },
+      {
+        "name": "PictureMarkerSymbol",
+        "type": "2d",
+        "location": "symbols/2d/PictureMarkerSymbol.json",
+        "message": "Not implemented in 3D"
+      },
+      {
+        "name": "TextSymbol",
+        "type": "2d",
+        "location": "symbols/2d/TextSymbol.json",
+        "error": false,
+        "message": "Some font options, angle, alignment, rotated, offset not implemented in 3D"
+      },
+      {
+        "name": "SimpleLineSymbol",
+        "type": "2d",
+        "location": "symbols/2d/SimpleLineSymbol.json",
+        "message": "style not implemented in 3D"
+      },
+      {
+        "name": "SimpleFillSymbol",
+        "type": "2d",
+        "location": "symbols/2d/SimpleFillSymbol.json",
+        "message": "style, outline style not implemented in 3D"
+      },
+      {
+        "name": "PictureFillSymbol",
+        "type": "2d",
+        "location": "symbols/2d/PictureFillSymbol.json",
+        "error": false,
+        "message": "Not implemented in 3D"
+      },
+      {
+        "name": "PointSymbol3D",
+        "type": "3d",
+        "location": "symbols/3d/PointSymbol3D.json"
+      },
+      {
+        "name": "LineSymbol3D",
+        "type": "3d",
+        "location": "symbols/3d/LineSymbol3D.json"
+      },
+      {
+        "name": "PolygonSymbol3D",
+        "type": "3d",
+        "location": "symbols/3d/PolygonSymbol3D.json"
+      },
+      {
+        "name": "MeshSymbol3D",
+        "type": "3d",
+        "location": "symbols/3d/MeshSymbol3D.json"
+      },
+      {
+        "name": "WebStyleSymbol",
+        "type": "3d",
+        "location": "symbols/3d/WebStyleSymbol.json"
+      }
+    ]
+  }
+]

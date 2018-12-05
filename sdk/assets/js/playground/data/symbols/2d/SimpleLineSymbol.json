@@ -1,0 +1,70 @@
+{
+  "className": "SimpleLineSymbol",
+  "type": "Class",
+  "baseClass": "LineSymbol",
+  "baseLocation": "symbols/2d/LineSymbol.json",
+  "variable": "line",
+  "description": "Line symbols are used to draw linear features on the graphics layer. SimpleLineSymbol is either a solid line or a predefined pattern of dashes and dots.",
+  "summary": "draw polylines and outline of points and polygons",
+  "path": "esri/symbols/SimpleLineSymbol",
+  "autocastType": "simple-line",
+  "properties": [
+    {
+      "name": "style",
+      "type": "String",
+      "default": "solid",
+      "summary": "The line style",
+      "options": {
+        "type": "String",
+        "values": [
+          "dash",
+          "dash-dot",
+          "dot",
+          "long-dash",
+          "long-dash-dot",
+          "long-dash-dot-dot",
+          "none",
+          "short-dash",
+          "short-dash-dot",
+          "short-dash-dot-dot",
+          "short-dot",
+          "solid"
+        ]
+      }
+    },
+    {
+      "name": "cap",
+      "type": "String",
+      "default": "butt",
+      "summary": "The cap style",
+      "options": {
+        "type": "String",
+        "values": [
+          "butt",
+          "round",
+          "square"
+        ]
+      }
+    },
+    {
+      "name": "join",
+      "type": "String",
+      "default": "miter",
+      "summary": "The join style",
+      "options": {
+        "type": "String",
+        "values": [
+          "miter",
+          "round",
+          "bevel"
+        ]
+      }
+    },
+    {
+      "name": "miterLimit",
+      "type": "Number",
+      "default": "10",
+      "summary": "Size threshold for showing mitered line joins"
+    }
+  ]
+}

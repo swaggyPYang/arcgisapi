@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Print widget using a VectorTileLayer - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+        "esri/views/MapView",
+        "esri/Map",
+        "esri/widgets/Print",
+        "esri/layers/VectorTileLayer"
+      ],
+      function(
+        MapView, Map, Print, VectorTileLayer
+      ) {
+
+        // Create a new instance of vector tile layer
+        // using esri chilren's vector tile service
+        var vtLayer = new VectorTileLayer({
+          url: "https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Childrens_Map/VectorTileServer/resources/styles/root.json"
+        });
+
+        // Create a new instance of a map
+        // add the vector tile layer to the map
+        var map = new Map({
+          layers: [vtLayer]
+        });
+
+        // Create a new instance of a MapView
+        // center the view around United States
+        var view = new MapView({
+          center: [-98.5795, 39.8282],
+          zoom: 3,
+          container: "viewDiv",
+          map: map
+        });
+
+        view.when(function() {
+          var print = new Print({
+            view: view,
+            // specify your own print service
+            printServiceUrl: "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          });
+
+          // Add widget to the top right corner of the view
+          view.ui.add(print, "top-right");
+        });
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

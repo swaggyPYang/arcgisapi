@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Expand widget - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/widgets/Expand",
+      "esri/widgets/BasemapGallery"
+    ], function(
+      Map, SceneView, Expand, BasemapGallery
+    ) {
+
+      var map = new Map({
+        basemap: "satellite"
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map
+      });
+
+      // Create a BasemapGallery widget instance and set
+      // its container to a div element
+
+      var basemapGallery = new BasemapGallery({
+        view: view,
+        container: document.createElement("div")
+      });
+
+      // Create an Expand instance and set the content
+      // property to the DOM node of the basemap gallery widget
+      // Use an Esri icon font to represent the content inside
+      // of the Expand widget
+
+      var bgExpand = new Expand({
+        view: view,
+        content: basemapGallery
+      });
+
+      // Add the expand instance to the ui
+
+      view.ui.add(bgExpand, "top-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Search widget with multiple sources - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/Search"
+    ], function(
+      Map,
+      MapView,
+      Search) {
+
+      var map = new Map({
+        basemap: "dark-gray"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-97, 38], // lon, lat
+        scale: 10000000
+      });
+
+      var searchWidget = new Search({
+        view: view,
+        allPlaceholder: "District or Senator",
+        sources: [{
+          featureLayer: {
+            url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/CongressionalDistricts/FeatureServer/0",
+            popupTemplate: { // autocasts as new PopupTemplate()
+              title: "Congressional District {DISTRICTID} </br>{NAME}, {PARTY}",
+              overwriteActions: true
+            }
+          },
+          searchFields: ["DISTRICTID"],
+          displayField: "DISTRICTID",
+          exactMatch: false,
+          outFields: ["DISTRICTID", "NAME", "PARTY"],
+          name: "Congressional Districts",
+          placeholder: "example: 3708",
+        }, {
+          featureLayer: {
+            url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/US_Senators/FeatureServer/0",
+            popupTemplate: { // autocasts as new PopupTemplate()
+              title: "<a href={Web_Page} target='_blank'> {Name}</a>, ({Party}-{State}) ",
+              overwriteActions: true
+            }
+          },
+          searchFields: ["Name", "Party"],
+          suggestionTemplate: "{Name}, Party: {Party}",
+          exactMatch: false,
+          outFields: ["*"],
+          placeholder: "example: Casey",
+          name: "Senators",
+          zoomScale: 500000,
+          resultSymbol: {
+            type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+            url: "images/senate.png",
+            height: 36,
+            width: 36
+          }
+        }]
+      });
+
+      // Add the search widget to the top left corner of the view
+      view.ui.add(searchWidget, {
+        position: "top-right"
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

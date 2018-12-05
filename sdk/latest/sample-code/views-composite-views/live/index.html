@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Create an app with composite views - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #mainViewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #akViewDiv {
+      padding: 0;
+      margin: 0;
+      height: 225px;
+      width: 300px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #hiViewDiv {
+      padding: 0;
+      margin: 0;
+      height: 135px;
+      width: 200px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(Map, MapView, FeatureLayer, Legend) {
+
+      var layer = new FeatureLayer({
+        portalItem: {
+          id: "b234a118ab6b4c91908a1cf677941702"
+        },
+        outFields: ["NAME", "STATE_NAME", "VACANT", "HSE_UNITS"],
+        title: "U.S. counties"
+      });
+
+      var map = new Map({
+        layers: [layer]
+      });
+
+      var mainView = new MapView({
+        container: "mainViewDiv",
+        map: map,
+        popup: {
+          highlightEnabled: false,
+          dockEnabled: true,
+          dockOptions: {
+            breakpoint: false,
+            position: "top-right"
+          }
+        },
+        extent: {
+          xmin: -3094834,
+          ymin: -44986,
+          xmax: 2752687,
+          ymax: 3271654,
+          spatialReference: {
+            wkid: 5070
+          }
+        },
+        spatialReference: {
+          // NAD_1983_Contiguous_USA_Albers
+          wkid: 5070
+        },
+        ui: {
+          components: ["attribution"]
+        }
+      });
+      mainView.ui.add(new Legend({
+        view: mainView
+      }), "bottom-right");
+
+      var akView = new MapView({
+        container: "akViewDiv",
+        map: map,
+        extent: {
+          xmin: 396381,
+          ymin: -2099670,
+          xmax: 3393803,
+          ymax: 148395,
+          spatialReference: {
+            wkid: 5936
+          }
+        },
+        spatialReference: {
+          // WGS_1984_EPSG_Alaska_Polar_Stereographic
+          wkid: 5936
+        },
+        ui: {
+          components: []
+        }
+      });
+      mainView.ui.add("akViewDiv", "bottom-left");
+
+      var hiView = new MapView({
+        container: "hiViewDiv",
+        map: map,
+        extent: {
+          xmin: -342537,
+          ymin: 655453,
+          xmax: 231447,
+          ymax: 1023383,
+          spatialReference: {
+            wkid: 102007
+          }
+        },
+        spatialReference: {
+          // Hawaii_Albers_Equal_Area_Conic
+          wkid: 102007
+        },
+        ui: {
+          components: []
+        }
+      });
+      mainView.ui.add("hiViewDiv", "bottom-left");
+
+      mainView
+        .when(maintainFixedExtent)
+        .then(disableNavigation)
+        .then(disablePopupOnClick)
+        .then(enableHighlightOnPointerMove);
+      akView
+        .when(disableNavigation)
+        .then(disablePopupOnClick)
+        .then(enableHighlightOnPointerMove);
+      hiView
+        .when(disableNavigation)
+        .then(disablePopupOnClick)
+        .then(enableHighlightOnPointerMove);
+
+      function maintainFixedExtent(view) {
+        var fixedExtent = view.extent.clone();
+        // keep a fixed extent in the view
+        // when the view size changes
+        view.on("resize", function() {
+          view.extent = fixedExtent;
+        });
+        return view;
+      }
+
+      var highlight = null;
+
+      function enableHighlightOnPointerMove(view) {
+        view.whenLayerView(layer).then(function(layerView) {
+          view.on("pointer-move", function(event) {
+            view.hitTest(event)
+              .then(function(response) {
+
+                // remove the previous highlight
+                if (highlight) {
+                  highlight.remove();
+                  highlight = null;
+                }
+
+                // if a feature is returned, highlight it
+                // and display its attributes in the popup
+                // if no features are returned, then close the popup
+                var id = null;
+
+                if (response.results.length) {
+                  var feature = response.results.filter(function(
+                    result) {
+                    return result.graphic.layer === layer;
+                  })[0].graphic;
+
+                  feature.popupTemplate = layer.popupTemplate;
+                  id = feature.attributes.OBJECTID;
+                  highlight = layerView.highlight([id]);
+                  var selectionId = mainView.popup.selectedFeature ?
+                    mainView.popup.selectedFeature.attributes
+                    .OBJECTID : null;
+
+                  if (highlight && (id !== selectionId)) {
+                    mainView.popup.open({
+                      features: [feature],
+                      updateLocationEnabled: true
+                    });
+                  }
+                } else {
+                  if (mainView.popup.visible) {
+                    mainView.popup.close();
+                    mainView.popup.clear();
+                  }
+                }
+              });
+          });
+        });
+      }
+
+      // disables all navigation in the view
+      function disableNavigation(view) {
+        view.popup.dockEnabled = true;
+
+        // Removes the zoom action on the popup
+        view.popup.actions = [];
+
+        // stops propagation of default behavior when an event fires
+        function stopEvtPropagation(event) {
+          event.stopPropagation();
+        }
+
+        // disable mouse wheel scroll zooming on the view
+        view.on("mouse-wheel", stopEvtPropagation);
+
+        // disable zooming via double-click on the view
+        view.on("double-click", stopEvtPropagation);
+
+        // disable zooming out via double-click + Control on the view
+        view.on("double-click", ["Control"], stopEvtPropagation);
+
+        // disables pinch-zoom and panning on the view
+        view.on("drag", stopEvtPropagation);
+
+        // disable the view's zoom box to prevent the Shift + drag
+        // and Shift + Control + drag zoom gestures.
+        view.on("drag", ["Shift"], stopEvtPropagation);
+        view.on("drag", ["Shift", "Control"], stopEvtPropagation);
+
+        // prevents zooming and rotation with the indicated keys
+        view.on("key-down", function(event) {
+          var prohibitedKeys = ["+", "-", "_", "=", "a", "d"];
+          var keyPressed = event.key.toLowerCase();
+          if (prohibitedKeys.indexOf(keyPressed) !== -1) {
+            event.stopPropagation();
+          }
+        });
+
+        return view;
+      }
+
+      // prevents the user from opening the popup with click
+
+      function disablePopupOnClick(view) {
+        view.on("click", function(event) {
+          event.stopPropagation();
+        });
+        return view;
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="mainViewDiv"></div>
+  <div id="akViewDiv" class="esri-widget"></div>
+  <div id="hiViewDiv" class="esri-widget"></div>
+</body>
+
+</html>

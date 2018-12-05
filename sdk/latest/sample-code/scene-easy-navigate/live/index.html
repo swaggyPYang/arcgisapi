@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Update the camera in a 3D view - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #buttonsDiv {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 12px;
+      background-color: rgba(200, 200, 200, 0.5);
+      border: 1px solid black;
+    }
+
+    #indicatorSpan {
+      display: inline-block;
+      vertical-align: middle;
+      width: 30px;
+      height: 30px;
+      background-color: rgba(100, 100, 100, 0.8);
+      border: 2px solid #ccc;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView"
+    ], function(Map, SceneView) {
+
+      // Create the Map
+      var map = new Map({
+        basemap: "hybrid",
+        ground: "world-elevation",
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        map: map,
+        container: "viewDiv",
+        camera: {
+          position: [7.654, 45.919, 5183],
+          tilt: 80
+        }
+      });
+
+      // Register events to control
+      var rotateAntiClockwiseSpan = document.getElementById(
+        "rotateAntiClockwiseSpan");
+      var rotateClockwiseSpan = document.getElementById(
+        "rotateClockwiseSpan");
+      var indicatorSpan = document.getElementById("indicatorSpan");
+      rotateClockwiseSpan.addEventListener("click", function() {
+        rotateView(-1);
+      });
+      rotateAntiClockwiseSpan.addEventListener("click", function() {
+        rotateView(1);
+      });
+      indicatorSpan.addEventListener("click", tiltView);
+
+      // Watch the change on view.camera
+      view.watch("camera", updateIndicator);
+
+      // Create the event's callback functions
+      function rotateView(direction) {
+        var heading = view.camera.heading;
+
+        // Set the heading of the view to the closest multiple of 90 degrees,
+        // depending on the direction of rotation
+        if (direction > 0) {
+          heading = Math.floor((heading + 1e-3) / 90) * 90 + 90;
+        } else {
+          heading = Math.ceil((heading - 1e-3) / 90) * 90 - 90;
+        }
+
+        view.goTo({
+          heading: heading
+        });
+      }
+
+      function tiltView() {
+        // Get the camera tilt and add a small number for numerical inaccuracies
+        var tilt = view.camera.tilt + 1e-3;
+
+        // Switch between 3 levels of tilt
+        if (tilt >= 80) {
+          tilt = 0;
+        } else if (tilt >= 40) {
+          tilt = 80;
+        } else {
+          tilt = 40;
+        }
+
+        view.goTo({
+          tilt: tilt
+        });
+      }
+
+      function updateIndicator(camera) {
+        var tilt = camera.tilt;
+        var heading = camera.heading;
+
+        // Update the indicator to reflect the current tilt/heading using
+        // css transforms.
+        var transform = "rotateX(" + 0.8 * tilt +
+          "deg) rotateY(0) rotateZ(" + -heading +
+          "deg)";
+
+        indicatorSpan.style["transform"] = transform;
+        indicatorSpan.style["-webkit-transform"] = transform; // Solution for Safari
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="buttonsDiv">
+    <button id="rotateAntiClockwiseSpan" title="Rotate 90°">↻</button>
+    <button id="indicatorSpan"></button>
+    <button id="rotateClockwiseSpan" title="Rotate 90°">↺</button>
+  </div>
+</body>
+</html>

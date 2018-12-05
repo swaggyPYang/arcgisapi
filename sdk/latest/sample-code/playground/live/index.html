@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A code generator app for the ArcGIS API for JavaScript">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>Symbol playground - 4.9</title>
+
+  <link rel="stylesheet" href="assets/css/normalize.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="assets/css/codemirror.css">
+  <link rel="stylesheet" href="assets/css/playground.css">
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header-container" id="headerContainer">
+      <p class="title">
+        <a class="link-no-underline link-white" href="../../../sample-code/index.html">ArcGIS
+          API for JavaScript</a> Playground
+      </p>
+      <div class="sub-title">
+        <span class="page-title" id="pageTitle"></span>
+        <p id="pageSubTitle">A code generator app for arcgis-js-api</p>
+        <div class="search-container" id="searchContainer" tabindex="0">
+          <input type="text" id="searchBox" placeholder="search symbol">
+          <div id="symbolsList"></div>
+        </div>
+        <span id="searchBtn"><i class="fa fa-search" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="playground-container">
+      <div class="map-block" id="mapBlock">
+        <div class="map-options" id="mapOptions">
+          <ul class="map-option" id="viewsOptions">
+            <li class="active" id="2d">
+              <p>2D</p>
+            </li>
+            <li id="3d">
+              <p>3D</p>
+            </li>
+          </ul>
+          <div class="map-option">
+            <select name="basemap" id="basemapSelector">
+              <option value="streets">streets</option>
+              <option value="satellite">satellite</option>
+              <option value="hybrid">hybrid</option>
+              <option value="topo" selected>topo</option>
+              <option value="gray">gray</option>
+              <option value="dark-gray">dark-gray</option>
+              <option value="oceans">oceans</option>
+              <option value="national-geographic">national-geographic</option>
+              <option value="terrain">terrain</option>
+              <option value="osm">osm</option>
+            </select>
+          </div>
+        </div>
+        <div class="map-div" id="view2d"></div>
+        <div class="map-div" id="view3d"></div>
+      </div>
+
+      <div class="selection-block" id="selectionBlock">
+        <div class="selection-container">
+          <div id="selectionList">
+            <p class="title">Symbols</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="generator-block" id="generatorBlock">
+        <div class="play-block">
+          <div class="sidebar-menu">
+            <ul>
+              <li id="reset"><i class="fa fa-refresh"></i><span>reset</span></li>
+              <li id="share"><i class="fa fa-share" aria-hidden="true"></i><span>share</span></li>
+            </ul>
+          </div>
+          <div id="playArea"></div>
+        </div>
+
+        <div class="code-container">
+          <div class="sidebar-menu">
+            <ul id="codeBlockMenu">
+              <li id="copyButton"><i class="fa fa-files-o"></i><span>copy</span></li>
+              <li id="autocastOption"><i class="fa fa-file-code-o"></i><span>autocast</span></li>
+              <li id="codeOption" class="active"><i class="fa fa-code"></i><span>code</span></li>
+              <li id="jsonOption">{ }<span>json</span></li>
+            </ul>
+          </div>
+          <div class="code-block">
+            <textarea id="code-area" name="code-area"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="msg-container">
+    <p id="msg">error!</p>
+  </div>
+
+  <div class="modal-block" id="modalBlock">
+    <div class="modal">
+      <div class="header">
+        <p>Share</p>
+        <i class="fa fa-times" id="shareClose"></i>
+      </div>
+      <div class="body">
+        <i class="fa fa-files-o" id="copyShare"></i>
+        <input type="text" id="shareInput">
+      </div>
+    </div>
+  </div>
+
+  <!--
+   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  // Script blocks
+   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  -->
+  <!--
+    escodegen is not compatible with requirejs - https://github.com/estools/escodegen/issues/115
+    Also bower install is not working - https://github.com/estools/escodegen/issues/243
+  -->
+  <!--<script src="resources/js/vendor/estraverse.browser.js"></script>-->
+  <script src="assets/js/escodegen.js"></script>
+  <script src="assets/js/codemirror.js"></script>
+  <script src="assets/js/codemirror-mode-javascript.js"></script>
+  <script src="../../../../assets/js/libs/beautify.js"></script>
+  <script src="../../../../assets/js/libs/ZeroClipboard.js"></script>
+  <script>
+    var relativePath = "../../../../";
+  </script>
+  <script src="../../../../assets/js/config.js"></script>
+  <script src="https://js.arcgis.com/4.9"></script>
+  <script src="../../../../assets/js/playground/main.js"></script>
+  <!-- Scripts end-->
+
+</body>
+</html>

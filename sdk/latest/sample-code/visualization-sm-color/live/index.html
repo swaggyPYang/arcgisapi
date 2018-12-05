@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Generate continuous color visualization - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/dijit/themes/claro/claro.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #containerDiv {
+      background-color: white;
+      padding: 3px;
+      text-align: center;
+    }
+
+    #title {
+      font-size: 14pt;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/renderers/smartMapping/creators/color",
+      "esri/renderers/smartMapping/statistics/histogram",
+      "esri/widgets/ColorSlider",
+      "esri/core/lang"
+    ], function(
+      Map, MapView, FeatureLayer, colorRendererCreator, histogram,
+      ColorSlider, lang
+    ) {
+
+      // Create a map and add it to a MapView
+
+      var map = new Map({
+        basemap: "gray"
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-85.050200, 33.125524],
+        zoom: 6
+      });
+
+      // Create FeatureLayer instance with popupTemplate
+
+      var povLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/counties_politics_poverty/FeatureServer/0",
+        outFields: ["POP_POVERTY", "TOTPOP_CY", "COUNTY", "STATE"],
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{COUNTY}, {STATE}",
+          content: "{POP_POVERTY} of {TOTPOP_CY} people live below the poverty line.",
+          fieldInfos: [
+          {
+            fieldName: "POP_POVERTY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }, {
+            fieldName: "TOTPOP_CY",
+            format: {
+              digitSeparator: true,
+              places: 0
+            }
+          }]
+        }
+      });
+
+      // configure parameters for the color renderer generator
+      // the layer must be specified along with a field name
+      // or arcade expression. The basemap and other properties determine
+      // the appropriate default color scheme.
+
+      var colorParams = {
+        layer: povLayer,
+        basemap: map.basemap,
+        field: "POP_POVERTY",
+        normalizationField: "TOTPOP_CY",
+        theme: "above-and-below"
+      };
+
+      // Set up initial color slider properties.
+      // numHandles determines whether 2 or 3 handles
+      // will be visible in the slider. The primary handle
+      // (middle one of the three) controls all handles
+      // when moved if `syncedHandles` is true.
+
+      var sliderParams = {
+        numHandles: 3,
+        syncedHandles: true,
+        container: "slider"
+      };
+
+      // Generate a continuous color renderer based on the
+      // statistics of the data in the provided layer
+      // and field normalized by the normalizationField.
+      //
+      // This resolves to an object containing several helpful
+      // properties, including color scheme, statistics,
+      // the renderer and visual variable
+
+      colorRendererCreator.createContinuousRenderer(colorParams)
+        .then(function(response) {
+
+          // set the renderer to the layer and add it to the map
+
+          povLayer.renderer = response.renderer;
+          map.add(povLayer);
+
+          // add the statistics and color visual variable objects
+          // to the color slider parameters
+
+          sliderParams.statistics = response.statistics;
+          sliderParams.visualVariable = response.visualVariable;
+
+          // generate a histogram for use in the slider. Input the layer
+          // and field or arcade expression to generate it.
+
+          return histogram({
+            layer: povLayer,
+            field: "POP_POVERTY",
+            normalizationField: "TOTPOP_CY"
+          });
+
+        })
+        .then(function(histogram) {
+
+          // when it resolves set the histogram in the slider parameters
+          sliderParams.histogram = histogram;
+
+          // input the slider parameters in the slider's constructor
+          // and add it to the view's UI
+
+          var colorSlider = new ColorSlider(sliderParams);
+          view.ui.add("containerDiv", "bottom-left");
+
+          // when the user slides the handle(s), update the renderer
+          // with the updated color visual variable object
+
+          colorSlider.on("data-change", function() {
+            var renderer = povLayer.renderer.clone();
+            renderer.visualVariables = [lang.clone(colorSlider.visualVariable)];
+            povLayer.renderer = renderer;
+          });
+        })
+        .catch(function(error) {
+          console.log("there was an error: ", error);
+        });
+
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="containerDiv"><span id="title">% population in poverty</span>
+    <div id="slider"></div>
+  </div>
+</body>
+
+</html>

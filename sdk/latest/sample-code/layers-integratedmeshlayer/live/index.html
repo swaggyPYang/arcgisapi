@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>IntegratedMeshLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/IntegratedMeshLayer"
+      ],
+      function(
+        Map, SceneView,
+        IntegratedMeshLayer
+      ) {
+
+        /********************
+         * Create IntegratedMeshLayer layer
+         ********************/
+
+        var layer = new IntegratedMeshLayer({
+          url: "https://tiles.arcgis.com/tiles/FQD0rKU8X5sAQfh8/arcgis/rest/services/VRICON_Yosemite_Sample_Integrated_Mesh_scene_layer/SceneServer",
+          // Integrated Mesh data provided by VRICON (www.vricon.com)
+          copyright: "VRICON"
+        });
+
+        /**************************
+         * Add IntegratedMeshLayer to map
+         *************************/
+
+        var map = new Map({
+          basemap: "satellite",
+          layers: [layer],
+          ground: "world-elevation"
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          camera: {
+            position: {
+              x: -13314225,
+              y: 4543000,
+              z: 1446,
+              spatialReference: {
+                wkid: 3857
+              }
+            },
+            tilt: 84,
+            heading: 85
+          }
+        });
+
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

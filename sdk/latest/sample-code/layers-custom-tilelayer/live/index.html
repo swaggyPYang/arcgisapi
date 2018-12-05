@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom TileLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/request",
+      "esri/Color",
+      "esri/views/SceneView",
+      "esri/widgets/LayerList",
+      "esri/layers/BaseTileLayer"
+    ], function(
+      Map, esriRequest, Color,
+      SceneView, LayerList, BaseTileLayer
+    ) {
+
+      // *******************************************************
+      // Custom tile layer class code
+      // Create a subclass of BaseTileLayer
+      // *******************************************************
+
+      var TintLayer = BaseTileLayer.createSubclass({
+        properties: {
+          urlTemplate: null,
+          tint: {
+            value: null,
+            type: Color
+          }
+        },
+
+        // generate the tile url for a given level, row and column
+        getTileUrl: function(level, row, col) {
+          return this.urlTemplate.replace("{z}", level).replace("{x}",
+            col).replace("{y}", row);
+        },
+
+        // This method fetches tiles for the specified level and size.
+        // Override this method to process the data returned from the server.
+        fetchTile: function(level, row, col) {
+
+          // call getTileUrl() method to construct the URL to tiles
+          // for a given level, row and col provided by the LayerView
+          var url = this.getTileUrl(level, row, col);
+
+          // request for tiles based on the generated url
+          return esriRequest(url, {
+              responseType: "image"
+            })
+            .then(function(response) {
+              // when esri request resolves successfully
+              // get the image from the response
+              var image = response.data;
+              var width = this.tileInfo.size[0];
+              var height = this.tileInfo.size[0];
+
+              // create a canvas with 2D rendering context
+              var canvas = document.createElement("canvas");
+              var context = canvas.getContext("2d");
+              canvas.width = width;
+              canvas.height = height;
+
+              // Apply the tint color provided by
+              // by the application to the canvas
+              if (this.tint) {
+                // Get a CSS color string in rgba form
+                // representing the tint Color instance.
+                context.fillStyle = this.tint.toCss();
+                context.fillRect(0, 0, width, height);
+
+                // Applies "difference" blending operation between canvas
+                // and steman tiles. Difference blending operation subtracts
+                // the bottom layer (canvas) from the top layer (tiles) or the
+                // other way round to always get a positive value.
+                context.globalCompositeOperation = "difference";
+              }
+
+              // Draw the blended image onto the canvas.
+              context.drawImage(image, 0, 0, width, height);
+
+              return canvas;
+            }.bind(this));
+        }
+      });
+
+      // *******************************************************
+      // Start of JavaScript application
+      // *******************************************************
+
+      // Create a new instance of the TintLayer and set its properties
+      var stamenTileLayer = new TintLayer({
+        urlTemplate: "https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png",
+        tint: new Color("#004FBB"),
+        title: "Stamen Toner"
+      });
+
+      // add the new instance of the custom tile layer the map
+      var map = new Map({
+        layers: [stamenTileLayer]
+      });
+
+      // create a new scene view and add the map
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        center: [0, 30],
+        zoom: 3
+      });
+
+      // create a layer list widget
+      var layerList = new LayerList({
+        view: view,
+      });
+      view.ui.add(layerList, "top-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

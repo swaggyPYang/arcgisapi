@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Generate a relationship visualization - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark-blue/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #infoDiv {
+      background-color: #242424;
+      padding: 10px;
+      overflow: auto;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/views/SceneView",
+      "esri/Map",
+      "esri/layers/SceneLayer",
+      "esri/widgets/Legend",
+      "esri/renderers/smartMapping/creators/relationship"
+    ], function(
+      SceneView,
+      Map,
+      SceneLayer,
+      Legend,
+      relationshipRendererCreator
+    ) {
+
+      const layer = new SceneLayer({
+        portalItem: {
+          id: "e61cfbbbe148472c8e3150da03d8ee13"
+        }
+      });
+
+      const map = new Map({
+        basemap: "gray",
+        ground: "world-elevation",
+        layers: [ layer ]
+      });
+
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            spatialReference: { wkid: 3857 },
+            x: -8240095,
+            y: 4968039,
+            z: 398
+          },
+          heading: 35,
+          tilt: 77
+        },
+        // Set dock options on the view's popup
+        popup: {
+          dockEnabled: true,
+          dockOptions: {
+            breakpoint: false
+          }
+        },
+        // enable shadows to be cast from the features
+        environment: {
+          lighting: {
+            directShadowsEnabled: true
+          }
+        }
+      });
+
+      const legend = new Legend({
+        view: view,
+        container: "legendDiv"
+      });
+      view.ui.add("infoDiv", "bottom-right");
+
+      const showDescriptiveLabelsElement = document.getElementById("descriptive-labels");
+
+      view.when()
+        .then(function(){
+          // switches the labels of the legend each time the user checks/unchecks the box
+          showDescriptiveLabelsElement.addEventListener("change", function(event){
+            const renderer = changeRendererLabels(layer.renderer.clone(), showDescriptiveLabelsElement.checked);
+            applyRenderer(renderer);
+          });
+          return layer.when();
+        })
+        .then(createRelationshipRenderer)
+        .then(function(response){
+          const renderer = changeRendererLabels(response.renderer, showDescriptiveLabelsElement.checked);
+          applyRenderer(renderer);
+        });
+
+     /**
+      * Generates a relationship renderer based on the StarScore and ElectricUse fields. StarScore is a numeric score
+      * from 0 - 100, indicating the energy efficiency of a building. The ElectricUse score indicates the amount of
+      * energy used by a building. This function returns a promise which resolves to an object containing the final
+      * renderer.
+      */
+      function createRelationshipRenderer(){
+
+        const params = {
+          layer: layer,
+          view: view,
+          basemap: map.basemap,
+          field1: {
+            field: "StarScore"
+          },
+          field2: {
+            field: "ElectricUse"
+          },
+          focus: "HH",
+          numClasses: 2,
+          edgesType: "solid"
+        };
+
+        return relationshipRendererCreator.createRenderer(params);
+      }
+
+      // applies any renderer to the scene layer
+
+      function applyRenderer(renderer){
+        renderer.defaultSymbol = {
+          type: "mesh-3d",
+          symbolLayers: [{
+            type: "fill",
+            material: {
+              color: [ 128, 128, 128, 0.4 ]
+            },
+            edges: {
+              type: "solid",
+              color: [ 50, 50, 50 ]
+            }
+          }]
+        };
+        renderer.defaultLabel = "No energy score";
+        layer.renderer = renderer;
+      }
+
+      /**
+      * Changes the labels and orientation of the relationship legend.
+      *
+      * @param {module:esri/renderers/UniqueValueRenderer} renderer - An instance of a relationship renderer.
+      * @param {boolean} showDescriptiveLabels - Indicates whether to orient the legend as a diamond and display
+      *   descriptive labels. If `false`, then the legend is oriented as a square with numeric labels, similar to
+      *   a chart with an x/y axis.
+      *
+      * @return {renderer} - The input renderer with the modified descriptions and orientation.
+      */
+      function changeRendererLabels(renderer, showDescriptiveLabels){
+
+        const numClasses = renderer.authoringInfo.numClasses;
+        const field1max = renderer.authoringInfo.field1.classBreakInfos[ numClasses-1 ].maxValue;
+        const field2max = renderer.authoringInfo.field2.classBreakInfos[ numClasses-1 ].maxValue;
+
+        renderer.uniqueValueInfos.forEach(function(info){
+          switch (info.value) {
+            case "HH":
+              info.label = showDescriptiveLabels ? "High energy score, High electric use" : "";
+              break;
+            case "HL":
+              info.label = showDescriptiveLabels ? "High energy score, Low electric use" : field1max.toLocaleString();
+              break;
+            case "LH":
+              info.label = showDescriptiveLabels ? "Low energy score, High electric use" : field2max.toLocaleString();
+              break;
+            case "LL":
+              info.label = showDescriptiveLabels ? "Low energy score, Low electric use" : 0;
+              break;
+          }
+        });
+
+        // When a focus is specified, the legend renders as a diamond with the
+        // indicated focus value on the top. If no value is specified, then
+        // the legend renders as a square
+
+        renderer.authoringInfo.focus = showDescriptiveLabels ? "HH" : null;
+        return renderer;
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="infoDiv" class="esri-widget">
+    <input type="checkbox" id="descriptive-labels" class="esri-widget" checked>
+    Show descriptive labels
+    <div id="legendDiv"></div>
+  </div>
+</body>
+
+</html>

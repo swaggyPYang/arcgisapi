@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Highlight SceneLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/tasks/support/Query",
+      "esri/widgets/Legend"
+    ], function(
+      WebScene, SceneView, Query,
+      Legend
+    ) {
+
+      // Load webscene from portal item
+      var webscene = new WebScene({
+        portalItem: { // autocasts as new PortalItem()
+          id: "fbbc829fa7d342e7ae8d18c54a5eab37"
+        }
+      });
+
+      // Create a view and set the highlight options
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webscene,
+        qualityProfile: "high",
+        environment: {
+          lighting: {
+            directShadowsEnabled: false,
+            ambientOcclusionEnabled: true
+          }
+        },
+        highlightOptions: {
+          color: [0, 255, 255],
+          fillOpacity: 0.6
+        }
+      });
+
+      // This variable will store the highlight handle that is used to remove the highlight
+      var highlight = null;
+
+      view.when(function() {
+
+        // Get layer from webScene
+        var officeSceneLayer = webscene.allLayers.filter(function(elem) {
+          return elem.title === "Esri Offices";
+        }).items[0];
+
+        // Get DOM element where list items will be placed
+        var container = document.getElementById("roomsList");
+
+        // Highlight is set on the layerView, so we need to detect when the layerView is ready
+        view.whenLayerView(officeSceneLayer).then(function(
+          officeLayerView) {
+
+          // Wait for the layer view to finish updating
+          officeLayerView.watch("updating", function(val) {
+            if (!val) {
+              // Query the features available for drawing and get all the attributes
+              var query = new Query({
+                outFields: ["*"]
+              });
+              officeLayerView.queryFeatures(query).then(
+                function(result) {
+                  // Empty the list DOM element
+                  container.innerHTML = "";
+                  // For each returned feature that is of type office create a list item and append it to the container
+                  result.features.forEach(function(feature) {
+                    var attributes = feature.attributes;
+                    // We only want to add features of type Office to the list
+                    if (attributes.SPACETYPE === "Office") {
+                      // Create list element
+                      var li = document.createElement(
+                        "li");
+                      li.setAttribute("class",
+                        "panel-result");
+                      li.innerHTML = "Room " + attributes
+                        .ROOMNUMBER;
+                      li.addEventListener("click",
+                        function(event) {
+                          var target = event.target;
+                          var objectId = feature.attributes
+                            .OBJECTID;
+                          // Create an extent query on the layer view that will return the 3D extent of the feature
+                          var queryExtent = new Query({
+                            objectIds: [objectId]
+                          });
+                          officeLayerView.queryExtent(
+                            queryExtent).then(
+                            function(result) {
+                              // Zoom to the extent of the feature
+                              // Use the expand method to prevent zooming in too close to the feature
+                              view.goTo(result.extent
+                                .expand(7), {
+                                  speedFactor: 0.5
+                                });
+                            });
+                          // Remove the previous highlights
+                          if (highlight) {
+                            highlight.remove();
+                          }
+                          // Highlight the feature passing the objectId to the method
+                          highlight = officeLayerView.highlight(
+                            [objectId]);
+                        });
+                      container.appendChild(li);
+                    }
+                  });
+                });
+            }
+          });
+        });
+      });
+
+      // Add a legend to the sample
+      var legend = new Legend({
+        view: view
+      });
+      view.ui.empty("top-left");
+      view.ui.add(legend, "bottom-left");
+    });
+  </script>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    .panel-side {
+      width: 200px;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      bottom: 28px;
+      color: #323232;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      overflow: auto;
+      z-index: 60;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .panel-side h2 {
+      padding: 0 20px;
+      margin: 20px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .panel-side ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-weight: 100;
+    }
+
+    .panel-side li {
+      list-style: none;
+      padding: 3px 10px;
+    }
+
+    .panel-result {
+      cursor: pointer;
+      margin: 2px 0;
+    }
+
+    .panel-result:hover,
+    .panel-result:focus,
+    .panel-result.selected {
+      background-color: rgba(200, 200, 200, 0.6);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="panel-side">
+    <h2>Office rooms</h2>
+    <ul id="roomsList">
+      <li>Loading&hellip;</li>
+    </ul>
+  </div>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

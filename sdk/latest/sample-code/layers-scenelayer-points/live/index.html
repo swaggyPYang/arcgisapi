@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Scene Layer with point geometries - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    h1 {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      color: #3bd9db;
+      font-family: 'Avenir Next W01', 'Helvetica Neue', 'Helvetica', sans-serif;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/SceneLayer",
+      "esri/layers/FeatureLayer"
+    ], function(Map, SceneView, SceneLayer, FeatureLayer) {
+
+      // setup the renderer with color visual variable
+      const renderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "point-3d", // autocasts as new PointSymbol3D()
+          symbolLayers: [{
+            type: "icon", // autocasts as new IconSymbol3DLayer()
+            size: 1.7
+          }]
+        },
+        visualVariables: [{
+          // shade each airport a different color based on its type
+          type: "color",
+          field: "type_airport",
+          stops: [{
+            value: 1,
+            color: [252, 12, 245]
+          },
+          {
+            value: 3,
+            color: [83, 0, 244]
+          },
+          {
+            value: 7,
+            color: [4, 245, 248]
+          }]
+        }]
+      };
+
+      // Create SceneLayer from a Scene Service URL
+      const sceneLayer = new SceneLayer({
+        url: "https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Airports_PointSceneLayer/SceneServer/layers/0",
+        renderer: renderer // Set the renderer to sceneLayer
+      });
+
+      const countries = new FeatureLayer({
+        url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/World_Countries_(Generalized)/FeatureServer",
+        renderer: {
+          type: "simple",
+          symbol: {
+            type: "polygon-3d", // autocasts as new PolygonSymbol3D()
+            symbolLayers: [{
+              type: "fill", // autocasts as new FillSymbol3DLayer()
+              material: {
+                color: [0, 0, 0, 0]
+              },
+              outline: {
+                color: [4, 245, 248]
+              }
+            }]
+          }
+        }
+      });
+
+      // Create Map
+      const map = new Map({
+        layers: [countries, sceneLayer],
+        ground: {
+          opacity: 0.6,
+          surfaceColor: "black"
+        }
+      });
+
+      // Create the SceneView
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        environment: {
+          starsEnabled: false,
+          atmosphereEnabled: false,
+          background: {
+            type: "color",
+            color: "black"
+          }
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <h1>World airports</h1>
+</body>
+
+</html>

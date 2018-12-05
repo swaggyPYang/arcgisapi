@@ -1,0 +1,69 @@
+{
+  "className": "ObjectSymbol3DLayer",
+  "type": "Class",
+  "baseClass": "Symbol3DLayer",
+  "baseLocation": "symbols/3d/Symbol3DLayer.json",
+  "variable": "objSym3DLayer",
+  "description": "ObjectSymbol3DLayer is used to symbolize points as 3D shapes.",
+  "summary": "used to symbolize points as 3D shapes",
+  "path": "esri/symbols/ObjectSymbol3DLayer",
+  "autocastType": "object",
+  "properties": [
+    {
+      "name": "anchor",
+      "type": "String",
+      "summary": "positioning of the object relative to the point geometry",
+      "options": {
+        "type": "String",
+        "values": [
+          "center",
+          "bottom",
+          "origin"
+        ]
+      }
+    },
+    {
+      "name": "depth",
+      "type": "Number",
+      "summary": "Depth of the object in meters"
+    },
+    {
+      "name": "height",
+      "type": "Number",
+      "summary": "Height of the object in meters"
+    },
+    {
+      "name": "resource",
+      "type": "Object",
+      "summary": "The shape (primitive) or external 3D model (href) used to visualize the points",
+      "properties": [
+        {
+          "name": "primitive",
+          "type": "String",
+          "summary": "Use a built-in shape",
+          "options": {
+            "type": "String",
+            "values": [
+              "sphere",
+              "cylinder",
+              "cube",
+              "cone",
+              "diamond",
+              "tetrahedron"
+            ]
+          }
+        },
+        {
+          "name": "href",
+          "type": "String",
+          "summary": "URL linking to the 3D model to be used"
+        }
+      ]
+    },
+    {
+      "name": "width",
+      "type": "Number",
+      "summary": "width of the object in meters"
+    }
+  ]
+}

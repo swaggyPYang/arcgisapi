@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom ElevationLayer - Thematic data as elevation - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+  body,
+  #viewDiv {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+  #displayDiv{
+    text-align: center;
+    background-color: rgba(255,255,255,0.6);
+    color: black;
+    padding: 10px;
+    width: 300px;
+  }
+  #displayDiv strong{
+    font-size: 14pt;
+  }
+  #legendDiv{
+    background-color: rgba(255,255,255,0.6);
+    padding: 10px;
+  }
+</style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+    "esri/Map",
+    "esri/Graphic",
+    "esri/layers/GraphicsLayer",
+    "esri/views/SceneView",
+    "esri/geometry/Extent",
+    "esri/layers/BaseElevationLayer",
+    "esri/layers/BaseTileLayer",
+    "esri/layers/ImageryLayer",
+    "esri/layers/support/RasterFunction",
+    "esri/layers/support/DimensionalDefinition",
+    "esri/layers/support/MosaicRule",
+    "esri/request"
+  ], function(
+    Map,
+    Graphic, GraphicsLayer,
+    SceneView, Extent,
+    BaseElevationLayer, BaseTileLayer, ImageryLayer,
+    RasterFunction, DimensionalDefinition, MosaicRule,
+    esriRequest
+  ) {
+
+    var map;
+
+    var depthSlider = document.getElementById("depth-slider");
+    var depthDisplay = document.getElementById("depth-display");
+    var depth = parseInt(depthSlider.value);
+
+    var dateSlider = document.getElementById("date-slider");
+    var dateDisplay = document.getElementById("date-display");
+    var tempDate = new Date(parseInt(dateSlider.value));
+
+    var tempSlider = document.getElementById("temp-slider");
+    var tempDisplay = document.getElementById("temp-display");
+    var tempFilterValue = parseInt(tempSlider.value);
+
+    // update displays when user slides handle
+    // of any slider
+    depthSlider.addEventListener("input", function() {
+      depth = parseInt(depthSlider.value);
+      depthDisplay.innerText = depth;
+    });
+
+    dateSlider.addEventListener("input", function(){
+      tempDate = new Date(parseInt(dateSlider.value));
+      dateDisplay.innerText = tempDate.toDateString();
+    });
+
+    tempSlider.addEventListener("input", function(){
+      tempFilterValue = parseInt(tempSlider.value);
+      tempDisplay.innerText = tempFilterValue;
+      createTemparatureZFilter(tempFilterValue);
+    });
+
+    // update the elevation layer and operational layers
+    // to reflect temperature at the depth indicated by the
+    // depthSlider value
+    depthSlider.addEventListener("change", function() {
+      map.ground.layers = [ new Temperature3DLayer() ];
+      var tempLayer = findLayer("Sea Temperature");
+      map.remove(tempLayer);
+      map.add(new Temperature2DLayer());
+    });
+
+    // update the elevation layer and operational layers
+    // to reflect temperature at the date indicated by the
+    // dateSlider value
+    dateSlider.addEventListener("change", function() {
+      map.ground.layers = [ new Temperature3DLayer() ];
+      var tempLayer = findLayer("Sea Temperature");
+      map.remove(tempLayer);
+      map.add(new Temperature2DLayer());
+    });
+
+    // returns a layer instance from the map based on its title
+    function findLayer(title){
+      return map.layers.find(function(layer){
+        return layer.title === title;
+      });
+    }
+
+    // Creates a new ImageryLayer representing temperature data
+    // for the given depth on April 6, 2014
+    function createTemperatureLayer(depth, date, format){
+      return new ImageryLayer({
+        url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/ScientificData/SeaTemperature/ImageServer",
+        renderingRule: new RasterFunction({
+          functionName: "None"
+        }),
+        format: format,
+        mosaicRule: new MosaicRule({
+          multidimensionalDefinition: [ new DimensionalDefinition({
+            variableName: "water_temp",
+            dimensionName: "StdZ",  // Water depth
+            values: [ depth ],  // Water depth
+            isSlice: true
+          }), new DimensionalDefinition({
+            variableName: "water_temp",
+            dimensionName: "StdTime",  // Time temp was recorded
+            values: [ date.valueOf() ],
+            isSlice: true
+          }) ]
+        })
+      });
+    }
+
+    //////////////////////////////////////////////
+    //
+    // Create a subclass of BaseElevationLayer
+    // where elevations will represent temperatures
+    //
+    /////////////////////////////////////////////
+
+    var Temperature3DLayer = BaseElevationLayer.createSubclass({
+      // the factor by which to multiply temperatures
+      // to create a pseudo elevation
+      properties: {
+        factor: 80000
+      },
+
+      load: function() {
+        // load ImageryLayer containing temperature values
+        this._temperature = createTemperatureLayer(depth, tempDate, "lerc");
+        this.addResolvingPromise(this._temperature.load());
+      },
+
+      // This function must associate elevation tiles with temperature
+      // values. This is achieved by getting the bounds (or extent)
+      // of the tile and fetching a temperature image based on
+      // the returned extent
+      fetchTile: function(level, row, col) {
+        var bounds = this.getTileBounds(level, row, col);
+        var tileSize = this.tileInfo.size[0] + 1;
+        var extent = new Extent({
+          xmin: bounds[0],
+          ymin: bounds[1],
+          xmax: bounds[2],
+          ymax: bounds[3],
+          spatialReference: this.spatialReference
+        });
+        var factor = this.factor;
+
+        // fetch the image representing temperature for the extent of the tile.
+        // this method returns the pixel data of the image for the extent
+        // of the given elevation tile
+        return this._temperature.fetchImage(extent, tileSize, tileSize)
+          .then(function(data) {
+
+            var pixelBlock = data.pixelData.pixelBlock;
+            // contains the temperature values of each pixel in the image
+            var elevations = pixelBlock.pixels[0];
+            var stats = pixelBlock.statistics[0];
+            // pixels that don't contain any temperature values
+            var noDataValue = stats.noDataValue;
+
+            elevations.forEach(function(value, index, pixelData) {
+              if (value !== noDataValue) {
+                // multiply temperatures by the given factor
+                pixelData[index] = value * factor;
+              }
+              else {
+                // areas with no temperature data (land)
+                // will be assigned the average sea surface
+                // temperature (17 degrees Celsius)
+                pixelData[index] = 17*factor;
+              }
+            });
+
+            // return the modified temperatures as elevations
+            return {
+              values: elevations,
+              width: pixelBlock.width,
+              height: pixelBlock.height,
+              noDataValue: noDataValue
+            };
+          }.bind(this));
+      }
+    });
+
+
+    //////////////////////////////////////////////
+    //
+    // Create a subclass of BaseTileLayer. This layer
+    // will create a tiled version of ImageryLayer
+    // that draws faster on the client
+    //
+    /////////////////////////////////////////////
+
+    var Temperature2DLayer = BaseTileLayer.createSubclass({
+
+      properties: {
+        title: "Sea Temperature",
+        opacity: 0.6
+      },
+
+      load: function() {
+        // load ImageryLayer containing temperature values
+        this._temperature = createTemperatureLayer(depth, tempDate,
+          "jpgpng");
+        this.addResolvingPromise(this._temperature.load());
+      },
+
+      fetchTile: function(level, row, col) {
+        var bounds = this.getTileBounds(level, row, col);
+        var tileSize = this.tileInfo.size[0];
+        var extent = new Extent({
+          xmin: bounds[0],
+          ymin: bounds[1],
+          xmax: bounds[2],
+          ymax: bounds[3],
+          spatialReference: this.spatialReference
+        });
+
+        // fetch the image representing temperature for the extent of the tile.
+        // this method returns the pixel data of the image for the extent
+        // of the given elevation tile
+        return this._temperature.fetchImage(extent, tileSize,
+            tileSize)
+          .then(function(data) {
+
+            var pixelBlock = data.pixelData.pixelBlock;
+
+            // the service gives back pixels color values as the format set on the layer is jpgpng
+            var r = pixelBlock.pixels[0];
+            var g = pixelBlock.pixels[1];
+            var b = pixelBlock.pixels[2];
+
+            // mask tells when there is data or not
+            var mask = pixelBlock.mask;
+
+            // create a canvas of the size of the tile and colorizes the tile with the pixel color values
+            var canvas = document.createElement("canvas");
+            canvas.width = canvas.height = tileSize;
+
+            var context = canvas.getContext("2d");
+            var imageData = context.getImageData(0, 0, tileSize, tileSize);
+            var pixels = imageData.data;
+
+            // Loop through the pixels in the image data, which are the pixels
+            // of the image that will be displayed.
+            // `pixels` is a flat array of color values and alpha [r, g, b, a, r, g, b, a, ...]
+            // The length of the pixels array is then the number of pixels times 4.
+            // Since we have 3 distinct arrays for r, g, b in the pixelBlock
+            // we need to iterate through the pixels and through the color values respectively
+            // So we decide to have 2 indexes: i and j
+            for (var i = 0, j = 0; i < pixels.length; i += 4, j++) {
+              if (mask[j] > 0) {
+                pixels[i] = r[j];
+                pixels[i + 1] = g[j];
+                pixels[i + 2] = b[j];
+                pixels[i + 3] = 255;
+              }
+            }
+
+            // time to put the image data on the canvas.
+            context.putImageData(imageData, 0, 0);
+
+            return canvas;
+          }.bind(this));
+      }
+    });
+
+    // Add the Temperature3DLayer as an elevation layer to the map
+    // with a 2D ImageryLayer representing elevation draped on top
+    var map = new Map({
+      basemap: "oceans",
+      ground: {
+        layers: [
+          new Temperature3DLayer()
+        ]
+      },
+      layers: [
+        new Temperature2DLayer()
+      ]
+    });
+
+    // Creates a scene view instance in the given mode
+    var view = new SceneView({
+      container: "viewDiv",
+      viewingMode: "local",
+      map: map,
+      camera: {
+        position: {
+          x: 36004541,
+          y: -8073308,
+          z: 10249365,
+          spatialReference: { wkid: 102100 },
+        },
+        heading: 284,
+        tilt: 72
+      },
+      constraints: {
+        altitude: {
+          max: 38226000
+        }
+      }
+    });
+
+    view.ui.add([{
+      component: "legendDiv",
+      position: "bottom-left"
+    }, {
+      component: "displayDiv",
+      position: "top-right"
+    }]);
+
+    view.when(function(){
+      createTemparatureZFilter(tempFilterValue);
+      createTemperatureLegend();
+    });
+
+    // Creates a graphic at the extent of the world
+    // used to filter out elevations (temperatures)
+    // below a specified value
+    function createTemparatureZFilter(temp){
+      var layer;
+      var factor = 80000;  //map.ground.layers.getItemAt(0).factor;
+      var z = temp * factor;
+      var layerTitle = "Temperature filter";
+
+      var filterGraphic = new Graphic({
+        symbol: {
+          type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+          color: [ 255, 255, 255, 0.7 ],
+          outline: null
+        },
+        geometry: {
+          type: "polygon",  // autocasts as new Polygon()
+          rings: [[
+            [ -179.9, 85, z ],
+            [ 179.9, 85, z ],
+            [ 179.9, -85, z ],
+            [ -179.9, -85, z ],
+            [ -179.9, 85, z ],
+          ]]
+        }
+      });
+
+      var index = map.layers.findIndex(function(layer){
+        return layer.title === layerTitle;
+      });
+
+      if(index < 0){
+        layer = new GraphicsLayer({
+          title: layerTitle,
+          graphics: [ filterGraphic ],
+          elevationInfo: {
+            mode: "absolute-height",
+            offset: 4500  // to avoid z-fighting with terrain
+          }
+        });
+        map.layers.add(layer);
+      } else {
+        layer = map.layers.getItemAt(index);
+        layer.graphics = [ filterGraphic ];
+      }
+    }
+
+    // Request the legend directly from the service since
+    // custom layers aren't supported by esri/widgets/Legend
+    function createTemperatureLegend(){
+      var url = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/ScientificData/SeaTemperature/ImageServer/legend";
+      var params = {
+        query: {
+          f: "pjson"
+        },
+        responseType: "json"
+      };
+
+      esriRequest(url, params)
+        .then(function(response){
+
+          var legendParts = response.data.layers[0].legend;
+
+          var maxImgSrc = "data:" + legendParts[0].contentType + ";base64," + legendParts[0].imageData;
+          var minImgSrc = "data:" + legendParts[1].contentType + ";base64," + legendParts[1].imageData;
+
+          var maxImage = document.createElement("IMG");
+          maxImage.setAttribute("src", maxImgSrc);
+          var minImage = document.createElement("IMG");
+          minImage.setAttribute("src", minImgSrc);
+
+          var legendMaxValueRow = document.getElementById("max-value");
+          var legendMaxValueLabel = document.createTextNode(legendParts[0].label);
+          var legendMinValueRow = document.getElementById("min-value");
+          var legendMinValueLabel = document.createTextNode(legendParts[2].label);
+
+          legendMaxValueRow.appendChild(maxImage);
+          legendMaxValueRow.appendChild(legendMaxValueLabel);
+          legendMinValueRow.appendChild(minImage);
+          legendMinValueRow.appendChild(legendMinValueLabel);
+
+        })
+        .catch(function(error){
+          console.log("legend error: ", error);
+        });
+    }
+
+  });
+</script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="displayDiv">
+    <strong>Sea temperature at <span id="depth-display">-100</span> meters</strong><br>
+    -1000<input id="depth-slider" type="range" min="-1000" max="0" step="100"
+      value="-100">0<br>
+    <strong>on <span id="date-display">Sun Apr 06 2014</span></strong><br>
+    April 6 <input id="date-slider" type="range" min="1396828800000" max="1404000000000"
+      step="86400000" value="1396828800000"> June 28<br>
+    <span id="temp-text"><strong>hide temperatures below <span id="temp-display">17</span>°C</strong></span><br>
+    -2 <input id="temp-slider" type="range" min="-2" max="30" step="1" value="17">
+    30
+  </div>
+  <div id="legendDiv">
+    <strong>Sea Temperature (°C)</strong>
+    <table id="legend-table">
+      <tr id="max-value"></tr>
+      <tr id="min-value"></tr>
+    </table>
+  </div>
+</body>
+</html>

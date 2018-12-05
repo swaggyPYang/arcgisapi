@@ -1,0 +1,68 @@
+{
+  "className": "Font",
+  "type": "Class",
+  "variable": "font",
+  "description": "Font used for text symbols added to the graphics layer.",
+  "summary": "for text symbols",
+  "path": "esri/symbols/Font",
+  "properties": [
+    {
+      "name": "size",
+      "type": "Number",
+      "default": 9,
+      "summary": "Font size",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "style",
+      "type": "String",
+      "default": "normal",
+      "summary": "Text style",
+      "options": {
+        "type": "String",
+        "values": [
+          "normal",
+          "italic",
+          "oblique"
+        ]
+      }
+    },
+    {
+      "name": "weight",
+      "type": "String",
+      "default": "normal",
+      "summary": "Text weight",
+      "options": {
+        "type": "String",
+        "values": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter"
+        ]
+      }
+    },
+    {
+      "name": "family",
+      "type": "String",
+      "default": "Serif",
+      "summary": "Font family"
+    },
+    {
+      "name": "decoration",
+      "type": "String",
+      "default": "none",
+      "summary": "Text decoration",
+      "options": {
+        "type": "String",
+        "values": [
+          "underline",
+          "line-through",
+          "none"
+        ]
+      }
+    }
+  ]
+}

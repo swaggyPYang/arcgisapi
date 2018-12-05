@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta charset="utf-8">
+  <title>Using widgets with Riot - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    html,
+    body,
+    .esri-view {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+
+    .zoom-btns {
+      transition: opacity .25s ease-in-out;
+      -moz-transition: opacity .25s ease-in-out;
+      -webkit-transition: opacity .25s ease-in-out;
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .button {
+      display: inline-block;
+      position: relative;
+      margin: 5px;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 2em;
+      background-color: #ffffff;
+      color: #646464;
+      cursor: pointer;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .button.circle {
+      border-radius: 50%;
+    }
+
+    .button:hover {
+      opacity: 0.8;
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    .button.raised {
+      transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0.2s;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .button.raised:active {
+      box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+      transition-delay: 0s;
+    }
+
+    .disable {
+      opacity: 0.8;
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    .disable:hover {
+      opacity: 0.8;
+      color: rgba(0, 0, 0, 0.25);
+      cursor: not-allowed;
+    }
+
+    .material-icons {
+      font-size: 1.2em;
+      line-height: 50px;
+    }
+
+    .view-info {
+      text-align: center;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <!-- this custom Riot tag provides zoom buttons functionality -->
+    <zoom-buttons view_ui_position="bottom-left"></zoom-buttons>
+  </div>
+
+  <!-- load riot.js and its compiler -->
+  <script src="//unpkg.com/riot@3/riot+compiler.min.js"></script>
+  <!-- load Esri JSAPI -->
+  <script src="https://js.arcgis.com/4.9"></script>
+
+  <!-- establish an inlined riot.js tag definition for zoom buttons -->
+  <script type="riot/tag">
+    <zoom-buttons>
+
+      <!-- tag template -->
+
+      <div class="zoom-btns">
+        <div class="{ button: true, circle: true, raised: true, disable: !opts.zoomVM.canZoomIn }"
+          onclick="{ zoomIn }">
+          <i class="material-icons">add</i>
+        </div>
+        <div class="{ button: true, circle: true, raised: true, disable: !opts.zoomVM.canZoomOut }"
+          onclick="{ zoomOut }">
+          <i class="material-icons">remove</i>
+        </div>
+      </div>
+      <div class="view-info">Scale: { opts.view.scale.toFixed(1) }</div>
+      <div class="view-info">Zoom: { opts.view.zoom.toFixed(2) }</div>
+
+      // tag logic
+
+      // optional: set the UI position of the tag within the view
+      if (this.opts.view_ui_position) {
+        this.opts.view.ui.add(this.root, this.opts.view_ui_position);
+      }
+
+      // watch view properties for changes and then manually update the tag
+      // to update its scale and zoom expressions on the page
+      this.opts.view.watch('scale,zoom', function() {
+        this.update();
+      }.bind(this));
+
+      // event handler for a div onclick in the tag template
+      zoomIn() {
+        if (this.opts.zoomVM.canZoomIn) {
+          this.opts.zoomVM.zoomIn();
+        }
+      }
+
+      // event handler for a div onclick in the tag template
+      zoomOut() {
+        if (this.opts.zoomVM.canZoomOut) {
+          this.opts.zoomVM.zoomOut();
+        }
+      }
+
+    </zoom-buttons>
+  </script>
+
+  <!-- load custom code -->
+  <script>
+    require([
+      'esri/Map',
+      'esri/views/MapView',
+      'esri/widgets/Zoom/ZoomViewModel'
+    ], function(Map, MapView, ZoomVM) {
+
+      var map = new Map({
+        basemap: 'topo'
+      });
+
+      var view = new MapView({
+        container: 'viewDiv',
+        map: map,
+        zoom: 10,
+        center: [-100.33, 25.69],
+        ui: {
+          components: ['attribution']
+        },
+        constraints: {
+          minZoom: 7,
+          maxZoom: 12
+        }
+      });
+
+      view.when(function(view) {
+        // using riot.js:
+        //  - mount the custom zoom buttons tag onto the page
+        //  - pass in properties to the tag (i.e. the MapView and a ZoomViewModel)
+        riot.mount('zoom-buttons', {
+          view: view,
+          zoomVM: new ZoomVM({
+            view: view
+          })
+        });
+      });
+
+    });
+  </script>
+</body>
+</html>

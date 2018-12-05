@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Extrude building footprints based on real world heights - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(
+      Map, SceneView, FeatureLayer, Legend
+    ) {
+
+      /*****************************************************************
+       * Define symbols for each unique type of building. One each for
+       * residential, condos, and other.
+       *****************************************************************/
+
+      var resSym = {
+        type: "polygon-3d", // autocasts as new PolygonSymbol3D()
+        symbolLayers: [{
+          type: "extrude", // autocasts as new ExtrudeSymbol3DLayer()
+          material: {
+            color: "#FC921F"
+          },
+          edges: {
+            type: "solid",
+            color: "#72420d",
+            size: 1.5
+          }
+        }]
+      };
+
+      var condoSym = {
+        type: "polygon-3d", // autocasts as new PolygonSymbol3D()
+        symbolLayers: [{
+          type: "extrude", // autocasts as new ExtrudeSymbol3DLayer()
+          material: {
+            color: "#9E559C"
+          },
+          edges: {
+            type: "solid",
+            color: "#4c294b",
+            size: 1.5
+          }
+        }]
+      };
+
+      /*****************************************************************
+       * Set each unique value directly in the renderer's constructor.
+       * At least one field must be used (in this case the "DESCLU" field).
+       * The label property of each unique value will be used to indicate
+       * the field value and symbol in the legend.
+       *
+       * The size visual variable sets the height of each building as it
+       * exists in the real world according to the "ELEVATION" field.
+       *****************************************************************/
+
+      var renderer = {
+        type: "unique-value", // autocasts as new UniqueValueRenderer()
+        defaultSymbol: {
+          type: "polygon-3d", // autocasts as new PolygonSymbol3D()
+          symbolLayers: [{
+            type: "extrude", // autocasts as new ExtrudeSymbol3DLayer()
+            material: {
+              color: "#A7C636"
+            },
+            edges: {
+              type: "solid",
+              color: "#4d5b18",
+              size: 1.5
+            }
+          }]
+        },
+        defaultLabel: "Other",
+        field: "DESCLU",
+        uniqueValueInfos: [{
+          value: "Residential",
+          symbol: resSym,
+          label: "Residential"
+        }, {
+          value: "Residential Condominium",
+          symbol: condoSym,
+          label: "Condominium"
+        }],
+        visualVariables: [{
+          type: "size",
+          field: "ELEVATION",
+          valueUnit: "feet" // Converts and extrudes all data values in feet
+        }]
+      };
+
+      // Set the renderer on the layer
+      var buildingsLayer = new FeatureLayer({
+        url: "https://services1.arcgis.com/jjVcwHv9AQEq3DH3/ArcGIS/rest/services/Buildings/FeatureServer/0",
+        renderer: renderer,
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{DESCLU}",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "ADDRESS",
+              label: "Address"
+            }, {
+              fieldName: "DESCLU",
+              label: "Type"
+            }, {
+              fieldName: "ELEVATION",
+              label: "Height"
+            }]
+          }]
+        },
+        outFields: ["ADDRESS", "DESCLU", "ELEVATION"],
+        definitionExpression: "ELEVATION > 0", // show only buildings with height
+      });
+
+      var map = new Map({
+        basemap: "streets",
+        ground: "world-elevation",
+        layers: [buildingsLayer]
+      });
+
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            x: -8354148,
+            y: 4641966,
+            z: 129,
+            spatialReference: {
+              wkid: 3857
+            }
+          },
+          heading: 300,
+          tilt: 75
+        }
+      });
+
+      var legend = new Legend({
+        view: view
+      });
+
+      view.ui.add(legend, "bottom-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

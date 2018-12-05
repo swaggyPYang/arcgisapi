@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom DynamicLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/BaseDynamicLayer",
+      "esri/widgets/LayerList",
+      "esri/core/urlUtils"
+    ], function(
+      Map,
+      MapView,
+      BaseDynamicLayer,
+      LayerList
+    ) {
+
+      // *******************************************************
+      // Create a subclass of BaseDynamicLayer
+      // *******************************************************
+      var CustomWMSLayer = BaseDynamicLayer.createSubclass({
+
+        properties: {
+          mapUrl: null,
+          mapParameters: null
+        },
+
+        // Override the getImageUrl() method to generate URL
+        // to an image for a given extent, width, and height.
+        getImageUrl: function(extent, width, height) {
+          var urlVariables = this._prepareQuery(this.mapParameters,
+            extent, width, height);
+          var queryString = this._joinUrlVariables(urlVariables);
+          return this.mapUrl + "?" + queryString;
+        },
+
+        // Prepare query parameters for the URL to an image to be generated
+        _prepareQuery: function(queryParameters, extent, width, height) {
+          var wkid = extent.spatialReference.isWebMercator ? 3857 :
+            extent.spatialReference.wkid;
+          var replacers = {
+            width: width,
+            height: height,
+            wkid: wkid,
+            xmin: extent.xmin,
+            xmax: extent.xmax,
+            ymin: extent.ymin,
+            ymax: extent.ymax
+          };
+
+          var urlVariables = this._replace({}, queryParameters,
+            replacers);
+          return urlVariables;
+        },
+
+        // replace the url variables with the application provided values
+        _replace(urlVariables, queryParameters, replacers) {
+          Object.keys(queryParameters).forEach(function(key) {
+            urlVariables[key] = Object.keys(replacers).reduce(
+              function(previous, replacerKey) {
+                return previous.replace("{" + replacerKey + "}",
+                  replacers[replacerKey]);
+              }, queryParameters[key]);
+          });
+
+          return urlVariables;
+        },
+
+        // join the url parameters
+        _joinUrlVariables: function(urlVariables) {
+          return Object.keys(urlVariables).reduce(function(previous,
+            key) {
+            return previous + (previous ? "&" : "") + key + "=" +
+              urlVariables[key];
+          }, "");
+        }
+
+      });
+      // *******************************************************
+      // end of custom dynamic layer
+      // *******************************************************
+
+      // create the custom WMS layer with
+      // url parameters
+      var wmsLayer = new CustomWMSLayer({
+        mapUrl: "https://geobretagne.fr/geoserver/cadastre/ows",
+        mapParameters: {
+          SERVICE: "WMS",
+          REQUEST: "GetMap",
+          FORMAT: "image/png",
+          TRANSPARENT: "TRUE",
+          STYLES: "",
+          VERSION: "1.3.0",
+          LAYERS: "CP.CadastralParcel",
+          WIDTH: "{width}",
+          HEIGHT: "{height}",
+          CRS: "EPSG:{wkid}",
+          BBOX: "{xmin},{ymin},{xmax},{ymax}"
+        },
+
+        minScale: 20000,
+        title: "Cadastral Parcel"
+      });
+
+      // create a new instance of a map
+      // add the wms layer to the map
+
+      var map = new Map({
+        basemap: "topo",
+        layers: [wmsLayer]
+      });
+
+      // create a new instance of the view
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-4.487534, 48.388673],
+        zoom: 16
+      });
+
+      // create a new layer list
+      var layerList = new LayerList({
+        view: view
+      });
+      view.ui.add(layerList, "top-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

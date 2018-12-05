@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Low poly terrain using mesh geometry - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/Graphic",
+      "esri/geometry/Extent",
+      "esri/geometry/Point",
+      "esri/geometry/Mesh",
+      "esri/geometry/SpatialReference",
+      "esri/geometry/support/MeshComponent",
+      "esri/geometry/support/meshUtils"
+    ], function(
+      Map, SceneView, Graphic,
+      Extent, Point, Mesh, SpatialReference, MeshComponent, meshUtils
+    ) {
+
+      /**************************************************
+       * This sample shows how to create a low-poly terrain
+       * from the ground elevation and color it based on the
+       * height.
+       * It also adds random trees with low-poly tree 3D models
+       * that were previously published in ArcGIS Pro. It uses
+       * the elevationSampler to synchronously get the height
+       * values at which the trees should be placed.
+       ***************************************************/
+
+      // The resolution at which the terrain is sampled to create the mesh
+      const demResolution = 125;
+
+      // The factor to exaggerate height values
+      const exaggeration = 2;
+
+      // The extent of the webscene - used for clipping the view and
+      // to set the extent for the terrain mesh geometry.
+      // Random trees are also generated inside of this extent only.
+      const extent = new Extent({
+        xmax: 950005,
+        xmin: 943783,
+        ymax: 5998448,
+        ymin: 5994465,
+        spatialReference: SpatialReference.WebMercator
+      });
+
+      const map = new Map({
+        ground: "world-elevation"
+      });
+
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        viewingMode: "local",
+        clippingArea: extent,
+        camera: {
+          position: {
+            spatialReference: SpatialReference.WebMercator,
+            x: 949489,
+            y: 5994263,
+            z: 1339
+          },
+          heading: 322,
+          tilt: 82
+        }
+      });
+
+      // Enable shadows so that the terrain mesh and trees cast shadows
+      view.environment.lighting.directShadowsEnabled = true;
+
+      view.when()
+        .then(createTerrain)
+        .then(createTrees)
+        .catch(console.error);
+
+      function createTerrain() {
+
+        // Use createFromElevation to generate a mesh geometry
+        // from a given elevation layer, for a certain extent
+        // and at a custom resolution
+        return meshUtils.createFromElevation(map.ground.layers.getItemAt(0),
+            extent, {
+              demResolution: demResolution
+            })
+          .then(function(mesh) {
+
+            const vPositions = mesh.vertexAttributes.position;
+
+            // Every third element in the positions array represents the height value
+            // [x1, y1, z1, x2, y2, z2, ...]
+            for (let index = 0; index < vPositions.length; index += 3) {
+
+              // Modify the height position by applying the exaggeration
+              vPositions[index + 2] = vPositions[index + 2] *
+                exaggeration;
+            }
+
+            // Set the shading of the component to flat, to see the generated triangles
+            // and generate the low-poly effect.
+            // Change shading to "smooth" for the terrain to be continuously interpolated
+            mesh.components[0].shading = "flat";
+
+            // Generate the texture with the colors for the terrain mesh
+            // based on the height values
+            mesh.components[0].material = {
+              color: createTerrainTexture(mesh)
+            };
+
+            // Create the graphic using the mesh geometry and a MeshSymbol3D
+            const graphic = new Graphic({
+              geometry: mesh,
+              symbol: {
+                type: "mesh-3d",
+                symbolLayers: [{
+                  type: "fill"
+                }]
+              }
+            });
+
+            view.graphics.add(graphic);
+          });
+      }
+
+      // Create a texture to be mapped on the mesh geometry
+      function createTerrainTexture(mesh) {
+
+        const vPositions = mesh.vertexAttributes.position;
+
+        // Calculate the width and height of the canvas
+        // based on the number of vertices and the extent aspect ratio
+        const vertexCount = vPositions.length / 3;
+        const w = Math.round(Math.sqrt(vertexCount * extent.width / extent.height));
+        const h = Math.round(vertexCount / w);
+
+        // Create a 2D canvas and assign the colors for each pixel
+        // based on the height value of the mesh vertices
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = w;
+        canvas.height = h;
+
+        // Set height based color values in the
+        // ImageData(https://developer.mozilla.org/en-US/docs/Web/API/ImageData)
+        // of the canvas
+        const imgData = ctx.createImageData(w, h);
+        let j = 0;
+
+        for (let i = 0; i < vPositions.length; i += 3) {
+          const color = getColor(vPositions[i + 2]);
+
+          imgData.data[j + 0] = color[0]; // r
+          imgData.data[j + 1] = color[1]; // g
+          imgData.data[j + 2] = color[2]; // b
+          imgData.data[j + 3] = 255; // alpha
+          j += 4;
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        return canvas;
+      }
+
+      // Returns a color based on height
+      function getColor(height) {
+
+        if (height < 500 * exaggeration) {
+          return [149, 195, 50]; // green
+        }
+        else {
+          if (height < 700 * exaggeration) {
+            return [209, 148, 81]; // brown
+          }
+        }
+
+        return [255, 255, 255]; // white
+      }
+
+      function createTrees() {
+
+        const treeXYCoordinates = [
+          [949511.0269866717, 5996737.260347401],
+          [948349.0915666509, 5995392.784148848],
+          [948134.9365087302, 5995257.3964663735],
+          [947677.0638892008, 5995549.099657962],
+          [948533.132906933, 5996579.031805388],
+          [948164.69040468, 5998378.064842778],
+          [947679.8323087967, 5996458.904069111],
+          [949905.6697365673, 5995740.200877652],
+          [949291.5109791199, 5997380.737017862],
+          [948419.5816452013, 5994747.508043459],
+          [949421.7202507699, 5998165.359250989]
+        ];
+
+        // Create an elevationSampler to synchronously query the elevation
+        // at tree locations
+        return map.ground.layers.getItemAt(0).createElevationSampler(extent, {
+            demResolution: demResolution
+          })
+          .then(function(elevationSampler) {
+
+            for (let i = 0; i < treeXYCoordinates.length; i++) {
+
+              // Generate a 2D point within the extent of the SceneView
+              const tree = new Point({
+                x: treeXYCoordinates[i][0],
+                y: treeXYCoordinates[i][1],
+                spatialReference: extent.spatialReference
+              });
+
+              // Query elevation and apply exaggeration
+              const tree3D = elevationSampler.queryElevation(tree);
+              tree3D.z = tree3D.z * exaggeration;
+
+              const symbol = {
+                type: "point-3d",
+                symbolLayers: [{
+                  type: "object",
+                  resource: {
+                    // The tree model was imported to Pro and published as a WebStyle
+                    // See details on how to do this here: http://pro.arcgis.com/en/pro-app/help/sharing/overview/share-a-web-style.htm
+                    href: "https://jsapi.maps.arcgis.com/sharing/rest/content/items/4418035fa87d44f490d5bf27a579e118/resources/styles/web/resource/tree.json"
+                  },
+                  height: 200,
+                  heading: Math.random() * 360,
+                  anchor: "bottom"
+                }]
+              };
+
+              view.graphics.add(new Graphic({
+                geometry: tree3D,
+                symbol: symbol
+              }));
+            }
+
+          });
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

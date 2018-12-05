@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+
+  <title>Query statistics client-side - 4.9</title>
+
+  <!-- Load the Chart.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/dijit/themes/claro/claro.css">
+
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #viewDiv {
+      position: absolute;
+      left: 0;
+      right: 380px;
+      top: 0;
+      bottom: 0;
+      height: 100%;
+    }
+
+    #panel {
+      position: absolute;
+      right: 0;
+      height: 100%;
+      width: 380px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/widgets/LayerList",
+      "esri/core/watchUtils"
+    ], function(
+      WebMap, MapView, LayerList, watchUtils
+    ) {
+
+      // Load a web map in a 2D MapView
+      const map = new WebMap({
+        portalItem: {
+          id: "88275f408861408dab986ad78f2a97cf"
+        }
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        popup: {
+          dockEnabled: true,
+          dockOptions: {
+            breakpoint: false
+          }
+        }
+      });
+
+      // helper function for returning a layer instance
+      // based on a given layer title
+      function findLayerByTitle(title) {
+        return view.map.allLayers.find(function(layer) {
+          return layer.title === title;
+        });
+      }
+
+      // When the view loads, set up UI elements
+      let layerList, predominanceLayer;
+
+      view.when(function() {
+        predominanceLayer = findLayerByTitle(
+          "Educational Attainment by City");
+        predominanceLayer.outFields = ["*"];
+
+        view.whenLayerView(predominanceLayer).then(function(layerView) {
+          // Update the pie chart after the user stops panning or zooming
+          watchUtils.whenTrue(view, "stationary", function(val) {
+            watchUtils.whenFalseOnce(layerView, "updating",
+              function(val) {
+                console.log(val);
+                queryLayerViewStats(layerView).then(function(
+                  newData) {
+                  updateChart(newData);
+                });
+              });
+          });
+        });
+
+        // Add a LayerList instance to the view with
+        // custom text and a canvas element in the list item panel
+        // for rendering a chart to display query results
+
+        layerList = new LayerList({
+          view: view,
+          container: document.createElement("div"),
+          listItemCreatedFunction: function(event) {
+            const item = event.item;
+
+            // add the pie chart to the Predominance layer list item panel
+            if (item.title === predominanceLayer.title) {
+              item.panel = {
+                content: [
+                  [
+                    "<b>Educational attainment</b> refers to the highest level of education that an individual has completed. ",
+                    "This chart categorizes the population living within the current ",
+                    "view extent by their educational attainment."
+                  ].join(""),
+
+                  document.createElement("canvas"),
+
+                  [
+                    "Notice that while one attainment level appears to dominate certain regions, it doesn't ",
+                    "necessarily mean it represents the majority of the population. In fact, as ",
+                    "you explore most areas, you will find the predominant educational attainment makes up ",
+                    "just a fraction of the population due to the number of categories considered."
+                  ].join("")
+                ],
+                className: "esri-icon-pie-chart",
+                open: item.visible
+              };
+            }
+          }
+        });
+        layerList.container.style = "height: 100%";
+        let panelDiv = document.getElementById("panel");
+        panelDiv.appendChild(layerList.container);
+      });
+
+      // Query the layer view for statistics on each education variable in the layer
+      function queryLayerViewStats(layerView) {
+
+        const educationFields = ["EDUC01_CY", "EDUC02_CY", "EDUC03_CY",
+          "EDUC04_CY", "EDUC05_CY", "EDUC06_CY", "EDUC07_CY", "EDUC08_CY",
+          "EDUC09_CY", "EDUC10_CY", "EDUC11_CY", "EDUC12_CY", "EDUC13_CY",
+          "EDUC14_CY", "EDUC15_CY", "EDUC16_CY", "EDUCA_BASE"
+        ];
+
+        // Creates a query object for statistics of each of the fields listed above
+        const statDefinitions = educationFields.map(function(fieldName) {
+          return {
+            onStatisticField: fieldName,
+            outStatisticFieldName: fieldName + "_TOTAL",
+            statisticType: "sum"
+          };
+        });
+
+        // query statistics for features only in view extent
+        const query = layerView.layer.createQuery();
+        query.outStatistics = statDefinitions;
+        query.geometry = view.extent;
+
+        // query features within the view's extent on the client
+        return layerView.queryFeatures(query).then(function(response) {
+          const stats = response.features[0].attributes;
+
+          const updatedData = [
+            stats.EDUC01_CY_TOTAL, // no school
+            stats.EDUC02_CY_TOTAL, // preschool
+            stats.EDUC03_CY_TOTAL, // some elementary
+            stats.EDUC04_CY_TOTAL + stats.EDUC07_CY_TOTAL, // elementary
+            stats.EDUC05_CY_TOTAL, // some secondary
+            stats.EDUC06_CY_TOTAL + stats.EDUC08_CY_TOTAL, // secondary
+            stats.EDUC09_CY_TOTAL + stats.EDUC11_CY_TOTAL, // high school
+            stats.EDUC10_CY_TOTAL + stats.EDUC12_CY_TOTAL + stats.EDUC13_CY_TOTAL +
+            stats.EDUC14_CY_TOTAL + stats.EDUC15_CY_TOTAL, // college
+            stats.EDUC16_CY_TOTAL // not specified
+          ];
+
+          // data used to update the pie chart
+          return {
+            total: stats.EDUCA_BASE_TOTAL, // total population 12+
+            values: updatedData
+          };
+        });
+      }
+
+      // Create a chart to display in a LayerList panel
+      // The chart is created using the Chart.js library
+      let chart, totalCount;
+
+      function updateChart(response) {
+        const newData = response.values;
+        totalCount = response.total;
+        const title = numberWithCommas(totalCount) + " people (age 12+)";
+        if (!chart) {
+          // get the canvas element created in the LayerList
+          // and use it to render the chart
+          const canvasElement = layerList.operationalItems.find(function(
+            item) {
+            return predominanceLayer.title === item.title;
+          }).panel.content[1];
+
+          chart = new Chart(canvasElement.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: ["No school", "Preschool",
+                "Incomplete Elementary", "Elementary",
+                "Incomplete Secondary", "Secondary",
+                "High School", "College", "Not Specified"
+              ],
+              datasets: [{
+                label: "Population by educational attainment",
+                backgroundColor: ["#9e549c", "#f789d8", "#149dcf",
+                  "#ed5050", "#ffde3e", "#a6c736", "#b7804a",
+                  "#fc9220", "#9e9e9e"
+                ],
+                borderColor: "rgb(255, 255, 255)",
+                borderWidth: 1,
+                data: newData
+              }]
+            },
+            options: {
+              responsive: false,
+              cutoutPercentage: 35,
+              // Not an ArcGIS legend instance. This legend
+              // is constructed for the pie chart, not the
+              // features in the view, though the colors match
+              // the colors of the features displayed in the map view
+              legend: {
+                position: "bottom"
+              },
+              title: {
+                display: true,
+                text: title
+              },
+              tooltips: {
+                // define custom callback to format data values with commas and %
+                callbacks: {
+                  label: function(tooltipItem, data) {
+                    const dataIndex = tooltipItem.index;
+                    const value = data.datasets[0].data[dataIndex];
+                    const percentage = totalCount > 0 ? Math.round((
+                      value / totalCount) * 100) : 0;
+                    return numberWithCommas(value) + " (" +
+                      percentage + "%)";
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          chart.options.title.text = title;
+          chart.data.datasets[0].data = newData;
+          chart.update();
+        }
+      }
+
+      // helper function for formatting number labels with commas
+      function numberWithCommas(value) {
+        value = value || 0;
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+    });
+  </script>
+
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="panel"></div>
+</body>
+
+</html>

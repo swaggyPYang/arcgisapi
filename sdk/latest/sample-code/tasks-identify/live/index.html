@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>IdentifyTask - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-popup .esri-popup-header .esri-title {
+      font-size: 18px;
+      font-weight: bolder;
+    }
+
+    .esri-popup .esri-popup-body .esri-popup-content {
+      font-size: 14px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/TileLayer",
+      "esri/tasks/IdentifyTask",
+      "esri/tasks/support/IdentifyParameters"
+    ], function(
+      Map, MapView, TileLayer,
+      IdentifyTask, IdentifyParameters
+    ) {
+
+      var identifyTask, params;
+
+      // URL to the map service where the identify will be performed
+      var soilURL =
+        "https://services.arcgisonline.com/arcgis/rest/services/Specialty/Soil_Survey_Map/MapServer";
+
+      // Add the map service as a TileLayer for fast rendering
+      // Tile layers are composed of non-interactive images. For that reason we'll
+      // use IdentifyTask to query the service to add interactivity to the app
+      var parcelsLayer = new TileLayer({
+        url: soilURL,
+        opacity: 0.85
+      });
+
+      var map = new Map({
+        basemap: "osm"
+      });
+      map.add(parcelsLayer);
+
+      var view = new MapView({
+        map: map,
+        container: "viewDiv",
+        center: [-120.174, 47.255],
+        zoom: 7
+      });
+
+      view.when(function() {
+        // executeIdentifyTask() is called each time the view is clicked
+        view.on("click", executeIdentifyTask);
+
+        // Create identify task for the specified map service
+        identifyTask = new IdentifyTask(soilURL);
+
+        // Set the parameters for the Identify
+        params = new IdentifyParameters();
+        params.tolerance = 3;
+        params.layerIds = [0, 1, 2];
+        params.layerOption = "top";
+        params.width = view.width;
+        params.height = view.height;
+      });
+
+      // Executes each time the view is clicked
+      function executeIdentifyTask(event) {
+        // Set the geometry to the location of the view click
+        params.geometry = event.mapPoint;
+        params.mapExtent = view.extent;
+        document.getElementById("viewDiv").style.cursor = "wait";
+
+        // This function returns a promise that resolves to an array of features
+        // A custom popupTemplate is set for each feature based on the layer it
+        // originates from
+        identifyTask.execute(params).then(function(response) {
+
+          var results = response.results;
+
+          return results.map(function(result) {
+
+            var feature = result.feature;
+            var layerName = result.layerName;
+
+            feature.attributes.layerName = layerName;
+            if (layerName === 'Soil Survey Geographic') {
+              feature.popupTemplate = { // autocasts as new PopupTemplate()
+                title: "{Map Unit Name}",
+                content: "<b>Dominant order:</b> {Dominant Order} ({Dom. Cond. Order %}%)" +
+                  "<br><b>Dominant sub-order:</b> {Dominant Sub-Order} ({Dom. Cond. Suborder %}%)" +
+                  "<br><b>Dominant Drainage Class:</b> {Dom. Cond. Drainage Class} ({Dom. Cond. Drainage Class %}%)" +
+                  "<br><b>Farmland Class:</b> {Farmland Class}"
+              };
+            }
+            else if (layerName === 'State Soil Geographic') {
+              feature.popupTemplate = { // autocasts as new PopupTemplate()
+                title: "{Map Unit Name}",
+                content: "<b>Dominant order:</b> {Dominant Order} ({Dominant %}%)" +
+                  "<br><b>Dominant sub-order:</b> {Dominant Sub-Order} ({Dominant Sub-Order %}%)"
+              };
+            }
+            else if (layerName === 'Global Soil Regions') {
+              feature.popupTemplate = { // autocasts as new PopupTemplate()
+                title: layerName,
+                content: "<b>Dominant order:</b> {Dominant Order}" +
+                  "<br><b>Dominant sub-order:</b> {Dominant Sub-Order}"
+              };
+            }
+            return feature;
+          });
+        }).then(showPopup); // Send the array of features to showPopup()
+
+        // Shows the results of the Identify in a popup once the promise is resolved
+        function showPopup(response) {
+          if (response.length > 0) {
+            view.popup.open({
+              features: response,
+              location: event.mapPoint
+            });
+          }
+          document.getElementById("viewDiv").style.cursor = "auto";
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - raster data source - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer"
+      ],
+      function(
+        Map, MapView, MapImageLayer
+      ) {
+
+        /*****************************************************************
+         * Create a MapImageLayer instance with two sublayers. Both are
+         * rasters. The first comes from a registered database and the second
+         * is a map service layer.
+         *****************************************************************/
+
+        var layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/GlacierBay/MapServer",
+          minScale: 2000000,
+          sublayers: [{
+            id: 1,
+            title: "hillshade",
+            source: {
+              // indicates the source of the sublayer is a dynamic data layer
+              type: "data-layer",
+              // this object defines the data source of the layer
+              // in this case it's a raster located in a registered workspace
+              dataSource: {
+                type: "raster",
+                workspaceId: "GlacierBayID",
+                dataSourceName: "gb_hillshade"
+              }
+            }
+          }, {
+            id: 0,
+            title: "dem"
+          }]
+        });
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+
+        var map = new Map({
+          basemap: "hybrid",
+          layers: [layer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-136.897460, 58.496968],
+          zoom: 13
+        });
+
+        // Change the layer's opacity value based on the value
+        // of the slider
+        layer.when(function() {
+          var slider = document.querySelector(".opacity-slider");
+          var opacity = document.querySelector(".opacity");
+          slider.addEventListener("input", function () {
+            layer.opacity = slider.value;
+            opacity.innerText = slider.value;
+          });
+        });
+
+      });
+  </script>
+
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #viewDiv {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 100px;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      height: 100px;
+      width: 100%;
+      color: #fff;
+      background-color: #0E3B6F;
+      text-align: center;
+    }
+
+    .opacity-slider {
+      padding: 0;
+      width: 85%;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div class="footer">
+    <h4>Digital Elevation Model (DEM) opacity = <span class="opacity">1</span></h4>
+    <input class="opacity-slider" type="range" min="0" max="1" step="0.001"
+      value="1">
+  </div>
+</body>
+
+</html>

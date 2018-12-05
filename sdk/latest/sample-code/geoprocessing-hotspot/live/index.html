@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Geoprocessing - hotspot analysis - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 97%;
+      background: rgba(61, 59, 60, 0.75);
+      width: 320px;
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow-y: auto;
+    }
+
+    .label {
+      color: white;
+    }
+
+    #legendDiv {
+      padding-top: 20px;
+      padding-left: 20px;
+      color: white;
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    #legendDiv_msg {
+      display: none;
+    }
+
+    #hotspotButton {
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      border: none;
+      background-color: rgba(229, 89, 52, 0.75);
+      color: #FFF;
+      margin: 1px;
+      width: 50%;
+      padding: 10px;
+      overflow: auto;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.7em;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/tasks/Geoprocessor",
+        "esri/widgets/Legend",
+        "esri/layers/support/ImageParameters",
+        "esri/moment",
+
+        // IE11 Date Input support
+        "https://unpkg.com/nodep-date-input-polyfill@5.2.0/nodep-date-input-polyfill.dist.js"
+      ],
+      function(Map, MapView, Geoprocessor, Legend, ImageParameters, moment) {
+
+        document.getElementById("hotspotButton").addEventListener("click", findHotspot);
+
+        var message = document.getElementById("message");
+
+        var map = new Map({
+          basemap: "dark-gray-vector"
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-122.81, 45.466],
+          zoom: 12
+        });
+
+        // initialize geoprocessor task
+        var gpUrl =
+          "https://sampleserver6.arcgisonline.com/arcgis/rest/services/911CallsHotspot/GPServer/911%20Calls%20Hotspot";
+
+        var gp = new Geoprocessor(gpUrl);
+        gp.outSpatialReference = { // autocasts as new SpatialReference()
+          wkid: 102100
+        };
+
+        // initialize a legend widget for the geoprocessing service result
+        var legend = new Legend({
+          view: view,
+          container: "legendDiv"
+        });
+
+
+        function findHotspot() {
+          var params = {
+            Query: buildDefinitionQuery()
+          };
+
+          // clean up previous results
+          cleanup();
+          message.innerText = "Job in progress...";
+          gp.submitJob(params).then(drawResultData, errBack, progTest);
+        }
+
+        var fromDate = document.getElementById("fromDate");
+        var toDate = document.getElementById("toDate");
+
+
+        function buildDefinitionQuery() {
+          var defQuery;
+          // get input info from form and build definition expression
+
+          var startDate = moment(new Date(fromDate.value)).format("YYYY-MM-DD hh:mm:ss");
+          var endDate = moment(new Date(toDate.value)).format("YYYY-MM-DD hh:mm:ss");
+          var def = [];
+          def.push("(Date >= date '" + startDate + "' and Date <= date '" +
+            endDate + "')");
+          def.push(
+            "(Day = 'SUN' OR Day= 'SAT' OR Day = 'FRI' OR Day ='MON' OR Day='TUE' OR Day='WED' OR Day ='THU')"
+          );
+
+          if (def.length > 1) {
+            defQuery = def.join(" AND ");
+          }
+          return defQuery;
+        }
+
+        function cleanup() {
+          // remove the geoprocessing result layer from the map
+          map.layers.forEach(function(layer, i) {
+            if (layer.title === "HotspotLayer") {
+              map.layers.remove(layer);
+            }
+          });
+        }
+
+        function drawResultData(result) {
+          // set imageParameters
+          var imageParams = new ImageParameters({
+            format: "png32",
+            dpi: 300
+          });
+
+          // get the task result as a MapImageLayer
+          var resultLayer = gp.getResultMapImageLayer(result.jobId);
+          resultLayer.opacity = 0.7;
+          resultLayer.title = "HotspotLayer";
+
+          // add the result layer to the map
+          map.layers.add(resultLayer);
+
+          // remove message
+          message.innerText = "";
+        }
+
+        function progTest(value) {
+          message.innerText += "...";
+          console.log(value.jobStatus);
+        }
+
+        function errBack(error) {
+          message.innerText = "";
+          console.log("gp error: ", error);
+        }
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="sidebar">
+      <div id="text">
+        <div id="info">
+          <div style="padding-bottom:20px; padding-left:10px;">
+            <br> <label class="label" for="fromDate">From:</label> <br>
+            <input type="date" id="fromDate" name="fromDate" min="1998-01-01"
+              max="1998-05-31" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+            <br><br> <label class="label" for="toDate">To:</label> <br>
+            <input type="date" id="toDate" name="toDate" min="1998-01-01" max="1998-05-31"
+              required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+          </div>
+          <div align="center">
+            <br> <button id="hotspotButton">Analyze 911 Calls</button>
+          </div>
+          <label id="message" class="label"></label>
+          <div id="legendDiv"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

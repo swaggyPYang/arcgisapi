@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+
+  <title>MapImageLayer - Explore data from a dynamic workspace - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer",
+        "esri/renderers/smartMapping/creators/color",
+        "esri/widgets/LayerList",
+        "esri/core/Collection"
+      ],
+      function(
+        Map, MapView, MapImageLayer, colorRendererCreator, LayerList,
+        Collection
+      ) {
+
+        const ancestrySelect = document.getElementById("ancestry-select");
+        const classSelect = document.getElementById("classification-select");
+
+        const map = new Map({
+          basemap: "hybrid"
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 5,
+          center: [-101.088, 40.969]
+        });
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing US state boundary geometries. A sublayer is added to
+         * the layer with a dynamic data layer source. The dynamic layer
+         * is created by joining a table with ancestry attributes to an
+         * existing map service layer with geometries (states).
+         *
+         * The data exist in a registered workspace in the map service.
+         *****************************************************************/
+
+        const layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/AGP/Census/MapServer",
+          title: "United States Population",
+          listMode: "hide-children",
+          sublayers: [{
+            title: "% population with selected ancestry",
+            id: 0,
+            opacity: 0.75,
+            source: {
+              type: "data-layer",
+              dataSource: {
+                type: "join-table",
+                leftTableSource: {
+                  type: "map-layer",
+                  mapLayerId: 3
+                },
+                rightTableSource: {
+                  type: "data-layer",
+                  dataSource: {
+                    type: "table",
+                    workspaceId: "CensusFileGDBWorkspaceID",
+                    dataSourceName: "ancestry"
+                  }
+                },
+                leftTableKey: "STATE_NAME",
+                rightTableKey: "State",
+                joinType: "left-outer-join"
+              }
+            }
+          }]
+        });
+
+        // Get the sublayer to explore
+        const ancestrySublayer = layer.sublayers.find(function(sublayer) {
+          return sublayer.title === "% population with selected ancestry";
+        });
+
+        // The feature layer equivalent of the sublayer will be used
+        // for generating the renderer for the sublayer and constructing
+        // the select containing various ancestry categories
+        const ancestryFeatureLayer = ancestrySublayer.createFeatureLayer();
+
+        // Populate one of the select elements with options for exploring
+        // different ancestry types.
+        ancestryFeatureLayer.load().then(function() {
+          const fields = new Collection(ancestryFeatureLayer.fields);
+          fields.filter(function(field) {
+            return field.name.slice(0, 8) === "ancestry" &&
+              field.name.indexOf("OBJECTID") === -1 &&
+              field.name.indexOf("State") === -1;
+          }).forEach(function(field) {
+            const option = document.createElement("option");
+            option.value = field.name;
+            option.text = field.name.slice(9, 30);
+            ancestrySelect.appendChild(option);
+          });
+
+          createRenderer();
+          ancestrySelect.addEventListener("change", createRenderer);
+          classSelect.addEventListener("change", createRenderer);
+        });
+
+        // Generates a renderer using the feature layer and
+        // sets the renderer on the sublayer instance
+        function createRenderer() {
+          const params = {
+            // set FeatureLayer as input
+            layer: ancestryFeatureLayer,
+            basemap: map.basemap,
+            // Arcade is used to normalize and round the data
+            valueExpression: "Round( ( $feature['" + ancestrySelect.value +
+              "'] / $feature['states.POP2007'] ) * 100, 1);",
+            view: view, // required with valueExpression
+            classificationMethod: classSelect.value
+          };
+
+          colorRendererCreator.createClassBreaksRenderer(params)
+            .then(function(response) {
+              // set the renderer on the sublayer
+              ancestrySublayer.renderer = response.renderer;
+              const selectedAncestry = ancestrySelect[ancestrySelect.selectedIndex]
+                .text;
+
+              if (!map.layers.includes(layer)) {
+                map.add(layer);
+              }
+
+              // Update the popupTemplate to display data from the selected field
+              ancestrySublayer.popupTemplate = {
+                title: "{states.STATE_NAME}",
+                content: "{ancestry." + selectedAncestry +
+                  "} of the {states.POP2007} people in {states.STATE_NAME} have " +
+                  selectedAncestry + " ancestry.",
+                expressionInfos: [{
+                  name: "per_ancestry",
+                  expression: response.renderer.valueExpression
+                }],
+                fieldInfos: [{
+                  fieldName: "states.POP2007",
+                  format: {
+                    digitSeparator: true,
+                    places: 0
+                  }
+                }, {
+                  fieldName: "ancestry." + selectedAncestry,
+                  format: {
+                    digitSeparator: true,
+                    places: 0
+                  }
+                }]
+              };
+
+            }).catch(function(error) {
+              console.log(error);
+            });
+        }
+
+        // Set LayerList with two content elements in the same panel
+        // 1. A div element containing the select elements for data exploration
+        // 2. a legend instance
+        const layerList = new LayerList({
+          view: view,
+          listItemCreatedFunction: function(event) {
+            const item = event.item;
+            item.panel = {
+              content: [document.getElementById("infoDiv"), "legend"],
+              open: true
+            };
+          }
+        });
+        view.ui.add(layerList, "top-right");
+
+      });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="infoDiv">
+    <div style="padding-bottom: 3px;">
+      Ancestry: <select id="ancestry-select" class="esri-widget"></select>
+    </div>
+    Class Method:
+    <select id="classification-select" class="esri-widget">
+      <option value="natural-breaks">Natural Breaks</option>
+      <option value="quantile">Quantile</option>
+      <option value="equal-interval">Equal Interval</option>
+      <option value="standard-deviation">Standard Deviation</option>
+    </select>
+  </div>
+</body>
+
+</html>

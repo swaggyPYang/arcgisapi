@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Thematic multivariate visualization (3D) - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/widgets/Legend"
+    ], function(
+      FeatureLayer,
+      Map, SceneView,
+      Legend
+    ) {
+
+      /*****************************************************************
+       * More than one visual variable can be set on a renderer to create
+       * multivariate visualizations on a layer.
+       *
+       * In this case we set three visual variables on the renderer - one
+       * for color and two for size. Because size values can be applied to
+       * more than one axis in 3D (heigh, depth, and width) we want to
+       * specify a constant value for the width and depth and size the
+       * height of each feature based on the windspeed of the hurricane
+       * at that location. Color is used to visualize atmospheric pressure.
+       *****************************************************************/
+
+      var renderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "point-3d", // autocasts as new PointSymbol3D()
+          symbolLayers: [{
+            type: "object", // autocasts as new ObjectSymbol3DLayer()
+            resource: {
+              primitive: "cone"
+            },
+            width: 50000 // width of the symbol in meters
+          }]
+        },
+        label: "hurricane location",
+        visualVariables: [{
+          type: "color",
+          field: "PRESSURE",
+          stops: [
+          {
+            value: 950,
+            color: "red"
+          },
+          {
+            value: 1020,
+            color: "blue"
+          }]
+        }, {
+          type: "size",
+          field: "WINDSPEED",
+          stops: [
+          {
+            value: 20,
+            size: 60000
+          },
+          {
+            value: 150,
+            size: 500000
+          }],
+          axis: "height"
+        }, {
+          type: "size",
+          axis: "width-and-depth",
+          useSymbolValue: true // uses the width value defined in the symbol layer (50,000)
+        }]
+      };
+
+      // set the renderer on the layer
+      var hurricaneLayer = new FeatureLayer({
+        url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/0",
+        renderer: renderer
+      });
+
+      // add the layer to a new map
+      var map = new Map({
+        basemap: "oceans",
+        layers: [hurricaneLayer]
+      });
+
+      // The initial camera of the view
+      var initCam = { // autocasts as new Camera()
+        position: { // autocasts as new Point()
+          x: -7094839,
+          y: -113987,
+          z: 8032780,
+          spatialReference: { // autocasts as new SpatialReference()
+            wkid: 3857
+          }
+        },
+        heading: 358.8,
+        tilt: 13.7
+      };
+
+      // add the map to a new 3d view
+      var view = new SceneView({
+        map: map,
+        container: "viewDiv",
+        camera: initCam
+      });
+
+      var legend = new Legend({
+        view: view
+      });
+
+      view.ui.add(legend, "bottom-left");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

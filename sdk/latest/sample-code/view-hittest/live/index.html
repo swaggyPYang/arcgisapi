@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Access features with pointer events - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #info {
+      background-color: black;
+      opacity: 0.75;
+      color: orange;
+      font-size: 18pt;
+      padding: 8px;
+      visibility: hidden;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer"
+    ], function(
+      Map,
+      MapView,
+      FeatureLayer
+    ) {
+
+      var hurricanesLayer = new FeatureLayer({
+        url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/1",
+        outFields: ["*"]
+      });
+
+      var map = new Map({
+        basemap: "dark-gray",
+        layers: [hurricanesLayer]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-61.125537, 35.863534],
+        zoom: 4
+      });
+
+      view.ui.add("info", "top-right");
+
+      // Set up an event handler for pointer-down (mobile)
+      // and pointer-move events (mouse)
+      // and retrieve the screen x, y coordinates
+      view.on("pointer-move", eventHandler);
+      view.on("pointer-down", eventHandler);
+
+      function eventHandler(event) {
+        // the hitTest() checks to see if any graphics in the view
+        // intersect the given screen x, y coordinates
+        view.hitTest(event)
+          .then(getGraphics);
+      }
+
+      function getGraphics(response) {
+        // the topmost graphic from the hurricanesLayer
+        // and display select attribute values from the
+        // graphic to the user
+        if (response.results.length) {
+          var graphic = response.results.filter(function(result) {
+            return result.graphic.layer === hurricanesLayer;
+          })[0].graphic;
+
+          var attributes = graphic.attributes;
+          var category = attributes.CAT;
+          var wind = attributes.WIND_KTS;
+          var name = attributes.NAME;
+
+          document.getElementById("info").style.visibility = "visible";
+          document.getElementById("name").innerHTML = name;
+          document.getElementById("category").innerHTML = "Category " +
+            category;
+          document.getElementById("wind").innerHTML = wind + " kts";
+
+          // symbolize all line segments with the given
+          // storm name with the same symbol
+          var renderer = {
+            type: "unique-value", // autocasts as new UniqueValueRenderer()
+            field: "NAME",
+            defaultSymbol: hurricanesLayer.renderer.symbol ||
+              hurricanesLayer.renderer.defaultSymbol,
+            uniqueValueInfos: [{
+              value: name,
+              symbol: {
+                type: "simple-line", // autocasts as new SimpleLineSymbol()
+                color: "orange",
+                width: 5,
+                cap: "round"
+              }
+            }]
+          };
+          hurricanesLayer.renderer = renderer;
+        }
+      }
+
+      view.when(function() {
+        hurricanesLayer.when(function() {
+          // update the default renderer's
+          // symbol when the hurricanesLayer loads
+          var renderer = hurricanesLayer.renderer.clone();
+          renderer.symbol.width = 4;
+          renderer.symbol.color = [128, 128, 128, 0.8];
+          renderer.symbol.cap = "round";
+          hurricanesLayer.renderer = renderer;
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="info">
+    <span id="name"></span>
+    <br>
+    <span id="category"></span>
+    <br>
+    <span id="wind"></span>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Scale feature sizes based on real world sizes (2D) - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-legend {
+      background-color: lightgray;
+      color: black;
+      opacity: 0.9;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(
+      Map, MapView,
+      FeatureLayer,
+      Legend
+    ) {
+
+      /******************************************************************
+       *
+       * Create a simple renderer, assign a default symbol. The visual
+       * variables will take over and generate a color for each tree based
+       * on the amount of carbon storage and it will size each point based
+       * on the actual canopy size of the tree.
+       *
+       * In this case the data has a "Width_EW" field that contains the diameter
+       * of the canopy from EW. The diameter there will be used to scale
+       * each symbol size as it exists in the real world.
+       *
+       ******************************************************************/
+
+      var renderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          outline: { // autocasts as new SimpleLineSymbol()
+            color: "lightgray",
+            width: 0.5
+          }
+        },
+        label: "tree",
+        visualVariables: [{
+          type: "size",
+          field: "Width_EW",
+          valueUnit: "feet", // values of Width_EW are expressed in feet
+          valueRepresentation: "diameter"
+        }, {
+          type: "color",
+          field: "C_Storage", // Carbon storage
+          legendOptions: {
+            title: "Carbon Storage"
+          },
+          stops: [
+            {
+              value: 0,
+              color: "#f7fcb9"
+            }, // features with zero carbon
+            {
+              value: 8000,
+              color: "#31a354"
+            } // features with 8000 carbon
+          ]
+          // Values between 0-8000 will be assigned a color proportionally along the ramp
+        }]
+      };
+
+      // Assign the renderer to the layer
+      var treesLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0",
+        renderer: renderer
+      });
+
+      var map = new Map({
+        basemap: "osm",
+        layers: [treesLayer]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-82.441933, 35.611474],
+        zoom: 18
+      });
+
+      /******************************************************************
+       *
+       * Add layers to layerInfos on the legend
+       *
+       ******************************************************************/
+
+      var legend = new Legend({
+        view: view,
+        layerInfos: [
+        {
+          layer: treesLayer,
+          title: "Carbon storage of trees"
+        }]
+      });
+
+      view.ui.add(legend, "bottom-left");
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

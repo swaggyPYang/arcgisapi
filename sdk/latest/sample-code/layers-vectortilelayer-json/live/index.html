@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>VectorTileLayer from JSON - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/VectorTileLayer",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(Map, MapView, VectorTileLayer, FeatureLayer, Legend) {
+
+      // Create a Map
+      const map = new Map();
+
+      // Make map view and bind it to the map
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-98.5795, 39.8282],
+        zoom: 1,
+      });
+
+      const vtLayer = new VectorTileLayer({
+        style: {
+          "layers": [{
+            "layout": {},
+            "paint": {
+              "fill-color": "#F0ECDB",
+            },
+            "source": "esri",
+            "minzoom": 0,
+            "source-layer": "Land",
+            "type": "fill",
+            "id": "Land/0"
+          },
+          {
+            "layout": {},
+            "paint": {
+              "fill-pattern": "Landpattern",
+              "fill-opacity": 0.25
+            },
+            "source": "esri",
+            "minzoom": 0,
+            "source-layer": "Land",
+            "type": "fill",
+            "id": "Land/1"
+          },
+          {
+            "layout": {},
+            "paint": {
+              "fill-color": "#93CFC7"
+            },
+            "source": "esri",
+            "minzoom": 0,
+            "source-layer": "Marine area",
+            "type": "fill",
+            "id": "Marine area/1"
+          },
+          {
+            "layout": {},
+            "paint": {
+              "fill-pattern": "Marine area",
+              "fill-opacity": 0.08
+            },
+            "source": "esri",
+            "source-layer": "Marine area",
+            "type": "fill",
+            "id": "Marine area/2"
+          },
+          {
+            "layout": {
+              "line-cap": "round",
+              "line-join": "round"
+            },
+            "paint": {
+              "line-color": "#cccccc",
+              "line-dasharray": [
+                7, 5.33333
+              ],
+              "line-width": 1
+            },
+            "source": "esri",
+            "minzoom": 1,
+            "source-layer": "Boundary line",
+            "type": "line",
+            "id": "Boundary line/Admin0/0"
+          },
+          {
+            "layout": {
+              "text-font": [
+                "Risque Regular"
+              ],
+              "text-anchor": "center",
+              "text-field": "{_name_global}",
+            },
+            "paint": {
+              "text-halo-blur": 1,
+              "text-color": "#AF420A",
+              "text-halo-width": 1,
+              "text-halo-color": "#f0efec"
+            },
+            "source": "esri",
+            "source-layer": "Continent",
+            "type": "symbol",
+            "id": "Continent"
+          },
+          {
+            "layout": {
+              "text-font": [
+                "Atomic Age Regular"
+              ],
+              "text-field": "{_name}",
+            },
+            "paint": {
+              "text-halo-blur": 1,
+              "text-color": "#AF420A",
+              "text-halo-width": 1,
+              "text-halo-color": "#f0efec"
+            },
+            "source": "esri",
+            "minzoom": 2,
+            "source-layer": "Admin0 point",
+            "maxzoom": 10,
+            "type": "symbol",
+            "id": "Admin0 point/large"
+          }],
+          "glyphs": "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/resources/fonts/{fontstack}/{range}.pbf",
+          "version": 8,
+          "sprite": "https://www.arcgis.com/sharing/rest/content/items/7675d44bb1e4428aa2c30a9b68f97822/resources/sprites/sprite",
+          "sources": {
+            "esri": {
+              "url": "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer",
+              "type": "vector"
+            }
+          }
+        }
+      });
+      map.add(vtLayer);
+
+      const heritageSites = new FeatureLayer({
+        // url: "https://services.arcgis.com/nzS0F0zdNLvs7nc8/ArcGIS/rest/services/WorldHeritageSites/FeatureServer/2"
+        portalItem: {
+          id: "dd555c0b2af04e9ea73d7442e394c056"
+        }
+      });
+      map.add(heritageSites);
+
+      const legend = new Legend({
+        view: view,
+        layerInfos: [{
+          layer: heritageSites,
+          title: "UNESCO World Heritage Sites"
+        }]
+      });
+
+      // Add widget to the bottom right corner of the view
+      view.ui.add(legend, "bottom-right");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

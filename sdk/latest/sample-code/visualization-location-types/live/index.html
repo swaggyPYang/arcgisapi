@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Visualize features by type - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-legend {
+      background-color: black;
+      color: white;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend"
+      ],
+      function(
+        Map, MapView, FeatureLayer, Legend
+      ) {
+
+        /******************************************************************
+         *
+         * Define symbols for each unique type. One each for freeways,
+         * highways, and other major roads
+         *
+         ******************************************************************/
+
+        // Symbol for freeways
+        var fwySym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#FFAA00",
+          width: 10,
+          style: "solid"
+        };
+
+        // Symbol for U.S. Highways
+        var hwySym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#DF73FF",
+          width: 7,
+          style: "solid"
+        };
+
+        // Symbol for other major highways
+        var otherSym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#EBEBEB",
+          width: 3,
+          style: "short-dot"
+        };
+
+        /******************************************************************
+         *
+         * Set each unique value directly in the renderer's constructor.
+         * At least one field must be used (in this case the "CLASS" field).
+         * The label property of each unique value will be used to indicate
+         * the field value and symbol in the legend.
+         *
+         ******************************************************************/
+
+        var hwyRenderer = {
+          type: "unique-value", // autocasts as new UniqueValueRenderer()
+          defaultSymbol: otherSym,
+          defaultLabel: "Other major roads",
+          field: "CLASS",
+          uniqueValueInfos: [{
+            value: "I", // code for interstates/freeways
+            symbol: fwySym,
+            label: "Interstate"
+          }, {
+            value: "U", // code for U.S. highways
+            symbol: hwySym,
+            label: "US Highway"
+          }]
+        };
+
+        // Set the renderer on the layer
+        var hwyLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Freeway_System/FeatureServer/2",
+          renderer: hwyRenderer
+        });
+
+        // Add the layer to the map
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [hwyLayer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-118.2438934, 34.058481],
+          zoom: 12
+        });
+
+        /******************************************************************
+         *
+         * Add layers to layerInfos on the legend
+         *
+         ******************************************************************/
+
+        var legend = new Legend({
+          view: view,
+          layerInfos: [
+          {
+            layer: hwyLayer,
+            title: "Major Roads"
+          }]
+        });
+
+        view.ui.add(legend, "bottom-left");
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

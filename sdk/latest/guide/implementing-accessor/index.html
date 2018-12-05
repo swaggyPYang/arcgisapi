@@ -1,0 +1,582 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="content-language" content="en"><meta name="last-modified" content="Tue Sep 04 2018 14:34:40 GMT-0700 (Pacific Daylight Time)"><meta name="product" content="js-api-arcgis"><meta name="version" content="4.x"><meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="subject_label" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE"><meta name="sub_category" content="JavaScript API"><meta name="sub_category_label" content="ArcGIS API for JavaScript"><meta name="content_type" content="Guide"><meta name="content_type_label" content="Guide"><meta name="search-collection" content="help"><meta name="search-category" content="help-api,help-api-guide"><title>Implementing Accessor | ArcGIS API for JavaScript 4.9</title><link rel="shortcut icon" href="../../../assets/img/favicon.ico"><link rel="stylesheet" href="../../../assets/css/default.css"></head><body><developers-account-notifications></developers-account-notifications><div class="wrapper"><header class="top-nav top-nav-hover-top"><div class="grid-container"><div class="column-24 tablet-show"><div class="dropdown js-dropdown left"><a href="#" class="icon-ui-menu top-nav-title js-drawer-toggle top-nav-title-tablet" data-drawer="top-nav">ArcGIS API for JavaScript</a></div></div><div class="column-24 leader-1 trailer-1 tablet-leader-0">Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a></div></div></header><header class="sub-nav sub-nav-purple"><div class="grid-container"><nav class="breadcrumbs breadcrumbs-white clearfix padding-leader-1"><a href="/web-api/" class="crumb">ArcGIS Web API</a> <a href="../../.." class="crumb">JavaScript API</a> <a href="../../.." class="crumb">4.9</a> <a href="../../../latest/guide/index.html" class="crumb">Guide</a></nav><h1 class="sub-nav-title text-white leader-1">ArcGIS API for JavaScript</h1><nav class="sub-nav-list leader-0 tablet-hide"><a class="sub-nav-link" href="../../../index.html">Home</a> <a class="sub-nav-link is-active" href="../../../latest/guide/index.html">Guide</a> <a class="sub-nav-link" href="../../../latest/api-reference/index.html">API Reference</a> <a class="sub-nav-link" href="../../../latest/sample-code/index.html">Sample Code</a> <a class="sub-nav-link" href="../../../support/index.html">Support</a></nav><select class="select-full trailer-half tablet-show js-select-nav"><option value="../../../index.html">Home</option><option selected="selected" value="../../../latest/guide/index.html">Guide</option><option value="../../../latest/api-reference/index.html">API Reference</option><option value="../../../latest/sample-code/index.html">Sample Code</option><option value="../../../support/index.html">Support</option></select></div></header><div id="skip-to-content"><div class="grid-container leader-1"><div class="column-6 trailer-2 tablet-hide"><aside class="accordion side-nav column-6 js-accordion guide"><div class="accordion-section"><h4 class="accordion-title">Get Started</h4><nav class="accordion-content"><a href="../../../latest/guide/index.html" class="side-nav-link">Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/release-notes/index.html" class="side-nav-link">Release notes</a></nav><nav class="accordion-content"><a href="../../../latest/guide/get-api/index.html" class="side-nav-link">Get the API</a></nav><nav class="accordion-content"><a href="../../../latest/guide/system-requirements/index.html" class="side-nav-link">System requirements</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from 3.x</h4><nav class="accordion-content"><a href="../../../latest/guide/choose-version/index.html" class="side-nav-link">Choose a version</a></nav><nav class="accordion-content"><a href="../../../latest/guide/migrating/index.html" class="side-nav-link">Migrating from 3.x to 4.9</a></nav><nav class="accordion-content"><a href="../../../latest/guide/functionality-matrix/index.html" class="side-nav-link">3.x to 4.x functionality matrix</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Migrating from other APIs</h4><nav class="accordion-content"><a href="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html" class="side-nav-link">Migrating from Google Maps API</a></nav></div><div class="accordion-section is-active"><h4 class="accordion-title">Working with the API</h4><nav class="accordion-content"><a href="../../../latest/guide/working-with-props/index.html" class="side-nav-link">Properties</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-promises/index.html" class="side-nav-link">Promises</a></nav><nav class="accordion-content"><a href="../../../latest/guide/arcade/index.html" class="side-nav-link">Arcade</a></nav><nav class="accordion-content"><a href="../../../latest/guide/labeling/index.html" class="side-nav-link">Labeling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/view-ui/index.html" class="side-nav-link">View UI</a></nav><nav class="accordion-content"><a href="../../../latest/guide/autocasting/index.html" class="side-nav-link">Autocasting</a></nav><nav class="accordion-content"><a href="../../../latest/guide/loadable/index.html" class="side-nav-link">Loadable</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-fromjson/index.html" class="side-nav-link">Using fromJSON()</a></nav><nav class="accordion-content"><a href="../../../latest/guide/typescript-setup/index.html" class="side-nav-link">TypeScript Setup</a></nav><nav class="accordion-content"><a href="../../../latest/guide/custom-widget/index.html" class="side-nav-link">Widget Development</a></nav><nav class="accordion-content"><a href="../../../latest/guide/implementing-accessor/index.html" class="side-nav-link is-active">Implementing Accessor</a></nav><nav class="accordion-content"><a href="../../../latest/guide/styling/index.html" class="side-nav-link">Styling</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-platform/index.html" class="side-nav-link">Working with the ArcGIS platform</a></nav><nav class="accordion-content"><a href="../../../latest/guide/secure-resources/index.html" class="side-nav-link">Access Secure Resources</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-frameworks/index.html" class="side-nav-link">Using Frameworks</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-npm/index.html" class="side-nav-link">Using npm</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-webpack/index.html" class="side-nav-link">Using webpack</a></nav><nav class="accordion-content"><a href="../../../latest/guide/using-phonegap/index.html" class="side-nav-link">Using PhoneGap</a></nav><nav class="accordion-content"><a href="../../../latest/guide/intro-workflows/index.html" class="side-nav-link">Intro to Workflow Manager</a></nav><nav class="accordion-content"><a href="../../../latest/guide/working-with-scene-layers/index.html" class="side-nav-link">Working with scene layers</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Visualization</h4><nav class="accordion-content"><a href="../../../latest/guide/visualization-overview/index.html" class="side-nav-link">Visualization Overview</a></nav><nav class="accordion-content"><a href="../../../latest/guide/creating-visualizations-manually/index.html" class="side-nav-link">Creating visualizations manually</a></nav><nav class="accordion-content"><a href="../../../latest/guide/visualizing-points-3d/index.html" class="side-nav-link">Visualizing points with 3D symbols</a></nav></div><div class="accordion-section"><h4 class="accordion-title">Reference</h4><nav class="accordion-content"><a href="../../../latest/guide/cors/index.html" class="side-nav-link">CORS</a></nav><nav class="accordion-content"><a href="../../../latest/guide/proxies/index.html" class="side-nav-link">Proxy pages</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-icon-font/index.html" class="side-nav-link">Esri Icon Font</a></nav><nav class="accordion-content"><a href="../../../latest/guide/esri-web-style-symbols/index.html" class="side-nav-link">Esri Web Style Symbols</a></nav><nav class="accordion-content"><a href="../../../latest/guide/localization/index.html" class="side-nav-link">Localization</a></nav><nav class="accordion-content"><a href="../../../latest/guide/licensing/index.html" class="side-nav-link">Licensing &amp; Attribution</a></nav><nav class="accordion-content"><a href="../../../latest/guide/faq/index.html" class="side-nav-link">FAQ</a></nav></div></aside><div class="column-6 js-sticky scroll-show tablet-hide" data-top="46"><a href="#" class="btn btn-fill btn-clear">Back to Top</a></div></div><div class="column-24 trailer-1 tablet-show"><select class="select-full trailer-half js-select-nav"><optgroup label="Get Started"><option value="../../../latest/guide/index.html">Overview</option><option value="../../../latest/guide/release-notes/index.html">Release notes</option><option value="../../../latest/guide/get-api/index.html">Get the API</option><option value="../../../latest/guide/system-requirements/index.html">System requirements</option></optgroup><optgroup label="Migrating from 3.x"><option value="../../../latest/guide/choose-version/index.html">Choose a version</option><option value="../../../latest/guide/migrating/index.html">Migrating from 3.x to 4.9</option><option value="../../../latest/guide/functionality-matrix/index.html">3.x to 4.x functionality matrix</option></optgroup><optgroup label="Migrating from other APIs"><option value="../../../latest/guide/migrating-from-google-maps-to-arcgis-javascript-api/index.html">Migrating from Google Maps API</option></optgroup><optgroup label="Working with the API"><option value="../../../latest/guide/working-with-props/index.html">Properties</option><option value="../../../latest/guide/working-with-promises/index.html">Promises</option><option value="../../../latest/guide/arcade/index.html">Arcade</option><option value="../../../latest/guide/labeling/index.html">Labeling</option><option value="../../../latest/guide/view-ui/index.html">View UI</option><option value="../../../latest/guide/autocasting/index.html">Autocasting</option><option value="../../../latest/guide/loadable/index.html">Loadable</option><option value="../../../latest/guide/using-fromjson/index.html">Using fromJSON()</option><option value="../../../latest/guide/typescript-setup/index.html">TypeScript Setup</option><option value="../../../latest/guide/custom-widget/index.html">Widget Development</option><option value="../../../latest/guide/implementing-accessor/index.html" selected="selected">Implementing Accessor</option><option value="../../../latest/guide/styling/index.html">Styling</option><option value="../../../latest/guide/working-with-platform/index.html">Working with the ArcGIS platform</option><option value="../../../latest/guide/secure-resources/index.html">Access Secure Resources</option><option value="../../../latest/guide/using-frameworks/index.html">Using Frameworks</option><option value="../../../latest/guide/using-npm/index.html">Using npm</option><option value="../../../latest/guide/using-webpack/index.html">Using webpack</option><option value="../../../latest/guide/using-phonegap/index.html">Using PhoneGap</option><option value="../../../latest/guide/intro-workflows/index.html">Intro to Workflow Manager</option><option value="../../../latest/guide/working-with-scene-layers/index.html">Working with scene layers</option></optgroup><optgroup label="Visualization"><option value="../../../latest/guide/visualization-overview/index.html">Visualization Overview</option><option value="../../../latest/guide/creating-visualizations-manually/index.html">Creating visualizations manually</option><option value="../../../latest/guide/visualizing-points-3d/index.html">Visualizing points with 3D symbols</option></optgroup><optgroup label="Reference"><option value="../../../latest/guide/cors/index.html">CORS</option><option value="../../../latest/guide/proxies/index.html">Proxy pages</option><option value="../../../latest/guide/esri-icon-font/index.html">Esri Icon Font</option><option value="../../../latest/guide/esri-web-style-symbols/index.html">Esri Web Style Symbols</option><option value="../../../latest/guide/localization/index.html">Localization</option><option value="../../../latest/guide/licensing/index.html">Licensing &amp; Attribution</option><option value="../../../latest/guide/faq/index.html">FAQ</option></optgroup></select></div><main class="column-17 tablet-column-12 pre-1 content-face"><article><div class="js-container-guide"><h1 id="implementing-accessor">Implementing Accessor</h1><p><a href="../../api-reference/esri-core-Accessor.html">Accessor</a> aims to make developing classes easy by providing a mechanism to <a href="../../api-reference/esri-core-Accessor.html#get">get</a>, <a href="../../api-reference/esri-core-Accessor.html#set">set</a>, and <a href="../../api-reference/esri-core-Accessor.html#watch">watch</a> properties.</p><p>This guide provides a guideline for common Accessor usage patterns. Please follow the links below to get further information on how to implement classes derived from <a href="../../api-reference/esri-core-Accessor.html">Accessor</a>. Please see the <a href="../working-with-props/index.html">working with properties</a> guide topic for additional information on Accessor properties.</p><ul><li><a href="#extend-accessor">Extend Accessor</a><ul><li><a href="#create-a-simple-subclass">Create a simple subclass</a></li><li><a href="#extend-multiple-classes">Extend multiple classes</a></li></ul></li><li><a href="#properties">Properties</a><ul><li><a href="#define-a-simple-property">Define a simple property</a></li><li><a href="#define-custom-getter-and-setter">Define custom getter and setter</a></li><li><a href="#define-a-read-only-property">Define a read-only property</a></li><li><a href="#define-a-proxy-property">Define a proxy property</a></li></ul></li><li><a href="#computed-properties">Computed properties</a><ul><li><a href="#define-a-computed-property">Define a computed property</a></li><li><a href="#define-a-writable-computed-property">Define a writable computed property</a></li><li><a href="#notify-a-property-change">Notify a property change</a></li></ul></li><li><a href="#autocast">Autocast</a><ul><li><a href="#define-the-property-type">Define the property type</a></li><li><a href="#define-a-method-to-cast-a-property">Define a method to cast a property</a></li><li><a href="#define-the-parameters-type-from-a-method">Define the parameters type from a method</a></li></ul></li><li><a href="#additional-information">Additional information</a></li></ul><div class="esri-md panel trailer-1"><p>If working in <a href="https://www.typescriptlang.org">TypeScript</a>, you will want to install the ArcGIS JavaScript API 4.x type definitions. You can access these typings with its command line syntax at the <a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/typescript">jsapi-resources</a> Github repository.</p></div><h2 id="extend-accessor">Extend Accessor</h2><p>Many classes in the API extend the <a href="../../api-reference/esri-core-Accessor.html">Accessor</a> class. These classes can expose watchable properties that may have unique characteristics, such as being read-only or computed. Under the hood, <a href="../../api-reference/esri-core-Accessor.html">Accessor</a> uses <a href="https://dojotoolkit.org/reference-guide/1.10/dojo/_base/declare.html">dojo/_base/declare</a> to create classes.</p><h3 id="create-a-simple-subclass">Create a simple subclass</h3><div class="esri-md panel trailer-1"><p>The <code>///</code> comments are <a href="https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html">compiler directives</a> for TypeScript. They let the TypeScript compiler know to include additional files. In this case, it specifies helper modules for the TypeScript decorators and extending classes.</p></div><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Simple subclass - TS</a> <a class="tab-title js-tab">Simple subclass - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Color"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Color</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+define([
+  <span class="hljs-string">"esri/core/Accessor"</span>
+],
+<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(
+  Accessor
+)</span> </span>{
+
+  <span class="hljs-keyword">var</span> Color = Accessor.createSubclass({
+    declaredClass: <span class="hljs-string">"esri.guide.Color"</span>
+  });
+
+});
+</code></pre></article></section></div><p></p><h3 id="extend-multiple-classes">Extend multiple classes</h3><div class="esri-md panel trailer-1"><p>When extending multiple classes using the <a href="../../api-reference/esri-core-accessorSupport-decorators.html#declared">declared</a> helper, you can take advantage of <a href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html">declaration merging</a> by giving the interface the same name as the class.</p></div><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Extend multiple classes - TS</a> <a class="tab-title js-tab">Extend multiple classes - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Evented</span> = require(<span class="hljs-string">"dojo/Evented"</span>);
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+interface <span class="hljs-type">Collection</span> <span class="hljs-keyword">extends</span> <span class="hljs-type">Evented</span> {}
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Collection"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Collection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span>, <span class="hljs-type">Evented</span></span>) </span>{
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+define([
+  <span class="hljs-string">"dojo/Evented"</span>,
+
+  <span class="hljs-string">"esri/core/Accessor"</span>
+],
+<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(
+  Evented,
+  Accessor
+)</span> </span>{
+
+  <span class="hljs-keyword">var</span> Collection = Accessor.createSubclass([Evented], {
+    declaredClass: <span class="hljs-string">"esri.guide.Collection"</span>
+  });
+
+});
+</code></pre></article></section></div><p></p><h2 id="properties">Properties</h2><h3 id="define-a-simple-property">Define a simple property</h3><p>The following syntax should be used when you want to have a simple, watchable, property that does not require any additional behavior. You can define both default values and types for primitive property values. If working with TypeScript, default property values can be set in the constructor.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Simple property - TS</a> <a class="tab-title js-tab">Simple property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared, property } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Color"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Color</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  <span class="hljs-meta">@property</span>()
+  r: number = <span class="hljs-number">255</span>;
+
+  <span class="hljs-meta">@property</span>()
+  g: number = <span class="hljs-number">255</span>;
+
+  <span class="hljs-meta">@property</span>()
+  b: number = <span class="hljs-number">255</span>;
+
+  <span class="hljs-meta">@property</span>()
+  a: number = <span class="hljs-number">1</span>;
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+define([
+  <span class="hljs-string">"esri/core/Accessor"</span>
+],
+<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(
+  Accessor
+)</span> </span>{
+
+  <span class="hljs-keyword">var</span> Color = Accessor.createSubclass({
+    declaredClass: <span class="hljs-string">"esri.guide.Color"</span>,
+
+    constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">this</span>.r = <span class="hljs-number">255</span>;
+      <span class="hljs-keyword">this</span>.g = <span class="hljs-number">255</span>;
+      <span class="hljs-keyword">this</span>.b = <span class="hljs-number">255</span>;
+      <span class="hljs-keyword">this</span>.a = <span class="hljs-number">1</span>;
+    },
+
+    properties: {
+      r: {},
+      g: {},
+      b: {},
+      a: {}
+    }
+
+  });
+
+});
+</code></pre></article></section></div><p></p><h3 id="define-custom-getter-and-setter">Define custom getter and setter</h3><p>There may be times when you may need to verify, validate, or transform values set on a property. You may also need to do additional (synchronous) work when a property is being set. The following snippets show this.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Setter property - TS</a> <a class="tab-title js-tab">Setter property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> Accessor = <span class="hljs-built_in">require</span>(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared, property } <span class="hljs-keyword">from</span> <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Collection"</span>)
+<span class="hljs-keyword">class</span> Collection <span class="hljs-keyword">extends</span> declared(Accessor) {
+
+  <span class="hljs-keyword">private</span> _items: <span class="hljs-built_in">any</span>[] = [];
+
+  <span class="hljs-comment">// Example: Define a custom property getter.</span>
+  <span class="hljs-comment">//   Accessor caches the values returned by the getters.</span>
+  <span class="hljs-comment">//   At this point `length` will never change.</span>
+  <span class="hljs-comment">//   See the "Notify a property change" section</span>
+  <span class="hljs-meta">@property</span>()
+  <span class="hljs-keyword">get</span> length(): <span class="hljs-built_in">number</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._items.length;
+  }
+
+  <span class="hljs-keyword">set</span> length(value: <span class="hljs-built_in">number</span>) {
+    <span class="hljs-comment">// Example: perform  validation</span>
+    <span class="hljs-keyword">if</span> (value &lt;= <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`value of length not valid: <span class="hljs-subst">${value}</span>`</span>);
+    }
+
+    <span class="hljs-comment">// internally you can access the cached value of `length` using `_get`.</span>
+    <span class="hljs-keyword">const</span> oldValue = <span class="hljs-keyword">this</span>._get&lt;<span class="hljs-built_in">number</span>&gt;(<span class="hljs-string">"length"</span>);
+
+    <span class="hljs-keyword">if</span> (oldValue !== value) {
+      <span class="hljs-comment">// a setter has to update the value from the cache</span>
+      <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"length"</span>, value);
+
+      <span class="hljs-comment">// Example: perform additional work when the length changes</span>
+      <span class="hljs-keyword">this</span>._items.length = value;
+    }
+  }
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+<span class="hljs-keyword">var</span> Collection = Accessor.createSubclass({
+  declaredClass: <span class="hljs-string">"esri.guide.Collection"</span>,
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">this</span>._items = [];
+  },
+
+  _items: <span class="hljs-literal">null</span>,
+
+  properties: {
+    length: {
+      <span class="hljs-comment">// Example: Define a custom property getter.</span>
+      <span class="hljs-comment">//   Accessor caches the values returned by the getters.</span>
+      <span class="hljs-comment">//   At this point `length` will never change.</span>
+      <span class="hljs-comment">//   See the "Notify a property change" section</span>
+      <span class="hljs-keyword">get</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._items.length;
+      },
+      <span class="hljs-keyword">set</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
+        <span class="hljs-comment">// Example: perform  validation</span>
+        <span class="hljs-keyword">if</span> (value &lt;= <span class="hljs-number">0</span>) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`value of length not valid: <span class="hljs-subst">${value}</span>`</span>);
+        }
+
+        <span class="hljs-comment">// internally you can access the cached value of `length` using `_get`.</span>
+        <span class="hljs-keyword">const</span> oldValue = <span class="hljs-keyword">this</span>._get(<span class="hljs-string">"length"</span>);
+
+        <span class="hljs-keyword">if</span> (oldValue !== value) {
+          <span class="hljs-comment">// a setter has to update the value from the cache</span>
+          <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"length"</span>, value);
+
+          <span class="hljs-comment">// Example: perform additional work when the length changes</span>
+          <span class="hljs-keyword">this</span>._items.length = value;
+        }
+      }
+    }
+  }
+
+});
+</code></pre></article></section></div><p></p><h3 id="define-a-read-only-property">Define a read-only property</h3><p>The following syntax shows how to set a read-only property.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Read-only - TS</a> <a class="tab-title js-tab">Read-only - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared, property } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Person"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  <span class="hljs-comment">// Example: read-only property may not be externally set</span>
+  <span class="hljs-meta">@property</span>({ readOnly: <span class="hljs-literal">true</span> })
+  firstName: string;
+
+  <span class="hljs-meta">@property</span>({ readOnly: <span class="hljs-literal">true</span> })
+  lastName: string;
+
+  updateName(firstName: string, lastName: string): void {
+    <span class="hljs-comment">// We may still update the read-only property internally, which will change</span>
+    <span class="hljs-comment">// the property and notify changes to watchers</span>
+    <span class="hljs-keyword">this</span>._set({
+      firstName: firstName,
+      lastName: lastName
+    });
+  }
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+var Person = Accessor.createSubclass({<span class="hljs-symbol">
+  declaredClass:</span> <span class="hljs-string">"esri.guide.Person"</span>,<span class="hljs-symbol">
+
+  properties:</span> {
+    <span class="hljs-comment">// Example: read-only property may not be externally set</span><span class="hljs-symbol">
+    firstName:</span> {<span class="hljs-symbol">
+      readOnly:</span> true
+    },<span class="hljs-symbol">
+
+    lastName:</span> {<span class="hljs-symbol">
+      readOnly:</span> true
+    }
+  },<span class="hljs-symbol">
+
+  updateName:</span> function(firstName, lastName) {
+    <span class="hljs-comment">// We may still update the read-only property internally, which will change</span>
+    <span class="hljs-comment">// the property and notify changes to watchers</span>
+    this._set({<span class="hljs-symbol">
+      firstName:</span> firstName,<span class="hljs-symbol">
+      lastName:</span> lastName
+    });
+  }
+});</code></pre></article></section></div><p></p><h3 id="define-a-proxy-property">Define a proxy property</h3><p>Sometimes you need to proxy a property when both reading and writing, in addition to possibly performing a transformation on the value. For example, exposing an inner member property.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Proxy property - TS</a> <a class="tab-title js-tab">Proxy property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared, aliasOf } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.GroupLayer"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GroupLayer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  <span class="hljs-meta">@property</span>()
+  sublayers: <span class="hljs-type">Collection</span> = <span class="hljs-keyword">new</span> <span class="hljs-type">Collection</span>();
+
+  <span class="hljs-comment">// Define a property that reflects one in another object.</span>
+  <span class="hljs-meta">@property</span>({ aliasOf: <span class="hljs-string">"sublayers.length"</span> })
+  length: number;
+
+  <span class="hljs-comment">// Alternatively you can use the `@aliasOf` decorator</span>
+  <span class="hljs-comment">//  @aliasOf</span>
+  <span class="hljs-comment">//  length: number</span>
+
+  <span class="hljs-comment">// You can also proxy a method from another object.</span>
+  <span class="hljs-meta">@aliasOf</span>(<span class="hljs-string">"sublayers.add"</span>)
+  add: (item: any) =&gt; void;
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+var GroupLayer = Accessor.createSubclass({<span class="hljs-symbol">
+  declaredClass:</span> <span class="hljs-string">"esri.guide.GroupLayer"</span>,
+
+  constructor() {
+    this.sublayers = new Collection();
+  },<span class="hljs-symbol">
+
+  properties:</span> {<span class="hljs-symbol">
+    sublayers:</span> {},
+
+    <span class="hljs-comment">// Define a property that reflects one in another object.</span><span class="hljs-symbol">
+    length:</span> {<span class="hljs-symbol">
+      aliasOf:</span> <span class="hljs-string">"sublayers.length"</span>
+    },
+
+    <span class="hljs-comment">// You can also proxy a method from another object.</span><span class="hljs-symbol">
+    add:</span> {<span class="hljs-symbol">
+      aliasOf:</span> <span class="hljs-string">"sublayers.add"</span>
+    }
+  }
+
+});
+</code></pre></article></section></div><p></p><h2 id="computed-properties">Computed properties</h2><h3 id="define-a-computed-property">Define a computed property</h3><p>You may need to use this when a property value depends on numerous other properties. These properties are always read-only.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Computed property - TS</a> <a class="tab-title js-tab">Computed property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+<span class="hljs-keyword">import</span> { subclass, property, declared } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Subclass</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+  <span class="hljs-meta">@property</span>()
+  firstName: string;
+
+  <span class="hljs-meta">@property</span>()
+  lastName: string;
+
+  <span class="hljs-meta">@property</span>({
+    readOnly: <span class="hljs-literal">true</span>,
+    <span class="hljs-comment">// define the property dependencies</span>
+    dependsOn: [<span class="hljs-string">"firstName"</span>, <span class="hljs-string">"lastName"</span>]
+  })
+  get fullName(): string {
+    <span class="hljs-keyword">return</span> `${<span class="hljs-keyword">this</span>.firstName} ${<span class="hljs-keyword">this</span>.lastName}`;
+  }
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+<span class="hljs-selector-tag">Accessor</span><span class="hljs-selector-class">.createSubclass</span>({
+  <span class="hljs-attribute">properties</span>: {
+    firstName: {},
+    <span class="hljs-selector-tag">lastName</span>: {},
+
+    <span class="hljs-selector-tag">fullName</span>: {
+      <span class="hljs-attribute">readOnly</span>: true,
+
+      // define the property dependencies
+      dependsOn: [<span class="hljs-string">"firstName"</span>, <span class="hljs-string">"lastName"</span>],
+
+      get: <span class="hljs-built_in">function</span>() {
+        return this.firstName + <span class="hljs-string">" "</span> + this.lastName;
+      }
+    }
+  }
+});
+</code></pre></article></section></div><p></p><h3 id="define-a-writable-computed-property">Define a writable computed property</h3><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Writable computed property - TS</a> <a class="tab-title js-tab">Writable computed property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> Accessor = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+<span class="hljs-keyword">import</span> { subclass, property, declared } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass()</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Subclass</span> <span class="hljs-title">extends</span> <span class="hljs-title">declared</span></span>(Accessor) {
+  <span class="hljs-meta">@property()</span>
+  firstName: string;
+
+  <span class="hljs-meta">@property()</span>
+  lastName: string;
+
+  <span class="hljs-meta">@property({
+    // define the property dependencies
+    dependsOn: [<span class="hljs-meta-string">"firstName"</span>, <span class="hljs-meta-string">"lastName"</span>]
+  })</span>
+  <span class="hljs-keyword">get</span> fullName(): string {
+    <span class="hljs-keyword">return</span> `${<span class="hljs-keyword">this</span>.firstName} ${<span class="hljs-keyword">this</span>.lastName}`;
+  }
+
+  <span class="hljs-keyword">set</span> fullName(value: string) {
+    <span class="hljs-keyword">if</span> (!value) {
+      <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"firstName"</span>, <span class="hljs-literal">null</span>);
+      <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"lastName"</span>, <span class="hljs-literal">null</span>);
+      <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"fullName"</span>, <span class="hljs-literal">null</span>);
+
+      <span class="hljs-keyword">return</span>;
+    }
+
+    const [firstName, lastName] = value.split(<span class="hljs-string">" "</span>);
+    <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"firstName"</span>, firstName);
+    <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"lastName"</span>, lastName);
+    <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"fullName"</span>, value);
+  }
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+Accessor.createSubclass({
+  properties: {
+    firstName: {},
+    lastName: {},
+
+    fullName: {
+      readOnly: <span class="hljs-literal">true</span>,
+
+      <span class="hljs-comment">// define the property dependencies</span>
+      dependsOn: [<span class="hljs-string">"firstName"</span>, <span class="hljs-string">"lastName"</span>],
+
+      <span class="hljs-keyword">get</span>: function() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.firstName + <span class="hljs-string">" "</span> + <span class="hljs-keyword">this</span>.lastName;
+      },
+
+      <span class="hljs-keyword">set</span>: function(value) {
+        <span class="hljs-keyword">if</span> (!value) {
+          <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"firstName"</span>, <span class="hljs-literal">null</span>);
+          <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"lastName"</span>, <span class="hljs-literal">null</span>);
+          <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"fullName"</span>, <span class="hljs-literal">null</span>);
+
+          <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">var</span> split = value.split(<span class="hljs-string">" "</span>);
+        <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"firstName"</span>, split[<span class="hljs-number">0</span>]);
+        <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"lastName"</span>, split[<span class="hljs-number">1</span>]);
+        <span class="hljs-keyword">this</span>._set(<span class="hljs-string">"fullName"</span>, value);
+      }
+    }
+  }
+});
+</code></pre></article></section></div><p></p><h3 id="notify-a-property-change">Notify a property change</h3><p>Sometimes properties cannot notify when changed. <a href="../../api-reference/esri-core-Accessor.html">Accessor</a> has an internal method to notify of any changes. This will mark the property as dirty. The next time the property is accessed its value is re-evaluated.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Writable computed property - TS</a> <a class="tab-title js-tab">Writable computed property - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, declared, property } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"esri.guide.Collection"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Collection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  <span class="hljs-keyword">private</span> _items: any[] = [];
+
+  <span class="hljs-meta">@property</span>({
+    readOnly: <span class="hljs-literal">true</span>
+  })
+  get length(): number {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._items.length;
+  }
+
+  add(item: any): void {
+    <span class="hljs-keyword">this</span>._items.push(item);
+
+    <span class="hljs-comment">// We know the value of `length` is changed.</span>
+    <span class="hljs-comment">// Notify so that at next access, the getter will be invoked</span>
+    <span class="hljs-keyword">this</span>.notifyChange(<span class="hljs-string">"length"</span>);
+  }
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+<span class="hljs-keyword">var</span> Collection = Accessor.createSubclass({
+  <span class="hljs-attr">declaredClass</span>: <span class="hljs-string">"esri.guide.Collection"</span>,
+
+  <span class="hljs-keyword">constructor</span>() {
+    <span class="hljs-keyword">this</span>._items = [];
+  },
+
+  <span class="hljs-attr">_items</span>: <span class="hljs-literal">null</span>,
+
+  <span class="hljs-attr">properties</span>: {
+    <span class="hljs-attr">length</span>: {
+      <span class="hljs-attr">get</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._items.length;
+      }
+    }
+  },
+
+  <span class="hljs-attr">add</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">item</span>) </span>{
+    <span class="hljs-keyword">this</span>._items.push(item);
+
+    <span class="hljs-comment">// We know the value of `length` is changed.</span>
+    <span class="hljs-comment">// Notify so that at next access, the getter will be invoked</span>
+    <span class="hljs-keyword">this</span>.notifyChange(<span class="hljs-string">"length"</span>);
+  }
+
+});
+</code></pre></article></section></div><p></p><h2 id="autocast">Autocast</h2><h3 id="define-the-property-type">Define the property type</h3><p>It is possible to define a type for a class' property.</p><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Define the property type - TS</a> <a class="tab-title js-tab">Define the property type - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Graphic</span> = require(<span class="hljs-string">"esri/Graphic"</span>);
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+<span class="hljs-keyword">import</span> <span class="hljs-type">Collection</span> = require(<span class="hljs-string">"esri/core/Collection"</span>);
+
+<span class="hljs-keyword">import</span> { subclass, property, declared } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-meta">@subclass</span>()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GraphicsLayer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  <span class="hljs-meta">@property</span>({
+    <span class="hljs-comment">// Define the type of the collection of Graphics</span>
+    <span class="hljs-comment">// When the property is set with an array,</span>
+    <span class="hljs-comment">// the collection constructor will automatically be called</span>
+    <span class="hljs-class"><span class="hljs-keyword">type</span></span>: <span class="hljs-type">Collection</span>.ofType(<span class="hljs-type">Graphic</span>)
+  })
+  graphics: <span class="hljs-type">Collection</span>&lt;<span class="hljs-type">Graphic</span>&gt;;
+
+}
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+<span class="hljs-title">var</span> <span class="hljs-type">GraphicsLayer</span> = <span class="hljs-type">Accessor</span>.createSubclass({
+
+  properties: {
+    // <span class="hljs-type">Shorthand</span> for camera: { <span class="hljs-class"><span class="hljs-keyword">type</span>: <span class="hljs-type">Camera</span> }</span>
+    graphics: {
+      <span class="hljs-class"><span class="hljs-keyword">type</span>: <span class="hljs-type">Collection</span>.ofType(<span class="hljs-type">Graphic</span>)</span>
+    }
+  }
+
+});
+</code></pre></article></section></div><p></p><h3 id="define-a-method-to-cast-a-property">Define a method to cast a property</h3><p>Sometimes you need to ensure a property's value type when it is being set. A good example of this is having well-known, preset, names for specific values, such as <code>map.basemap = 'streets'</code>.</p><div class="esri-md panel trailer-1"><p>The <code>type</code> metadata automatically creates an appropriate <code>cast</code> for <a href="../../api-reference/esri-core-Accessor.html">Accessor</a> and primitive types if it is not already set.</p></div><p></p><div class="trailer-2 js-tab-group"><nav class="tab-nav"><a class="tab-title is-active js-tab">Define a casting method - TS</a> <a class="tab-title js-tab">Define a casting method - JS</a></nav><section class="tab-contents"><article class="tab-section is-active js-tab-section"><pre><code>
+ <span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+ <span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+
+ <span class="hljs-keyword">import</span> Accessor = <span class="hljs-built_in">require</span>(<span class="hljs-string">"esri/core/Accessor"</span>);
+ <span class="hljs-keyword">import</span> { subclass, property, declared, cast } <span class="hljs-keyword">from</span> <span class="hljs-string">"esri/core/tsSupport/declare"</span>;
+
+ <span class="hljs-meta">@subclass</span>()
+ <span class="hljs-keyword">class</span> Color <span class="hljs-keyword">extends</span> declared(Accessor) {
+
+   <span class="hljs-meta">@property</span>()
+   r: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+
+   <span class="hljs-meta">@property</span>()
+   g: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+
+   <span class="hljs-meta">@property</span>()
+   b: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+
+   <span class="hljs-meta">@property</span>()
+   a: <span class="hljs-built_in">number</span> = <span class="hljs-number">1</span>;
+
+   <span class="hljs-meta">@cast</span>(<span class="hljs-string">"r"</span>)
+   <span class="hljs-meta">@cast</span>(<span class="hljs-string">"g"</span>)
+   <span class="hljs-meta">@cast</span>(<span class="hljs-string">"b"</span>)
+   <span class="hljs-keyword">protected</span> castComponent(value: <span class="hljs-built_in">number</span>): <span class="hljs-built_in">number</span> {
+     <span class="hljs-comment">// cast method that clamp the value that</span>
+     <span class="hljs-comment">// will be set on r, g or b between 0 and 255</span>
+     <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(<span class="hljs-number">255</span>, value));
+   }
+
+   <span class="hljs-meta">@cast</span>(<span class="hljs-string">"a"</span>)
+   <span class="hljs-keyword">protected</span> castAlpha(value: <span class="hljs-built_in">number</span>): <span class="hljs-built_in">number</span> {
+     <span class="hljs-comment">// cast method that clamp the value that</span>
+     <span class="hljs-comment">// will be set on a between 0 and 1</span>
+     <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(<span class="hljs-number">1</span>, value));
+   }
+ }
+</code></pre></article><article class="tab-section js-tab-section"><pre><code>
+<span class="hljs-selector-tag">function</span> <span class="hljs-selector-tag">castComponent</span>(value) {
+  <span class="hljs-comment">// cast method that clamp the value that</span>
+  <span class="hljs-comment">// will be set on r, g or b between 0 and 255</span>
+  <span class="hljs-selector-tag">return</span> <span class="hljs-selector-tag">Math</span><span class="hljs-selector-class">.max</span>(<span class="hljs-number">0</span>, Math.min(<span class="hljs-number">255</span>, value));
+}
+
+<span class="hljs-selector-tag">function</span> <span class="hljs-selector-tag">castAlpha</span>(value) {
+  <span class="hljs-comment">// cast method that clamp the value that</span>
+  <span class="hljs-comment">// will be set on a between 0 and 1</span>
+  <span class="hljs-selector-tag">return</span> <span class="hljs-selector-tag">Math</span><span class="hljs-selector-class">.max</span>(<span class="hljs-number">0</span>, Math.min(<span class="hljs-number">1</span>, value));
+}
+
+<span class="hljs-selector-tag">Accessor</span><span class="hljs-selector-class">.createSubclass</span>({
+  <span class="hljs-attribute">properties</span>: {
+    <span class="hljs-attribute">r</span>: {
+      <span class="hljs-attribute">value</span>: <span class="hljs-number">255</span>,
+      <span class="hljs-attribute">cast</span>: castComponent
+    },
+    <span class="hljs-attribute">g</span>: {
+      <span class="hljs-attribute">value</span>: <span class="hljs-number">255</span>,
+      <span class="hljs-attribute">cast</span>: castComponent
+    },
+    <span class="hljs-attribute">b</span>: {
+      <span class="hljs-attribute">value</span>: <span class="hljs-number">255</span>,
+      <span class="hljs-attribute">cast</span>: castComponent
+    },
+    <span class="hljs-attribute">a</span>: {
+      <span class="hljs-attribute">value</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attribute">cast</span>: castAlpha
+    }
+  }
+});
+</code></pre></article></section></div><p></p><h3 id="define-the-parameters-type-from-a-method">Define the parameters type from a method</h3><p>It is possible to <a href="../autocasting/index.html">autocast</a> parameters of a method. In this case, the developer is not required to import the class of the parameter and instantiate it.</p><p><pre><code>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" /&gt;</span>
+<span class="hljs-comment">/// &lt;amd-dependency path="esri/core/tsSupport/paramHelper" name="__param" /&gt;</span>
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Accessor</span> = require(<span class="hljs-string">"esri/core/Accessor"</span>);
+<span class="hljs-keyword">import</span> { subclass, declared, cast } from <span class="hljs-string">"esri/core/accessorSupport/decorators"</span>;
+
+<span class="hljs-keyword">import</span> <span class="hljs-type">Query</span> = require(<span class="hljs-string">"esri/tasks/support/Query"</span>);
+
+<span class="hljs-meta">@subclass</span>(<span class="hljs-string">"Test"</span>)
+export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">declared</span>(<span class="hljs-params"><span class="hljs-type">Accessor</span></span>) </span>{
+
+  query(<span class="hljs-meta">@cast</span>(<span class="hljs-type">Query</span>) query: <span class="hljs-type">Query</span>): void {
+    console.log(query.declaredClass);
+  }
+}
+</code></pre></p><h2 id="additional-information">Additional information</h2><p>Please refer to these additional links for further information:</p><ul><li><a href="../working-with-props/index.html">Working with properties</a></li><li><a href="../../sample-code/widgets-custom-widget/index.html">Sample code - Create custom widget</a></li><li><a href="../../sample-code/widgets-custom-recenter/index.html">Sample code - Recenter widget</a></li><li><a href="../../api-reference/esri-core-Accessor.html">API Reference - Accessor</a> class</li><li><a href="https://github.com/Esri/jsapi-resources/tree/master/4.x/typescript">jsapi-resources</a> Github repository</li><li><a href="https://www.typescriptlang.org">TypeScript</a> reference</li><li><a href="../migrating/index.html#properties">Migrating from 3.x to 4.9</a></li></ul></div></article></main></div><div class="footnote feedback right trailer-1"><a class="icon-ui-contact hide js-feedback" href="mailto:js_feedback@esri.com?subject=Feedback%20on%204.9%20-%20guide:%20Implementing%20Accessor&body=Hello,%0A%0AI%20was%20reading%20the%20ArcGIS%20API%20for%20JavaScript%20version%204.9%20documentation%20and%20have%20some%20feedback.%0A%0ADocumentation%20details:%0APage%20title:%20%7BREPLACE_TITLE%7D%0APage%20URL:%20%7BREPLACE_URL%7D%0A%0A">Feedback on this topic?</a></div></div></div><footer class="footer leader- link-dark-gray" role="contentinfo"><div class="grid-container"><nav class="column-6"><h6>ArcGIS for Developers</h6><ul class="list-plain"><li><a href="/">Home</a></li><li><a href="/features/">Features</a></li><li><a href="/documentation/">Documentation</a></li><li><a href="/support/">Support</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/startups/">Startups</a></li><li><a href="https://blogs.esri.com/esri/arcgis/category/developer/">Blog</a></li></ul></nav><nav class="column-6"><h6>ArcGIS Platform</h6><ul class="list-plain"><li><a href="http://arcgis.com">ArcGIS Online</a></li><li><a href="http://desktop.arcgis.com">ArcGIS Desktop</a></li><li><a href="http://server.arcgis.com">ArcGIS Enterprise</a></li><li><a href="http://developers.arcgis.com">ArcGIS for Developers</a></li><li><a href="http://solutions.arcgis.com">ArcGIS Solutions</a></li><li><a href="http://marketplace.arcgis.com">ArcGIS Marketplace</a></li></ul></nav><nav class="column-6"><h6>About Esri</h6><ul class="list-plain"><li><a href="http://www.esri.com/about-esri/">About Us</a></li><li><a href="http://www.esri.com/careers/">Careers</a></li><li><a href="https://blogs.esri.com/esri/esri-insider/">Insiders Blog</a></li><li><a href="http://www.esri.com/events/user-conference/index.html">User Conference</a></li><li><a href="http://www.esri.com/events/devsummit/index.html">Developer Summit</a></li></ul></nav><nav class="column-6"><a class="esri-logo" href="http://esri.com" aria-label="Esri Home"></a><div class="footer-social-nav leader-1"><a class="icon-social-twitter" aria-label="Esri on Twitter" href="https://twitter.com/Esri/"></a> <a class="icon-social-facebook" aria-label="Esri on Facebook" href="https://www.facebook.com/esrigis/"></a> <a class="icon-social-github" aria-label="Esri on GitHub" href="http://esri.github.com/"></a> <a class="icon-social-contact" aria-label="Contact Esri" href="http://www.esri.com/about-esri/contact/"></a></div></nav><div class="column-24 leader-1"><p><small><a href="http://www.esri.com/legal/copyright-trademarks">Copyright © 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="http://www.esri.com/legal/software-license">Terms of use</a> | <a href="/terms/faq/">FAQ</a></small></p></div></div></footer><script></script><script>var relativePath=document.URL.replace(/[-\w\d]*\.(html|css|js).*/,"../../..")</script><script src="../../../assets/js/config.js"></script><script src="../../../assets/js/preparse.js"></script><div class="js-modal modal-overlay modifier-class" data-modal="modal-keyboard-shortcuts"><div class="modal-content column-8" aria-label="modal" role="dialog"><a class="js-modal-toggle right" href="#" aria-label="close-modal"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 32 32" class="svg-icon"><path d="M18.404 16l9.9 9.9-2.404 2.404-9.9-9.9-9.9 9.9L3.696 25.9l9.9-9.9-9.9-9.898L6.1 3.698l9.9 9.899 9.9-9.9 2.404 2.406-9.9 9.898z"/></svg></a><h4>Keyboard shortcuts</h4><hr class="leader-0 trailer-half"><div><table class="table-plain keyboard-mappings"><thead><tr><th></th><th>Site wide shortcuts</th></tr></thead><tbody><tr><td><kbd>?</kbd></td><td>Bring up this help dialog</td></tr><tr><td><kbd>esc</kbd></td><td>Dismiss this help dialog</td></tr><tr><td><kbd>g</kbd><kbd>h</kbd></td><td>Go to Home</td></tr><tr><td><kbd>g</kbd><kbd>g</kbd></td><td>Go to Guide</td></tr><tr><td><kbd>g</kbd><kbd>a</kbd></td><td>Go to API Reference</td></tr><tr><td><kbd>g</kbd><kbd>s</kbd></td><td>Go to Sample Code</td></tr><tr><td><kbd>g</kbd><kbd>t</kbd></td><td>Scroll to top of page</td></tr><tr><td><kbd>spacebar</kbd></td><td>Scroll page down</td></tr><tr><td><kbd>shift spacebar</kbd></td><td>Scroll page up</td></tr><tr><td><kbd>g</kbd><kbd>b</kbd></td><td>Scroll to bottom of page</td></tr></tbody></table></div></div></div><script src="../../../assets/js/libs/url-search-params.js"></script><script src="../../../assets/js/calcite-web.js"></script><script src="../../../assets/js/calcite-web-extend.js"></script><script src="../../../assets/js/libs/mousetrap.js"></script><script>"function"==typeof Mousetrap&&"object"==typeof calcite&&"function"==typeof Mousetrap&&"object"==typeof calcite&&Mousetrap.bind(["g h","g g","g a","g s","?","g t","g b"],function(e,t){calcite.bus.emit("keyboard:mousetrap",{event:e,combination:t,navigation:{h:"../../../index.html",g:"../../../latest/guide/index.html",a:"../../../latest/api-reference/index.html",s:"../../../latest/sample-code/index.html"}})})</script></body></html>

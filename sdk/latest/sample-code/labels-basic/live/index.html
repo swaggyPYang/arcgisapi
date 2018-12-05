@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Add labels to a FeatureLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/light-green/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background-color: black;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Search"
+    ], function(WebMap, MapView, FeatureLayer, Search) {
+
+      const labelClass = { // autocasts as new LabelClass()
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "green",
+          haloColor: "black",
+          font: { // autocast as new Font()
+            family: "playfair-display",
+            size: 12,
+            weight: "bold"
+          }
+        },
+        labelPlacement: "above-center",
+        labelExpressionInfo: {
+          expression: "$feature.MARKER_ACTIVITY"
+        }
+      };
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: new WebMap({
+          portalItem: { // autocasts as new PortalItem
+            id: "372b7caa8fe340b0a6300df93ef18a7e"
+          },
+          layers: [
+            new FeatureLayer({
+              portalItem: { // autocasts as new PortalItem
+                id: "6012738cd1c74582a5f98ea30ae9876f"
+              },
+              labelingInfo: [labelClass],
+              renderer: {
+                type: "simple", // autocasts as new SimpleRenderer()
+                symbol: {
+                  type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                  color: "rgba(0,100,0,0.6)",
+                  size: 3,
+                  outline: {
+                    color: [0, 0, 0, 0.1],
+                    width: 0.5
+                  }
+                }
+              }
+            })
+          ]
+        }),
+        center: [-116.9250, 34.2501],
+        zoom: 14
+      });
+
+      // Adds the search widget to the top right corner of the view
+      view.ui.add(new Search({
+        view: view
+      }), "top-right");
+
+    });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

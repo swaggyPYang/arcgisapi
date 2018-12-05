@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Popup with DOM node - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #sceneViewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .mapView {
+      height: 400px;
+      border: 1px solid #A8A8A8;
+    }
+
+    .esri-popup.esri-widget {
+      max-height: 100%;
+    }
+
+    .esri-view-width-xlarge .esri-popup__main-container {
+      width: 580px;
+    }
+
+    .esri-view-height-less-than-medium .esri-popup__main-container {
+      max-height: 500px;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/Map",
+      "esri/WebScene",
+      "esri/views/MapView",
+      "esri/views/SceneView"
+    ], function(
+      FeatureLayer, Map, WebScene, MapView, SceneView) {
+
+      // Create the map from the given web scene id
+      var map = new WebScene({
+        portalItem: {
+          id: "5a392557cffb485f8fe004e668e9edc0"
+        },
+        ground: "world-elevation"
+      });
+
+      // Create the SceneView
+      var sceneView = new SceneView({
+        map,
+        container: "sceneViewDiv",
+        popup: {
+          actions: [],
+          dockEnabled: true,
+          dockOptions: {
+            buttonEnabled: true,
+            breakpoint: false
+          }
+        }
+      });
+
+      // Listen for when the scene view is ready
+      sceneView.when(function() {
+        sceneView.on("click", function(event) {
+          // It's necessary to overwrite the default click for the popup
+          // behavior in order to display your own popup
+          event.stopPropagation();
+
+          // Make sure that there is a valid latitude/longitude
+          if (event && event.mapPoint) {
+            // Create lat/lon vars to display in popup title
+            var lat = Math.round(event.mapPoint.latitude * 1000) /
+              1000;
+            var lon = Math.round(event.mapPoint.longitude * 1000) /
+              1000;
+
+            sceneView.popup.open({
+              // Set the popup's title to the coordinates of the location
+              title: "Map view coordinates: [" + lon + ", " +
+                lat +
+                "]",
+              location: event.mapPoint, // Set the location of the popup to the clicked location
+              content: setContentInfo(
+                sceneView.center,
+                sceneView.scale
+              )
+            });
+          } else {
+            sceneView.popup.open({
+              // Set the popup's title to the coordinates of the location
+              title: "Invalid point location",
+              location: event.mapPoint, // Set the location of the popup to the clicked location
+              content: "Please click on a valid location."
+            });
+          }
+        });
+
+        function setContentInfo(center, scale) {
+          var popupDiv = document.createElement("div");
+          popupDiv.classList.add("mapView");
+
+          var popupView = new MapView({
+            container: popupDiv,
+            map: new Map({
+              basemap: "topo"
+            }),
+            center: sceneView.center,
+            scale: sceneView.scale *
+              2 *
+              Math.max(sceneView.width / 250, sceneView.height /
+                250),
+            constraints: {
+              rotationEnabled: false
+            },
+            ui: {
+              components: []
+            }
+          });
+          // Return a dom node
+          return popupView.container;
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="sceneViewDiv"></div>
+</body>
+
+</html>

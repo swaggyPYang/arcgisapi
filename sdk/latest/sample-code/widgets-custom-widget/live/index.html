@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>Create a custom widget - 4.9</title>
+
+  <style>
+    .esri-hello-world {
+      font-family: "Helvetica Neue", sans-serif;
+      display: inline-block;
+    }
+
+    .esri-hello-world--emphasis {
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    var locationPath = location.pathname.replace(/\/[^\/]+$/, "");
+    window.dojoConfig = {
+      packages: [
+      {
+        name: "app",
+        location: locationPath + "/app"
+      }]
+    };
+  </script>
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    var widget;
+
+    require([
+      "app/HelloWorld"
+    ], function(
+      HelloWorld
+    ) {
+
+      var names = [
+        {
+          firstName: "John",
+          lastName: "Smith"
+        },
+        {
+          firstName: "Jackie",
+          lastName: "Miller"
+        },
+        {
+          firstName: "Anna",
+          lastName: "Price"
+        }],
+        nameIndex = 0;
+
+      var widget = new HelloWorld({
+        firstName: names[nameIndex].firstName,
+        lastName: names[nameIndex].lastName,
+        container: "widgetDiv"
+      });
+
+      function changeName() {
+        widget.set(names[++nameIndex % names.length]);
+      }
+
+      widget.on("greeted", function(event) {
+        console.log(event);
+      })
+      setInterval(changeName, 1000);
+    });
+  </script>
+</head>
+
+<body>
+  <div id="widgetDiv"></div>
+</body>
+</html>

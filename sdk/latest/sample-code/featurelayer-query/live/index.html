@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query features from a FeatureLayer - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #infoDiv {
+      background-color: white;
+      color: black;
+      padding: 6px;
+      width: 400px;
+    }
+
+    #results {
+      font-weight: bolder;
+    }
+
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/layers/GraphicsLayer",
+        "esri/geometry/geometryEngine",
+        "esri/Graphic"
+      ],
+      function (
+        Map, MapView,
+        FeatureLayer,
+        GraphicsLayer,
+        geometryEngine,
+        Graphic
+      ) {
+
+        var quakesUrl =
+          "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/ks_earthquakes_since_2000/FeatureServer/0";
+
+        var wellBuffer, wellsGeometries, magnitude;
+
+        var wellTypeSelect = document.getElementById("well-type");
+        var magSlider = document.getElementById("mag");
+        var distanceSlider = document.getElementById("distance");
+        var queryQuakes = document.getElementById("query-quakes");
+
+        // oil and gas wells
+        var wellsLayer = new FeatureLayer({
+          portalItem: { // autocasts as new PortalItem()
+            id: "8af8dc98e75049bda6811b0cdf9450ee"
+          },
+          outFields: ["*"],
+          visible: false
+        });
+
+        // historic earthquakes
+        var quakesLayer = new FeatureLayer({
+          url: quakesUrl,
+          outFields: ["*"],
+          visible: false
+        });
+
+        // GraphicsLayer for displaying results
+        var resultsLayer = new GraphicsLayer();
+
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [wellsLayer, quakesLayer, resultsLayer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-97.75188, 37.23308],
+          zoom: 10
+        });
+        view.ui.add("infoDiv", "top-right");
+
+        // query all features from the wells layer
+        view.when(function () {
+            return wellsLayer.when(function () {
+              var query = wellsLayer.createQuery();
+              return wellsLayer.queryFeatures(query);
+            });
+          })
+          .then(getValues)
+          .then(getUniqueValues)
+          .then(addToSelect)
+          .then(createBuffer);
+
+        // return an array of all the values in the
+        // STATUS2 field of the wells layer
+        function getValues(response) {
+          var features = response.features;
+          var values = features.map(function (feature) {
+            return feature.attributes.STATUS2;
+          });
+          return values;
+        }
+
+        // return an array of unique values in
+        // the STATUS2 field of the wells layer
+        function getUniqueValues(values) {
+          var uniqueValues = [];
+
+          values.forEach(function (item, i) {
+            if ((uniqueValues.length < 1 || uniqueValues.indexOf(item) === -1) &&
+              (item !== "")) {
+              uniqueValues.push(item);
+            }
+          });
+          return uniqueValues;
+        }
+
+        // Add the unique values to the wells type
+        // select element. This will allow the user
+        // to filter wells by type.
+        function addToSelect(values) {
+          values.sort();
+          values.forEach(function (value) {
+            var option = document.createElement("option");
+            option.text = value;
+            wellTypeSelect.add(option);
+          });
+
+          return setWellsDefinitionExpression(wellTypeSelect.value);
+        }
+
+        // set the definition expression on the wells
+        // layer to reflect the selection of the user
+        function setWellsDefinitionExpression(newValue) {
+          wellsLayer.definitionExpression = "STATUS2 = '" + newValue + "'";
+
+          if (!wellsLayer.visible) {
+            wellsLayer.visible = true;
+          }
+
+          return queryForWellGeometries();
+        }
+
+        // Get all the geometries of the wells layer
+        // the createQuery() method creates a query
+        // object that respects the definitionExpression
+        // of the layer
+        function queryForWellGeometries() {
+          var wellsQuery = wellsLayer.createQuery();
+
+          return wellsLayer.queryFeatures(wellsQuery)
+            .then(function (response) {
+              wellsGeometries = response.features.map(function (feature) {
+                return feature.geometry;
+              });
+
+              return wellsGeometries;
+            });
+        }
+
+        // creates a single buffer polygon around
+        // the well geometries
+        function createBuffer(wellPoints) {
+          var bufferDistance = parseInt(distanceSlider.value);
+          var wellBuffers = geometryEngine.geodesicBuffer(wellPoints, [bufferDistance], "meters",
+            true);
+          wellBuffer = wellBuffers[0];
+
+          // add the buffer to the view as a graphic
+          var bufferGraphic = new Graphic({
+            geometry: wellBuffer,
+            symbol: {
+              type: "simple-fill", // autocasts as new SimpleFillSymbol()
+              outline: {
+                width: 1.5,
+                color: [255, 128, 0, 0.5]
+              },
+              style: "none"
+            }
+          });
+          view.graphics.removeAll();
+          view.graphics.add(bufferGraphic);
+        }
+
+        // Get the magnitude value set by the user
+        magSlider.addEventListener("input", function () {
+          magnitude = magSlider.value;
+          document.getElementById("mag-value").innerText = magnitude;
+        });
+        // display the distance value selected by the user
+        distanceSlider.addEventListener("input", function () {
+          document.getElementById("distance-value").innerText = distanceSlider.value;
+        });
+        // create a buffer around the queried geometries
+        distanceSlider.addEventListener("change", function () {
+          createBuffer(wellsGeometries);
+        });
+        // set a new definitionExpression on the wells layer
+        // and create a new buffer around the new wells
+        wellTypeSelect.addEventListener("change", function () {
+          var type = event.target.value;
+          setWellsDefinitionExpression(type)
+            .then(createBuffer);
+        });
+
+        // query for earthquakes with the specified magnitude
+        // within the buffer geometry when the query button
+        // is clicked
+        queryQuakes.addEventListener("click", function () {
+          queryEarthquakes()
+            .then(displayResults);
+        });
+
+        function queryEarthquakes() {
+          var query = quakesLayer.createQuery();
+          query.where = "mag >= " + magSlider.value;
+          query.geometry = wellBuffer;
+          query.spatialRelationship = "intersects";
+
+          return quakesLayer.queryFeatures(query);
+        }
+
+        // display the earthquake query results in the
+        // view and print the number of results to the DOM
+        function displayResults(results) {
+
+          resultsLayer.removeAll();
+          var features = results.features.map(function (graphic) {
+            graphic.symbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              style: "diamond",
+              size: 6.5,
+              color: "darkorange"
+            };
+            return graphic;
+          });
+          var numQuakes = features.length;
+          document.getElementById("results").innerHTML = numQuakes + " earthquakes found";
+          resultsLayer.addMany(features);
+        }
+
+      });
+
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="infoDiv">
+    Select well type:
+    <select id="well-type"></select>
+    <br> Well buffer distance:
+    <input id="distance" type="range" min="10" max="10000" step="10" value="10000">&nbsp;
+    <span id="distance-value">10000</span> meters
+    <br> Earthquake magnitude:
+    <input id="mag" type="range" min="0.0" max="5.0" step="0.1" value="2.0">&nbsp;
+    <span id="mag-value">2.0</span>
+    <button id="query-quakes">Query Earthquakes</button>
+    <br>
+    <div id="results"></div>
+  </div>
+</body>
+
+</html>

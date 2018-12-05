@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Elevation options - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #elevationDiv {
+      font-family: monospace;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    .right {
+      text-align: right;
+    }
+    select {
+      width: 180px;
+    }
+    select option {
+      width: 180px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/LayerList"
+    ], function(WebScene, SceneView, FeatureLayer, LayerList) {
+
+      // Load Webscene from portal item
+      var webscene = new WebScene({
+        portalItem: {
+          id: "82b1268e2dda4c0bb04d2f48e38652b8"
+        }
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webscene,
+      });
+      view.ui.add("elevationDiv", "top-right");
+
+      // Check when webscene finished loading all the resources
+      webscene.when(function(){
+        // Retrieve FeatureLayer from webscene
+        var balloonLayer = webscene.layers.find(function(layer){
+          return layer.title === "Balloon layer";
+        });
+
+        // Define elevationInfo and set it on the layer
+        var currentElevationInfo = {
+          mode: "relative-to-ground",
+          offset: 0,
+          featureExpressionInfo:{
+            expression: "Geometry($feature).z * 10"
+          },
+          unit: "meters"
+        };
+
+        balloonLayer.elevationInfo = currentElevationInfo;
+
+        // Register events to the controls
+        var offsetInput = document.getElementById("offset");
+        var featureExpressionInput = document.getElementById("featureExpressionInfo");
+        var unitSelect = document.getElementById("unit");
+        var modeSelect = document.getElementById("modeSelect");
+        modeSelect.addEventListener("change", updateElevationMode);
+        document.querySelectorAll("input").forEach(function(inputElement){
+          inputElement.addEventListener("blur", updateElevationSettings);
+          inputElement.addEventListener("keypress", onKeypress);
+        });
+        unitSelect.addEventListener("change", updateElevationSettings);
+
+        // Create events' callback functions
+        function updateElevationMode(event) {
+          var select = event.target;
+          var mode = select.options[select.selectedIndex].value;
+
+          if (mode === "on-the-ground") {
+            setInputStatus(false);
+          }
+
+          if (currentElevationInfo.mode === "on-the-ground") {
+            setInputStatus(true);
+          }
+
+          currentElevationInfo.mode = mode;
+          balloonLayer.elevationInfo = currentElevationInfo;
+        }
+
+        function setInputStatus(status) {
+          if (status) {
+            offsetInput.removeAttribute("disabled");
+            featureExpressionInput.removeAttribute("disabled");
+            unitSelect.removeAttribute("disabled");
+          } else {
+            offsetInput.setAttribute("disabled", "true");
+            featureExpressionInput.setAttribute("disabled", "true");
+            unitSelect.setAttribute("disabled", "true");
+          }
+        }
+
+        function updateElevationSettings(event) {
+
+          if (event.target.id === "featureExpressionInfo") {
+            var expression = event.target.value !== "" ? event.target.value : 0;
+            currentElevationInfo.featureExpressionInfo.expression = expression;
+          } else {
+            currentElevationInfo[event.target.id] = event.target.value;
+          }
+
+          balloonLayer.elevationInfo = currentElevationInfo;
+        }
+
+        function onKeypress(event) {
+          if (event.which === 13) {
+            updateElevationSettings(event);
+          }
+        }
+
+        // Add the possibility to turn buildings on/off by adding a LayerList with the Buildings layer
+        var buildingsLayer = webscene.layers.find(function(layer){
+          return layer.title === "Buildings";
+        });
+
+        view.ui.add(new LayerList({
+          view: view
+        }), "bottom-left");
+      });
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="elevationDiv">
+    <table>
+      <tr>
+        <td class="right">mode</td>
+        <td>
+          <select id="modeSelect">
+            <option value="on-the-ground">on-the-ground</option>
+            <option value="relative-to-ground" selected>relative-to-ground</option>
+            <option value="relative-to-scene">relative-to-scene</option>
+            <option value="absolute-height">absolute-height</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="right">offset</td>
+        <td><input id="offset" type="text" size="23" value="0"></td>
+      </tr>
+      <tr>
+        <td class="right">expression</td>
+        <td><input id="featureExpressionInfo" type="text" size="23" value="Geometry($feature).z * 10"></td>
+      </tr>
+      <tr>
+        <td class="right">unit</td>
+        <td>
+          <select id="unit">
+            <option value="feet">feet</option>
+            <option value="kilometers">kilometers</option>
+            <option value="meters" selected>meters</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

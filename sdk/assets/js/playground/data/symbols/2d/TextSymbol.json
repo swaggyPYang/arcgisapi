@@ -1,0 +1,86 @@
+{
+  "className": "TextSymbol",
+  "type": "Class",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "textSym",
+  "description": "Text symbols are used to add text on the graphics layer.",
+  "summary": "display labels for points, polylines and polygons",
+  "path": "esri/symbols/TextSymbol",
+  "autocastType": "text",
+  "properties": [
+    {
+      "name": "text",
+      "type": "String",
+      "required": true,
+      "summary": "Text string for display in the graphics layer"
+    },
+    {
+      "name": "font",
+      "type": "Object",
+      "summary": "Font for displaying text",
+      "location": "symbols/2d/Font.json",
+      "exclude": true
+    },
+    {
+      "name": "angle",
+      "type": "Number",
+      "default": 0,
+      "summary": "Text angle"
+    },
+    {
+      "name": "horizontalAlignment",
+      "type": "String",
+      "default": "center",
+      "summary": "Horizontal alignment of the text with respect to the graphic",
+      "options": {
+        "type": "String",
+        "values": [
+          "left",
+          "right",
+          "center",
+          "justify"
+        ]
+      }
+    },
+    {
+      "name": "verticalAlignment",
+      "type": "String",
+      "default": "baseline",
+      "summary": "Vertical alignment of the text with respect to the graphic",
+      "options": {
+        "type": "String",
+        "values": [
+          "baseline",
+          "top",
+          "middle",
+          "bottom"
+        ]
+      }
+    },
+    {
+      "name": "kerning",
+      "type": "Boolean",
+      "default": true,
+      "summary": "Determines whether to adjust the spacing between characters in the text string"
+    },
+    {
+      "name": "rotated",
+      "type": "Boolean",
+      "default": false,
+      "summary": "Determines whether every character in the text string is rotated"
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "summary": "The offset on the y-axis in pixels"
+    }
+  ]
+}

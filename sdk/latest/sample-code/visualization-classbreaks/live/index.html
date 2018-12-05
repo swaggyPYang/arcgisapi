@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Visualize data with class breaks - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-legend {
+      background-color: whitesmoke;
+      color: darkslategray;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Legend"
+    ], function(
+      Map, MapView, FeatureLayer, Legend
+    ) {
+
+      /*****************************************************************
+       * Define symbols for each class break.
+       *****************************************************************/
+
+      var less35 = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: "#7B3294",
+        style: "solid",
+        outline: {
+          width: 0.5,
+          color: "white"
+        }
+      };
+
+      var less50 = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: "#C2A5CF",
+        style: "solid",
+        outline: {
+          width: 0.5,
+          color: "white"
+        }
+      };
+
+      var more50 = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: "#A6DBA0",
+        style: "solid",
+        outline: {
+          width: 0.5,
+          color: "white"
+        }
+      };
+
+      var more75 = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: "#008837",
+        style: "solid",
+        outline: {
+          width: 0.5,
+          color: "white"
+        }
+      };
+
+      /*****************************************************************
+       * Set each unique value directly in the renderer's constructor.
+       * At least one field must be used (in this case the "COL_DEG" field).
+       * The label property of each unique value will be used to indicate
+       * the field value and symbol in the legend.
+       *****************************************************************/
+
+      var renderer = {
+        type: "class-breaks", // autocasts as new ClassBreaksRenderer()
+        field: "COL_DEG",
+        normalizationField: "EDUCBASECY",
+        defaultSymbol: {
+          type: "simple-fill", // autocasts as new SimpleFillSymbol()
+          color: "gray",
+          outline: {
+            width: 0.5,
+            color: "white"
+          }
+        },
+        defaultLabel: "no data",
+        classBreakInfos: [{
+          minValue: 0,
+          maxValue: 0.3499,
+          symbol: less35,
+          label: "< 35%"
+        }, {
+          minValue: 0.35,
+          maxValue: 0.4999,
+          symbol: less50,
+          label: "35 - 50%"
+        }, {
+          minValue: 0.50,
+          maxValue: 0.7499,
+          symbol: more50,
+          label: "50 - 75%"
+        }, {
+          minValue: 0.75,
+          maxValue: 1.00,
+          symbol: more75,
+          label: "> 75%"
+        }]
+      };
+
+      var seattleLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Puget_Sound_BG_demographics/FeatureServer/0",
+        renderer: renderer,
+        outFields: ["COL_DEG", "EDUCBASECY", "NO_COL_DEG",
+          "FID_Block_Group"
+        ],
+        popupTemplate: { // autocast as esri/PopupTemplate
+          title: "Block Group {FID_Block_Group}",
+          content: "{COL_DEG} adults 25 years old and older in this block group have a college degree. " +
+            "{NO_COL_DEG} adults do not have a college degree."
+        },
+        // show only block groups in Seattle
+        definitionExpression: "City = 'Seattle' AND EDUCBASECY > 0",
+      });
+
+      var map = new Map({
+        basemap: "gray",
+        layers: [seattleLayer]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-122.3487846, 47.589070],
+        zoom: 12
+      });
+
+      /******************************************************************
+       *
+       * Add layers to layerInfos on the legend
+       *
+       ******************************************************************/
+
+      var legend = new Legend({
+        view: view,
+        layerInfos: [
+        {
+          layer: seattleLayer,
+          title: "% of adults (25+) with a college degree"
+        }]
+      });
+
+      view.ui.add(legend, "bottom-left");
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

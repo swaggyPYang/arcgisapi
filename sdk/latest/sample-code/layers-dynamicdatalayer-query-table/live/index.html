@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - dynamic data layer with query table - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #info-div {
+      background-color: white;
+      border-radius: 8px;
+      padding: 8px;
+      opacity: 0.92;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/MapImageLayer"
+    ], function(
+      Map, MapView, MapImageLayer
+    ) {
+
+      // helper function to create a symbol
+      function createSymbol(color, size) {
+        return {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          color: color,
+          size: size,
+          outline: {
+            width: 0.5,
+            color: [0, 0, 0, 0.2]
+          }
+        };
+      }
+
+      /*****************************************************************
+       * Create a renderer for the dynamic layer based on the population
+       * value of each feature.
+       *****************************************************************/
+
+      var renderer = {
+        type: "class-breaks", // autocasts as new ClassBreaksRenderer()
+        field: "population",
+        classBreakInfos: [{
+          minValue: 0,
+          maxValue: 2500,
+          symbol: createSymbol("#f8e3c2", 3)
+        }, {
+          minValue: 2500,
+          maxValue: 15000,
+          symbol: createSymbol("#e5998c", 6)
+        }, {
+          minValue: 15000,
+          maxValue: 75000,
+          symbol: createSymbol("#d86868", 12)
+        }, {
+          minValue: 75000,
+          maxValue: 10000000,
+          symbol: createSymbol("#9b3557", 22)
+        }]
+      };
+
+      /*****************************************************************
+       * Create a MapImageLayer instance. A sublayer is added to
+       * the layer with a dynamic data layer source. The dynamic layer
+       * is created by querying a table that resides in a registered
+       * workspace as a feature class.
+       *****************************************************************/
+
+      // The base SQL statement used to query features.
+      // We'll select all rows from the Places feature class table
+      var queryString = "SELECT * FROM ss6.gdb.Places";
+
+      var layer = new MapImageLayer({
+        url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+        sublayers: [{
+          title: "Places",
+          renderer: renderer,
+          id: 0,
+          source: {
+            // indicates the source of the sublayer is a dynamic data layer
+            type: "data-layer",
+            // this object defines the data source of the layer
+            // in this case it's a table that will be queried
+            // using a SQL WHERE clause
+            dataSource: {
+              type: "query-table",
+              workspaceId: "MyDatabaseWorkspaceIDSSR2",
+              query: queryString + document.getElementById(
+                "layer-select").value,
+              oidFields: "objectid"
+            }
+          }
+        }]
+      });
+
+      /*****************************************************************
+       * Add the layer to a map
+       *****************************************************************/
+
+      var map = new Map({
+        basemap: "gray",
+        layers: [layer]
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 9,
+        center: [-73.8886, 40.8361]
+      });
+
+      view.ui.add("info-div", "top-right");
+
+      view.when(function() {
+        // change where clause when selection changes
+        document.getElementById("layer-select").addEventListener(
+          "change",
+          function(event) {
+            var newValue = event.target.value;
+            var sublayer = layer.sublayers.find(function(sublayer) {
+              return sublayer.title === "Places";
+            });
+            var updatedSublayer = sublayer.clone();
+            updatedSublayer.source.dataSource.query = queryString +
+              newValue;
+            layer.sublayers = [updatedSublayer];
+          });
+      });
+    });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="info-div">
+    Filter by type<br><br>
+    <select id="layer-select">
+      <option value="">All</option>
+      <option value=" WHERE class = 'city'" selected>City</option>
+      <option value=" WHERE class = 'town'">Town</option>
+      <option value=" WHERE class = 'CDP'">Census designated place</option>
+    </select>
+  </div>
+</body>
+
+</html>

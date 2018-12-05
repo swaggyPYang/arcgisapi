@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>WMTSLayer - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-layer-list {
+      width: 310px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    var map, view;
+
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/WMTSLayer",
+      "esri/widgets/LayerList"
+    ], function(
+      Map,
+      MapView,
+      WMTSLayer,
+      LayerList
+    ) {
+
+      layer = new WMTSLayer({
+        url: "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best",
+        copyright: "<a target='_top' href='https://earthdata.nasa.gov'>Earthdata</a> by <a target='_top' href='https://www.nasa.gov'>NASA</a>",
+        activeLayer: {
+          id: "SRTM_Color_Index",
+        }
+      });
+
+      map = new Map({
+        layers: [layer]
+      });
+      view = new MapView({
+        container: "viewDiv",
+        map: map
+      });
+      view.when(function() {
+        view.extent = layer.fullExtent;
+        var layerList = new LayerList({
+          view: view
+        });
+        view.ui.add(layerList, "bottom-left");
+      });
+    });
+  </script>
+
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Query a SceneLayer's associated FeatureLayer - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/SceneLayer",
+      "esri/layers/FeatureLayer",
+      "esri/tasks/support/Query"
+    ], function(Map, SceneView, SceneLayer, FeatureLayer, Query) {
+
+      // Create Map
+      var map = new Map({
+        basemap: "dark-gray",
+        ground: "world-elevation"
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            x: -8241580,
+            y: 4964925,
+            z: 2311,
+            spatialReference: 3857
+          },
+          heading: 32.5,
+          tilt: 64.9
+        }
+      });
+
+      // Create SceneLayer and add to the map
+      var sceneLayer = new SceneLayer({
+        portalItem: {
+          id: "2e0761b9a4274b8db52c4bf34356911e"
+        },
+        // disable "default" scenelayer popups
+        // because we will show them manually
+        popupEnabled: false
+      });
+      map.add(sceneLayer);
+
+      // Create the linked FeatureLayer instance that contains the attributes.
+      // This layer must also contain a field with the SceneLayer
+      // features' objectid, since we will use it for linking both layers
+
+      var featureLayer = new FeatureLayer({
+        url: "https://services2.arcgis.com/z2tnIkrLQ2BRzr6P/arcgis/rest/services/New_York_OBJECTID/FeatureServer/0",
+        // configure the feature layer to return all fields
+        outFields: ["*"],
+        // define the popup template with the fields from FeatureLayer
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "NYC building: {NAME}",
+          content: [{
+            type: "fields"
+          }],
+          fieldInfos: [{
+            fieldName: "CNSTRCT_YR",
+            label: "Construction Year",
+            visible: true,
+            format: {
+              places: 0,
+              digitSeparator: false
+            }
+          }, {
+            fieldName: "LSTMODDATE",
+            label: "Modification Date",
+            visible: true,
+            format: {
+              dateFormat: "short-date",
+            }
+          }, {
+            fieldName: "LSTSTATYPE",
+            visible: true,
+            label: "Status"
+          }, {
+            fieldName: "NUM_FLOORS",
+            label: "Number of Floors",
+            visible: true,
+            format: {
+              places: 0,
+              digitSeparator: true
+            }
+          }]
+        }
+      });
+
+      // we don't need to add the FeatureLayer to the map, as
+      // it won't be displayed and we won't click on its features,
+      // however in this case we need to explicitly load the layer
+      // before we execute any queries
+
+      featureLayer.load().then(attributesReady);
+
+      function attributesReady() {
+
+        // capture click events on the view
+        view.on("click", function(event) {
+
+          // get the returned screen x, y coordinates and use it
+          // with hitTest to find if any graphics were clicked
+          // (using promise chaining for cleaner code and error handling)
+          view.hitTest(event).then(function(response) {
+
+            // we're only interested in the first result
+            var result = response.results[0];
+            if (result && result.graphic) {
+              return result.graphic;
+            }
+          }).then(function(graphic) {
+
+            // now extract the object id from the graphic
+            var objectid = graphic.attributes.objectid;
+
+            var query = new Query();
+
+            // the feature layer must contain a field with the
+            // objectid values of the scenelayer buildings in
+            // order to execute this query correctly
+            query.where = "objectid = " + objectid;
+            query.returnGeometry = false;
+            query.outFields = ["NAME", "CNSTRCT_YR", "LSTMODDATE",
+              "LSTSTATYPE",
+              "NUM_FLOORS"
+            ];
+
+            // execute the query
+            return featureLayer.queryFeatures(query);
+
+          }).then(function(results) {
+
+            // process the feature service query results
+            if (results && results.features.length > 0) {
+
+              // show the popup with all attributes coming from the
+              // feature layer query, at the original click position
+              view.popup.open({
+                features: results.features,
+                location: event.mapPoint
+              });
+            }
+          }).catch(function(error) {
+            console.error(error);
+          });
+        });
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

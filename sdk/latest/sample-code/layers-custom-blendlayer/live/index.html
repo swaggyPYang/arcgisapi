@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Custom BlendLayer - 4.9</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+          "esri/Map",
+          "esri/views/MapView",
+          "esri/widgets/LayerList",
+          "esri/layers/TileLayer",
+          "esri/layers/BaseTileLayer",
+          "esri/core/promiseUtils"
+        ],
+        function(
+          Map, MapView, LayerList, TileLayer,
+          BaseTileLayer, promiseUtils
+        ) {
+
+          // **********************************************
+          //  Create a subclass of BaseTileLayer
+          // **********************************************
+
+          var BlendLayer = BaseTileLayer.createSubclass({
+
+            // Add a multiplyLayers property. Its value will be used
+            // store tile layers that will be used to create
+            // a blended layer. Layers stored in this property
+            // will be blended using "multiply" operation.
+            properties: {
+              multiplyLayers: null
+            },
+
+            // The load() method is called when the layer is added to the map
+            // prior to it being rendered in the view.
+            load: function() {
+              // call load method on each tile layer stored in multiple property
+              this.multiplyLayers.forEach(function(layer) {
+                // The tile layers must load() prior to the BlendLayer
+                // resolving and moving to the "loaded" status.
+                this.addResolvingPromise(layer.load());
+              }, this);
+            },
+
+            // Fetches the tile(s) visible in the view
+            fetchTile: function(level, row, col) {
+
+              var tilePromises = this.multiplyLayers.map(function(layer) {
+                  // calls fetchTile() on the tile layers returned in multiplyLayers property
+                  // for the tiles visible in the view
+                  return layer.fetchTile(level, row, col);
+
+                  return promiseUtils.eachAlways(tilePromises)
+                    .then(function(results) {
+                      // create a canvas
+                      var width = this.tileInfo.size[0];
+                      var height = this.tileInfo.size[0];
+                      var canvas = document.createElement("canvas");
+                      var context = canvas.getContext("2d");
+
+                      canvas.width = width;
+                      canvas.height = height;
+
+                      // multiply - multiplies the numbers for each pixel of the top layer (nat geo)
+                      // with the corresponding pixel for the bottom layer (hillshade).
+                      context.globalCompositeOperation = "multiply";
+                      results.forEach(function(result) {
+                        var image = result.image;
+                        context.drawImage(image, 0, 0, width,
+                          height);
+                      });
+
+                      return canvas;
+                    }.bind(this));
+                }
+              });
+
+            // **********************************************
+            // Start of JS application
+            // **********************************************
+
+            // natGeoLayer and hillShadeLayer are added to
+            // multiplyLayers property of the BlendLayer
+
+            var natGeoLayer = new TileLayer({
+              url: "https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer"
+            });
+
+            var hillShadeLayer = new TileLayer({
+              url: "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer"
+            });
+
+            // Create a new instance of BlendLayer
+            // add natGeoLayer and hillShadeLayer to multiplyLayers property
+            var blendLayer = new BlendLayer({
+              multiplyLayers: [
+                hillShadeLayer,
+                natGeoLayer
+              ],
+              title: "Blended NatGeo World Map",
+              copyright: "Blended National Geographic Layer"
+            });
+
+            // Add natGeoLayer and blendLayer to the map
+            var map = new Map({
+              layers: [
+                natGeoLayer,
+                blendLayer
+              ]
+            });
+
+            var view = new MapView({
+              container: "viewDiv",
+              map: map,
+              center: [-112.656079, 36.301955],
+              zoom: 11,
+              constraints: {
+                snapToZoom: false
+              }
+            });
+
+            var layerList = new LayerList({
+              view: view,
+            });
+            view.ui.add(layerList, "top-right");
+          });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

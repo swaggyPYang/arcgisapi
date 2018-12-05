@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Look around camera position - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #description {
+      background-color: #ffffff;
+      padding: 20px;
+      font-size: 1.3em;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView"
+    ], function(WebScene, SceneView) {
+
+      // load scene with buildings
+      var scene = new WebScene({
+        portalItem: { // autocasts as new PortalItem()
+          id: "d8695805cb324135846f4b03eaeddeaa"
+        }
+      });
+
+      // create a view and add the scene
+      var view = new SceneView({
+        map: scene,
+        container: "viewDiv"
+      });
+
+      view.ui.add("description", "bottom-left");
+
+      // add event listeners on keys s, w, a and d
+      view.on("key-down", function(event) {
+        switch (event.key) {
+          case "s":
+            event.stopPropagation();
+
+            // only when camera.tilt is bigger than 2 deg allow for tilting down
+            if (view.camera.tilt > 2) {
+              // decrease the tilt and apply it, by using goTo()
+              view.goTo({
+                position: view.camera.position,
+                tilt: view.camera.tilt - 1
+              }, {
+                // animate is false, because otherwise camera position will also change
+                // due to interpolations in the camera animations
+                animate: false
+              });
+            }
+
+            break;
+
+          case "w":
+            event.stopPropagation();
+
+            if (view.camera.tilt < 160) {
+              view.goTo({
+                position: view.camera.position,
+                tilt: view.camera.tilt + 1
+              }, {
+                animate: false
+              });
+            }
+
+            break;
+
+          case "a":
+            event.stopPropagation();
+
+            view.goTo({
+              position: view.camera.position,
+              heading: view.camera.heading - 1
+            }, {
+              animate: false
+            });
+
+            break;
+
+          case "d":
+            event.stopPropagation();
+
+            view.goTo({
+              position: view.camera.position,
+              heading: view.camera.heading + 1
+            }, {
+              animate: false
+            });
+
+            break;
+
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="description">Use <b> keys w, a, s and d</b> with the scene view in
+    focus to discover the rooftop view of a building
+    in Portland.</div>
+</body>
+</html>

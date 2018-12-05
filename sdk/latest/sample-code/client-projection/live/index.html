@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Client-side projection - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #projectionDiv {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffffff;
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    .options {
+      height: 30px;
+      overflow: hidden;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/views/MapView",
+      "esri/Map",
+      "esri/portal/PortalItem",
+      "esri/geometry/Polygon",
+      "esri/geometry/SpatialReference",
+      "esri/geometry/projection"
+    ], function(
+      MapView, Map,
+      PortalItem,
+      Polygon, SpatialReference,
+      projection
+    ) {
+
+      let jsonData, view;
+
+      // check if the client side projection engine is supported in the browser.
+      // The browser must support WebAssembly.
+      if (!projection.isSupported()) {
+        alert("Client-side projection is not supported in this browser.");
+        return;
+      }
+
+      // load the projection module
+      const projectionPromise = projection.load();
+
+      // listen to change event on projections drop down menu
+      const wkidSelect = document.getElementById("projectWKID");
+      wkidSelect.addEventListener("change", getWkid);
+
+      getItems() // get the portal item
+        .then(fetchJsonData) // fetch the json data from portal item
+        .catch(errback)
+
+      function getItems() {
+        //world geojson
+        const itemid = "98bd91a471244ca79eff0f4b82b2200a";
+        const item = new PortalItem({
+          id: itemid
+        });
+        return item.load();
+      }
+
+      /*******************************************************************************
+       * Fetch the GeoJSON data from a portal item and create polygons
+       * from GeoJSON features. Convert the polygons from WGS84 to selected projection
+       *******************************************************************************/
+      function fetchJsonData(item) {
+        // fetch the GeoJSON data from the world portal item
+        item.fetchData().then(function(data) {
+          jsonData = data;
+
+          // project the fetched data to winkel III projection
+          projectData(54042);
+
+          // enable the projection dropdown
+          wkidSelect.disabled = false;
+        });
+      }
+
+      /*************************************************************************
+       * This function is called whenever user selects a new projection
+       * from the projections drop down.
+       * New view and map is created with the spatial reference that user chose
+       *************************************************************************/
+      function recreateView(graphics, viewSpatialReference) {
+        // use this point to set the center of the view
+        // for the specified spatial reference
+        let centerPoint = {
+          x: 0,
+          y: 0,
+          spatialReference: viewSpatialReference
+        };
+
+        if (view) {
+          view.map.removeAll();
+          view.container = null;
+          view.map = null;
+        }
+
+        view = new MapView({
+          container: "viewDiv",
+          map: new Map(),
+          // set the view spatial reference to Winkel III projection
+          // if spatial reference is set explicitly on the view then
+          // center and scale properties (or extent) must also be specified
+          spatialReference: viewSpatialReference,
+          center: centerPoint,
+          scale: 166418924
+        });
+
+        view.graphics.addMany(graphics);
+      }
+
+      /*******************************************************************************
+       * This function is called when user selects a projection from the drop down
+       * We get the wkid of the projection and call the projectData function so that
+       * the geometries can be converted to the selected projection
+       *******************************************************************************/
+      function getWkid() {
+        var wkid = wkidSelect.value;
+        projectData(wkid);
+      }
+
+      /*******************************************************************************
+       * This function converts the continents and ocean polygons from WGS84 to
+       * the projection that user selected from the projection drop down.
+       *******************************************************************************/
+      function projectData(wkid) {
+
+        projectionPromise.then(function() {
+          // convert polygons from WGS84 to the selected spatial reference
+          const outSpatialReference = new SpatialReference({
+            wkid: wkid
+          });
+
+          // loop through the raw GeoJSON data, project the polygons,
+          // and create array of graphics to be added to the view
+          const graphics = jsonData.features.map(function(feature, i) {
+            // create a polygon from the raw GeoJSON specify its spatial reference
+            const polygon = new Polygon({
+              spatialReference: SpatialReference.WGS84
+            });
+
+            // read the GeoJSON's geometry and add to the polygon rings
+            feature.geometry.coordinates.forEach(function(coord) {
+              polygon.addRing(coord[0]);
+            });
+
+            // project the polygons to the user selected projection
+            const projectedPolygon = projection.project(polygon,
+              outSpatialReference);
+
+            // create new graphic and set its geometry to the projected polygon
+            const graphic = {
+              geometry: projectedPolygon,
+              // select only the attributes you care about
+              attributes: {
+                ObjectID: i
+              }
+            };
+
+            // check if the feature is continent or ocean and assign an appropriate symbol
+            graphic.symbol = feature.properties.CONTINENT !=
+              "Ocean" ? createSymbol("#31a354") :
+              createSymbol("#2B65EC");
+
+            return graphic;
+          });
+
+          // re-create view and map
+          recreateView(graphics, outSpatialReference);
+        });
+      }
+
+      function createSymbol(color) {
+        return {
+          type: "simple-fill",
+          color: color,
+          outline: {
+            color: "white",
+            width: 0.5
+          }
+        };
+      }
+
+      // Executes if data retrieval was unsuccessful.
+      function errback(error) {
+        console.error("something went wrong. ", error);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="projectionDiv">
+      <p>Select a projection</p>
+      <select id="projectWKID" class="options" disabled>
+        <option value="54042" selected>Winkel III</option>
+        <option value="54044">World Hammer Aitoff</option>
+        <option value="54050">World Fuller</option>
+        <option value="54010">World Eckert VI</option>
+        <option value="54021">World Polyconic</option>
+        <option value="54016">World Gall Stereographic</option>
+        <option value="54008">World Sinusoidal</option>
+        <option value="54023">World Loximuthal</option>
+        <option value="54024">World Bonne</option>
+        <option value="54044">World Hammer</option>
+      </select>
+    </div>
+  </div>
+</body>
+
+</html>

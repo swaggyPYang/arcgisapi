@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Themes - 4.9</title>
+
+  <!--
+    change the theme color to see the themes in action:
+
+    https://<js-api>/esri/themes/<color>/main.css
+
+    * light
+    * dark
+    * light-blue
+    * dark-blue
+    * light-green
+    * dark-green
+    * light-purple
+    * dark-purple
+    * light-red
+    * dark-red
+   -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/Search"
+    ], function(Map, MapView, Search) {
+
+      var map = new Map({
+        basemap: "streets-navigation-vector"
+      });
+
+      var view = new MapView({
+        map: map,
+        container: "viewDiv"
+      });
+
+      var search = new Search({
+        view: view
+      });
+
+      view.ui.add(search, "top-right");
+
+      view.when(function() {
+        search.search("Waialea Beach Park, Honolulu")
+      });
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>

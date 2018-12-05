@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - set renderers on sublayers - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer"
+      ],
+      function(
+        Map, MapView, MapImageLayer
+      ) {
+
+        /*****************************************************************
+         * Create renderers for each sublayer: cities, highways, states
+         *****************************************************************/
+
+        var citiesRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+            size: 3,
+            color: "white",
+            style: "circle",
+            outline: {
+              width: 0.5,
+              color: "gray"
+            }
+          },
+          label: "Cities"
+        };
+
+        var statesRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-fill", // autocasts as new SimpleFillSymbol()
+            style: "none",
+            outline: {
+              width: 0.5,
+              color: "gray"
+            }
+          },
+          label: "State boundaries"
+        };
+
+        var highwaysRenderer = {
+          type: "simple", // autocasts as new SimpleRenderer()
+          symbol: {
+            type: "simple-line", // autocasts as new SimpleLineSymbol()
+            style: "none",
+            width: 0.7,
+            color: "white"
+          },
+          label: "Interstate highway"
+        };
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing data about US Cities, States and Highways.
+         * Define sublayers with visibility for each layer in Map Service.
+         *****************************************************************/
+
+        var layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+          sublayers: [
+          {
+            id: 2,
+            renderer: statesRenderer,
+            opacity: 0.4
+          },
+          {
+            id: 1,
+            renderer: highwaysRenderer,
+            opacity: 0.8
+          },
+          {
+            id: 0,
+            renderer: citiesRenderer,
+            opacity: 0.6
+          }]
+        });
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [layer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 6,
+          center: [-83.114, 36.921]
+        });
+
+      });
+  </script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

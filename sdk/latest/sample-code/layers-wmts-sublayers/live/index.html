@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <title>Select WMTSLayer sublayer - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 95%;
+      /* allow space for sublayer switcher */
+      width: 100%;
+    }
+
+    select,
+    label {
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif
+    }
+
+    #selectDiv {
+      background-color: lightgrey;
+      padding: 10px;
+    }
+
+    #theLabel {
+      visibility: hidden;
+      /* hide until populated */
+    }
+
+    .esri-layer-list {
+      width: 310px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    var map, view;
+
+    require([
+      "esri/Map",
+      "esri/Viewpoint",
+      "esri/geometry/Extent",
+      "esri/views/MapView",
+      "esri/layers/WMTSLayer",
+      "esri/widgets/LayerList",
+      "esri/core/watchUtils"
+    ], function(
+      Map,
+      Viewpoint,
+      Extent,
+      MapView,
+      WMTSLayer,
+      LayerList,
+      watchUtils
+    ) {
+
+      layer = new WMTSLayer({
+        url: "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best",
+        copyright: "<a href='https://earthdata.nasa.gov'>Earthdata</a> by NASA",
+        activeLayer: {
+          id: "SRTM_Color_Index"
+        }
+      });
+
+      map = new Map({
+        layers: [layer]
+      });
+      view = new MapView({
+        container: "viewDiv",
+        map: map
+      });
+      view.when(function() {
+        layerList = new LayerList({
+          view: view
+        });
+        view.ui.add(layerList, "bottom-left");
+
+        layer.when(function() {
+          // add all sublayers to the select element
+          layer.sublayers.forEach(function(sublayer, i) {
+            selectSublayer.options[selectSublayer.options.length] =
+              new Option('(' + i + ") " + sublayer.title,
+                sublayer.id);
+          });
+
+          // once populated, show the select element
+          var theDiv = document.getElementById('theLabel');
+          theDiv.style.visibility = "visible";
+        }); // end layer.load function
+
+      });
+
+      // if sublayer is changed, recreate map, view, and widgets using new activeLayer
+      document.getElementById("selectSublayer").onchange = function() {
+        layer.activeLayer = layer.findSublayerById(event.target.value).clone();
+      };
+    });
+  </script>
+
+</head>
+<body>
+  <div id="selectDiv">
+    <label id="theLabel">
+      Pick a layer from the WMTS catalog <select id="selectSublayer"></select>
+    </label>
+  </div>
+  <div id="viewDiv"></div>
+</body>
+</html>

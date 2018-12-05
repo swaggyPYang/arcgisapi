@@ -1,0 +1,49 @@
+{
+  "className": "PolygonSymbol3D",
+  "type": "Class",
+  "baseClass": "Symbol3D",
+  "baseLocation": "symbols/3d/Symbol3D.json",
+  "variable": "pointSym3D",
+  "description": "PolygonSymbol3D is used to render features with Polygon geometry.",
+  "summary": "to render features with Polygon geometry",
+  "path": "esri/symbols/PolygonSymbol3D",
+  "autocastType": "polygon-3d",
+  "properties": [
+    {
+      "name": "symbolLayers",
+      "type": "Array",
+      "options": {
+        "type": "Object",
+        "values": [
+          {
+            "className": "ExtrudeSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/ExtrudeSymbol3DLayer.json"
+          },
+          {
+            "className": "FillSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/FillSymbol3DLayer.json"
+          },
+          {
+            "className": "IconSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/IconSymbol3DLayer.json"
+          },
+          {
+            "className": "LineSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/LineSymbol3DLayer.json"
+          },
+          {
+            "className": "ObjectSymbol3DLayer",
+            "type": "Class",
+            "location": "symbols/3d/ObjectSymbol3DLayer.json"
+          }
+        ]
+      },
+      "properties": [],
+      "summary": "array of symbol layers"
+    }
+  ]
+}

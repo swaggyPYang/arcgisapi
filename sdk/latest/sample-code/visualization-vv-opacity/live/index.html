@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Data-driven opacity - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend"
+      ],
+      function(
+        Map, MapView, FeatureLayer, Legend
+      ) {
+
+        var edLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Puget_Sound_BG_demographics/FeatureServer/0",
+          definitionExpression: "CITY = 'Seattle'",
+          popupTemplate: { // autocasts as new PopupTemplate()
+            content: [{
+              type: "fields",
+              fieldInfos: [{
+                fieldName: "ED_ATT",
+                label: "Dominant educational attainment"
+              }, {
+                fieldName: "EDUCBASECY",
+                label: "Population 25 years and older",
+                format: {
+                  places: 0,
+                  digitSeparator: true
+                }
+              }]
+            }]
+          }
+        });
+
+        /******************************************************************
+         *
+         * When the layer is ready you can modify the existing renderer
+         * by changing symbols, values, or adding/removing visual variables.
+         *
+         * In this case we want to add an opacity visual variable to emphasize
+         * features where more adults live. We'll set the field property to a
+         * field storing population data and then set min and max data values.
+         * In this case features with an adult population of 1,300 people or
+         * more will be given an opacity of 90%. Features with fewer than 700
+         * people will be given an opacity of 10%.
+         *
+         * Opacity visual variables are good for providing emphasis or adding
+         * strength to the main variable in the visualization.
+         *
+         ******************************************************************/
+
+        edLayer.when(function() {
+          // renderer properties cannot be deeply modified,
+          // so you must clone the renderer
+          var renderer = edLayer.renderer.clone();
+
+          // Set the opacity visual variable back on the renderer
+          renderer.visualVariables = [{
+            type: "opacity",
+            field: "EDUCBASECY",
+            stops: [
+            {
+              value: 700,
+              opacity: 0.1
+            },
+            {
+              value: 1500,
+              opacity: 0.9
+            }]
+
+            // features with a population between 700 - 1,500 people will be assigned
+            // an opacity value proportional to the specified range.
+            // e.g. if a feature has a population of 1,100 people, then it will
+            // have an opacity value of 0.9
+
+          }];
+
+          // apply the new renderer to the layer
+          edLayer.renderer = renderer;
+        });
+
+        // Add the layer to the map
+        var map = new Map({
+          basemap: "gray",
+          layers: [edLayer]
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-122.3487846, 47.589070],
+          zoom: 12
+        });
+
+        /******************************************************************
+         *
+         * Add layers to layerInfos on the legend
+         *
+         ******************************************************************/
+
+        var legend = new Legend({
+          view: view,
+          layerInfos: [
+          {
+            layer: edLayer,
+            title: "Seattle Census block groups"
+          }]
+        });
+
+        view.ui.add(legend, "top-right");
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

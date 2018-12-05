@@ -1,0 +1,15 @@
+{
+  "className": "Symbol3D",
+  "type": "baseClass",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "symbol",
+  "description": "Symbols of type Symbol3D are used to display 3D points, lines, and polygons on the layer in a SceneView.",
+  "summary": "used to draw 3D points, lines, and polygons on graphics layer",
+  "path": "esri/symbols/Symbol3D",
+  "removeProperties": [
+    "color"
+  ],
+  "properties": [
+  ]
+}

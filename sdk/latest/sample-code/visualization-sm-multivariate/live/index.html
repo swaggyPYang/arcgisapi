@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Multivariate data exploration - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/dijit/themes/claro/claro.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .widget-background {
+      background-color: white;
+      font-size: 12pt;
+      padding: 8px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/widgets/Legend",
+      "esri/widgets/Expand",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/widgets/ColorSlider",
+      "esri/widgets/SizeSlider",
+      "esri/renderers/smartMapping/statistics/histogram",
+      "esri/renderers/smartMapping/statistics/summaryStatistics",
+      "esri/core/lang"
+    ], function(
+      WebMap, MapView, Legend, Expand, SimpleLineSymbol, SimpleMarkerSymbol,
+      ColorSlider, SizeSlider, histogram, summaryStatistics, lang
+    ) {
+
+      // The web map must have one layer with a size
+      // and color visual variable set on the renderer
+      // (i.e. a Color + Size visualization)
+      var map = new WebMap({
+        portalItem: {
+          id: "b4cfa4a48dbb49b8b150c14bb6cca6f9"
+        }
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: map
+      });
+      view.ui.move("zoom", "top-right");
+
+      view.ui.add(new Legend({
+        view: view
+      }), "bottom-left");
+
+      // Create the slider widgets for data exploration
+      view.when(function() {
+        var layer = view.map.layers.getItemAt(0);
+        var renderer = layer.renderer;
+
+        var sizeVV = getVisualVariableByType(renderer, "size");
+
+        // give color visual variable meaningful description
+        // in the Legend
+        var colorVV = getVisualVariableByType(renderer, "color");
+
+        if (!sizeVV || !colorVV) {
+          console.error(
+            "Web map layer must have a Color + Size visualization.");
+          return;
+        }
+
+        // Create an Expand instance and set the content
+        // property to the DOM node of the size slider widget
+
+        var sizeSliderExpand = new Expand({
+          view: view,
+          content: document.getElementById("size-container"),
+          expandIconClass: "esri-icon-pie-chart"
+        });
+        view.ui.add(sizeSliderExpand, "top-left");
+
+        // Create an Expand instance and set the content
+        // property to the DOM node of the color slider widget
+
+        var colorSliderExpand = new Expand({
+          view: view,
+          content: document.getElementById("color-container"),
+          expandIconClass: "esri-icon-environment-settings"
+        });
+        view.ui.add(colorSliderExpand, "top-left");
+
+        // When the user expands one of the sliders while the other
+        // is expanded, then the already expanded slider will collapse
+
+        sizeSliderExpand.watch("expanded", function(expanded) {
+          if (expanded && colorSliderExpand.expanded) {
+            colorSliderExpand.collapse();
+          }
+        });
+
+        colorSliderExpand.watch("expanded", function(expanded) {
+          if (expanded && sizeSliderExpand.expanded) {
+            sizeSliderExpand.collapse();
+          }
+        });
+
+        return getHistogramForVisualVariable(colorVV)
+          .then(function(colorHistogram) {
+            createColorSlider(layer, colorHistogram);
+            return getHistogramForVisualVariable(sizeVV);
+          })
+          .then(function(sizeHistogram) {
+            return getStatsForVisualVariable(sizeVV)
+              .then(function(statistics) {
+                return createSizeSlider(layer, sizeHistogram,
+                  statistics);
+              });
+          });
+      });
+
+      function dataChangeCallback(slider) {
+        // set the new visual variable on the renderer for immediate feedback
+        var layer = view.map.layers.getItemAt(0);
+        var renderer = layer.renderer.clone();
+
+        var staticVVType = slider.visualVariable.type === "color" ? "size" :
+          "color";
+        var staticVV = getVisualVariableByType(renderer, staticVVType);
+        renderer.visualVariables = [lang.clone(slider.visualVariable),
+          staticVV
+        ];
+        layer.renderer = renderer;
+      }
+
+      // Creates a new instance of the ColorSlider widget
+      // based on the renderer already saved to the layer
+
+      function createColorSlider(layer, histogram) {
+        var renderer = layer.renderer.clone();
+        var numHandles = getNumHandles(renderer);
+        var colorSlider = new ColorSlider({
+          container: "color-slider",
+          numHandles: numHandles,
+          syncedHandles: numHandles === 3,
+          visualVariable: getVisualVariableByType(renderer, "color"),
+          statistics: getStatsFromVisualVariable(renderer, "color"),
+          histogram: histogram
+        });
+
+        colorSlider.on("data-change", dataChangeCallback.bind(null,
+          colorSlider));
+      }
+
+      // Creates a new instance of the SizeSlider widget
+      // based on the renderer already saved to the layer
+
+      function createSizeSlider(layer, histogram, stats) {
+        var renderer = layer.renderer.clone();
+        var sizeSlider = new SizeSlider({
+          container: "size-slider",
+          visualVariable: getVisualVariableByType(renderer, "size"),
+          statistics: stats ? stats : getStatsFromVisualVariable(
+            renderer, "size"),
+          histogram: histogram,
+          symbol: layer.geometryType === "polyline" ? new SimpleLineSymbol() :
+            new SimpleMarkerSymbol()
+        });
+
+        sizeSlider.on("data-change", dataChangeCallback.bind(null,
+          sizeSlider));
+      }
+
+      function getVisualVariableByType(renderer, type) {
+        var visualVariables = renderer.visualVariables;
+        return visualVariables && visualVariables.filter(function(vv) {
+          return vv.type === type;
+        })[0];
+      }
+
+      function getNumHandles(renderer) {
+        var colorVVAuthInfo = renderer.authoringInfo.visualVariables.filter(
+          function(vv) {
+            return vv.type === "color";
+          })[0];
+        return colorVVAuthInfo.theme === "high-to-low" ? 2 : 3;
+      }
+
+      function getStatsFromVisualVariable(renderer, type) {
+        var visualVariable = getVisualVariableByType(renderer, type);
+
+        var avg, stddev;
+        if (type === "color") {
+          avg = visualVariable.stops[2].value;
+          stddev = visualVariable.stops[4].value - avg;
+        }
+
+        var visualVariableAuthInfo = renderer.authoringInfo.visualVariables
+          .filter(function(vv) {
+            return vv.type === type;
+          })[0];
+
+        var stats = {
+          avg: avg,
+          stddev: stddev,
+          min: visualVariableAuthInfo.minSliderValue,
+          max: visualVariableAuthInfo.maxSliderValue
+        };
+        return stats;
+      }
+
+      function getHistogramForVisualVariable(visualVariable) {
+        var params = {
+          layer: view.map.layers.getItemAt(0),
+          field: visualVariable.field,
+          normalizationField: visualVariable.normalizationField,
+          numBins: 30
+        };
+
+        return histogram(params);
+      }
+
+      function getStatsForVisualVariable(visualVariable) {
+        var params = {
+          layer: view.map.layers.getItemAt(0),
+          field: visualVariable.field,
+          normalizationField: visualVariable.normalizationField
+        };
+
+        return summaryStatistics(params);
+      }
+
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="color-container" class="widget-background">
+    <h3>% of truck traffic per day</h3>
+    <div id="color-slider"></div>
+  </div>
+  <div id="size-container" class="widget-background">
+    <h3>Daily traffic volume</h3>
+    <div id="size-slider"></div>
+  </div>
+</body>
+
+</html>

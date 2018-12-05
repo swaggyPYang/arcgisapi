@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Simple theme - 4.9</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/light/main.css">
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+
+    .sassy-theme .esri-widget,
+    .sassy-theme .esri-widget--button,
+    .sassy-theme .esri-menu,
+    .sassy-theme .esri-popup__main-container,
+    .sassy-theme .esri-popup .esri-popup__pointer-direction,
+    .sassy-theme .esri-popup .esri-popup__button,
+    .sassy-theme .esri-button,
+    .sassy-theme .esri-input,
+    .sassy-theme .esri-widget a {
+      background-color: #c69;
+      color: #fff;
+    }
+
+    .sassy-theme .esri-widget--button:focus,
+    .sassy-theme .esri-widget--button:hover,
+    .sassy-theme .esri-menu li:focus,
+    .sassy-theme .esri-menu li:hover {
+      background-color: #699;
+      color: #fff;
+    }
+
+    .sassy-theme .esri-button:focus,
+    .sassy-theme .esri-button:hover {
+      color: #fff;
+    }
+
+    .sassy-theme .esri-search__input::-moz-placeholder {
+      color: #ccc;
+      opacity: 1;
+    }
+
+    .sassy-theme .esri-search__input:-ms-input-placeholder {
+      color: #ccc;
+    }
+
+    .sassy-theme .esri-search__input::-webkit-input-placeholder {
+      color: #ccc;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script>
+    var map, view;
+
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/Search"
+    ], function(Map, MapView, Search) {
+
+      map = new Map({
+        basemap: "gray"
+      });
+
+      view = new MapView({
+        map: map,
+        container: "viewDiv",
+        zoom: 12,
+        center: {
+          x: -11847426.869526852,
+          y: 3731351.295683393,
+          spatialReference: 102100
+        }
+      });
+
+      view.ui.add(new Search({
+        view: view
+      }), "top-right");
+
+    });
+  </script>
+</head>
+
+<!-- remove this class name to see the default style -->
+<body class="sassy-theme">
+  <div id="viewDiv"></div>
+</body>
+</html>

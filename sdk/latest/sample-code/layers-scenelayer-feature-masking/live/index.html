@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Feature masking with SceneLayer - 4.9</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #info {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 200px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/layers/SceneLayer"
+    ], function(WebScene, SceneView, SceneLayer) {
+
+      // load WebScene from a portal item
+      var webscene = new WebScene({
+        portalItem: {
+          id: "10ede348e4c54c77b45f6ebab2d018db"
+        }
+      });
+
+      // create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webscene
+      });
+
+      webscene.when(function() {
+
+        // get the layer with the features that are used for masking
+        var sceneLayer = webscene.layers.find(function(l) {
+          return l.title === "Buildings";
+        });
+
+        // array that will store the masked buildings
+        var hiddenBuildings = [];
+
+        // register a click event on the view
+        view.on("click", function(event) {
+          // use hitTest to find if any graphics were clicked
+          view.hitTest(event)
+            .then(function(response) {
+
+              var graphic = response.results[0].graphic;
+
+              // check if a graphic is returned from the hitTest
+              // and that it belongs to the Buildings layer
+              if (graphic && graphic.layer.title === "Buildings") {
+
+                // function that hides the building the user clicked on
+                hideBuilding(graphic.attributes.OBJECTID);
+              }
+            });
+        });
+
+        // remove the filter and display all buildings
+        document.getElementById("clear").addEventListener("click",
+          function() {
+            hiddenBuildings = [];
+            sceneLayer.definitionExpression = "";
+          });
+
+        function hideBuilding(id) {
+
+          hiddenBuildings.push(id);
+          // filter out buildings by setting definitionExpression
+          sceneLayer.definitionExpression = "OBJECTID NOT IN (" +
+            hiddenBuildings.join(",") + ")";
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="info">
+    <p>Click on a building to mask it.</p>
+    <button id="clear">Clear masking</button>
+  </div>
+</body>
+
+</html>

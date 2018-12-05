@@ -1,0 +1,41 @@
+{
+  "className": "PictureMarkerSymbol",
+  "type": "Class",
+  "baseClass": "MarkerSymbol",
+  "baseLocation": "symbols/2d/MarkerSymbol.json",
+  "variable": "marker",
+  "description": "Marker symbols are used to draw points and multipoints on the graphics layer. PictureMarkerSymbol uses an image as a marker.",
+  "summary": "draw points and multipoints",
+  "path": "esri/symbols/PictureMarkerSymbol",
+  "removeProperties": [
+    "size",
+    "color"
+  ],
+  "autocastType": "picture-marker",
+  "properties": [
+    {
+      "name": "url",
+      "type": "String",
+      "required": true,
+      "summary": "URL of the image"
+    },
+    {
+      "name": "width",
+      "type": "Number",
+      "default": 12,
+      "summary": "Width of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "height",
+      "type": "Number",
+      "default": 12,
+      "summary": "Height of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    }
+  ]
+}
