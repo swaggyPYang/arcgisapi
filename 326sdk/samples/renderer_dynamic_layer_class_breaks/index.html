@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Class breaks renderer with dynamic layer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/form/resources/RangeSlider.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; text-align: center }
+      .shadow {
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      #map{ margin: 0; padding: 0; }
+      #feedback {
+        background: #fff;
+        color: #444;
+        position: absolute;
+        font-family: arial;
+        height: 210px;
+        left: 30px;
+        margin: 5px;
+        padding: 10px;
+        bottom: 30px;
+        width: 320px;
+        z-index: 40;
+      }
+      .note { font-size: 80%; padding: 0 0 10px 0; }
+      #slider {
+        color: #666;
+        margin: 5px auto;
+        padding: 3px;
+      }
+      #appSliderLabel { padding: 0 0 10px 0; }
+      #maxLabel { display: inline-block; margin: 0 0 0 -30px;}
+      #minLabel { display: inline-block; margin: 0 0 0 30px;}
+      #breakInfo { padding: 20px 0 0 0; }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.form.HorizontalRuleLabels");
+      dojo.require("dojox.form.RangeSlider");
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.renderer");
+      dojo.require("esri.dijit.Legend");
+
+      // one global for persistent app variables
+      var app = {};
+
+      function init() {
+        var ext, basemap, usaUrl;
+
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+
+        app.map = new esri.Map("map", {
+          basemap: "oceans",
+          center: [-100.626, 36.408],
+          zoom: 5,
+          slider: false
+        });
+        dojo.connect(app.map, "onClick", queryCounties);
+        dojo.connect(app.map, "onKeyDown", escClosesPopup);
+
+        // set up a layer to show counties as a dynamic map service
+        // set visible layers to [2]
+        usaUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer";
+        app.usaLayer = new esri.layers.ArcGISDynamicMapServiceLayer(usaUrl, {
+          "id": "usa",
+          "opacity": 0.7
+        });
+        app.usaLayer.setVisibleLayers([2]);
+
+        // query for the max average household size
+        getMaxAvgHH();
+        // create a renderer with one class > 2 and < 3 and add counties to the map
+        showCounties(dijit.byId("appSlider").get("value"));
+        // listen to slider changes and update the counties layer
+        dojo.connect(dijit.byId("appSlider"), "onChange", updateCounties);
+      }
+
+      function getMaxAvgHH() {
+        var countiesUrl, outFields, queryTask, query, statDef;
+        // query to get max value
+        countiesUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2";
+        outFields = ["AVE_HH_SZ", "STATE_NAME", "NAME"];
+        queryTask = new esri.tasks.QueryTask(countiesUrl);
+        query = new esri.tasks.Query();
+        query.outFields = outFields;
+        statDef = new esri.tasks.StatisticDefinition();
+        statDef.statisticType = "max";
+        statDef.onStatisticField = "AVE_HH_SZ";
+        statDef.outStatisticName = "max_avg_hh_size";
+
+        query.returnGeometry = false;
+        query.where = "1=1";
+        query.outStatistics = [ statDef ];
+        queryTask.execute(query, handleQueryResult, errorHandler);
+      }
+
+      function handleQueryResult(results) {
+        if ( ! results.hasOwnProperty("features") ||
+             results.features.length === 0 ) {
+          return; // no features, something went wrong
+        }
+
+        var maxSize = results.features[0].attributes.MAX_AVE_HH_SZ;
+        console.log("max size: ", maxSize, results.features);
+        dojo.byId("maxLabel").innerHTML = dojo.number.format(maxSize, { "places": 2 });
+      }
+
+      function showCounties(vals) {
+        // create the default renderer for the app
+        var outlineColor = new dojo.Color([220, 220, 220, 1]);
+        app.symLine = new esri.symbol.SimpleLineSymbol().setColor(outlineColor);
+        app.symHighlight = new esri.symbol.SimpleFillSymbol(
+          "solid",
+          app.symLine,
+          new dojo.Color([55, 255, 102, 0.9])
+        ); // neon green fill, no outline
+        app.symDefault = new esri.symbol.SimpleFillSymbol( // gray, no outline
+          "solid",
+          app.symLine,
+          new dojo.Color(outlineColor)
+        );
+        app.renderer = new esri.renderer.ClassBreaksRenderer(app.symDefault, "AVE_HH_SZ");
+        addClassBreaks(vals);
+
+        // set up the parameters for the dynamic layer
+        var optionsArray = [];
+        var drawingOptions = new esri.layers.LayerDrawingOptions();
+        drawingOptions.renderer = app.renderer;
+        optionsArray[2] = drawingOptions;
+        app.usaLayer.setLayerDrawingOptions(optionsArray);
+        // add the layer to the map
+        app.map.addLayer(app.usaLayer);
+      }
+
+      function updateCounties(vals) {
+        console.log("slider changed", vals, app.renderer.infos[0].minValue, app.renderer.infos[0].maxValue);
+        // remove current breaks
+        var breakInfo = dojo.map(app.renderer.infos, function(info) {
+          return [info.minValue, info.maxValue];
+        });
+        dojo.forEach(breakInfo, function(info) {
+          app.renderer.removeBreak(info[0], info[1]);
+        });
+        // add the new break
+        // app.renderer.addBreak(vals[0], vals[1], app.symHighlight);
+        addClassBreaks(vals);
+        var optionsArray = [];
+        var drawingOptions = new esri.layers.LayerDrawingOptions();
+        drawingOptions.renderer = app.renderer;
+        optionsArray[2] = drawingOptions;
+        app.usaLayer.setLayerDrawingOptions(optionsArray);
+        // show the new breaks
+        dojo.byId("minBreak").innerHTML = dojo.number.format(vals[0], { "places": 2 });
+        dojo.byId("maxBreak").innerHTML = dojo.number.format(vals[1], { "places": 2 });
+      }
+
+      function addClassBreaks(vals) {
+        if ( vals[0] > 0 ) {
+          app.renderer.addBreak(0, vals[0], app.symDefault);
+        }
+        app.renderer.addBreak(vals[0], vals[1], app.symHighlight);
+        if ( vals[1] < 4.40 ) {
+          app.renderer.addBreak(vals[1], 4.40, app.symDefault);
+        }
+      }
+
+      function queryCounties(e) {
+        console.log("query counties");
+        var mp, pad, queryGeom, q, vals;
+
+        mp = e.mapPoint;
+        vals = dijit.byId("appSlider").get("value");
+        // save copy of the click event
+        app.click = e;
+        // build an extent around the click point
+        pad = app.map.extent.getWidth() / app.map.width * 3;
+        queryGeom = new esri.geometry.Extent(mp.x - pad, mp.y - pad, mp.x + pad, mp.y + pad, app.map.spatialReference);
+        q = new esri.tasks.Query();
+        q.outSpatialReference = app.map.spatialReference;
+        q.returnGeometry = true;
+        q.where = "AVE_HH_SZ >= " + vals[0] + " AND AVE_HH_SZ <= " + vals[1];
+        q.outFields = ["STATE_NAME", "NAME", "AVE_HH_SZ"];
+        q.geometry = queryGeom;
+        console.log("done with query...", q.where);
+
+        var qt = new esri.tasks.QueryTask("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2");
+        qt.execute(q, handleCounties);
+      }
+
+      function handleCounties(result) {
+        // make sure a feature was clicked
+        if ( result.features.length === 0 ) {
+          app.map.infoWindow.hide();
+          return;
+        }
+        var popupTemplate = new esri.dijit.PopupTemplate({
+          title: "{NAME} County",
+          fieldInfos: [
+            { fieldName: "AVE_HH_SZ", visible: true, label: "Average Household Size: " },
+            { fieldName: "STATE_NAME", visible: true, label: "State: " }
+          ]
+        });
+        dojo.forEach(result.features, function(f) {
+          f.setInfoTemplate(popupTemplate);
+        });
+        app.map.infoWindow.setFeatures(result.features);
+        app.map.infoWindow.show(app.click.screenPoint, app.map.getInfoWindowAnchor(app.click.screenPoint));
+      }
+
+      function escClosesPopup(key) {
+        if ( key.keyCode == 27 ) {
+          app.map.infoWindow.hide();
+        }
+      }
+
+      function errorHandler(err) {
+        console.log('Oops, error: ', err);
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div data-dojo-type="dijit.layout.BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="map"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="feedback" class="shadow">
+          <h3>Filter Counties by Average Household Size</h3>
+          <div id="info">
+            <div class="note">
+              Note:  This sample requires an ArcGIS Server version 10.1 map service to generate a renderer.
+            </div>
+
+            <div id="slider">
+              <div id="appSliderLabel">
+                Filter On Average Household Size:
+              </div>
+              <div id="appSlider"
+                data-dojo-type="dojox.form.HorizontalRangeSlider"
+                data-dojo-props="value:[3,4], minimum:2, maximum:4.4, intermediateChanges:false, showButtons:false">
+
+                
+                <ol id="sliderLabels"
+                  data-dojo-type="dijit.form.HorizontalRuleLabels"
+                  data-dojo-props="container:'bottomDecoration'"
+                  style="height:1em;font-size:75%;color:#666;">
+                  <li>
+                    <span id="minLabel">2.00</span>
+                  </li>
+                  <li id="maxLabel">
+                    <span id="maxLabel"></span>
+                  </li>
+                </ol>
+
+              </div>
+            </div> 
+
+            <div class="note" id="breakInfo">
+              Showing Counties with between <span id="minBreak">2</span>
+               and <span id="maxBreak">3</span> average household size.
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

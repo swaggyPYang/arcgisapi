@@ -1,0 +1,37 @@
+      html, body { 
+        height: 100%; width: 100%; margin: 0; 
+      } 
+      body{
+        background-color:white; overflow:hidden; 
+        font-family: "Trebuchet MS"; 
+      }
+      .roundedCorners{
+        -moz-border-radius: 4px;      
+      }
+      #header {
+        border: solid 2px #7EABCD;
+        background-color:white; color:peru; font-size:18pt; 
+        text-align:center; font-weight:bold; height:60px;
+      }
+      #subheader {
+        font-size:small;
+        color: peru;
+      }
+      #rightPane{
+        background-color:white;
+        color:peru;
+        border: solid 2px cornflowerblue;
+        width:30%;
+        overflow:hidden;
+      }
+      #map {
+        background-color:white;
+        border:solid 2px cornflowerblue;
+      }
+      #footer {
+        border: solid 2px #7EABCD;
+        background-color:white;color:peru;font-size:10pt; text-align:center; height:40px;
+      }
+      .soria .dojoxGridHeader .dojoxGridCell   {
+        color:peru !important;
+      }

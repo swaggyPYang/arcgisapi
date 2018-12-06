@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Map and Layer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        background-color: #999;
+        font: 14px Segoe UI;
+        width: 200px;
+        text-align: center;
+        border-radius: 0 0 0 10px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+    var map, calculateSquareMiles;
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/InfoTemplate", 
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/renderers/ClassBreaksRenderer",
+        "esri/dijit/Legend",
+        "esri/Color", "dojo/number", "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, InfoTemplate, 
+        SimpleFillSymbol, SimpleLineSymbol, ClassBreaksRenderer,
+        Legend,
+        Color, number
+      ) {
+        map = new Map("map", {
+          basemap: "gray",
+          center: [-89.849, 40.369],
+          zoom: 6
+        });
+        map.on("layers-add-result", createLegend);
+
+        var infoTemplate = new InfoTemplate(
+          "${COUNTY}, ${STATE}", 
+          "${M163_07} acres of corn in 2007, which is ${M163_07:calculateSquareMiles} square miles."
+        );
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/USA_County_Crops_2007/FeatureServer/0", {
+          infoTemplate: infoTemplate,
+          outFields: ["STATE", "COUNTY", "M163_07", "AREA", "FID"],
+          opacity: 0.5
+        });
+        layer.setDefinitionExpression("AREA > 0.01");
+
+        // convert acres to square miles
+        // also used by the feature layer's info template
+        // test for presence to a property named "attributes" to 
+        // determine whether or the "value" argument is a graphic or number
+        calculateSquareMiles = function(value) {
+          var acres = (value.hasOwnProperty("attributes")) ? value.attributes.M163_07 : value;
+          return number.format(acres / 640, { places: 2 });
+        };
+        
+        var renderer = new ClassBreaksRenderer(null, calculateSquareMiles);
+        renderer.setMaxInclusive(true);
+        var color1 = new Color([247, 252, 185]); // yellow
+        var color2 = new Color([173, 221, 142]); // light green
+        var color3 = new Color([49, 163, 84]); // green
+        renderer.addBreak({
+          minValue: 0,
+          maxValue: 10,
+          label: "< 10 Square Miles",
+          symbol: new SimpleFillSymbol(
+            "solid", 
+            new SimpleLineSymbol("solid", color1, 1), 
+            color1
+          )
+        });
+        renderer.addBreak({
+          minValue: 10,
+          maxValue: 100,
+          label: "10 - 100 Square Miles",
+          symbol: new SimpleFillSymbol(
+            "solid", 
+            new SimpleLineSymbol("solid", color2, 1), 
+            color2
+          )
+        });
+        renderer.addBreak({
+          minValue: 100,
+          maxValue: Infinity,
+          label: "> 100 Square Miles",
+          symbol: new SimpleFillSymbol(
+            "solid", 
+            new SimpleLineSymbol("solid", color3, 1), 
+            color3
+          )
+        });
+        layer.setRenderer(renderer);
+        map.addLayers([layer]);
+
+        function createLegend(results) {
+          var legend = new Legend({
+            layerInfos: [{ 
+              layer: results.layers[0].layer,
+              title: " " 
+            }],
+            map: map
+          }, "legend");
+          legend.startup();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="info">
+      <div style="font-size: 36px;">Square miles of farmland used for corn.</div>
+      <div id="legend"></div>
+    </div>
+  </body>
+</html> 

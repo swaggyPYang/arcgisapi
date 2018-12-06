@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Geocoder Widget</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height:100%;
+        width:100%;
+        margin:0;
+        padding:0;
+      }
+      body {
+        background-color:#FFF;
+        overflow:hidden;
+        font-family:"Trebuchet MS";
+      }
+      #search {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 20px;
+        left: 75px;
+      } 
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map, geocoder;
+      require(["esri/map", 
+               "esri/dijit/Geocoder",
+               "dojo/ready"],
+               function(Map, Geocoder, ready){
+          
+      function init() {
+        map = new Map("map",{
+          basemap: "topo",
+          center: [-117.19,34.05], //long, lat
+          zoom: 13
+        });
+        
+        geocoder = new Geocoder({
+          map: map,
+          autoComplete: true,
+          arcgisGeocoder: {
+            name: "Esri World Geocoder",
+            suffix: " Redlands, CA"
+          }
+        },"search");
+        geocoder.startup();
+      }
+      ready(init);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="search"></div>
+    <div id="map"></div>
+  </body>
+</html>

@@ -1,0 +1,185 @@
+﻿.esriGEPlayerToolbar {
+    height: 50px;
+    white-space: nowrap;
+    display: table-cell;
+    vertical-align: middle;
+    position: relative; /* to avoid conflict with the player print background div */
+}
+
+    /* Left */
+
+    .esriGEPlayerToolbar .playerToolbar_infographicsSelectDiv {
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    /* Center */
+
+    .esriGEPlayerToolbar .playerToolbar_areaTitleDiv {
+        text-align: center;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_areaTitleInnerDiv {
+        position: relative;
+        text-align: left;
+        max-width: 120px;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_areasSelectDiv {
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    /* Right */
+
+    .esriGEPlayerToolbar .playerToolbar_rightSideControlsBlock {
+        text-align: right;
+        position: absolute;
+        right: -5px;
+        top: 13px;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_zoomSelectDiv {
+        text-align: left;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_pageSelectDiv {
+        text-align: left;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_commandButtonsContainer {
+        text-align: left;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+        .esriGEPlayerToolbar .playerToolbar_commandButtonsContainer .playerExportButton {
+            position: relative;
+            top: -1px;
+        }
+
+    /* Command Buttons */
+
+    .esriGEPlayerToolbar .playerToolbar_commandButton,
+    .esriGEPlayerToolbar .playerToolbar_commandButton {
+        width: 24px;
+        height: 24px;
+        background-repeat: no-repeat;
+        background-size: 24px;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .esriGEPlayerToolbar .playerToolbar_commandButtonContainer:not(:first-child) {
+        margin-left: 25px;
+    }
+
+    /* Close Button */
+
+    .esriGEPlayerToolbar .playerToolbar_closeButton {
+        width: 24px;
+        height: 24px;
+        background-repeat: no-repeat;
+        background-size: 24px;
+        background-position: center;
+        cursor: pointer;
+    }
+
+.esriGEReportPlayer .playerToolbar_closeButtonOuter {
+    background-image: url("../images/closeWindowBigWhite.svg");
+}
+
+/* Theming */
+
+/* Command Buttons */
+
+.esriGEPlayerToolbar.playerThemeDark .playerToolbar_commandButton.playerPrintButton {
+    background-image: url("../images/commands/printWhite.svg");
+}
+
+.esriGEPlayerToolbar.playerThemeDark .playerToolbar_commandButton.playerExportButton {
+    background-image: url("../images/commands/exportWhite.svg");
+}
+
+.esriGEPlayerToolbar.playerThemeLight .playerToolbar_commandButton.playerPrintButton {
+    background-image: url("../images/commands/print.svg");
+}
+
+.esriGEPlayerToolbar.playerThemeLight .playerToolbar_commandButton.playerExportButton {
+    background-image: url("../images/commands/export.svg");
+}
+
+/* Close Button */
+
+.esriGEPlayerToolbar.playerThemeDark .playerToolbar_closeButton {
+    background-image: url("../images/closeWindowBigWhite.svg");
+}
+
+.esriGEPlayerToolbar.playerThemeLight .playerToolbar_closeButton {
+    background-image: url("../images/closeWindowBig.svg");
+}
+
+/* Dark Theme */
+
+.esriGEPlayerToolbar.playerThemeDark {
+    background-color: #0079C1;
+    color: white;
+}
+
+    .esriGEPlayerToolbar.playerThemeDark .playerToolbar_commandButtonsContainer .esriGEDisabledContent {
+        background-color: #0079C1;
+    }
+
+/* Light Theme */
+
+.esriGEPlayerToolbar.playerThemeLight {
+    background-color: #EFEFEF;
+    color: #4d4d4d;
+}
+
+    .esriGEPlayerToolbar.playerThemeLight .playerToolbar_commandButtonsContainer .esriGEDisabledContent {
+        background-color: #EEEEEE;
+    }
+
+/* Outer buttons */
+
+.esriGEReportPlayer .playerToolbar_outerButton {
+    background-color: #0079C1;
+    background-size: 16px;
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+    min-width: 0px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* Settings Button */
+
+.esriGEReportPlayer .playerToolbar_settingsButton {
+    background-image: url("../images/gearWhite.svg");
+}
+
+/* Outer toolbar */
+
+.esriGEReportPlayer .reportPlayer_playerAfterToolbarDiv {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+    .esriGEReportPlayer .reportPlayer_playerAfterToolbarDiv.playerToolbar_parentHasScroll {
+        right: 25px; /* give room to the scrollbar */
+    }
+
+        .esriGEReportPlayer .reportPlayer_playerAfterToolbarDiv.playerToolbar_parentHasScroll.isMobileDevice {
+            right: 5px; /* the scrollbar on mobile devices is much smaller */
+        }

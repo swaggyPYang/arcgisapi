@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Edit Map Wraparound</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      overflow: hidden;
+      font-family: Helvetica, san-serif;
+    }
+    #templatePickerPane {
+      width: 225px;
+      overflow: hidden;
+    }
+    #panelHeader {
+      background-color: #92A661;
+      border-bottom: solid 1px #92A860;
+      color: #FFF;
+      font-size: 18px;
+      height: 50px;
+      line-height: 22px;
+      margin: 0;
+      overflow: hidden;
+      padding: 10px 10px 10px 10px;
+    }
+    #map {
+      margin-right: 5px;
+      padding: 0;
+    }
+    .esriEditor .templatePicker {
+      padding-bottom: 5px;
+      padding-top: 5px;
+      height: 500px;
+      border-radius: 0px 0px 4px 4px;
+      border: solid 1px #92A661;
+    }
+    .dj_ie .infowindow .window .top .right .user .content,
+    .dj_ie .simpleInfoWindow .content {
+      position: relative;
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+
+    require([
+    "esri/config",
+    "esri/map",
+    "esri/dijit/editing/Editor",
+    "esri/layers/FeatureLayer",
+    "esri/tasks/GeometryService",
+    "esri/geometry/Extent",
+    "esri/SpatialReference",
+    "dojo/parser",
+    "dojo/_base/array",
+    "dijit/layout/BorderContainer",
+    "dijit/layout/ContentPane",
+    "dojo/domReady!"
+    ], 
+      function (esriConfig, Map, Editor, FeatureLayer, GeometryService,
+      Extent, SpatialReference, parser, arrayUtils) {
+
+      parser.parse();
+
+      //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to
+      //replace the url below with the location of a proxy on your machine.
+      esriConfig.defaults.io.proxyUrl = "/proxy/";
+
+      //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications.
+      esriConfig.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+      map = new Map("map", {
+        basemap: "topo",
+        extent: new Extent({
+          xmin: -16326959,
+          ymin: -2022840,
+          xmax: 23474106,
+          ymax: 11694243,
+          spatialReference: {
+            wkid: 102100
+          }
+        }),
+        zoom: 3
+      });
+
+      map.on("layers-add-result", initEditing);
+
+      var incidentAreas = new FeatureLayer("https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/HSEC/FeatureServer/3", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"],
+        opacity: 0.75
+      });
+
+      var incidentLines = new FeatureLayer("https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/HSEC/FeatureServer/1", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"]
+      });
+
+      var incidentPoints = new FeatureLayer("https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/HSEC/FeatureServer/0", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"]
+      });
+
+      map.addLayers([incidentPoints, incidentLines, incidentAreas]);
+
+      map.infoWindow.resize(400, 300);
+
+      function initEditing(event) {
+        var featureLayerInfos = arrayUtils.map(event.layers, function (layer) {
+          return {
+            "featureLayer": layer.layer
+          };
+        });
+
+        var settings = {
+          map: map,
+          layerInfos: featureLayerInfos
+        };
+
+        var params = {
+          settings: settings
+        };
+
+        var editorWidget = new Editor(params, "editorDiv");
+        editorWidget.startup();
+      }
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:false" style="width:100%; height:100%;">
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+    </div>
+    <div data-dojo-type="dijit/layout/ContentPane" id="templatePickerPane" data-dojo-props="region:'left'">
+      <div id="panelHeader">
+        Editing with map wrap-around
+      </div>
+      <div style="padding:20px;" id="editorDiv">
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

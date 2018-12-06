@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Update Fire Perimeter with GeometryService Reshape</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <style>
+      html, body, #mapDiv {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      #info {
+        bottom: 20px;
+        color: #444;
+        height: auto;
+        font-family: arial;
+        left: 20px;
+        margin: 5px;
+        padding: 10px;
+        position: absolute;
+        text-align: left;
+        width: 200px;
+        z-index: 40;
+      }
+      .label {
+        display: inline-block;
+        width: 4em;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad:true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.toolbars.draw");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.tasks.geometry");
+
+      var map, drawToolbar;
+      
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        map = new esri.Map("mapDiv",{
+          basemap: "topo",
+          center: [-117.594, 34.316],
+          zoom: 12
+        });
+        
+        dojo.connect(map, "onLayersAddResult", initEditing);
+
+        //add the fire perimeter layer to the map 
+        var firePerimeterFL = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Fire/Sheep/FeatureServer/2", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"],
+          id: "firePerimeterFL"
+        });
+        map.addLayers([firePerimeterFL]);
+      }
+
+      function initEditing(layers) {
+        var gs = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+        var myMap = this;
+        var firePerimeterFL = myMap.getLayer("firePerimeterFL");
+        
+        drawToolbar = new esri.toolbars.Draw(myMap);
+        var selectQuery = new esri.tasks.Query();
+
+        dojo.connect(dijit.byId("reshape"), "onClick", function() {
+          drawToolbar.activate(esri.toolbars.Draw.FREEHAND_POLYLINE);
+        });
+
+        dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
+          drawToolbar.deactivate();
+          selectQuery.geometry = geometry;
+          firePerimeterFL.selectFeatures(selectQuery, esri.layers.FeatureLayer.SELECTION_NEW);
+        });
+
+        dojo.connect(firePerimeterFL,"onSelectionComplete", function(features) {
+          if (features.length === 1) {
+            var targetGeometry = features[0].geometry;
+            gs.reshape(targetGeometry,selectQuery.geometry);
+          }
+        });
+
+        dojo.connect(gs, "onReshapeComplete", function(reshapedGeometry) {
+          var targetGraphic = firePerimeterFL.getSelectedFeatures()[0].setGeometry(reshapedGeometry);
+          firePerimeterFL.applyEdits(null, [targetGraphic], null);
+        });
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    <div id="mapDiv"></div>
+    <div id="info" class="esriSimpleSlider">
+      <button id="reshape" data-dojo-type="dijit.form.Button">Reshape Fire Perimeter</button>
+      Zoom in to a fire perimeter then click the 'reshape' button and draw a polyline to reshape the features.
+    </div>
+  </body>
+</html>

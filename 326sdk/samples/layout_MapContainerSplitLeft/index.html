@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"> 
+    <title>Map container split left</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <link rel="stylesheet" href="css/layout.css"/> 
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("dijit.layout.TabContainer");
+      dojo.require("esri.dijit.Legend");
+      
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          center: [-85.772, 38.255],
+          zoom: 10
+        });
+        var basemapUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer";
+        var dynamicUrl = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyHazardsandRisks/MapServer";
+        var referenceUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer";
+        
+        var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapUrl);
+        var dynamicLayer = new esri.layers.ArcGISDynamicMapServiceLayer(dynamicUrl,{opacity:0.45});
+        var referenceLayer = new esri.layers.ArcGISTiledMapServiceLayer(referenceUrl);
+        
+        dojo.connect(map, "onLayersAddResult", function(results) {
+         //add the legend 
+          var legend = new esri.dijit.Legend({
+            map: map,
+            layerInfos: [{layer:dynamicLayer, title:"Public Safety"}],
+            arrangement: esri.dijit.Legend.ALIGN_RIGHT
+          },"legendDiv");
+          legend.startup();
+        });
+        map.addLayer(basemap);
+        map.addLayers([dynamicLayer,referenceLayer]);
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" 
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+
+        This is the header section
+       <div id="subheader">subheader</div>
+
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" id="leftPane" data-dojo-props="region:'left'">
+        <div data-dojo-type="dijit.layout.TabContainer">
+
+          <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Legend', selected:true">
+            <div id="legendDiv"></div>
+          </div>
+
+          <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Tab 2'" >
+            Content for the second tab
+          </div>
+
+        </div>
+      </div>
+
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'"></div>
+
+      <div id="footer" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+        this is the footer section
+      </div>
+      
+    </div>
+  </body>
+
+</html>

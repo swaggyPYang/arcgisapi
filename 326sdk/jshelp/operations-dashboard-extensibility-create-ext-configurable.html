@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="content-language" content="en">
+  <meta name="product" content="js-api-arcgis">
+  <meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE">
+  <meta name="sub_category" content="JavaScript API">
+  <meta name="search-collection" content="help">
+  <meta name="search-category" content="help-api,help-api-guide">
+  <meta name="version" content="3.x">
+  <meta name="content_type" content="Help Topic"> 
+  <meta name="last-modified" content="2018-09-21"> 
+
+  <link rel="stylesheet" href="../styles/screen.css">
+  <link rel="stylesheet" href="../styles/jsdoc.css">
+  <link rel="stylesheet" href="../styles/hljs-github.css">
+  <link rel="stylesheet" href="../styles/homepage.css">
+  <link rel="stylesheet" href="../styles/grid.css">
+  <link rel="stylesheet" href="../styles/tree.css">
+  <link rel="stylesheet" href="../prettify/prettify.css">
+  <link rel="stylesheet" href="../styles/tailcoat-search.css">
+  <link rel="stylesheet" href="//fast.fonts.com/cssapi/23855eec-5fdf-4594-9898-0113a04bfef0.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+
+  <style>
+    html {
+      overflow-y: auto;
+    }
+    pre {
+      font-size: 1.1em;
+      line-height: normal;
+      margin: 0;
+    }
+    #header nav li a {
+      font-size: .875em;
+    }
+    #esri-logo {
+      margin-left: 0;
+    }
+    h1.light {
+      color: #fff;
+    }
+    .navigation-bar {
+      background-image: url("../graphics/tailcoat/navigation-bar-background.jpg");
+    }
+  </style>
+  <title>Create a configurable widget | Guide | ArcGIS API for JavaScript 3.26</title>
+  
+  
+</head>
+
+<body>
+<header class="header">
+  <div class="container">
+    <nav class="site-nav trailer-half">
+        Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="navigation-bar ">
+    <div class="container">
+      <header>
+        <h1 class="light"><a href="..">ArcGIS API for JavaScript <sup>3.26</sup></a></h1>
+      </header>
+       <nav class="navigation-bar-nav">
+        <ul>
+            <li class=""><a href="../">Home</a></li>
+            <li class="current"><a href=".">Guide</a></li>
+            <li class=""><a href="../jsapi/">API Reference</a></li>
+            <li class=""><a href="../jssamples/">Sample Code</a></li>
+            <li class=""><a class="icon-share icon-link-external" href="https://community.esri.com/community/developers/web-developers/arcgis-api-for-javascript">Community</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+ 
+
+<div class="container_12">
+  <div class="grid_3 contentWrapper">
+    <div id="toggleToc">
+      <img src="../graphics/tochide.gif" alt=""> Hide Table of Contents
+    </div>
+    <div id="apiToc"><div class="treeDiv" id="tree" style="top: 35px; left: 0px;">
+  <div id="treeRoot">
+    <div class="treeNode">
+      <a class="treeUnselected" href="." onclick="clickAnchor(this)">Overview</a>
+    </div>
+    <div class="treeNode">
+      <a class="treeUnselected" href="whats_new.html" onclick="clickAnchor(this)">What's New in Version 3.26</a>
+    </div>
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Tutorials</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firstmap_amd.html" onclick="clickAnchor(this)">Build your first application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_agstemplate_amd.html" onclick="clickAnchor(this)">Use an ArcGIS.com webmap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_dev.html" onclick="clickAnchor(this)">Mobile-specific application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions.html" onclick="clickAnchor(this)">Directions widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_search.html" onclick="clickAnchor(this)">Search widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_label_layer.html" onclick="clickAnchor(this)">Labeling features client-side</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_javascript_classes.html" onclick="clickAnchor(this)">Write a class</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_custom_dijit.html" onclick="clickAnchor(this)">Create a re-usable widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_sharing_maps_secure_layers.html" onclick="clickAnchor(this)">Share maps with secure layers</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">About the API</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_gettingstarted.html" onclick="clickAnchor(this)">Get Started</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_accessapi.html" onclick="clickAnchor(this)">Get the API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="localization.html" onclick="clickAnchor(this)">Localization</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="css.html" onclick="clickAnchor(this)">Required CSS</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="supported_browsers.html" onclick="clickAnchor(this)">Supported Browsers</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="community.html" onclick="clickAnchor(this)">Community</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Dojo
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo.html" onclick="clickAnchor(this)">Work with Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoversion.html" onclick="clickAnchor(this)">Get Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojodijits.html" onclick="clickAnchor(this)">Dijits</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo_amd.html" onclick="clickAnchor(this)">Dojo and AMD</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoLayouts.html" onclick="clickAnchor(this)">Dojo Layouts</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojohelp.html" onclick="clickAnchor(this)">Additional resources</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="why_dojo.html" onclick="clickAnchor(this)">Why Dojo?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        Work with the API
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_defaults.html" onclick="clickAnchor(this)">Default API configurations</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bundle.html" onclick="clickAnchor(this)">Default API strings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_esri_request.html" onclick="clickAnchor(this)">Retrieve data from a web server</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_navigation.html" onclick="clickAnchor(this)">Map navigation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_events.html" onclick="clickAnchor(this)">Events</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_extents.html" onclick="clickAnchor(this)">Set Extents</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_editing.html" onclick="clickAnchor(this)">Editing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="arcade.html" onclick="clickAnchor(this)">Arcade</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_temporal.html" onclick="clickAnchor(this)">Time aware data</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firsttask.html" onclick="clickAnchor(this)">Adding a task</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_querytask.html" onclick="clickAnchor(this)">Using QueryTask</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_custom_layers.html" onclick="clickAnchor(this)">Creating custom layer types</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_webmap.html" onclick="clickAnchor(this)">Web maps</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_analysiswidgets.html" onclick="clickAnchor(this)">Working with Analysis Widgets</a>
+        </div>
+        <div class="treeNode">
+        <a class="treeUnselected" href="intro_search_widget.html" onclick="clickAnchor(this)">Working with the Search Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions_widget.html" onclick="clickAnchor(this)">Working with the Directions Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_geoenrichment.html" onclick="clickAnchor(this)">Working with GeoEnrichment Widgets</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_datareviewer.html" onclick="clickAnchor(this)">Working with DataReviewer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_locationproviders.html" onclick="clickAnchor(this)">Location Providers (beta)</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Graphics and feature layers</span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_graphics.html" onclick="clickAnchor(this)">Graphics overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_feature_layers.html" onclick="clickAnchor(this)">Feature layer overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_renderers.html" onclick="clickAnchor(this)">Symbols and renderers</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_bettermaps.html" onclick="clickAnchor(this)">Data Visualization</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_styling_svg.html" onclick="clickAnchor(this)">Styling features with CSS</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Popups and Info Windows
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_infowindow.html" onclick="clickAnchor(this)">Info windows and graphics</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_formatinfowindow.html" onclick="clickAnchor(this)">Format info window content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customize.html" onclick="clickAnchor(this)">Customize info windows</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_agspopup.html" onclick="clickAnchor(this)">Popup overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_popuptemplate.html" onclick="clickAnchor(this)">Format popup content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customizepopup.html" onclick="clickAnchor(this)">Customize popup</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Geoprocessor
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_overview.html" onclick="clickAnchor(this)">Geoprocessing overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_creating.html" onclick="clickAnchor(this)">Creating the geoprocessor</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_parameters.html" onclick="clickAnchor(this)">Geoprocessor parameters</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_running.html" onclick="clickAnchor(this)">Geoprocessing results</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Operations Dashboard
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="operations-dashboard-extensibility-overview.html" onclick="clickAnchor(this)">Overview</a>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Get started
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-setup-dev-env.html" onclick="clickAnchor(this)">Set up a development environment</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-samples.html" onclick="clickAnchor(this)">Samples</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Create extensions
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-overview.html" onclick="clickAnchor(this)">Overview of widgets, map tools and feature actions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-widget.html" onclick="clickAnchor(this)">Create a widget</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-maptool.html" onclick="clickAnchor(this)">Create a map tool</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-configurable.html" onclick="clickAnchor(this)">Create a configurable extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-manifest.html" onclick="clickAnchor(this)">Manifest</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Test and debug
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-test-debug.html" onclick="clickAnchor(this)">Test and debug in Operations Dashboard</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-troubleshooting.html" onclick="clickAnchor(this)">Troubleshooting</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Deploy
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-overview.html" onclick="clickAnchor(this)">Overview of deploying extensions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-setup-web-server.html" onclick="clickAnchor(this)">Set up a web server</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-register-ext.html" onclick="clickAnchor(this)">Register an extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-update-ext.html" onclick="clickAnchor(this)">Update an extension</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Mobile</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_viewport.html" onclick="clickAnchor(this)">Viewport Settings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_hardware.html" onclick="clickAnchor(this)">Device Detection and Browser Sniffing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_orientation.html" onclick="clickAnchor(this)">Device Orientation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_geolocation.html" onclick="clickAnchor(this)">Geolocation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_frameworks.html" onclick="clickAnchor(this)">Frameworks</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_phonegap.html" onclick="clickAnchor(this)">Using PhoneGap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_references.html" onclick="clickAnchor(this)">References</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        ArcGIS Server Services
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_overview.html" onclick="clickAnchor(this)">Overview</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_rest.html" onclick="clickAnchor(this)">Services directory and the REST API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_secureservices.html" onclick="clickAnchor(this)">Working with secure resources</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_proxy.html" onclick="clickAnchor(this)">Using the proxy page</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        References
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_web_optimizer.html" onclick="clickAnchor(this)">Using the Web Optimizer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bower_custom_builds.html" onclick="clickAnchor(this)">Using Bower for Custom Builds</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="limits_for_graphics.html" onclick="clickAnchor(this)">Determine limits for map graphics</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="best_practices_feature_layers.html" onclick="clickAnchor(this)">Feature layer best practices</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_guidelines.html" onclick="clickAnchor(this)">Coding guidelines</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ref_coordsystems.html" onclick="clickAnchor(this)">Coordinate system IDs</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="licensing.html" onclick="clickAnchor(this)">Licensing & Attribution</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_faq.html" onclick="clickAnchor(this)">Frequently asked questions</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        What's New archive
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_30.html" onclick="clickAnchor(this)">Migrating to 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_20.html" onclick="clickAnchor(this)">Migrating to 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v325.html" onclick="clickAnchor(this)">What's New in Version 3.25</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v324.html" onclick="clickAnchor(this)">What's New in Version 3.24</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v323.html" onclick="clickAnchor(this)">What's New in Version 3.23</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v322.html" onclick="clickAnchor(this)">What's New in Version 3.22</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v321.html" onclick="clickAnchor(this)">What's New in Version 3.21</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v320.html" onclick="clickAnchor(this)">What's New in Version 3.20</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v319.html" onclick="clickAnchor(this)">What's New in Version 3.19</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v318.html" onclick="clickAnchor(this)">What's New in Version 3.18</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v317.html" onclick="clickAnchor(this)">What's New in Version 3.17</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v316.html" onclick="clickAnchor(this)">What's New in Version 3.16</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v315.html" onclick="clickAnchor(this)">What's New in Version 3.15</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v314.html" onclick="clickAnchor(this)">What's New in Version 3.14</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v313.html" onclick="clickAnchor(this)">What's New in Version 3.13</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v312.html" onclick="clickAnchor(this)">What's New in Version 3.12</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v311.html" onclick="clickAnchor(this)">What's New in Version 3.11</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v310.html" onclick="clickAnchor(this)">What's New in Version 3.10</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v39.html" onclick="clickAnchor(this)">What's New in Version 3.9</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v38.html" onclick="clickAnchor(this)">What's New in Version 3.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v37.html" onclick="clickAnchor(this)">What's New in Version 3.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v36.html" onclick="clickAnchor(this)">What's New in Version 3.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v35.html" onclick="clickAnchor(this)">What's New in Version 3.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v34.html" onclick="clickAnchor(this)">What's New in Version 3.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v33.html" onclick="clickAnchor(this)">What's New in Version 3.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v32.html" onclick="clickAnchor(this)">What's New in Version 3.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v31.html" onclick="clickAnchor(this)">What's New in Version 3.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v30.html" onclick="clickAnchor(this)">What's New in Version 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v28.html" onclick="clickAnchor(this)">What's New in Version 2.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v27.html" onclick="clickAnchor(this)">What's New in Version 2.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v26.html" onclick="clickAnchor(this)">What's New in Version 2.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v25.html" onclick="clickAnchor(this)">What's New in Version 2.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v24.html" onclick="clickAnchor(this)">What's New in Version 2.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v23.html" onclick="clickAnchor(this)">What's New in Version 2.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v22.html" onclick="clickAnchor(this)">What's New in Version 2.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v21.html" onclick="clickAnchor(this)">What's New in Version 2.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v20.html" onclick="clickAnchor(this)">What's New in Version 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v16.html" onclick="clickAnchor(this)">What's New in Version 1.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v15.html" onclick="clickAnchor(this)">What's New in Version 1.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v14.html" onclick="clickAnchor(this)">What's New in Version 1.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v13.html" onclick="clickAnchor(this)">What's New in Version 1.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v12.html" onclick="clickAnchor(this)">What's New in Version 1.2</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+</div> 
+  </div>
+  <div class="grid_9 contentWrapper">
+    <div id="topicPane" class="js-scroll-to-top"><div id="pageBanner">Create a configurable widget</div>
+<div id="nstext">
+  <p>
+      <strong>Legacy: </strong>This topic discusses extending operation views created using the Windows version Operations Dashboard for ArcGIS. This version of the application has been moved to Mature Support status. To learn more about the latest web-based version, see <a href="https://doc.arcgis.com/en/operations-dashboard/">Operations Dashboard for ArcGIS</a>.
+  </p>
+  
+  <p class="tutorial-outline">The basic steps to creating a configurable widget are as follows:</p>
+  <ul class="tutorial-outline">
+    <li><a href="#step1">Create the files for the widget configuration</a></li>
+    <li><a href="#step2">Update the manifest</a></li>
+    <li><a href="#step3">Create the configuration user interface</a></li>
+    <li><a href="#step4">Add programming logic to the configuration</a></li>
+    <li><a href="#step5">Update table widget's programming logic</a></li>
+    <li><a href="#step6">Update the style</a></li>
+    <li><a href="#step7">Debug the extension configuration</a></li>
+  </ul>
+
+  <p>In this tutorial, you will learn how to enhance the attribute table widget you built in the
+    <a href="operations-dashboard-extensibility-create-ext-widget.html">Create a widget tutorial</a> by adding
+    some configuration logic to it. You'll allow the operation view author to choose the fields of a data source, then
+    use a table to show the chosen attribute information for each feature from the data source.
+  </p>
+
+  <p>The same concepts in this tutorial can be applied to configure map tool and feature action extensions.</p>
+
+  <p><strong>Note: </strong> If you didn't complete the
+    <a href="operations-dashboard-extensibility-create-ext-widget.html">Create a widget tutorial</a>, you can download
+    the source code from <a href="https://github.com/Esri/dashboard-samples">here</a> to continue this tutorial.
+  </p>
+
+  <p><img src="images/operations-dashboard/create-ext-configurable-example.png" alt="Completed table widget with configuration dialog"/></p>
+
+  <p>
+    <a href="https://github.com/Esri/dashboard-samples/tree/master/tableWidgetWithConfig">View completed tutorial files</a>
+  </p>
+
+  <p>
+    Before you begin, you must
+    <a href="operations-dashboard-extensibility-getstarted-setup-dev-env.html">set up a development environment</a>
+    for Windows Operations Dashboard and prepare it to run in developer mode.
+  </p>
+
+  <ol class="tutorial-content">
+    <li id="step1">
+      <h3>Create configuration files</h3>
+
+      <p>After completing the <a href="operations-dashboard-extensibility-create-ext-widget.html">Create a widget</a>
+        tutorial, you should have a folder named <b>tableWidget</b> with the following files:
+      </p>
+      <ul>
+        <li>
+          table.json
+        </li>
+        <li>
+          table.html
+        </li>
+        <li>
+          tableWidgetTemplate.html
+        </li>
+        <li>
+          tableWidget.js
+        </li>
+        <li>
+          style.css
+        </li>
+        <li>
+          A PNG (or JPG) image file for the widget's thumbnail.
+        </li>
+      </ul>
+
+      <p>
+        In the same folder, create the following files:
+      </p>
+
+      <ul>
+        <li>
+          tableConfig.html&ndash;The user interface (UI) of the widget's configuration that will load into the <b>Data</b>
+          tab of the <b>Settings</b> dialog when configuring the widget within an operation view. It shows a list of
+          checkboxes for each field of the data source to be chosen by an operation view author.
+        </li>
+        <li>
+          tableWidgetConfigTemplate.html&ndash;A template or an HTML fragment that will be incorporated into the
+          tableConfig.html file. This template has a Dojo <code>CheckedMultiSelect</code> form that will be manifested as
+          checkboxes for the alpha-numeric fields of the selected data source. The business logic of the template is
+          implemented in the tableWidgetConfig.js file.
+        </li>
+        <li>
+          tableWidgetConfig.js&ndash;A JavaScript file that defines the table widget configuration class that will be
+          created as a Dojo widget, or a
+          <a href="http://dojotoolkit.org/reference-guide/1.10/dijit/info.html#dijit-info">dijit</a>
+          (the term "widget" here has no association with the concept of widgets in operation views).
+          This class sets up the data stores for the <code>CheckedMultiSelect</code> form using the fields of the selected data
+          source, captures the selections from the author, and prepares the selections and other settings to be saved
+          when the author saves the operation view.
+        </li>
+      </ul>
+
+      <p><strong>Note: </strong>You can assign different names to the above files.</p>
+    </li>
+
+    <li id="step2">
+      <h3>Update the manifest file</h3>
+      <p>
+        Open the table.json or manifest file in your IDE and add the "path"
+        property to the configuration object to indicate the path to the configuration UI:
+      </p>
+
+      <div class="detailSample">
+        <pre class="prettyprint">
+"configuration": {
+  "path": " tableConfig.html",
+  "requireDataSource": true
+},
+        </pre>
+      </div>
+    </li>
+
+    <li id="step3">
+      <h3>Create the configuration user interface</h3>
+
+      <ol>
+        <li>
+          Open the tableConfig.html file and add the following code to set up the basic structure of an HTML5 file.
+          <div class="detailSample">
+            <pre class="prettyprint">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+ &lt;link rel="stylesheet" type="text/css" href="style.css" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+            </pre>
+          </div>
+        </li>
+        <li>
+          Between the <code>&lt;body&gt;</code> tags, create a <code>div</code> element and add a "data-dojo-type" attribute with
+          the value "extension/ TableWidgetConfig".
+          <div class="detailSample">
+            <pre class="prettyprint">
+&lt;body&gt;
+&lt;div data-dojo-type="extension/TableWidgetConfig"&gt;&lt;/div&gt;
+&lt;/body&gt;
+            </pre>
+          </div>
+          <p>This attribute will be used to instantiate an "extension/TableWidgetConfig" object that has the logic of
+            the table configuration dijit you are going to implement.</p>
+        </li>
+        <li>
+          <p>Open the TableWidgetConfigTemplate.html file and add the following HTML fragment to define the UI of the table
+            configuration dijit.</p>
+          <p>In the CheckedMultiSelect <code>&lt;div&gt;</code> element, set "multiSelectDiv" as the value
+          for the data-dojo-attach-point property. This "multiSelectDiv" pointer will be used by the TabletWidgetConfig
+            class to communicate with the configuration UI.</p>
+          <p>In addition, define the onSelectionChanged event handler when the selection on the form changes (i.e. when
+            a field checkbox is checked or unchecked).</p>
+
+          <div class="detailSample">
+            <pre class="prettyprint">
+&lt;div class="table"&gt;
+  &lt;div class="table-row"&gt;
+    &lt;label class="configLabel"&gt;
+      Check the fields to show on the attribute table:
+    &lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class="table-row full"&gt;
+    &lt;div data-dojo-type="dojox.form.CheckedMultiSelect"
+         data-dojo-attach-point="multiSelectDiv"
+         data-dojo-attach-event="onChange:onSelectionChanged"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+            </pre>
+          </div>
+        </li>
+      </ol>
+    </li>
+
+    <li id="step4">
+      <h3>Add programming logic to the configuration</h3>
+
+      <ol>
+        <li>
+          Open the tableConfig.html file again. Before the closing <code>&lt;body&gt;</code> tag, add the following
+          <code>&lt;script&gt;</code> block with the dojoConfig object to define the module (i.e. the table
+          configuration dijit) that will load. Set the "async" and "parseOnLoad" properties to true. To learn more about
+          dojoConfig, read the Dojo Toolkit documentation.
+
+          <div class="detailSample">
+            <pre class="prettyprint">
+&lt;script&gt;
+  var dojoConfig = {
+    async: true,
+    paths: {
+      "extension": location.pathname.replace(/\/[^/]+$/, '')
+    }
+  };
+&lt;/script&gt;
+            </pre>
+          </div>
+
+          <p>
+            <strong>Note: </strong> Within the "paths" object, the URI of the extension folder is referenced as
+            "extension". This is used to construct the relative path to the widget configuration dijit (i.e.
+            "extension/TableWidgetConfig") in the dojo-data-type attribute of a <code>&lt;div&gt;</code> element in
+            this file.
+          </p>
+        </li>
+        <li>
+          <p>
+            After the <code>&lt;script&gt;</code> block from the previous step, add another <code>&lt;script&gt;</code>
+            block referencing the ArcGIS API for JavaScript.
+          </p>
+          <p>
+            You must load the dojoConfig before loading the ArcGIS API for JavaScript, otherwise the dojoConfig will
+            be ignored.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+&lt;script src="//js.arcgis.com/3.26/"&gt;&lt;/script&gt;
+            </pre>
+          </div>
+        </li>
+    <li>
+    Inside of another <code>&lt;script&gt;</code> block, add the Dojo parser:
+    <div class="detailSample">
+                        <pre class="prettyprint">
+&lt;script&gt; 
+  require([
+      "dojo/parser",
+      "dojo/domReady!"
+    ], function(parser){
+      parser.parse();
+    });
+&lt;/script&gt;
+                        </pre>
+          </div>
+    </li>
+        <li>
+          <p>
+            Open the tableWidgetConfig.js file and add the following <code>define</code> function to define the table
+            configuration dijit.
+          </p>
+          <p>
+            In this function, load the dependent modules and pass in a callback function with the modules as parameters.
+          </p>
+
+          <div class="detailSample">
+            <pre class="prettyprint">
+define([
+  "dojo/_base/declare",
+  "dojo/_base/lang",
+  "dojo/store/Memory",
+  "dijit/_WidgetBase",
+  "dijit/_TemplatedMixin",
+  "dijit/_WidgetsInTemplateMixin",
+  "esri/opsdashboard/WidgetConfigurationProxy",
+  "dojo/text!./TableWidgetConfigTemplate.html",
+  "dojox/form/CheckedMultiSelect"
+], function (declare, lang, Memory, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, WidgetConfigurationProxy, templateString) {
+
+});
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>Declare a class named "TableWidgetConfig".</p>
+          <p>
+            The second parameter is an array of super classes that are inherited by the TableWidgetConfig class. The
+            third parameter is an object that will contain the methods to be called throughout the lifecycle of the class.
+          </p>
+
+          <div class="detailSample">
+            <pre class="prettyprint">
+...
+  "dojo/text!./TableWidgetConfigTemplate.html",
+  "dojox/form/CheckedMultiSelect"
+], function (declare, lang, _WidgetBase, _TemplatedMixin, WidgetProxy, Memory, Observable, Query, Grid, templateString) {
+
+  return declare("TableWidgetConfig", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, WidgetConfigurationProxy], {
+
+  });
+});
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            Inside the TableWidgetConfig class, load the TableWidgetConfigTemplate.html file into the templateString
+            as an inline string.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+return declare("TableWidgetConfig", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, WidgetConfigurationProxy], {
+    templateString: templateString,
+
+});
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            Add a <code>postCreate</code> function. Through the "multiSelectDiv" pointer set
+            the "multiple" property of the <code>CheckedMultiSelect</code> form to true so that they will render as
+            checkboxes. Then, set the labels of the checkboxes to be displayed by the alias of the fields.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+postCreate: function () {
+  this.inherited(arguments);
+  this.multiSelectDiv.set("labelAttr", "alias");
+  this.multiSelectDiv.set("multiple", true);
+},
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            After creating the <code>postCreate</code> function, add a <code>dataSourceSelectionChanged</code> callback.
+          </p>
+          <p>
+            It will be called when the table widget is initialized and when the operation view author selects a
+            different data source.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+dataSourceSelectionChanged: function (dataSource, dataSourceConfig) {
+
+},
+            </pre>
+          </div>
+          <p>
+            The callback for this event accounts for two parameters: <code>dataSource</code> and <code>dataSourceConfig</code>.
+            The <code>dataSource</code> parameter represents the data source chosen by the operation view author. The
+            <code>dataSourceConfig</code> parameter is an object that stores the fields chosen by the author. If you
+            implement additional properties in your extension, you can also include them in this object.
+          </p>
+          <p>
+            When the author saves the view, the properties of the <code>dataSourceConfig</code> object will save with the operation
+            view. As a result, when the operation view is opened again, these properties will feed back into the
+            <code>dataSourceConfig</code> object.
+          </p>
+        </li>
+        <li>
+          <p>
+            In the <code>dataSourceSelectionChanged</code> callback, reference the <code>dataSourceConfig</code> using
+            <code>this.dataSourceConfig</code>, and get the data source's alpha-numeric fields. Then create a memory
+            store object with the fields.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+dataSourceSelectionChanged: function (dataSource, dataSourceConfig) {
+
+  this.dataSourceConfig = dataSourceConfig;
+
+  var alphaNumericFields = [];
+  dataSource.fields.forEach(function (field) {
+    switch (field.type) {
+      case "esriFieldTypeString":
+      case "esriFieldTypeSmallInteger":
+      case "esriFieldTypeInteger":
+      case "esriFieldTypeSingle":
+      case "esriFieldTypeDouble":
+        alphaNumericFields.push(field);
+        return;
+    }
+  });
+
+  var alphaNumericFieldsStore = new Memory({
+    idProperty: "name",
+    data: alphaNumericFields
+  });
+
+  this.multiSelectDiv.set("store", alphaNumericFieldsStore);
+},
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            Finally, in the <code>dataSourceSelectionChanged</code> callback, add the logic to retrieve the previously selected
+            fields from the dataSourceConfig.selectedFieldsNames property, and use them to check the field boxes.
+          </p>
+          <p>
+            This part of the logic was needed when the operation view was previously configured and some fields were
+            chosen from the table configuration UI.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+dataSourceSelectionChanged: function (dataSource, dataSourceConfig) {
+
+  .....
+
+  // Set previous fields saved in config
+  if (Array.isArray(dataSourceConfig.selectedFieldsNames))
+    this.multiSelectDiv.set("value", dataSourceConfig.selectedFieldsNames);
+},
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            After creating the <code>dataSourceSelectionChanged</code> callback, implement an <code>onSelectionChanged</code>
+            callback.
+          </p>
+          <p>
+            This callback will be called when a checkbox is checked or unchecked. In this callback, the selected fields will be
+            retrieved through the "value" variable. The alias of these fields will then be saved into the
+            selectedFieldsNames property of this.dataSourceConfig.
+          </p>
+          <p>
+            At the end of the callback, add the logic to check if there is at least one selected field. If there is,
+            enable the <b>OK</b> button by sending a true flag to the <code>readyToPersistConfig</code> method
+            (<code>readyToPersistConfig</code> is a method inherited from the <code>WidgetConfigurationProxy</code>'s base class).
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+onSelectionChanged: function (value) {
+  if (!this.dataSourceConfig)
+    return;
+
+  this.dataSourceConfig.selectedFieldsNames = value;
+  this.readyToPersistConfig(Array.isArray(value) && value.length > 0);
+}
+            </pre>
+          </div>
+          <p>
+            Your code for the TableWidgetConfig.js file should look like this:
+          </p>
+
+          <div class="detailSample">
+            <pre class="prettyprint">
+define([
+  "dojo/_base/declare",
+  "dojo/_base/lang",
+  "dojo/store/Memory",
+  "dijit/_WidgetBase",
+  "dijit/_TemplatedMixin",
+  "dijit/_WidgetsInTemplateMixin",
+  "esri/opsdashboard/WidgetConfigurationProxy",
+  "dojo/text!./TableWidgetConfigTemplate.html",
+  "dojox/form/CheckedMultiSelect"
+], function (declare, lang, _WidgetBase, _TemplatedMixin, WidgetProxy, Memory, Observable, Query, Grid, templateString) {
+
+  return declare("TableWidgetConfig", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, WidgetConfigurationProxy], {
+    templateString: templateString,
+
+    postCreate: function () {
+      this.inherited(arguments);
+      this.multiSelectDiv.set("labelAttr", "alias");
+      this.multiSelectDiv.set("multiple", true);
+    },
+
+    dataSourceSelectionChanged: function (dataSource, dataSourceConfig) {
+
+      this.dataSourceConfig = dataSourceConfig;
+
+      var alphaNumericFields = [];
+      dataSource.fields.forEach(function (field) {
+        switch (field.type) {
+          case "esriFieldTypeString":
+          case "esriFieldTypeSmallInteger":
+          case "esriFieldTypeInteger":
+          case "esriFieldTypeSingle":
+          case "esriFieldTypeDouble":
+            alphaNumericFields.push(field);
+            return;
+        }
+      });
+
+      var alphaNumericFieldsStore = new Memory({
+        idProperty: "name",
+        data: alphaNumericFields
+      });
+
+      this.multiSelectDiv.set("store", alphaNumericFieldsStore);
+
+      // Set previous fields saved in config
+      if (Array.isArray(dataSourceConfig.selectedFieldsNames))
+        this.multiSelectDiv.set("value", dataSourceConfig.selectedFieldsNames);
+    },
+
+    onSelectionChanged: function (value) {
+      if (!this.dataSourceConfig)
+        return;
+
+      this.dataSourceConfig.selectedFieldsNames = value;
+      this.readyToPersistConfig(Array.isArray(value) && value.length > 0);
+    }
+  });
+});
+            </pre>
+          </div>
+        </li>
+      </ol>
+    </li>
+    <li id="step5">
+      <h3>Update table widget's programming logic</h3>
+
+      <ol>
+        <li>
+          <p>
+            Open the tableWidget.js file. Inside the <code>hostReady</code> method, using the selected fields from the
+            <code>dataSourceConfig</code> object, replace the following code block:
+          </p>
+          <p>replace</p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+dataSource.fields.forEach(function (field) {
+  switch (field.type) {
+    case "esriFieldTypeString":
+    case "esriFieldTypeSmallInteger":
+    case "esriFieldTypeInteger":
+    case "esriFieldTypeSingle":
+    case "esriFieldTypeDouble":
+      fieldsToQuery.push(field.name);
+      columns.push({field: field.alias});
+      return;
+  }
+});
+            </pre>
+          </div>
+          <p>with the code block below:</p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+dataSourceConfig.selectedFieldsNames.forEach(function (field) {
+  columns.push({field: field});
+});
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+           Similarly, in the same method update the <code>fieldsToQuery</code> array so that it will query for the fields from the
+            <code>selectedFieldsNames</code> property saved to the <code>dataSourceConfig</code> object. Replace the following code block:
+          </p>
+          <p>replace</p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+fieldsToQuery.push(dataSource.objectIdFieldName);
+            </pre>
+          </div>
+          <p>with the below code block:</p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+var fieldsToQuery = dataSourceConfig.selectedFieldsNames.slice();
+if (fieldsToQuery.indexOf(dataSource.objectIdFieldName) === -1)
+  fieldsToQuery.push(dataSource.objectIdFieldName);
+            </pre>
+          </div>
+        </li>
+      </ol>
+
+      <p>
+        Now, the names of the fields chosen by the operation view author through the table widget's <b>Settings</b> dialog
+        will be extracted from the <code>dataSourceConfig</code> object. These fields will then be queried by the chosen data source
+        and the results will be rendered in the attribute table.
+      </p>
+    </li>
+    <li id="step6">
+      <h3>Update the style</h3>
+      <ol>
+        <li>
+          <p>
+            Open the style.css file. At the top of the file, import the style for the <code>CheckedMultiSelect</code> form
+            the ArcGIS API for JavaScript.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+@import "//js.arcgis.com/3.26/dojox/form/resources/CheckedMultiSelect.css";
+            </pre>
+          </div>
+        </li>
+        <li>
+          <p>
+            Update the styles for the configuration UI.
+          </p>
+          <div class="detailSample">
+            <pre class="prettyprint">
+
+.dataSourceInfoLabel {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.configLabel {
+  margin-bottom: 10px;
+}
+
+.dojoxCheckedMultiSelect, .dojoxCheckedMultiSelectWrapper {
+  height: inherit !important;
+  margin: 0 !important;
+  overflow-y: auto !important;
+  border: none !important;
+}
+
+.dijitInline.dojoxMultiSelectItemLabel, .dijitInline.dijitCheckBox {
+  display: inline;
+}
+            </pre>
+          </div>
+        </li>
+      </ol>
+
+      <p>
+        Your extension is now ready for testing in Operations Dashboard.
+      </p>
+    </li>
+    <li id="step7">
+      <h3>Debug the extension configuration</h3>
+      <p></p>
+      <ol>
+        <li>
+          Start Operations Dashboard in developer mode, and sign in to your ArcGIS organization as a publisher or an
+          administrator.
+        </li>
+        <li>Create a single-display operation view and select a map. If you create a multi-display operation view,
+          you can only open it in the Windows app, and you won't be able to debug your extension in the web browser.
+          <p><strong>Note</strong>: To learn more about creating an operation view, see Create an operation view in the
+          PDF of the <a href="http://doc.arcgis.com/en/operations-dashboard/operation-views/"> operation view help</a>.</p>
+        </li>
+        <li>
+          Click on the <b>Add Widget</b>, the table widget should be listed under the <b>Custom</b> category.
+          <p>
+            <strong>Tip</strong>: When an extension is loaded in the developer mode, it will have a red bounding
+            box to help you distinguish it from extensions in production.
+          </p>
+        </li>
+        <li>
+          Double click the table widget to confirm the selection and open its <b>Settings</b> dialog.
+          <p>
+            The UI under the <b>Data</b> tab originates from the tableConfig.html file. You should see the checkboxes
+            created for the alpha-numeric fields of the currently chosen data source.
+          </p>
+        </li>
+        <li>
+          Click the <b>Debug</b> button at the top of the configuration UI under the <b>Data</b> tab to launch the
+          Operations Dashboard extension debugger.
+          <p><img src="images/operations-dashboard/create-ext-configurable-debug.png" alt="Debug widget configuration"></p>
+          <p><strong>Tip: </strong>You can also click the <b>Dev Mode</b> text at the upper right corner of the app,
+            then click <b>Open Debug Tool</b> to launch the debugger.</p>
+        </li>
+        <li>
+          Once the debugger is launched, you can start inspecting the UI elements on the tableConfig.html file, or
+          set break points and step through the business logic in tableWidgetConfig.js, and more.
+          <p>
+            The URL to the HTML page shown on the debugger starts from localhost:&lt;port number&gt; because the
+            extension is running from a local server.
+          </p>
+          <p><img src="images/operations-dashboard/create-ext-configurable-debug-source.png" alt="Debug Window"></p>
+          <p><strong>Tip: </strong>If you make a change to the HTML or JS file during debugging, you can click the
+            <b>Refresh</b> button <img src="images/operations-dashboard/create-ext-widget-refresh.png" alt="Refresh button"> at the top left
+            corner of the debugger to get the update. However, if you make any changes to the manifest, you will need
+            to save the operation view, then close and reopen it.</p>
+        </li>
+        <li>
+          Click <b>OK</b> to create the widget.
+          <p>
+            If you want to debug your extension using the web browser, follow the steps below.
+          </p>
+        </li>
+        <li>
+          Save your operation view.
+        </li>
+        <li>
+          Click <b>Dev</b> Mode in the upper right corner and choose <b>Open in Browser</b>.
+          <p><img src="images/operations-dashboard/create-ext-maptool-open-view-in-browser.png"
+                  alt="Open operation view in a browser"/></p>
+          <p>The operation view will open in your default browser.</p>
+        </li>
+        <li>
+          Use the built-in debugging tool of your browser to debug your map tool.
+          <p><strong>Note: </strong>Since you are hosting your extension in the local server, you need to keep the
+            Windows app and the local server running.</p>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</div>
+ <div id="wh_footer" class="footnote">
+  <!--<a href="mailto:js_feedback@esri.com?subject=Feedback%20on%203.26%20Guide:%20jshelp/operations-dashboard-extensibility-create-ext-configurable.html">Report an error on this page</a>.
+  <br>-->
+  <a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a>
+</div>
+</div> 
+  </div>
+</div> 
+
+
+<script src="../scripts/tree.js"></script>
+
+<script src="../prettify/prettify.js"></script>
+<script>
+  var dojoConfig = {
+    async: true,
+    packages: [{
+      "name": "js",
+      "location": location.pathname.replace(/\/[^/]+$/, "/") + "../scripts"
+    }]
+  };
+</script>
+<script src="../scripts/libs/tailcoat.js"></script>
+
+<script src="../scripts/libs/dojo-esri/dojo/dojo.js" data-dojo-config="async: true,locale: 'en-us'"></script>
+<script src="../scripts/esri-main-concepts.js"></script>
+<script src="../scripts/esri-keyboard-navigation.js"></script>
+<script>
+  require(["dojo/topic", "js/libs/mousetrap"], function(topic, Mousetrap) {
+    Mousetrap.bind([
+      // ${API_BINDINGS}
+      // ${SAMPLE_CODE_BINDINGS}
+      // Focus search
+      "/",
+      // Blur search
+      "esc",
+      // Go to Home
+      "g h",
+      // Go to Guide
+      "g g",
+      // Go to API Reference
+      "g a",
+      // Go to Sample Code
+      "g s",
+      // Show help
+      "?",
+      // Scroll to top of the page
+      "g t",
+      // Scroll to bottom of the page
+      "g b"
+    ], function (mousetrapEvent, keyboardCombination){
+      topic.publish("keyboard:mousetrap", {
+        event: mousetrapEvent,
+        combination: keyboardCombination,
+        navigation: {}
+      });
+
+    });
+  });
+</script>
+<a class="modal-show keyboard-shortcuts-hidden hide js-keyboard-shortcuts" data-modal="keyboard-shortcuts-modal" href="#">Show Modal</a>
+<div class="modal-overlay">
+  <div class="modal keyboard-shortcuts-modal js-keyboard-shortcuts-modal" data-modal="keyboard-shortcuts-modal">
+    <a class="modal-dismiss js-modal-dismiss icon-close right" href="#"></a>
+    <h3 class="keyboard-shortcuts-modal-title">Keyboard shortcuts</h3>
+    <hr class="leader-0 trailer-1">
+    
+    <div class="row">
+      
+      <div class="column-12 js-keyboard-mappings-first-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Site wide shortcuts</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>Bring up this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>esc</kbd></td>
+              <td>Dismiss this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>h</kbd></td>
+              <td>Go to Home</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>g</kbd></td>
+              <td>Go to Guide</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>a</kbd></td>
+              <td>Go to API Reference</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>s</kbd></td>
+              <td>Go to Sample Code</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>t</kbd></td>
+              <td>Scroll to top of page</td>
+            </tr>
+            <tr>
+              <td><kbd>spacebar</kbd></td>
+              <td>Scroll page down</td>
+            </tr>
+            <tr>
+              <td><kbd>shift spacebar</kbd></td>
+              <td>Scroll page up</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>b</kbd></td>
+              <td>Scroll to bottom of page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="column-12 js-keyboard-mappings-second-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Guide</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>Focus search</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>T.init();</script>
+
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+
+ 
+
+
+
+</body>
+</html>

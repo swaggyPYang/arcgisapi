@@ -1,0 +1,164 @@
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <title>StreamLayer arcade geofence</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <script src="https://js.arcgis.com/3.26/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #info{
+      top: 0px;
+      right: 0px;
+      position: absolute;
+      z-index: 99;
+      opacity: 0.9;
+      background-color: white;
+      padding: 0px 0px 0px 10px;
+      width: 130px;
+    }
+  </style>
+
+  <script type="text/plain" id="arcade-geofence">
+    // convention center location
+    var centerPoint = Point({
+      'x': -13165819,
+      'y': 4034188,
+      'spatialReference': { 'wkid': 3857 }
+    });
+
+    var fence = BufferGeodetic(centerPoint, 3, 'miles');
+    IIF(Intersects(Geometry($feature), fence), 'within 3 miles', 'far away');
+  </script>
+
+  <script type="text/plain" id="arcade-distance">
+    var busLocation = Geometry($feature);
+    var line = Polyline({
+      paths: [[
+        [ -13165819, 4034188 ],  // convention center location
+        [ busLocation.x, busLocation.y ]
+      ]],
+      'spatialReference' : { 'wkid': 3857 }
+    });
+    // geodetic distance from convention center to point
+    LengthGeodetic(line, 'miles');
+  </script>
+
+  <script>
+    require([
+      "esri/map",
+      "esri/layers/StreamLayer",
+      "esri/renderers/UniqueValueRenderer",
+      "esri/Color",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/dijit/Legend",
+      "esri/dijit/PopupTemplate",
+      "esri/graphic",
+      "esri/geometry/Point",
+      "esri/SpatialReference",
+      "dojo/domReady!"
+    ], function(
+      Map, StreamLayer, UniqueValueRenderer, Color, SimpleMarkerSymbol,
+      SimpleLineSymbol, Legend, PopupTemplate, Graphic, Point, SpatialReference
+    ) {
+
+        var map = new Map("viewDiv", {
+          basemap: "dark-gray",
+          center: [ -118.23318, 34.066536 ],
+          zoom: 11
+        });
+
+        var url = "https://geoeventsample1.esri.com:6443/arcgis/rest/services/LABus/StreamServer";
+
+        var layer = new StreamLayer(url, {
+          outFields: [ "route_id" ],
+          infoTemplate: new PopupTemplate({
+            title: "Route {route_id}",
+            description: "This bus is {expression/arcade-distance} miles from the convention center.",
+            fieldInfos: [{
+              fieldName: "expression/arcade-distance",
+              format: {
+                digitSeparator: true,
+                places: 2
+              }
+            }],
+            expressionInfos: [{
+              name: "arcade-distance",
+              title: "Distance from convention center",
+              expression: document.getElementById("arcade-distance").text
+            }]
+          })
+        });
+
+        var renderer = new UniqueValueRenderer({
+          valueExpression: document.getElementById("arcade-geofence").text,
+          valueExpressionTitle: "Distance from LA convention center",
+          uniqueValueInfos: [{
+            value: "within 3 miles",
+            symbol: createSymbol("#ff002e"),
+            label: "< 3 miles"
+          }, {
+            value: "far away",
+            symbol: createSymbol("#00c3ff"),
+            label: "> 3 miles"
+          }]
+        });
+
+        layer.setRenderer(renderer);
+        map.addLayer(layer);
+
+        map.on("load", function(evt){
+          var conventionCenterPoint = new Point(-13165819, 4034188, new SpatialReference({ wkid: 3857 }));
+          map.graphics.add(new Graphic(conventionCenterPoint, createSymbol([255,255,255], SimpleMarkerSymbol.STYLE_DIAMOND)));
+
+          var legend = new Legend({
+            map: map,
+            layerInfos: [{
+              layer: layer,
+              title: "City buses"
+            }]
+          }, "legendDiv");
+
+          legend.startup();
+        });
+
+        function createSymbol (color, style){
+          var outline = new SimpleLineSymbol()
+            .setColor(new Color([ 0, 0, 0, 0.2 ]))
+            .setWidth(0.5);
+
+            var symbol = new SimpleMarkerSymbol()
+              .setColor(new Color(color))
+              .setOutline(outline)
+              .setSize(6);
+
+            if(style){
+              symbol.setStyle(style);
+              symbol.setSize(12);
+            }
+
+          return symbol;
+        }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="info"><div id="legendDiv"></div></div>
+</body>
+
+</html>

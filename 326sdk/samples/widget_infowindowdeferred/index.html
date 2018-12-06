@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Info window with deferred object</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { 
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      } 
+      body{
+        background-color:white; overflow:hidden; 
+        font-family: "Kimberley", sans-serif
+      } 
+      #header {
+       -moz-border-radius: 5px;
+       border-radius:5px;
+       margin:5px;
+       padding-top: 4px;
+       padding-right: 15px;
+       background-color:#211E21; 
+       color:#FFC98C; 
+       font-size:16pt; text-align:right;font-weight:bold;
+       border: solid 2px #2A2F30;
+       height:55px;
+      }
+      #subheader {
+        font-size:small;
+        color: #cfcfcf;
+        text-align:right;
+        padding-right:20px;
+      }
+      #map {
+        margin:5px;
+        border:solid 4px #2A2F30;
+        padding:0px;
+      }
+      .shadow{
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        -webkit-box-shadow: 0 8px 6px -6px #999;
+        -moz-box-shadow: 0 8px 6px -6px #999;
+        box-shadow: 0 8px 6px -6px #999;
+      }
+    </style>
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script> 
+      var map, trailLayer;
+      var template;
+      var soeParams;
+      var soeURL = "https://sampleserver4.arcgisonline.com/ArcGIS/rest/services/Elevation/ESRI_Elevation_World/MapServer/exts/ElevationsSOE/ElevationLayers/1/GetElevationProfile";
+      
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/dijit/InfoWindow", "esri/InfoTemplate", 
+        "esri/symbols/SimpleLineSymbol", "esri/renderers/SimpleRenderer", 
+        "esri/request", "esri/config", "esri/geometry/webMercatorUtils",
+        "esri/Color", "dojo/json",
+        "dojo/parser", "dojo/Deferred", "dojo/number", "dojo/dom-construct", 
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, ArcGISTiledMapServiceLayer,
+        InfoWindow, InfoTemplate,
+        SimpleLineSymbol, SimpleRenderer,
+        esriRequest, esriConfig, webMercatorUtils,
+        Color, JSON,
+        parser, Deferred, number, domConstruct
+      ) {
+        //create dijit layout widgets
+        parser.parse();
+
+        //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to  
+        //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic 
+        //for details on setting up a proxy page.
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+
+        map = new Map("map", {
+          basemap: "satellite",
+          center: [-117.177, 34.0583],
+          zoom: 13
+        });
+
+        var infoWindow = new InfoWindow({}, domConstruct.create("div", null, map.root));
+        infoWindow.startup();
+        map.setInfoWindow(infoWindow);
+        map.infoWindow.resize(625, 240);
+        
+        //setup SOE parameters
+        soeParams = {};
+        soeParams.ImageWidth = 600;
+        soeParams.ImageHeight= 200;
+        soeParams.BackgroundColorHex= "#ffffff";
+        soeParams.DisplaySegments= false;
+        soeParams.f= "json";
+        
+        //add the trails feature layer to the map
+        template = new InfoTemplate();
+        template.setTitle("<b>${notes}</b>");
+        template.setContent(getTextContent);
+        
+        trailLayer = new FeatureLayer("https://sampleserver5.arcgisonline.com/ArcGIS/rest/services/LocalGovernment/Recreation/MapServer/1", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          infoTemplate: template,
+          outFields: ["*"]
+        });
+       
+        //create a new renderer for the feature layer
+        var lineSymbol = new SimpleLineSymbol("solid", new Color([0,255,0,0.7]), 5);
+        trailLayer.setRenderer(new SimpleRenderer(lineSymbol));
+        map.addLayer(trailLayer);
+
+        //add world place names to the map
+        var referenceLayer = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
+        map.addLayer(referenceLayer);
+
+        //Generate the content for the info window when the feature is clicked.
+        function getTextContent(graphic) {
+          console.log("get txt content", graphic);
+          var geometry = webMercatorUtils.webMercatorToGeographic(graphic.geometry);
+
+          //generate elevation profile
+          soeParams.InputPolyline = JSON.stringify(geometry.toJson());
+          soeParams.InputPolyline = JSON.stringify(geometry.toJson());
+          var def =  esriRequest({
+            url: soeURL,
+            content: soeParams,
+            callbackParamName: "callback",
+            load: function(fset) {
+              return "<img src='" + fset.profileImageUrl + "'/>";
+            }
+          });
+          return def;
+        }
+      });
+    </script> 
+  </head> 
+  <body class="claro"> 
+    <div id="mainWindow" 
+         data-dojo-type="dijit/layout/BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      <div id="header" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+        Click a trail to view the elevation profile
+      </div>
+
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" class="shadow" data-dojo-props="region:'center'"></div>
+
+   </div>
+  </body> 
+</html>

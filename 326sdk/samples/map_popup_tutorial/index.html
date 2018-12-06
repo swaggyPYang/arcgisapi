@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Create a Map</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+
+  <script>dojoConfig = { parseOnLoad:true };</script>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <style>
+    html, body, #mapDiv, .map.container {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+  <script>
+    dojo.require("esri.map");
+    dojo.require("esri.layers.FeatureLayer");
+    dojo.require("dojo.date.locale");
+
+    function init() {
+
+
+      var initialExtent = new esri.geometry.Extent({"xmin":-163.01, "ymin":3.52, "xmax":51.96, "ymax":64.17, "spatialReference":{"wkid":4326}});
+
+
+      var map = new esri.Map("mapDiv", {
+        extent:esri.geometry.geographicToWebMercator(initialExtent)
+      });
+
+      dojo.connect(window, 'resize', map, map.resize);
+
+      var basemapURL = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer";
+      var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapURL);
+
+      map.addLayer(basemap);
+
+      //define info window and format contents https://developers.arcgis.com/javascript/3/jsapi/infotemplate-amd.html
+      var template = esri.InfoTemplate({
+        title  :"${Venue}",
+        content:"${Date:DateFormat(selector: 'date', datePattern: 'MMMM d,yyyy')}<br>${City}, ${State}"
+      });
+      var featureLayer = new esri.layers.FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/U2/FeatureServer/0", {
+        infoTemplate:template,
+        outFields   :["*"]
+      });
+
+      //resize the info window
+      map.infoWindow.resize(160, 80);
+
+      //add a layer definition to filter to display the features
+      featureLayer.setDefinitionExpression("Tour = 'Unforgettable Fire 2nd Leg'");
+
+      //define new symbol for feature layer - generated with https://developers.arcgis.com/javascript/3/jshelp/inside_renderers.html
+      var symbol = new esri.symbol.PictureMarkerSymbol({
+        "angle"      :0,
+        "xoffset"    :0,
+        "yoffset"    :10,
+        "type"       :"esriPMS",
+        "url"        :"https://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png",
+        "contentType":"image/png",
+        "width"      :24,
+        "height"     :24
+      });
+      featureLayer.setRenderer(new esri.renderer.SimpleRenderer(symbol));
+
+      map.addLayer(featureLayer);
+
+
+    }
+
+    dojo.addOnLoad(init);
+  </script>
+
+</head>
+<body class="claro">
+<div id="mapDiv"></div>
+</body>
+</html>

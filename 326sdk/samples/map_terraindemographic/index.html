@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Terrain basemap with custom data</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{padding:0;}
+    </style>
+
+    <script>var dojoConfig = {parseOnLoad: true};</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          center: [19.46, 50.382],
+          zoom: 5
+        });
+        //Add the terrain service to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service    
+        var basemap = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer");
+        map.addLayer(basemap);
+        
+        //add custom services in the middle. This is typically data like demographic data, soils, geology etc.
+        //This layer is typically partly opaque so the base layer is visible. 
+        var operationalLayer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Population_World/MapServer", {"opacity":0.5});
+        map.addLayer(operationalLayer);
+        
+        //add the reference layer
+        var referenceLayer = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Reference_Overlay/MapServer");      
+        map.addLayer(referenceLayer);
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      
+      <div id="map" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'center'" 
+           style="overflow:hidden;">
+      </div>
+
+    </div>
+  </body>
+</html>

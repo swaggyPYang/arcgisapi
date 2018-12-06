@@ -1,0 +1,47 @@
+{
+  "name": "SimpleFillSymbol",
+  "type": "class",
+  "baseClass": "FillSymbol",
+  "baseLocation": "symbols/FillSymbol.json",
+  "variable": "fill",
+  "description": "Fill symbols are used to draw polygon features on the graphics layer. SimpleFillSymbol can be solid, transparent, or one of several cross hatch patterns. In addition, the symbol can have an optional outline, which is defined by a line symbol.",
+  "summary": "draw polygons",
+  "path": "esri/symbols/SimpleFillSymbol",
+  "toolbar": true,
+  "constructorArgs": ["style","outline","color"],
+  "properties": [
+    {
+      "name": "style",
+      "type": "String",
+      "default": "STYLE_SOLID",
+      "method": "setStyle",
+      "summary": "The line style",
+      "options": {
+        "type": "constants",
+        "className": "SimpleFillSymbol",
+        "values": [
+          "STYLE_BACKWARD_DIAGONAL",
+          "STYLE_CROSS",
+          "STYLE_DIAGONAL_CROSS",
+          "STYLE_FORWARD_DIAGONAL",
+          "STYLE_HORIZONTAL",
+          "STYLE_NULL",
+          "STYLE_SOLID",
+          "STYLE_VERTICAL"
+        ]
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "setStyle",
+      "parameters": [
+        {
+          "name": "style",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the fill symbol style"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>FeatureTable without map</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <script src="https://js.arcgis.com/3.26/"></script>
+
+  <style>
+    html, 
+    body, 
+    #myTableNode {
+      width:100%;
+      height:100%;
+      margin:0;
+      padding:0;
+    }
+    
+    #top, 
+    #bot {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script>
+    var map;
+
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/dijit/FeatureTable",
+      "dojo/dom",
+      "dojo/parser",
+      "dojo/ready",
+    ], function (
+      FeatureLayer, FeatureTable,
+      dom, parser, ready
+    ) {
+
+      parser.parse();
+
+      ready(function(){
+
+        // Create the feature layer
+        var myFeatureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/california_census_blocks/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields:  ["NAME","GEOID","MTFCC","ALAND","AWATER"],
+          visible: true,
+          id: "fLayer"
+        });
+
+        myTable = new FeatureTable({
+          featureLayer : myFeatureLayer,
+          showGridMenu: false,
+          hiddenFields: ["FID","C_Seq","Street"]  // field that end-user can show, but is hidden on startup
+        }, "myTableNode");
+
+        myTable.startup();
+      });
+    });
+  </script>
+</head>
+
+<body class="claro esri">
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters: false" style="width:100%; height:100%;">
+    <div id="top" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+    <p><em>The FeatureTable dijit supports tables with lots of features, with the table growing as you scroll.</em></p>
+    </div>
+    <div id="bot" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+      <div id="myTableNode"></div>
+    </div>
+  </div>
+</body>
+
+</html>

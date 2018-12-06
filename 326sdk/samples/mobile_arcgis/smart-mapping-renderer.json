@@ -1,0 +1,235 @@
+{
+  "drawingInfo": {
+    "renderer": {
+      "authoringInfo": {
+        "visualVariables": [
+          {
+            "maxSliderValue": 100,
+            "minSliderValue": 0,
+            "type": "transparencyInfo"
+          }
+        ]
+      },
+      "field1": "PredominantEduAttainment",
+      "type": "uniqueValue",
+      "uniqueValueInfos": [
+        {
+          "label": "Graduate Degree",
+          "symbol": {
+            "color": [
+              132,
+              0,
+              168,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "Graduate Degree"
+        },
+        {
+          "label": "College Degree",
+          "symbol": {
+            "color": [
+              0,
+              38,
+              115,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "College Degree"
+        },
+        {
+          "label": "Associates Degree",
+          "symbol": {
+            "color": [
+              0,
+              92,
+              230,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "Associates Degree"
+        },
+        {
+          "label": "Some College",
+          "symbol": {
+            "color": [
+              0,
+              169,
+              230,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "Some College"
+        },
+        {
+          "label": "High School Degree",
+          "symbol": {
+            "color": [
+              38,
+              115,
+              0,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "High School Degree"
+        },
+        {
+          "label": "Some High School",
+          "symbol": {
+            "color": [
+              152,
+              230,
+              0,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "Some High School"
+        },
+        {
+          "label": "No High School",
+          "symbol": {
+            "color": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                98
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "No High School"
+        },
+        {
+          "label": "Tie",
+          "symbol": {
+            "color": [
+              0,
+              38,
+              115,
+              255
+            ],
+            "outline": {
+              "color": [
+                153,
+                153,
+                153,
+                255
+              ],
+              "style": "esriSLSSolid",
+              "type": "esriSLS",
+              "width": 0.75
+            },
+            "style": "esriSFSSolid",
+            "type": "esriSFS"
+          },
+          "value": "Tie"
+        }
+      ],
+      "visualVariables": [
+        {
+          "field": "PrecentPredominantOfTotal",
+          "stops": [
+            {
+              "transparency": 60,
+              "value": 21
+            },
+            {
+              "transparency": 9.999999999999998,
+              "value": 39
+            }
+          ],
+          "type": "transparencyInfo"
+        }
+      ]
+    }
+  }
+}

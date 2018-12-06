@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10"/>
+    <title>SVG and CSS to style points</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/jsapi.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=News+Cycle"/>
+
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'News Cycle', sans-serif;
+            font-size: 0.90em;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Legend */
+        #legend {
+            height: 170px;
+            width: 800px;
+            position: absolute;
+            z-index: 1;
+            bottom: 1em;
+            left: 1em;
+            right: 1em;
+            background-color: #f8f8f8;
+            border-radius: 3px;
+            opacity: 0.95;
+            padding: 5px;
+        }
+        #title { font-weight: bold; font-size: 1.2em;}
+        #school {float: right; margin-right: 20px; max-width: 140px;}
+        #legend ul li { display: inline; float: left; margin-right: 30px; text-align: center; }
+        #symbols ul { margin: 0; padding: 0; list-style-type: none; }
+        
+        /* Symbolization */
+        #legend .symbol {
+          border-radius: 50%;
+          display: block; 
+          cursor: pointer;
+          margin: 5px auto 0;
+        }        
+        #map .symbol {
+          stroke-linecap: round;
+          stroke-linejoin: round; 
+          stroke-opacity: 1.0;
+          fill-opacity: 1.0;
+        }
+        
+        /* classbreaks */        
+        .nodata {
+            background-color: rgb(255, 0, 0););
+            fill: rgb(255, 0, 0););
+            opacity: 0.9;
+            stroke: rgb(255, 0, 0);
+        }
+        .symbol.nodata { width: 6px; height: 6px; }
+        .nodata_hover .nodata { stroke: rgb(100,0,0) }
+        .nodata_select .nodata { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        .small {
+            background-color: rgb(0, 89, 190);
+            fill: rgb(0, 89, 190);
+            opacity: 0.85;
+            stroke: rgb(0, 89, 190);
+            stroke-width: 3pt;
+        }
+        .symbol.small  { width: 6px; height: 6px; }
+        .small_hover .small { stroke: rgb(100,0,0) }
+        .small_select .small { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        .medium {
+            background-color: rgb(0, 89, 190);
+            fill: rgb(0, 89, 190);
+            opacity: 0.65;
+            stroke: rgb(0, 89, 190);
+            stroke-width: 10pt;
+        }
+        .symbol.medium { width: 16px; height: 16px; }
+        .medium_hover .medium { stroke: rgb(100,0,0) }
+        .medium_select .medium { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        .large {
+            background-color: rgb(0, 89, 190);
+            fill: rgb(0, 89, 190);
+            opacity: 0.35;
+            stroke: rgb(0, 89, 190);
+            stroke-width: 30pt;
+        }
+        .symbol.large  { width: 40px; height: 40px; }
+        .large_hover .large { stroke: rgb(100,0,0) }
+        .large_select .large { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        .xlarge {
+            background-color: rgb(0, 89, 190);
+            fill: rgb(0, 89, 190);
+            stroke: rgb(0, 89, 190);
+            stroke-width: 45pt;
+            opacity: 0.25;
+        }
+        .symbol.xlarge { width: 70px; height: 70px; }
+        .xlarge_hover .xlarge { stroke: rgb(100,0,0) }
+        .xlarge_select .xlarge { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        .xxlarge {
+            background-color: rgb(0, 89, 190);
+            stroke: rgb(0, 89, 190);
+            fill: rgb(0, 89, 190);
+            fill-opacity: 1;
+            stroke-width: 70pt;
+            stroke-opacity: 1;
+            opacity: 0.12;
+        }
+        .symbol.xxlarge{ width: 90px; height: 90px; }
+        .xxlarge_hover .xxlarge { stroke: rgb(100,0,0) }
+        .xxlarge_select .xxlarge { stroke: rgb(200,0,0); box-shadow: 0 0 5px 5px #FF0000;}
+
+        /* Interaction */
+        #map .symbol:hover {
+          opacity: 0.9;
+        }
+        #legend .symbol.active, #legend .symbol:hover {
+          box-shadow: 0 0 5px 5px #FF0000;
+        }
+
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+
+    <script>
+        require([
+            "esri/map",
+            "esri/layers/FeatureLayer",
+            "dojo/_base/array",
+            "dojo/dom-class",
+            "dojo/dom",
+            "dojo/number",
+            "dojo/on",
+            "dojo/parser",
+            "dojo/ready"
+        ], function (Map, FeatureLayer, array, domClass, dom, number, on, parser, ready) {
+
+            parser.parse();
+
+            ready(function () {
+                var map = new Map("map", {
+                    basemap:"gray",
+                    center:[-72, 42.028175],
+                    zoom:9
+                });
+
+                var featureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/colleges/FeatureServer/0", {
+                    id:"featureLayer",
+                    styling:false,
+                    dataAttributes:["COLLEGE", "UNDERGRAD", "GRAD", "CITYST"]
+                });
+
+                if (featureLayer.surfaceType === "svg") {
+                    on(featureLayer, "mouse-over", function (evt) {
+                        var underGradCount = evt.graphic.attributes.UNDERGRAD;
+                        dom.byId("school").innerHTML = evt.graphic.attributes.COLLEGE + "<br />" +
+                                evt.graphic.attributes.CITYST + "<br />Enrollment: " +
+                                number.format(underGradCount, { places:0 }) + "<br />";
+
+                        domClass.add("legend_" + evt.graphic.attributes.SIZE, "active");
+                    });
+                    
+                    on(featureLayer, "mouse-out", function (evt) {
+                        domClass.remove("legend_" + evt.graphic.attributes.SIZE, "active");
+                    });
+
+                    on(featureLayer, "graphic-draw", function (evt) {
+                        var underGradCount = evt.graphic.attributes.UNDERGRAD;
+
+                        var enrollmentSize;
+                        if (underGradCount < 1) {
+                            enrollmentSize = "nodata";
+                        } else if (underGradCount > 0 && underGradCount < 3000) {
+                            enrollmentSize = "small";
+                        } else if (underGradCount >= 3000 && underGradCount < 6000) {
+                            enrollmentSize = "medium";
+                        } else if (underGradCount >= 6000 && underGradCount < 9000) {
+                            enrollmentSize = "large";
+                        } else if (underGradCount >= 9000 && underGradCount < 12000) {
+                            enrollmentSize = "xlarge";
+                        } else if (underGradCount >= 12000) {
+                            enrollmentSize = "xxlarge";
+                        }
+                        evt.graphic.attributes.SIZE = enrollmentSize;
+                        // set the data attribute for the feature
+                        evt.node.setAttribute("class", enrollmentSize + " symbol");
+                    });
+                }
+
+                map.addLayer(featureLayer);
+                var symbols = dojo.query("#legend .symbol");
+                symbols.on("mouseover", function(evt) {
+                  dojo.addClass("body", evt.target.getAttribute("data-size") + "_hover");
+                });
+                symbols.on("mouseout", function(evt) {
+                  dojo.removeClass("body", evt.target.getAttribute("data-size") + "_hover");
+                });
+                symbols.on("click", function(evt) {
+                  dojo.toggleClass("body", evt.target.getAttribute("data-size") + "_select");
+                });
+            });
+        });
+    </script>
+</head>
+
+<body id="body">
+<div id="map"></div>
+<div id="legend">
+    <div id="title">2012 Undergraduate Enrollment</div>
+    <div id="school"></div>
+    <ul>
+      <li>+12,000       <span id="legend_xxlarge" data-size="xxlarge" class="symbol xxlarge"></span></li>
+      <li>12,000-9,000  <span id="legend_xlarge"  data-size="xlarge" class="symbol xlarge"></span></li>
+      <li>8,999 - 6,000 <span id="legend_large"   data-size="large"  class="symbol large"></span></li>
+      <li>5,999 - 3,000 <span id="legend_medium"  data-size="medium" class="symbol medium"></span></li>
+      <li>2,999 - 0     <span id="legend_small"   data-size="small"  class="symbol small"></span></li>
+      <li>No data       <span id="legend_nodata"  data-size="nodata" class="symbol nodata"></span></li>
+    </ul>
+</div>
+</body>
+
+</html>

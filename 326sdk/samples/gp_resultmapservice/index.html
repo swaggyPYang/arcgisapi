@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Geoprocessing - Export result as map service</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; }
+      .shadow {
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      #map{ margin: 0; padding: 0; }
+      #leftPanel {
+        margin:5px;
+        background: #fff;
+        color: #444;
+        font-family: arial;
+        width: 250px;
+        border-right: solid 1px #888;
+      }
+      #footer{
+        border-top: solid 1px #888;
+        height:55px;
+      }
+
+      #status{
+        background-color:#E0E0E0; 
+        color: #707070; 
+        font-weight:bold;
+        padding: 3px; 
+        border: solid 1px #707070;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;    
+        border-radius:5px;
+        position:absolute;
+        top:50%;
+        right:50%;
+        z-index:100;
+        display:none;
+        height:20px;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var app;
+
+      require(["dojo/dom",
+          "dojo/_base/array",
+          "dojo/date/locale",
+          "dojo/parser",
+          "dijit/registry",
+
+          "esri/domUtils",
+          "esri/map",
+          "esri/graphic",
+          "esri/layers/ArcGISDynamicMapServiceLayer",
+          "esri/layers/FeatureLayer",
+          "esri/tasks/Geoprocessor",
+          "esri/dijit/Legend",
+
+          "dijit/form/DateTextBox",
+          "dijit/layout/BorderContainer",
+          "dijit/layout/ContentPane"],
+    function(dom, array, locale, parser, registry,
+             domUtils, Map, Graphic, ArcGISDynamicMapServiceLayer, FeatureLayer, Geoprocessor, Legend){
+      var gpServiceUrl= "https://sampleserver6.arcgisonline.com/arcgis/rest/services/911CallsHotspot/GPServer/911%20Calls%20Hotspot",
+          legend;
+      
+      parser.parse();
+
+      var map = new Map("map",{
+        basemap: "streets",
+        center: [-122.81, 45.466],
+        zoom: 13
+      });
+      
+      var gp = new Geoprocessor(gpServiceUrl);
+      
+      //Run the gp task when the app loads to display default incidents 
+      map.on("load", findHotspot);
+      
+      function findHotspot(){
+        var params = {
+          Query: buildDefinitionQuery()
+        };
+        //cleanup any results from previous runs 
+        cleanup();
+        gp.submitJob(params, gpJobComplete, gpJobStatus, gpJobFailed);
+      }
+
+      function gpJobComplete(jobinfo){
+        //get the result map service layer and add to map
+        gp.getResultImageLayer(jobinfo.jobId, null, null, function(layer){
+          layer.setOpacity(0.7);
+          map.addLayers([layer]);
+        });
+        
+        map.on("layers-add-result", function(evtObj) {
+          domUtils.show(dom.byId('legendDiv'));          
+          if( !legend ) { 
+            //add the legend to show the resulting layer. 
+            var layerInfo = array.map(evtObj.layers, function(layer,index){
+              return {
+                layer: layer.layer,
+                title: layer.layer.name
+              };
+            });
+          
+            legend = new Legend({
+              map: map,
+              layerInfos: layerInfo
+            },"legendDiv");
+            legend.startup();
+          }
+        });
+      }      
+      
+      function gpJobStatus(jobinfo){
+        domUtils.show(dom.byId('status'));
+        var jobstatus = '';
+        switch (jobinfo.jobStatus) {
+          case 'esriJobSubmitted':
+            jobstatus = 'Submitted...';
+            break;
+          case 'esriJobExecuting':
+            jobstatus = 'Executing...';
+            break;
+          case 'esriJobSucceeded':
+            domUtils.hide(dom.byId('status'));
+            break;
+        }
+        dom.byId('status').innerHTML = jobstatus;
+      }
+      function gpJobFailed(error){
+        dom.byId('status').innerHTML = error;
+        domUtils.hide(dom.byId('status'));
+      }
+      function buildDefinitionQuery(){
+        var defQuery;
+        //get input info from form and build definition expression
+        var startDate = locale.format(registry.byId('fromDate').value, {
+            datePattern: 'yyyy-MM-dd hh:mm:ss',
+            selector: 'date'
+        });
+        var endDate = locale.format(registry.byId('toDate').value, {
+            datePattern: 'yyyy-MM-dd hh:mm:ss',
+            selector: 'date'
+        });
+        var def = [];
+        def.push("(Date >= date '" + startDate + "' and Date <= date '" + endDate + "')");            
+        def.push("(Day = 'SUN' OR Day= 'SAT' OR Day = 'FRI' OR Day ='MON' OR Day='TUE' OR Day='WED' OR Day ='THU')");
+ 
+        if (def.length > 1) {
+            defQuery = def.join(" AND ");
+        }   
+        return defQuery;
+      }
+      
+      function cleanup(){
+        //hide the legend and remove the existing hotspot layer
+        domUtils.hide(dom.byId('legendDiv'));
+        var hotspotLayer = map.getLayer('HotspotLayer');
+        if(hotspotLayer){
+          map.removeLayer(hotspotLayer);
+        }
+      }
+      app = {
+        findHotspot: findHotspot
+      };
+    });
+    </script>
+  </head>
+
+<body class="tundra">
+  <div data-dojo-type="dijit.layout.BorderContainer"
+       data-dojo-props="design:'headline',gutters:false"
+       style="width: 100%; height: 100%; margin: 0;">
+
+    <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      <span id="status" style='position:absolute;bottom:5px;'></span> 
+    </div>
+    
+    <div id="leftPanel" data-dojo-type="dijit.layout.ContentPane"data-dojo-props="region:'left'">
+      <div id="info">
+        <div style="padding-bottom:20px;width:40px">
+          <label for="fromDate">From:</label>
+          <br/>
+          <input type="text" name="fromDate" id="fromDate" value="1998-01-01" dojoType="dijit.form.DateTextBox"
+              required="true" constraints="{min:'1998-01-01',max:'1998-05-31'}" onChange="dijit.byId('toDate').constraints.min = arguments[0];"/>
+          <br/>
+          <label for="toDate">To:</label>
+          <br/>
+          <input type="text" name="toDate" id="toDate" value="1998-01-07" dojoType="dijit.form.DateTextBox"
+              required="true" constraints="{min:'1998-01-01',max:'1998-05-31'}" />
+        </div>
+
+        <div align="center">
+          <button  id="hotspotButton" onclick="app.findHotspot();">Analyze 911 Calls</button>
+        </div>
+      </div>
+      
+      <div id='legendDiv' style='display:none;margin-top:15px;'></div>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,8 @@
+﻿
+/* Simple Infographic */
+
+.esriGESimpleInfographic {
+    font-size: 13px;
+    position: relative;
+    overflow: hidden;
+}

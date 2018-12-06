@@ -1,0 +1,178 @@
+<!DOCTYPE HTML> 
+  <html> 
+  <head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Localization</title> 
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html,body{
+        height:100%;
+        margin:0;
+        overflow:hidden;
+        padding:0;
+      }
+      #map{
+        padding:0;
+        border:solid 1px #595241;
+      }
+      #appLayout{
+        height:100%;
+      }
+      .header{
+       color:#282828;
+       font-size: 18px !important;
+      }
+      .claro .demoLayout .edgePanel{
+        /*background-color, border*/
+      }
+      /*text area width height (attribute inspector)*/
+     .claro .dijitEditor .dijitEditorIFrameContainer {
+        height:80px;
+        width:170px;
+        border:solid 1px #1B2736;
+     }
+     .templatePicker{
+       border-radius: 0px 0px 4px 4px !important;
+     }
+     .claro .dijitToolbar{
+        border:none;
+        background-color: #8CA4B8;
+     }
+      #leftContainer {
+        width:14em;
+        margin:0;
+        padding:0;
+      } 
+   
+      #paneContent {
+        height:100%;
+        width:100%;
+        margin:0;
+      }
+
+      #paneHeader {
+        background-color:#8CA4B8;
+        border:solid 1px #1B2736;
+        color:#1B2736;
+        height:28px;
+        font-size:18px;
+        line-height:26px;
+        overflow:hidden;
+        margin:0;
+        padding:10px 10px 10px 15px;
+      }
+      #paneBody {
+        border:none;
+        margin:0;
+      }
+      #paneBody .panel_content {
+        padding:10px;
+      }
+      .esriAttributeInspector .atiRichTextField .dijitEditorIFrameContainer{
+        height:60px;
+      }
+      .templatePicker .itemLabel{
+        display:none;
+      }
+    </style>
+    
+    <script>var dojoConfig = { 
+        parseOnLoad: true,
+        locale:'ja'
+      };
+    </script>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script> 
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.StackContainer");
+      
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.editing.Editor-all");
+     
+      var map;
+
+      function init() {
+       //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic for details on setting up a proxy page.
+       esri.config.defaults.io.proxyUrl = "/proxy/";
+       
+       //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications. 
+       esri.config.defaults.geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+        
+       map = new esri.Map("map", { 
+        basemap: "topo",
+        center: [-79.047, 35.91],
+        zoom: 16
+       });
+
+        dojo.connect(map, "onLayersAddResult", initEditor);
+        
+        //add the editable layer
+        var requestLayer = new esri.layers.FeatureLayer("https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/CitizenRequests/FeatureServer/0",{
+          outFields:['name','comment','requestdate']
+        });
+        map.addLayers([requestLayer]);
+      }
+        
+      function initEditor(results){      
+       //initialize the editor
+       var layer = results[0].layer;
+       var templatePicker = new esri.dijit.editing.TemplatePicker({
+          featureLayers: [layer],
+          grouping: false,
+          rows: 'auto',
+          columns: 2
+        }, 'templateDiv');
+        templatePicker.startup();
+        
+        var layerInfos = [{'featureLayer':layer,
+           'showAttachments':false,
+           'isEditable': true,
+           'fieldInfos': [
+           {'fieldName': 'name', 'label':'Name:'},
+           {'fieldName': 'requestdate', 'label':'Date:'},
+           {'fieldName': 'comment', 'label':'Details:',
+            'stringFieldOption':esri.dijit.AttributeInspector.STRING_FIELD_OPTION_RICHTEXT,
+            'richTextPlugins':['bold','italic','createLink','unlink']}
+           ]}];
+        
+        var settings = {
+          map: map,
+          templatePicker: templatePicker,
+          toolbarVisible: true,
+          layerInfos: layerInfos
+        };
+        var params = {
+          settings: settings
+        };
+        var editorWidget = new esri.dijit.editing.Editor(params,'editorDiv');
+        editorWidget.startup();
+        //resize the info window to resize the attribute inspector
+        map.infoWindow.resize(270,220);
+      } 
+      dojo.ready(init);
+    </script> 
+  </head> 
+  <body class="claro"> 
+    <div id="appLayout" class="demoLayout" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design: 'sidebar'"> 
+      <div id="map"  data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'"> 
+      </div>
+      <div id="leftContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="region: 'left'"> 
+        <div id="paneHeader" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+          <span>Localized Editor</span>
+        </div>
+        <div id="paneBody" data-dojo-type="dijit.layout.StackContainer" data-dojo-props="region:'center'">
+          <div id="panel1" class="panel_content" data-dojo-type="dijit.layout.ContentPane">
+            <div id="editorDiv"></div>
+            <div id="templateDiv"></div>
+            <div style="margin-top:5px;">This sample sets the locale to Japanese to demonstrate the localization capabilities of the esri and dojo dijits. Mouse-over the tools and note that the Editor and Drawing tooltips are in Japanese. Click a feature to view the attribute inspector and note that the rich text editor and calendar tools are also in Japanese.
+            </div>            
+          </div>  
+        </div> 
+      </div> 
+    </div> 
+  </body> 
+  </html> 

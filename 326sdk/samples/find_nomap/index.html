@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Simple Find</title>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.tasks.find");
+
+      var find, params;
+      function init() {
+        find = new esri.tasks.FindTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer/");
+        params = new esri.tasks.FindParameters();
+        params.layerIds = [2];
+        params.searchFields = ["STATE_NAME","STATE_FIPS"];
+      }
+
+      function doFind() {
+        params.searchText = dojo.byId("searchText").value;
+        find.execute(params, showResults);
+      }
+
+      function showResults(results) {
+        var result, attribs;
+        var s = ["<table border=\"1\"><thead><tr style=\"background-color:#ccc;\"><td>State Name</td><td>FIPS</td><td>Population (1990)</td><td>Population (1999)</td></tr></thead><tbody id=\"states\">"];
+        dojo.forEach(results,function(result){
+          attribs = result.feature.attributes;
+           s.push("<tr><td>" + attribs.STATE_NAME + "</td><td>" + attribs.STATE_FIPS + "</td><td>" + attribs.POP1990 + "</td><td>" + attribs.POP1999 + "</td></tr>");
+        });
+        s.push("</tbody></table>");
+        dojo.byId("tbl").innerHTML = s.join("");
+      }
+
+      dojo.ready(init);
+    </script>
+
+  </head>
+  <body class="claro">
+    Find by State Name or State FIPS: <input type="text" id="searchText" size="40" value="Kansas" />
+    <input type="button" value="Find" onclick="doFind()" />
+    <div id="tbl"></div>
+  </body>
+</html>

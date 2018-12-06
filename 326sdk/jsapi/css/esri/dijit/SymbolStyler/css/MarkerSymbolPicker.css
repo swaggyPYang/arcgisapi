@@ -1,0 +1,89 @@
+.esriMarkerSymbolPicker {
+  position: relative;
+  width: 290px;
+  padding: 8px 0;
+}
+
+.esriMarkerSymbolPicker .templatePicker {
+  border: none;
+  padding: 0;
+}
+
+.esriMarkerSymbolPicker .templatePicker .dojoxGrid {
+  height: auto !important; /* inline style workaround :( */
+  width: auto !important; /* inline style workaround :( */
+}
+
+.esriMarkerSymbolPicker .templatePicker .dojoxGridCell {
+  padding: 0;
+  width: 3.43em !important; /* inline style workaround :( */
+}
+
+.esriMarkerSymbolPicker .templatePicker .dojoxGridCell.dojoxGridCellOver .item {
+  cursor: pointer;
+}
+
+.esriMarkerSymbolPicker .templatePicker .dojoxGridCell.selectedItem .item {
+  cursor: auto;
+}
+
+.esriMarkerSymbolPicker.esriDefaultSymbols .esriContainer {
+  height: auto;
+}
+
+.esriMarkerSymbolPicker .esriContainer {
+  height: 180px;
+  overflow: auto;
+}
+
+.esriMarkerSymbolPicker .esriTypeInput {
+  margin-bottom: 10px;
+}
+
+.esriMarkerSymbolPicker .esriTypeInput .dijitButtonContents {
+  width: 100%;
+}
+
+.esriMarkerSymbolPicker .dijitSelectLabel {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 17em; /* (floor(grid cell width) * cells per row) - 1em padding*/
+}
+
+.esriMarkerSymbolPicker .esriOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: none;
+}
+
+.esriMarkerSymbolPicker.esriNoSymbols .esriOverlay {
+  display: inline;
+}
+
+/* Absolute Horizontal And Vertical Centering In CSS */
+/* http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/ */
+
+.esriMarkerSymbolPicker .esriOverlay .esriCenterContainer.esriTable {
+  width: 100%;
+  height: 100%;
+
+  display: table;
+}
+
+.esriMarkerSymbolPicker .esriOverlay .esriTable .esriTableCell {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.esriMarkerSymbolPicker .esriOverlay .esriTable .esriCenterBlock {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.dijitMenuPopup[dijitpopupparent^="esri_dijit_SymbolStyler_MarkerSymbolPicker_"] .dijitMenuItemLabel {
+  font-family: "Avenir LT W01 65 Medium", Arial, Helvetica, sans-serif;
+}

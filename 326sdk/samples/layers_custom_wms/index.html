@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>WMS</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      var map;
+
+      dojo.ready(function() {
+        dojo.declare("my.CityStatesRiversUSAWMSLayer", esri.layers.DynamicMapServiceLayer, {
+          constructor: function() {
+            this.initialExtent = this.fullExtent = new esri.geometry.Extent({"xmin":-16476154.32,"ymin":2504688.54,"xmax":-6457400.14,"ymax":7514065.62,"spatialReference":{"wkid":102100}});
+            this.spatialReference = new esri.SpatialReference({wkid:102100});
+
+            this.loaded = true;
+            this.onLoad(this);
+          },
+
+          getImageUrl: function(extent, width, height, callback) {
+            var params = {
+              request: "GetMap",
+              transparent: true,
+              format: "image/png",
+              bgcolor: "ffffff",
+              version: "1.1.1",
+              layers: "0,1",
+              styles: "default,default",
+              exceptions: "application/vnd.ogc.se_xml",
+
+              //changing values
+              bbox:extent.xmin + "," + extent.ymin + "," + extent.xmax + "," + extent.ymax,
+              srs: "EPSG:" + extent.spatialReference.wkid,
+              width: width,
+              height: height
+            };
+
+            callback("https://sampleserver1.arcgisonline.com/arcgis/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer/WMSServer?" + dojo.objectToQuery(params));
+          }
+        });
+      });
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "satellite",
+          center: [-103.008, 40.98],
+          zoom: 4
+        });
+        map.addLayer(new my.CityStatesRiversUSAWMSLayer());
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    <div id="map"  style="position:relative; width:1024px; height:512px; border:2px solid #000;"></div>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+﻿
+/* Template Floating Element */
+
+.floatingElementContainer.esriGEAdjustableGridValueField .floatingElement {
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Floating Element Container */
+
+/* preview */
+.esriGEReportPlayer_section .floatingElementContainer.esriGEAdjustableGridValueField {
+    overflow: visible;
+}
+
+/* SVG */
+
+.esriGEReportPlayer_section .shapeContainer_svgContainer {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.esriGEReportPlayer_section .shapeContainer_svgContainerBackground {
+    opacity: 0.3;
+}
+
+.esriGEReportPlayer_section .shapeContainer_svgContainerElement {
+    position: absolute;
+    top: 0px;
+}
+
+/* SVG Placeholder */
+
+.esriGEReportPlayer_section .shapeContainer_svgPlaceholder {
+    background-image: url("./images/addShape.svg");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: inherit;
+    height: inherit;
+}
+
+.esriGEReportPlayer_section .valueField_valueBlock:hover .shapeContainer_svgPlaceholder {
+    background-image: url("./images/addShape_over.svg");
+}
+
+.esriGEReportPlayer_section .shapeContainer_svgPlaceholderText {
+    margin-top: -10px;
+    width: 100%;
+    text-align: center;
+}
+
+/* hide it in the report container, it can be shown somewhere else when editing a section */
+.esriGEReportPlayer_reportContainerGrid .shapeContainer_svgPlaceholder {
+    display: none;
+}
+
+/* Logo Placeholder (default and short) */
+
+.floatingElementContainer.esriGEAdjustableGridValueField.templateImage_logoPlaceholder {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("./images/logo/logoCircle.svg");
+}
+
+    .floatingElementContainer.esriGEAdjustableGridValueField.templateImage_logoPlaceholder .templateImage {
+        opacity: 0;
+    }
+
+    .floatingElementContainer.esriGEAdjustableGridValueField.templateImage_logoPlaceholder.templateImage_logoPlaceholderShort {
+        background-image: none;
+    }

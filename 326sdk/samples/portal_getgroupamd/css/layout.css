@@ -1,0 +1,45 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow:hidden;
+}
+#grid {
+  height:100%;
+}
+#grid .dgrid-row {
+  clear:both;
+  min-height:64px;
+  padding:0.5em;
+}
+#gridpane{
+  overflow:hidden;
+}
+.thumbnail {
+  float:left;
+  width:72px;
+  height:64px;
+}
+.group-id {
+  font-weight:bold;
+}
+.title {
+  padding-right:4px;
+  font-weight:bold;
+  margin-bottom:1em;
+}
+.owner{
+  padding-right:4px;
+  font-style:italic;
+}
+.summary{
+  margin: .5em;
+}
+#signIn {
+  position:absolute;
+  top:18px;
+  right:20px;
+  text-decoration:underline;
+  cursor:pointer;
+}

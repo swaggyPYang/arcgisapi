@@ -1,0 +1,99 @@
+﻿/* Report Player */
+
+.esriGEReportPlayer {
+    position: relative;
+    min-height: 150px;
+}
+
+    /* Resize Modes */
+
+    .esriGEReportPlayer.esriGEReportPlayerFullScreen {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        z-index: 150; /* above the map when run in the full screen over a map */
+    }
+
+    /* Page Navigator */
+
+    .esriGEReportPlayer .reportPlayer_sidePageNavigator {
+        position: absolute;
+        top: 70px;
+        right: 30px;
+    }
+
+    /* Pagination View */
+
+    .esriGEReportPlayer.esriGEReportPlayerPaginationView {
+    }
+
+        .esriGEReportPlayer.esriGEReportPlayerPaginationView .reportPalyer_printableDivContainer {
+            text-align: center;
+        }
+
+        .esriGEReportPlayer.esriGEReportPlayerPaginationView .reportPalyer_printableDiv {
+            display: inline-block;
+        }
+
+    /* Error */
+
+    .esriGEReportPlayer .esriGEReportPlayerErrorMessage {
+        color: red;
+        font-size: 13px;
+        text-align: center;
+        padding: 100px;
+        text-align: center;
+    }
+
+    .esriGEReportPlayer.playerThemeDark .esriGEReportPlayerErrorMessage {
+        color: white;
+    }
+
+    /* Classic Reports: prettify */
+
+    .esriGEReportPlayer .esriGEReportPlayer_pageBreak {
+        display: none;
+    }
+
+    /* Esri Infographics */
+
+    .esriGEReportPlayer .Tapestry_Details_Image div:first-child {
+        background-size: cover;
+    }
+
+    .esriGEReportPlayer .RelatedVariables_ComparisonDiv {
+        text-align: right;
+    }
+
+    /* Dark Theme */
+
+    .esriGEReportPlayer.playerThemeDark {
+        background-color: #525659;
+    }
+
+        .esriGEReportPlayer.playerThemeDark .esriGEReportPlayerProgress {
+            background-color: rgba(82, 86, 89, 0.8);
+        }
+
+    /* Light Theme */
+
+    .esriGEReportPlayer.playerThemeLight {
+        background-color: #FFFFFF;
+    }
+
+        .esriGEReportPlayer.playerThemeLight .esriGEReportPlayerProgress {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+    /* Waiting */
+
+    .esriGEReportPlayer .esriGEReportPlayerWaitingNode {
+        min-width: 250px;
+        min-height: 150px;
+    }
+
+    .esriGEReportPlayer .esriGEWaitingMessageProgressBar {
+        height: 5px;
+    }

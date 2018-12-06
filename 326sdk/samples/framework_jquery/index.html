@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0:, user-scalable=no">
+
+
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="mobile-web-app-capable" content="yes">
+<title>Esri Map and jQuery</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.min.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<style>
+  html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 1em;
+    font-family: Roboto, "Helvetica Neue", Verdana, Geneva, Arial, Helvetica, sans-serif;
+  }
+
+  #map {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  #jqSlider {
+    position: absolute;
+    left: 2em; /* 32 pixels */
+    top: 15.65em; /* 250 pixels */
+    height: 12.5em; /* 200 pixels */
+    z-index: 2;
+    font-size: 0.75em; /* 12 pixels */
+  }
+
+  #ui-sample-description {
+    position: absolute;
+    top: 1.25em;
+    left: 1.25em;
+    right: 1.25em;
+    z-index: 2;
+    background-color: #fff;
+    border-radius: 0.3125em;
+    border: 0.0625em #AAAAAA solid;
+  }
+
+  #ui-sample-feedback {
+    bottom: 1.25em;
+    left: 1.25em;
+    z-index: 2;
+    position: absolute;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 0.3125em;
+    border: 0.0625em #AAAAAA solid;
+  }
+
+  .simpleInfoWindow, .simpleInfoWindow .title {
+    border-color: #5C9CFF;
+  }
+
+  .simpleInfoWindow .title {
+    font-weight: bold;
+  }
+
+  .ui-header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.875em;
+    color: #FFFFFF;
+    background-color: #67656c;
+    padding: 0.625em 0 0 0.625em;
+    border-radius: 0.3125em 0.3125em 0 0;
+    border-bottom-color: #FFFFFF;
+    border-bottom-width: 0.3125em;
+  }
+
+  .ui-content {
+    color: #343434;
+    background-color: #fff;
+    padding: 0.625em 0.625em;
+    border-radius: 0 0 0.3125em 0.3125em;
+  }
+
+  .ui-drop-shadow {
+    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .ui-state-default,
+  .ui-widget-content .ui-state-default,
+  .ui-widget-header .ui-state-default {
+    border: 2px solid #67656c;
+  }
+
+  .ui-widget-content {
+    border: 2px solid #67656c;
+    color: #555555;
+  }
+</style>
+
+<script src="https://js.arcgis.com/3.26compact/"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+<script>
+  var map;
+
+  require([
+      "dojo/dom",
+      "dojo/on",
+      "esri/Color",
+      "esri/config",
+      "esri/geometry/webMercatorUtils",
+      "esri/graphic",
+      "esri/lang",
+      "esri/map",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "dojo/domReady!"
+    ],
+    function (dom, on, Color, esriConfig, webMercatorUtils, Graphic, lang, Map, SimpleFillSymbol, SimpleLineSymbol,
+      SimpleMarkerSymbol){
+
+      var zoomSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+          new Color([20, 156, 255]), 1), new Color([141, 185, 219, 0.3]));
+
+      esriConfig.defaults.map.zoomSymbol = zoomSymbol.toJson();
+
+      map = new Map("map", {
+        basemap: "gray",
+        center: [2.352, 48.87],
+        zoom: 12,
+        slider: false
+      });
+
+      on(map, "load", function (){
+        console.log("Map load event");
+        // Hook up jQuery
+        $(document).ready(jQueryReady);
+      });
+
+      on(map, "layer-add", function (){
+        console.log("Map layer-add event");
+      });
+
+      on(map, "extent-change", showExtent);
+
+      map.infoWindow.resize(150, 100);
+
+      function showExtent(event){
+        console.log("Map extent-change", JSON.stringify(event.extent));
+        var innerContent;
+        var extent = webMercatorUtils.webMercatorToGeographic(event.extent);
+        innerContent = "XMin: " + extent.xmin.toFixed(2) + "&nbsp;" +
+          "YMin: " + extent.ymin.toFixed(2) + "&nbsp;" +
+          "XMax: " + extent.xmax.toFixed(2) + "&nbsp;" +
+          "YMax: " + extent.ymax.toFixed(2);
+
+        dom.byId("info").innerHTML = innerContent;
+      }
+
+      // jQuery stuff
+      function jQueryReady(){
+        // Create jQuery Slider
+        createSlider();
+
+        var markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_X,
+          12, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+            new Color([92, 156, 255, 1]), 4));
+
+        var graphic;
+
+        on(map, "click", function (event){
+          console.log("Map click event");
+          // Add a graphic at the clicked location
+          if (graphic) {
+            graphic.setGeometry(event.mapPoint);
+          }
+          else {
+            graphic = new Graphic(event.mapPoint, markerSymbol);
+            map.graphics.add(graphic);
+          }
+
+          formatNumber = function (value, key, data){
+            return value.toFixed(2);
+          };
+
+          var infoContent = lang.substitute(
+            webMercatorUtils.webMercatorToGeographic(event.mapPoint),
+            "Latitude (y): ${y:formatNumber} <br> Longitude (x): ${x:formatNumber}");
+
+          map.infoWindow.setTitle("Location:");
+          map.infoWindow.setContent(infoContent);
+          map.infoWindow.show(event.mapPoint);
+        });
+      }
+
+      function createSlider(){
+        $("#jqSlider").slider({
+          min: 0,
+          max: map.getLayer(map.layerIds[0]).tileInfo.lods.length - 1,
+          value: map.getLevel(),
+          orientation: "vertical",
+          range: "min",
+          change: function (event, ui){
+            map.setLevel(ui.value);
+          }
+        });
+
+        on(map, "zoom-end", function (){
+          $("#jqSlider").slider("value", map.getLevel());
+        });
+      }
+    });
+</script>
+</head>
+<body>
+  
+  <div id="map"></div>
+  
+  <div id="jqSlider"></div>
+  <div id="ui-sample-description" class="ui-drop-shadow">
+    <div class="ui-header">Description</div>
+    <div class="ui-content">
+      This sample demonstrates the use of <a href="http://jquery.com/" target="_blank">jQuery</a> library with
+      the ArcGIS API for JavaScript (compact). This sample uses the <a href="http://jqueryui.com/slider/"
+      target="_blank">Slider</a> UI widget.
+      Click on the map for location info.
+    </div>
+  </div>
+  <div id="ui-sample-feedback" class="ui-drop-shadow">
+    <div class="ui-header">Current extent</div>
+    <div id="info" class="ui-content"></div>
+  </div>
+</body>
+</html>

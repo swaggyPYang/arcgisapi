@@ -1,0 +1,205 @@
+/* --------------------------------------------------
+                  MAIN TOPIC STYLES
+-------------------------------------------------- */
+ body
+  {
+  margin: 0;
+  background: #ffffff; 
+  color: #000000;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 78%;
+    }
+ 
+#content {
+  padding: 0 10px 0 10px;
+  margin: 0 10px 0 10px;
+}
+
+#pageBanner {
+  PADDING-RIGHT: 0pt; PADDING-LEFT: 5px; FONT-WEIGHT: bold; FONT-SIZE: 130%; PADDING-BOTTOM: 4px; MARGIN: 23px 0pt 5px; COLOR: #000000; PADDING-TOP: 0pt; BORDER-BOTTOM: #ccc 1px solid; 
+}
+
+    
+/* --------------------------------------------------
+                    HEADING STYLES
+-------------------------------------------------- */
+
+h1, h2, h3, h4
+  {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  margin-bottom: .4em; 
+  margin-top: 1em;
+  font-weight: bold;
+  }
+h1
+  {
+  font-size: 120%;
+  margin-top: 0em;
+  }
+h2
+  {
+  font-size: 130%;
+  }
+h3
+  {
+  font-size: 115%;
+  }
+h4
+  {
+  font-size: 115%;
+  }
+
+.dtH1, .dtH2, .dtH3, .dtH4
+  {
+  margin-left: -18px;
+  }
+
+/* --------------------------------------------------
+                     TEXT STYLES
+-------------------------------------------------- */
+
+p
+  {
+  margin: 1.0em 0em .5em 0em;
+  }
+
+.blueFont 
+  {
+  color: 0000C8;
+  }
+
+.verdanaFont
+  {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 100%;
+  }
+    
+
+/* --------------------------------------------------
+           CODE, SYNTAX, and REFTIP STYLES
+-------------------------------------------------- */
+
+pre
+  {
+  margin-top: .5em;
+  margin-bottom: .5em; 
+  }
+pre, code, .code
+  {
+  font: 100% Monospace, Courier New, Courier; /* This is 100% of 70% */
+  color: #000066;
+  }
+pre b, code b
+  {
+  letter-spacing: .1em; /* opens kerning on bold in Syntax/Code */
+  }
+pre.syntax
+  {
+  background: #cccccc;
+  padding: 4px 8px;
+  cursor: text;
+  margin-top: 1em;
+  margin-bottom: 1em; 
+  color: #000000;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #999999;
+  }
+
+.inherits
+  {
+  font: 120% Monospace, Courier New, Courier; /* This is 100% of 70% */
+  color: #000066;
+  }
+/* --------------------------------------------------
+                      LINK STYLES
+-------------------------------------------------- */
+
+a:link
+  {
+  color: #0000C8;
+  }
+a:visited
+  {
+  color: #0000C8;
+  }
+a:hover
+  {
+  color: #3366ff;
+  }
+/* --------------------------------------------------
+     TABLE STYLES (all unique to JSDoc)
+-------------------------------------------------- */
+
+
+.tableheader
+  { 
+  border-color: #BFD9ED;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;  
+  background-color: #BFD9ED;
+  padding: 4px 6px;
+  /*font-size: 70%; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: .85em;
+  color: #000066;
+  text-align: left;
+  } 
+table.detailTABLE
+  {
+  width: 100%;  /*Forces tables to have correct right margin */
+  margin-top: .1em;
+  margin-bottom: .3em;
+  border-color: #BFD9ED;
+  border-width: 1px 1px 0px 1px;
+  border-style: solid;  
+  table-layout: fixed;
+  }
+
+td.detailTABLE
+  { 
+  border-color: #BFD9ED;
+  border-width: 0px 0px 1px 1px;
+  border-style: solid;  
+  background-color: #ffffff;
+  padding: 4px 6px;
+  font-size: 78%; 
+  /*font-family: Verdana, Arial, Helvetica, sans-serif;*/
+  /*font-size: .78em;*/
+  /*color: #000066;*/
+  vertical-align: top;
+  }
+
+th.detailTABLE
+  { 
+  border-color: #BFD9ED;
+  border-width: 0px 0px 1px 1px;
+  border-style: solid;  
+  background-color: #E5EFF7;
+  padding: 4px 6px;
+  /*font-size: 70%; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: .85em;
+  color: #000066;
+  } 
+  
+td.idname
+  { 
+  border-width: 0;
+  background-color: #E5EFF7;;
+  padding: 4px 6px;
+  vertical-align: top;
+  font-size: .78em;
+  }
+td.string /*pedetailTABLE*/
+  { 
+  border-color: #BFD9ED;
+  border-width: 1px 1px 1px 1px;
+  border-style: solid;  
+  background-color: #ffffff;
+  padding: 4px 6px;
+  vertical-align: top;
+  font-size: .78em;
+  word-wrap: break-word;
+  }
+          

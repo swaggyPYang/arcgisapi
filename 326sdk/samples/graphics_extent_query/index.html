@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Points in Extent</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.toolbars.draw");
+      dojo.require("esri.tasks.query");
+
+      //global variables
+      var map, defaultSymbol, highlightSymbol, resultTemplate;
+
+      function init() {
+        //create map, set initial extent and disable default info window behavior
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-120.275, 47.485],
+          zoom: 6,
+          slider: false,
+          showInfoWindowOnClick:false
+        });
+        dojo.connect(map, "onLoad", initToolbar);
+
+        //initialize symbology
+        defaultSymbol = new esri.symbol.SimpleMarkerSymbol().setColor(new dojo.Color([0,0,255]));
+        highlightSymbol = new esri.symbol.SimpleMarkerSymbol().setColor(new dojo.Color([255,0,0]));
+
+        //initialize & execute query
+        var queryTask = new esri.tasks.QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer/0");
+        var query = new esri.tasks.Query();
+        query.where = "STATE_NAME = 'Washington'";
+        query.outSpatialReference = {wkid:102100}; 
+        query.returnGeometry = true;
+        query.outFields = ["CITY_NAME"];
+        queryTask.execute(query, addPointsToMap);
+
+        //info template for points returned
+        resultTemplate = new esri.InfoTemplate("City", "<tr><td>${CITY_NAME}</tr></td>");
+      }
+
+      //initialize drawing toolbar
+      function initToolbar(map) {
+        var tb = new esri.toolbars.Draw(map);
+
+        //find points in Extent when user completes drawing extent
+        dojo.connect(tb, "onDrawEnd", findPointsInExtent);
+
+        //set drawing mode to extent
+        tb.activate(esri.toolbars.Draw.EXTENT);
+      }
+
+      //add points to map and set their symbology + info template
+      function addPointsToMap(featureSet) {
+        dojo.forEach(featureSet.features,function(feature){
+          map.graphics.add(feature.setSymbol(defaultSymbol).setInfoTemplate(resultTemplate));
+        });
+      }
+
+      //find all points within argument extent
+      function findPointsInExtent(extent) {
+        var results = [];
+        dojo.forEach(map.graphics.graphics,function(graphic){
+          if (extent.contains(graphic.geometry)) {
+            graphic.setSymbol(highlightSymbol);
+            results.push(graphic.getContent());
+          }
+          //else if point was previously highlighted, reset its symbology
+          else if (graphic.symbol == highlightSymbol) {
+            graphic.setSymbol(defaultSymbol);
+          }
+        });
+   
+        //display number of points in extent
+        dojo.byId("inextent").innerHTML = results.length;
+
+        //display list of points in extent
+        dojo.byId("results").innerHTML = "<table><tbody>" + results.join("") + "</tbody></table>";
+      }
+
+      dojo.addOnLoad(init);
+    </script>
+
+  </head>
+  <body class="claro">
+    Draw an Extent on the map to find all points within this extent
+
+    
+    <div id="map" style="width:800px; height:400px; border:1px solid #000;"></div>
+    <br />
+
+    
+    <b># of points in extent = <span id="inextent">0</span></b>
+
+    
+    <div id="results" style="width:400px; height:200px; border:1px solid #000; overflow:auto;">
+    </div>
+  </body>
+</html>

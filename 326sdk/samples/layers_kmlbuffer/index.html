@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>KML with buffer</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      padding: 0;
+      position: relative;
+    }
+
+    #description {
+      height: 160px;
+    }
+
+    #info {
+      color: #666;
+      padding: 10px;
+      font-family: sans-serif;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    #info h3 {
+      color: #E4A54F;
+      margin: 0;
+      padding: 0 0 5px 0;
+    }
+
+    #info hr {
+      border: 1px solid #666;
+    }
+
+    #popWrapper {
+      float: right;
+    }
+
+    #totalPop {
+      font-weight: bold;
+      font-size: x-large;
+    }
+
+    .ds {
+      background: #000;
+      overflow: hidden;
+      position: absolute;
+      z-index: 2;
+      bottom: 0;
+    }
+
+    #ds-h div {
+      width: 100%;
+    }
+
+    #ds .o1 {
+      filter: alpha(opacity=10);
+      opacity: .1;
+    }
+
+    #ds .o2 {
+      filter: alpha(opacity=8);
+      opacity: .08;
+    }
+
+    #ds .o3 {
+      filter: alpha(opacity=6);
+      opacity: .06;
+    }
+
+    #ds .o4 {
+      filter: alpha(opacity=4);
+      opacity: .04;
+    }
+
+    #ds .o5 {
+      filter: alpha(opacity=2);
+      opacity: .02;
+    }
+
+    #ds .h1 {
+      height: 1px;
+    }
+
+    #ds .h2 {
+      height: 2px;
+    }
+
+    #ds .h3 {
+      height: 3px;
+    }
+
+    #ds .h4 {
+      height: 4px;
+    }
+
+    #ds .h5 {
+      height: 5px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map, kml, kmlGeoms, bufferGraphics, gp;
+    require([
+      "esri/map", "esri/layers/KMLLayer", "esri/layers/GraphicsLayer",
+      "esri/SpatialReference", "esri/graphic",
+      "esri/tasks/GeometryService", "esri/tasks/Geoprocessor",
+      "esri/tasks/BufferParameters", "esri/tasks/FeatureSet",
+      "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+      "esri/urlUtils",
+      "dojo/parser", "dojo/_base/array", "esri/Color", "dojo/_base/connect",
+      "dojo/number", "dojo/dom", "dojo/dom-style", "dojo/dom-attr",
+
+      "dijit/layout/BorderContainer", "dijit/layout/ContentPane",
+      "dojo/domReady!"
+    ], function(
+      Map, KMLLayer, GraphicsLayer,
+      SpatialReference, Graphic,
+      GeometryService, Geoprocessor,
+      BufferParameters, FeatureSet,
+      SimpleFillSymbol, SimpleLineSymbol,
+      urlUtils,
+      parser, arrayUtils, Color, connect,
+      number, dom, domStyle, domAttr
+    ) {
+
+      urlUtils.addProxyRule({
+        proxyUrl: "/proxy/",
+        urlPrefix: "sampleserver1.arcgisonline.com"
+      });
+
+      map = new Map("map", {
+        basemap: "topo",
+        center: [-77.8, 39.3],
+        zoom: 10
+      });
+
+      parser.parse();
+
+      // Graphics layer for the buffer
+      bufferGraphics = new GraphicsLayer();
+      map.addLayer(bufferGraphics);
+
+      var kmlUrl =
+        "https://esri.box.com/shared/static/iiqwmrs9915iioa3j4tpmwo5nujwdj2i.kmz";
+      kml = new KMLLayer(kmlUrl);
+      map.addLayer(kml);
+
+      // The geoprocessor
+      var gpUrl =
+        "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Population_World/GPServer/PopulationSummary";
+      gp = new Geoprocessor(gpUrl);
+      gp.setOutputSpatialReference({
+        wkid: 102100
+      });
+
+      kml.on("load", function(evt) {
+        // Collect the line features from the KML layer
+        kmlGeoms = arrayUtils.map(evt.layer.getLayers()[0].graphics,
+          function(g) {
+            return g.geometry;
+          });
+
+        // Send to a function to do the buffer
+        bufferKML();
+      });
+
+      // Re-calculate the buffer and population when buffer distance changes
+      connect.connect(dom.byId("bufferDistance"), "onchange", bufferKML);
+
+      function bufferKML() {
+        bufferGraphics.clear();
+        dom.byId("totalPop").innerHTML = "";
+        domStyle.set("loading", "display", "inline-block");
+        domAttr.set("bufferDistance", "disabled", true);
+
+        var bufferDistance = dom.byId("bufferDistance").value;
+        var params = new BufferParameters();
+        params.geometries = kmlGeoms;
+        params.distances = [bufferDistance];
+        params.bufferSpatialReference = new SpatialReference({
+          "wkid": 102100
+        });
+        params.outSpatialReference = map.spatialReference;
+        params.unit = GeometryService.UNIT_STATUTE_MILE;
+        params.unionResults = true;
+        //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications.
+        var gsUrl =
+          "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer";
+        var gs = new GeometryService(gsUrl);
+        gs.buffer(params, showBuffer);
+      }
+
+      function showBuffer(buffer) {
+        // Add the buffer graphic to the map
+        var polySym = new SimpleFillSymbol()
+          .setColor(new Color([56, 102, 164, 0.4]))
+          .setOutline(
+            new SimpleLineSymbol()
+            .setColor(new Color([56, 102, 164, 0.8]))
+          );
+        var bufferGraphic = new Graphic(buffer[0], polySym);
+        bufferGraphics.add(bufferGraphic);
+
+        // Send buffer to runction to calculate population
+        calcPop(bufferGraphic);
+      }
+
+      function calcPop(aoi) {
+        // Create a feature set for the population zonal stats GP service
+        var fset = new FeatureSet();
+        fset.features = [aoi];
+
+        var params = {
+          "inputPoly": fset
+        };
+        gp.execute(params, handlePop);
+      }
+
+      function handlePop(result) {
+        if (result[0] && result[0].value.features[0].attributes.hasOwnProperty(
+            'SUM')) {
+          var pop = number.format((result[0].value.features[0].attributes.SUM)
+            .toFixed() + '');
+          dom.byId('totalPop').innerHTML = pop;
+        } else {
+          alert("Unable to get population summary. Please try again.");
+        }
+        domStyle.set("loading", "display", "none");
+        domAttr.set("bufferDistance", "disabled", false);
+      }
+    });
+  </script>
+</head>
+
+<body class="tundra">
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false"
+    style="width: 100%; height: 100%; margin: 0;">
+    <div id="description" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+      <div id="info">
+        <h3>Buffer a KML Layer and the Send Result To a Geoprocessing Service</h3>
+        KML layers in the ArcGIS API for JavaScript give you full access to the features
+        in a KML file. For this app, a KML file representing most of the Chesapeake and Ohio Canal
+        near Washington, DC is added to the map. The features from the KML layer
+        are first buffered using a geometry service and then population within the buffer
+        is calculated via a geoprocessing service.
+        <hr />
+        <div id="feedback">
+          Buffer Distance (miles):
+          <select id="bufferDistance">
+          <option selected>1</option>
+          <option>5</option>
+          <option>10</option>
+        </select>
+          <div id="popWrapper">
+            Approximately
+            <span id="loading"><img src="images/loading_orange.gif" /> </span>
+            <span id="totalPop"></span> people within buffer.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+      <div id="ds">
+        <div id="ds-h">
+          <div class="ds h1 o1"></div>
+          <div class="ds h2 o2"></div>
+          <div class="ds h3 o3"></div>
+          <div class="ds h4 o4"></div>
+          <div class="ds h5 o5"></div>
+        </div>
+      </div>
+    </div>
+    </div>
+</body>
+</html>

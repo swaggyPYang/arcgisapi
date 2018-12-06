@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html> 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Measure Tool</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html,body {
+        height:100%;
+        width:100%;
+        margin:0;
+      }
+      body {
+        background-color:#FFF;
+        overflow:hidden;
+        font-family:"Trebuchet MS";
+      }
+      #map {
+        padding:0px;
+      }
+      #rightPane{
+        width:200px;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad:true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.Measurement");
+      dojo.require("esri.dijit.Scalebar");
+
+      var map;
+
+      function init() {
+        //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to  
+        //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic 
+        //for details on setting up a proxy page.
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        esri.config.defaults.io.alwaysUseProxy = false;
+        
+        //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications
+        esri.config.defaults.geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+        
+        map = new esri.Map("map", {
+          basemap: "hybrid",
+          center: [-34.541, 32.843],
+          zoom: 3
+        });
+
+        dojo.connect(map, 'onLoad', function(map) {
+          initToolbar(map);
+        });
+      }
+
+      function initToolbar(mymap) {
+        //define a new line symbol and point symbol to use for measure tools
+        var pms = new esri.symbol.PictureMarkerSymbol("images/flag.png",24,24);
+        pms.setOffset(9,11);
+        var sls = new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DOT,
+            new dojo.Color([255,0,0,0.55]), 4);
+        var measurement = new esri.dijit.Measurement({
+          map: mymap,
+          lineSymbol: sls,
+          pointSymbol: pms
+        }, dojo.byId('measurementDiv'));
+        measurement.startup();
+        measurement.setTool("area", true);
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:true"
+    style="width:100%; height:100%;">
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+      <div id="rightPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'">
+        <div>Use the measurement widget to calculate area, find the distance between locations and display the current mouse location.  </div>
+        <div id="measurementDiv"></div>
+      </div>
+    </div>
+  </body>
+</html>

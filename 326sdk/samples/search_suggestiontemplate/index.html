@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Search with Suggestion Template</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #search {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: 20px;
+      left: 74px;
+    }
+  </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+
+
+    require([
+        "esri/map", "esri/dijit/Search", "esri/layers/FeatureLayer",  "esri/InfoTemplate", "dojo/domReady!"
+      ], function (Map, Search, FeatureLayer,InfoTemplate) {
+      var map = new Map("map", {
+        basemap: "gray",
+        center: [-82.93, 42.5], // lon, lat
+        zoom: 10
+      });
+
+      var search = new Search({
+        sources: [{
+          featureLayer: new FeatureLayer("https://services.arcgis.com/b6gLrKHqgkQb393u/arcgis/rest/services/TaxParcelQuery/FeatureServer/0", {
+            outFields: ["*"],
+            infoTemplate: new InfoTemplate("Parcels", "Owner name: ${OWNERNME1}</br>Parcel ID: ${PARCELID}</br>Site address: ${SITEADDRESS}")
+          }),
+          outFields: ["OWNERNME1","PARCELID","SITEADDRESS"],
+          displayField: "OWNERNME1",
+          suggestionTemplate: "${PARCELID}: ${SITEADDRESS}",
+          name: "Parcels",
+          placeholder: "example: Shawn Smith",
+          enableSuggestions: true
+      }],
+        map: map
+      }, "search");
+
+
+      search.startup();
+    });
+  </script>
+</head>
+
+<body>
+  <div id="search"></div>
+  <div id="map"></div>
+</body>
+
+</html>

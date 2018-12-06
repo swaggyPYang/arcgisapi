@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Bookmark Widget(Read-only Bookmarks)</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css"> 
+    <style>
+      html, body { 
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      } 
+      body{
+        background-color: #fff; overflow:hidden; 
+        font-family: sans-serif;
+      } 
+      #header {
+        padding-top: 4px;
+        padding-left: 15px;
+        background-color:#444; 
+        color:#fff; 
+        font-size:16pt; 
+        text-align: left; 
+        font-weight:bold;
+        height:55px;
+      }
+      #subheader {
+        font-size:small;
+        color: #cfcfcf;
+        text-align:left;
+      }
+      #bookmarks-wrapper {
+        position: absolute;
+        z-index: 40;
+        top: 15px;
+        right: 30px;
+        background: transparent;
+        font-size: 12pt;
+        color: #444;
+      }
+
+      .ds { background: #000; overflow: hidden; position: absolute; z-index: 2; }
+      #ds-h div { width: 100%; }
+      #ds-l div { height: 100%; }
+      #ds .o1 { filter: alpha(opacity=10); opacity: .1; }
+      #ds .o2 { filter: alpha(opacity=8); opacity: .08; }
+      #ds .o3 { filter: alpha(opacity=6); opacity: .06; }
+      #ds .o4 { filter: alpha(opacity=4); opacity: .04; }
+      #ds .o5 { filter: alpha(opacity=2); opacity: .02; }
+      #ds .h1 { height: 1px; }
+      #ds .h2 { height: 2px; }
+      #ds .h3 { height: 3px; }
+      #ds .h4 { height: 4px; }
+      #ds .h5 { height: 5px; }
+    </style>
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.form.DropDownButton");
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.Bookmarks");      
+      
+      var map, bookmarks;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-100, 40],
+          zoom: 4
+        });
+
+        // Bookmarks can be specified as an array of objects with the structure:
+        // { extent: <esri.geometry.Extent>, name: <some string> }
+        var bookmarks_list = [{
+          "extent": {
+            "spatialReference": {
+                "wkid": 102100
+            },
+            "xmin":-14201669,
+            "ymin":4642975,
+            "xmax":-13021482,
+            "ymax":5278931
+          },
+          "name": "Northern California" 
+        }, {
+          "extent": {
+            "spatialReference": {
+              "wkid":102100
+            },
+            "xmin":-8669334,
+            "ymin":4982379,
+            "xmax":-8664724,
+            "ymax":4984864
+          },
+          "name": "Central Pennsylvania"
+        }];
+
+        // Create the bookmark widget
+        bookmarks = new esri.dijit.Bookmarks({
+          map: map, 
+          bookmarks: bookmarks_list
+        }, dojo.byId('bookmarks'));                 
+      }
+      //show map on load 
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="nihilo">
+    <div id="mainWindow" 
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'top'">
+        Bookmark Widget Sample 
+        <div id="subheader">Read-only bookmarks</div>
+
+        
+        <div id="bookmarks-wrapper">
+          <div data-dojo-type="dijit.form.DropDownButton">
+            <span>Bookmarks</span>
+            <div data-dojo-type="dijit.TooltipDialog">
+              <div id="bookmarks"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div id="map" class="shadow" 
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="ds"> 
+          <div id="ds-h">
+            <div class="ds h1 o1"></div>
+            <div class="ds h2 o2"></div>
+            <div class="ds h3 o3"></div>
+            <div class="ds h4 o4"></div>
+            <div class="ds h5 o5"></div>
+          </div>
+        </div> 
+
+      </div>
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,33 @@
+{
+  "name": "FillSymbol",
+  "type": "baseClass",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "symbol",
+  "description": "Fill symbols are used to draw polygon features on the graphics layer. Fills can be specified as solid, hatched, or pictures. In addition, the symbol can have an optional outline, which is defined by a line symbol. ",
+  "summary": "used to draw polygon features on the graphics layer",
+  "path": "esri/symbols/FillSymbol",
+  "toolbar": true,
+  "properties": [
+    {
+      "name": "outline",
+      "type": "SimpleLineSymbol",
+      "method": "setOutline",
+      "summary": "Outline of the marker",
+      "class": true,
+      "location": "symbols/SimpleLineSymbol.json"
+    }
+  ],
+  "methods": [
+    {
+      "name": "setOutline",
+      "parameters": [
+        {
+          "name": "outline",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the outline of the marker symbol"
+    }
+  ]
+}

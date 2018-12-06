@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Hurricane Explorer</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; } 
+      body {
+        background-color:#EFEFDE; 
+        overflow:hidden;
+        font-family: "Trebuchet MS";
+      }
+      .pane {
+        border: solid 1px #9CAA9C;
+        margin: 5px; 
+        padding: 5px; 
+      }
+      #header { 
+        background-color:#EFEFDE;
+        color:#9CAA9C;
+        font-size:16pt;
+        text-align:left;
+        font-weight:bold; 
+        padding-top:10px; padding-bottom:10px; padding-left:10px; padding-right: 10px;
+        margin-top:0px; margin-bottom:0px;
+      }
+
+      #banner {
+        height:40px; width:100%;
+      }
+    </style>
+    
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.dijit.TimeSlider");
+      dojo.require("dojo.date.locale");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("esri.dijit.Legend");
+
+      var flUpdateEndHandle;
+      var hurricaneTracks;
+      var map;
+      var timeSlider;
+      var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-81.299, 39.3],
+          slider: false,
+          zoom: 2
+        });
+
+        dojo.connect(map, "onLayersAddResult", function(results) {
+          var layerInfo = dojo.map(results, function(layer) {
+            return {layer: layer.layer, title: layer.layer.name};
+          });
+          if (layerInfo.length > 0) {
+            var legendDijit = new esri.dijit.Legend({
+              map: map,
+              layerInfos: layerInfo
+            }, "legendDiv");
+            legendDijit.startup();
+          }
+        });
+        var content = "<b>Category: </b>${CAT} <br> <b>Wind Speed: </b>${WIND_KTS}<br><b>Pressure: </b>${PRESSURE}<br>";
+        var infoTemplate = new esri.InfoTemplate("${NAME}", content);
+
+        hurricaneTracks = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Hurricanes/NOAA_Tracks_1851_2007/MapServer/0", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"],
+          infoTemplate: infoTemplate
+        });
+
+        map.infoWindow.resize(125, 105);
+
+        flUpdateEndHandle = dojo.connect(hurricaneTracks, "onUpdateEnd", updateSlider);
+
+        //display map initally for 1976
+        var timeExtent = new esri.TimeExtent();
+        timeExtent.startTime = new Date("1/1/1976 UTC");
+        timeExtent.endTime = new Date("12/31/1976 UTC");
+        hurricaneTracks.setTimeDefinition(timeExtent);
+
+        map.addLayers([hurricaneTracks]);
+      }
+
+      function yearChange() {
+        //if the slider is currently playing stop and reset it
+        if (timeSlider.playing) {
+          timeSlider.pause();
+        }
+        var year = dojo.byId('year').value;
+        var timeExtent = new esri.TimeExtent();
+        timeExtent.startTime = new Date("1/1/" + year + " UTC");
+        timeExtent.endTime = new Date("12/31/" + year + " UTC");
+        flUpdateEndHandle = dojo.connect(hurricaneTracks, "onUpdateEnd", updateSlider);
+        hurricaneTracks.setTimeDefinition(timeExtent);
+      }
+
+      function updateSlider() {
+        dojo.disconnect(flUpdateEndHandle);
+
+        var featureLayer = this; //because this is fired after all features have been updated and we are working with a featureLayer in snapshot mode we can be assured that featureLayer.graphics has all the features that match the layer and time defintion.
+
+        var dateField = featureLayer.timeInfo.startTimeField;
+        var minDate = new Date(featureLayer.graphics[0].attributes[dateField]);
+        var maxDate = new Date(featureLayer.graphics[0].attributes[dateField]);
+
+        dojo.forEach(featureLayer.graphics, function(graphic) {
+          var currentDate = new Date(graphic.attributes[dateField]);
+          if (currentDate.getTime() <= minDate.getTime()) {
+            minDate = currentDate;
+          }
+
+          if (currentDate.getTime() > maxDate.getTime()) {
+            maxDate = currentDate;
+          }
+        });
+
+        var currentYearTimeExtent = new esri.TimeExtent();
+        currentYearTimeExtent.startTime = minDate;
+        currentYearTimeExtent.endTime = maxDate;
+        updateTimeString(currentYearTimeExtent);
+
+
+        if (dijit.byId('timeSlider')) {
+          dijit.byId('timeSlider').destroy();
+        }
+        var tsDiv = dojo.create("div", null, dojo.byId('timeSliderDiv'));
+
+        timeSlider = new esri.dijit.TimeSlider({
+          style: "width: 1000px;",
+          id: 'timeSlider',
+          options: {
+            excludeDataAtLeadingThumb: true
+          }
+        }, tsDiv);
+
+
+        var query = new esri.tasks.Query();
+        //When the time extent changes update the list to contain unique hurricane's that occurred during
+        //the time frame.
+        dojo.connect(timeSlider, "onTimeExtentChange", function(timeExtent) {
+          updateTimeString(timeExtent);
+          query.timeExtent = timeExtent;
+          featureLayer.queryFeatures(query, function(featureSet) {
+            var uniqueHurricaneNames = {};
+            dojo.forEach(featureSet.features, function(feature) {
+              var hurricaneName = feature.attributes.NAME;
+              uniqueHurricaneNames[hurricaneName] = uniqueHurricaneNames[hurricaneName] + 1 || 1;
+            });
+            var content = "<br><i>";
+            for (var hurricane in uniqueHurricaneNames) {
+              content = content + hurricane + "<br>";
+            }
+            dojo.byId("activeHurricanes").innerHTML = content + "</i>";
+          });
+        });
+
+        map.setTimeSlider(timeSlider);
+        timeSlider.setThumbCount(2);
+
+        timeSlider.createTimeStopsByTimeInterval(currentYearTimeExtent, 1, 'esriTimeUnitsMonths', {
+          resetStartTime: true
+        });
+
+        timeSlider.setThumbIndexes([0, 1]);
+        timeSlider.setThumbMovingRate(500);
+        timeSlider.setLoop(true);
+        timeSlider.startup();
+
+        var labels = dojo.map(timeSlider.timeStops, function(timeStop) {
+          return monthNames[timeStop.getUTCMonth()];
+        });
+        timeSlider.setLabels(labels);
+      }
+
+      function updateTimeString(timeExtent) {
+        var startTime = monthNames[timeExtent.startTime.getUTCMonth()] + " " + timeExtent.startTime.getUTCDate();
+        var endTime = monthNames[timeExtent.endTime.getUTCMonth()] + " " + timeExtent.endTime.getUTCDate();
+
+        dojo.byId("daterange").innerHTML = "View hurricanes from <b>" + startTime + "</b> to <b>" + endTime + "</b>";
+      }
+
+      function startSlider() {
+        timeSlider.play();
+        console.log("play");
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    
+    <div id="mainWindow" 
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'top'" 
+           style="height:40px;">
+
+        <div id="banner">
+          &nbsp;&nbsp;Hurricane Explorer (1976 - 2007)
+        </div>
+
+      </div>
+      
+      <div id="map" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'center'"
+           class="pane">
+      </div>
+
+      
+      <div id="right" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'right'" 
+           class="pane"
+           style="width: 160px; margin-left: 0;">
+        
+        <div id="legendDiv"></div>
+        <b>
+          Active Hurricanes
+        </b>
+        <span id="activeHurricanes"></span>
+      </div>
+
+      
+      <div id="footer" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'bottom'" 
+           class="pane"
+           style="height:100px; margin-top: 0;">
+
+        <div style="height:20px;text-align:center;">
+          <span id="daterange">
+          </span>
+          <select id="year" onChange=yearChange();>
+            <option value="1976" selected='true'> 1976 </option>
+            <option value="1977"> 1977 </option>
+            <option value="1978"> 1978 </option>
+            <option value="1979"> 1979 </option>
+            <option value="1980"> 1980 </option>
+            <option value="1981"> 1981 </option>
+            <option value="1982"> 1982 </option>
+            <option value="1983"> 1983 </option>
+            <option value="1984"> 1984 </option>
+            <option value="1985"> 1985 </option>
+            <option value="1986"> 1986 </option>
+            <option value="1987"> 1987 </option>
+            <option value="1988"> 1988 </option>
+            <option value="1989"> 1989 </option>
+            <option value="1990"> 1990 </option>
+            <option value="1991"> 1991 </option>
+            <option value="1992"> 1992 </option>
+            <option value="1993"> 1993 </option>
+            <option value="1994"> 1994 </option>
+            <option value="1995"> 1995 </option>
+            <option value="1996"> 1996 </option>
+            <option value="1997"> 1997 </option>
+            <option value="1998"> 1998 </option>
+            <option value="1999"> 1999 </option>
+            <option value="2000"> 2000 </option>
+            <option value="2001"> 2001 </option>
+            <option value="2002"> 2002 </option>
+            <option value="2003"> 2003 </option>
+            <option value="2004"> 2004 </option>
+            <option value="2005"> 2005 </option>
+            <option value="2006"> 2006 </option>
+            <option value="2007"> 2007 </option>
+          </select>
+        </div>
+        <br>
+        <center>
+          <div id="timeSliderDiv">
+          </div>
+        </center>
+      </div>
+
+    </div>
+  </body>
+</html>

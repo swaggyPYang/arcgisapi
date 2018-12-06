@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Edit Fire Perimeters</title>
+
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <style>
+      .dj_ie .infowindow .window .top .right .user .content { position: relative; }
+      .dj_ie .simpleInfoWindow .content {position: relative;}
+
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; }
+      #leftPane{
+        width:255px;
+        border:none;
+      }
+      #map{
+        padding:0;
+      }
+      #header{
+        font-weight:600;
+        font-size:14pt;
+        color:#666666;
+        padding-left:20px;
+      }
+    </style>
+
+    
+    <script>var dojoConfig = { parseOnLoad:true };</script>
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      //require selection dijit
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.editing.Editor-all");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.form.CheckBox");
+      dojo.require("dijit.Toolbar");
+      dojo.require("esri.SnappingManager");
+      
+      var map;
+      var editorWidget;
+      
+      function init() {
+     
+        //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to  
+        //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic 
+        //for details on setting up a proxy page.
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        
+        //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications. 
+        esri.config.defaults.geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+                
+        map = new esri.Map("map", { 
+          basemap: "topo",
+          center: [-117.535, 34.28],
+          zoom: 12,
+          slider: false
+        });
+        
+        dojo.connect(map, "onLayersAddResult", initEditor);
+        
+        var pointsOfInterest = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/0",{
+          mode: esri.layers.FeatureLayer.MODE_ONDEMAND, //QUERY_SELECTION is working as well
+          outFields: ['*']
+        });
+
+        var WildfireLine = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/1",{
+          mode: esri.layers.FeatureLayer.MODE_ONDEMAND, //QUERY_SELECTION is working as well
+          outFields: ['*']
+        });
+
+        var evacuationPerimeter = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/2",{
+          mode: esri.layers.FeatureLayer.MODE_ONDEMAND, //QUERY_SELECTION is working as well
+          outFields: ['*']
+        });
+
+        map.addLayers([pointsOfInterest,WildfireLine,evacuationPerimeter]);
+      }
+
+      function initEditor(results) {
+     
+       //build the layer and field information for the layer, display the description field
+        //using a text area.
+        var layers = dojo.map(results, function(result) {
+          var fieldInfos= dojo.map(result.layer.fields,function(field){
+            if(field.name === 'description'){
+              return {'fieldName': field.name,'label':'Details',stringFieldOption:esri.dijit.AttributeInspector.STRING_FIELD_OPTION_TEXTAREA};
+            }
+            else{
+              return {'fieldName': field.name,'label':field.alias};
+            }
+          });
+          return {featureLayer:result.layer,'fieldInfos':fieldInfos};
+        });
+
+        var settings = {
+          map: map,
+          enableUndoRedo: true,
+          layerInfos: layers,
+          toolbarVisible: true,
+          createOptions: {
+            polygonDrawTools: [ 
+              esri.dijit.editing.Editor.CREATE_TOOL_FREEHAND_POLYGON,
+              esri.dijit.editing.Editor.CREATE_TOOL_AUTOCOMPLETE
+            ]
+          },
+          toolbarOptions: {
+            reshapeVisible: true,
+            cutVisible: true,
+            mergeVisible: true
+          }
+        };
+        var params = {settings: settings};
+
+        editorWidget = new esri.dijit.editing.Editor(params,'editorDiv');
+        
+        //Dojo.keys.copyKey maps to CTRL in Windows and CMD in Mac
+        map.enableSnapping({snapKey:dojo.keys.copyKey});
+ 
+        //create a new checkbox to enable/disable snapping
+        var checkBox = new dijit.form.CheckBox({
+          name: "chkSnapping",
+          checked: true,
+          id: "chkSnapping",
+          label: "Snapping",
+          showLabel: "false",
+          title: "Snapping",
+          onChange: function(evt) {
+            console.log(this.checked);
+            if(this.checked){
+              map.enableSnapping({snapKey:dojo.keys.copyKey});
+            } else {
+              map.disableSnapping();
+            }
+          }
+        });
+  
+        //add the snapping checkbox to the editor's toolbar 
+        var myToolbarElement = dojo.query(".esriDrawingToolbar",editorWidget.domNode)[0];
+        var myToolbar = dijit.byId(myToolbarElement.id);       
+
+        myToolbar.addChild(new dijit.ToolbarSeparator());
+        myToolbar.addChild(checkBox);
+        
+        editorWidget.startup();
+        
+        //listen for the template pickers onSelectionChange and disable
+        //the snapping checkbox when a template is selected
+        var templatePickerElement = dojo.query(".esriTemplatePicker",editorWidget.domNode)[0];
+        var templatePicker = dijit.byId(templatePickerElement.id);
+        dojo.connect(templatePicker,"onSelectionChange",function(){
+          if (templatePicker.getSelected()) {
+            //disable the snapping checkbox
+            dijit.byId('chkSnapping').set("disabled",true);
+          } else {
+            dijit.byId('chkSnapping').set("disabled",false);    
+          }
+        });
+        map.infoWindow.resize(325,200);
+      }
+  
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">    
+    <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline'" style="width:100%;height:100%;">
+      <div data-dojo-type="dijit.layout.ContentPane"  id="header" data-dojo-props="region:'top'">Editable Fire Map</div>
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'"></div>
+      <div id="leftPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'left'">
+        <div id="templatePickerDiv"></div>
+        <div id="editorDiv">
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

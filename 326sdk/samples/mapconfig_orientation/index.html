@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Change Map Slider Orientation</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+
+      function init() {
+        var map = new esri.Map("map", {
+          sliderOrientation: "horizontal",
+          sliderPosition: "bottom-left",
+          sliderStyle: "large"
+        });
+        map.addLayer(new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"));
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    Configure map slider's orientation
+    <div id="map" style="width:500px; height:500px; border:1px solid #000;"></div>
+  </body>
+</html>

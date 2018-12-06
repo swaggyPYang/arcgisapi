@@ -1,0 +1,141 @@
+﻿
+/* Settings Toolbar */
+
+.esriGEReportPlayer_section .sectionDynamicSettings_toolbar {
+    background-color: rgba(100, 100, 100, 0.75);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 13px;
+}
+
+    .esriGEReportPlayer_section .sectionDynamicSettings_toolbar.needsTopOffset {
+        top: -19px;
+        right: 4px;
+    }
+
+.esriGEReportPlayer_section .sectionDynamicSettings_buttonBar.hasMultipleButtons {
+    padding: 0px 5px;
+}
+
+.esriGEReportPlayer_section .sectionDynamicSettings_buttonBar > div:not(:first-child) {
+    margin-left: 10px;
+}
+
+/* SectionDynamicSettingsBuilder */
+
+.esriGEReportPlayer_section .sectionDynamicSettings_settingsButton {
+    width: 32px;
+    height: 32px;
+    background-size: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./images/gearWhite.svg");
+    cursor: pointer;
+}
+
+.esriGEReportPlayer_section .sectionDynamicSettings_filterButton {
+    background-image: url("./images/filterWhite.svg");
+    background-size: 22px;
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+/* Dynamic Settings */
+
+.esriGEReportPlayer_sectionDynamicSettings {
+    background-color: white;
+    min-width: 100px;
+    padding-bottom: 5px;
+}
+
+    .esriGEReportPlayer_sectionDynamicSettings .sectionDynamicSettings_row {
+        padding: 10px;
+    }
+
+/* Dynamic Chart Settings */
+
+.esriGEReportPlayer_sectionDynamicChartSettings {
+}
+
+    /* Sorting List */
+
+    .esriGEReportPlayer_sectionDynamicChartSettings .sectionDynamicChartSettings_sortingList {
+    }
+
+        .esriGEReportPlayer_sectionDynamicChartSettings .sectionDynamicChartSettings_sortingList .listItem div:first-child {
+            width: 100px;
+        }
+
+        .esriGEReportPlayer_sectionDynamicChartSettings .sectionDynamicChartSettings_sortingList .upButton,
+        .esriGEReportPlayer_sectionDynamicChartSettings .sectionDynamicChartSettings_sortingList .downButton {
+            background-image: url("./images/sortArrows/upTriangle.svg");
+            background-repeat: no-repeat;
+            width: 8px;
+            height: 8px;
+            background-size: 7px;
+            background-position: center;
+        }
+
+        .esriGEReportPlayer_sectionDynamicChartSettings .sectionDynamicChartSettings_sortingList .downButton {
+            background-image: url("./images/sortArrows/downTriangle.svg");
+        }
+
+    /* Variable Toggle */
+
+    .esriGEReportPlayer_sectionDynamicChartSettings .VariableToggleButtonGroup .dijitButtonContents {
+        min-width: 50px;
+    }
+
+    .esriGEReportPlayer_sectionDynamicChartSettings .VariableToggleButtonGroup .dijitButtonContents {
+        background: -webkit-linear-gradient(#EEEEEE, #EEEEEE);
+        background: -o-linear-gradient(#EEEEEE, #EEEEEE);
+        background: -moz-linear-gradient(#EEEEEE, #EEEEEE);
+        background: linear-gradient(#EEEEEE, #EEEEEE);
+    }
+
+    .esriGEReportPlayer_sectionDynamicChartSettings .VariableToggleButtonGroup .esriGroupChecked {
+        background: -webkit-linear-gradient(#409ECE, #409ECE);
+        background: -o-linear-gradient(#409ECE, #409ECE);
+        background: -moz-linear-gradient(#409ECE, #409ECE);
+        background: linear-gradient(#409ECE, #409ECE);
+    }
+
+/* Dynamic Refine Filters */
+
+.esriGEReportPlayer_sectionDynamicRefineFilters {
+    text-align: left;
+}
+
+    .esriGEReportPlayer_sectionDynamicRefineFilters .sectionDynamicRefineFilters_row {
+        height: 60px;
+    }
+
+    .esriGEReportPlayer_sectionDynamicRefineFilters .sectionDynamicRefineFilters_textFilter .dijitTextBox {
+        width: 99%;
+    }
+
+    .esriGEReportPlayer_sectionDynamicRefineFilters .esriGENumericalSliderLabel {
+        padding-bottom: 5px;
+    }
+
+/* Dynamic Comparison Settings */
+
+.esriGEReportPlayer_sectionDynamicComparisonSettings {
+    text-align: left;
+}
+
+/* Export Button */
+
+.esriGEReportPlayer_section .sectionDynamicSettings_exportButton {
+    width: 32px;
+    height: 32px;
+    background-size: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./images/commands/exportWhite.svg");
+    cursor: pointer;
+}

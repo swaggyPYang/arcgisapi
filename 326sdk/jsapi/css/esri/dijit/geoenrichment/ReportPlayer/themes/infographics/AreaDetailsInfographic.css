@@ -1,0 +1,18 @@
+﻿
+/* Area Details */
+
+.esriGEAreaDetailsInfographic {
+}
+
+    /* No Details Placeholder */
+
+    .esriGEAreaDetailsInfographic .paginatableTableInfographic_noDataPlaceHolderImage {
+        background-image: url("../images/emptySectionIcon.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        display: inline-block;
+        background-size: 250px 139px;
+        width: 250px;
+        height: 139px;
+        opacity: 0.5;
+    }

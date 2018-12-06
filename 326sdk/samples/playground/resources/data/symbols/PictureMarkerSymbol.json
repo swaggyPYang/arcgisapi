@@ -1,0 +1,75 @@
+{
+  "name": "PictureMarkerSymbol",
+  "type": "class",
+  "baseClass": "MarkerSymbol",
+  "baseLocation": "symbols/MarkerSymbol.json",
+  "variable": "marker",
+  "description": "Marker symbols are used to draw points and multipoints on the graphics layer. PictureMarkerSymbol uses an image as a marker.",
+  "summary": "draw points and multipoints",
+  "path": "esri/symbols/PictureMarkerSymbol",
+  "toolbar": true,
+  "constructorArgs": ["url","width","height"],
+  "removeProperties": ["size","color"],
+  "removeMethods": ["setSize","setColor"],
+  "properties": [
+    {
+      "name": "url",
+      "type": "String",
+      "required": true,
+      "method": "setUrl",
+      "summary": "URL of the image"
+    },
+    {
+      "name": "width",
+      "type": "Number",
+      "default": 16,
+      "method": "setWidth",
+      "summary": "Width of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "height",
+      "type": "Number",
+      "default": 16,
+      "method": "setHeight",
+      "summary": "Height of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "setHeight",
+      "parameters": [
+        {
+          "name": "height",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the height of the image for display"
+    },
+    {
+      "name": "setUrl",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the URL where the image is located"
+    },
+    {
+      "name": "setWidth",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the width of the image for display"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    
+    <meta name="viewport"
+          content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Create Map with Custom ArcGISDynamicMapServiceLayer Layer
+      Definitions</title>
+
+    <link rel="stylesheet"
+          href="https://js.arcgis.com/3.26/esri/css/esri.css"/>
+    <style>
+      html, body, #mapDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
+
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/layers/ImageParameters",
+        "dojo/domReady!"
+      ],
+        function (Map, ArcGISDynamicMapServiceLayer, ImageParameters) {
+
+          map = new Map("mapDiv", {
+            basemap: "streets",
+            center: [-98.258, 38.236],
+            zoom: 7
+          });
+
+          //Use the ImageParameters to set map service layer definitions and map service visible layers before adding to the client map.
+          var imageParameters = new ImageParameters();
+
+          //ImageParameters.layerDefinitions takes an array.  The index of the array corresponds to the layer id.
+          //In the sample below an element is added in the array at 3, 4, and 5 indexes.
+          //Those array elements correspond to the layer id within the remote ArcGISDynamicMapServiceLayer
+          var layerDefs = [];
+          layerDefs[5] = "STATE_NAME='Kansas'";
+          layerDefs[4] = "STATE_NAME='Kansas' and POP2007>25000";
+          layerDefs[3] = "STATE_NAME='Kansas' and POP2007>25000";
+          imageParameters.layerDefinitions = layerDefs;
+
+          //I want layers 5,4, and 3 to be visible
+          imageParameters.layerIds = [5, 4, 3];
+          imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
+          imageParameters.transparent = true;
+
+          //construct ArcGISDynamicMapServiceLayer with imageParameters from above
+          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer",
+            {"imageParameters": imageParameters});
+
+          map.addLayer(dynamicMapServiceLayer);
+        });
+    </script>
+  </head>
+
+  <body>
+    <div id="mapDiv"></div>
+  </body>
+</html>

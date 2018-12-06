@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Local Storage Demo</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; }
+      #leftPane{
+        overflow:hidden;
+        border:none;
+        color:#5C832F;
+      }
+      #map{
+        border: solid medium #382513;
+        padding:0;
+      }
+
+      .esriAttributeInspector{
+          atiLayerName:'Building Details'
+      }
+      .templatePicker{
+        border:none !important;
+        height:85px;
+      }
+      .templatePicker .grid .groupLabel{
+        display:none;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.editing.Editor-all");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dojo.DeferredList");
+      dojo.require("dijit.form.Button");
+
+      var map;
+      var featureLayer;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-117.282, 34.289],
+          zoom: 13
+        });
+
+        dojo.connect(map, "onLayersAddResult", initEditor);
+
+        if (window.localStorage.getItem("storedCollection")) {
+          console.log('Feature Collection read from storage');
+          addLayer(dojo.fromJson(window.localStorage.getItem("storedCollection")));
+        } else {
+          var mapserverUrl = "https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/Notes/FeatureServer/1";
+          var deferred = getLayerResource(mapserverUrl);
+
+          deferred.then(function(response) {
+            var featureCollection = {};
+            featureCollection.layerDefinition = response;
+
+            var fields = dojo.map(featureCollection.layerDefinition.fields, function(field) {
+              return dojo.mixin({
+                editable: true,
+                domain: null
+              }, field);
+            });
+
+            featureCollection.layerDefinition.fields = fields;
+
+            window.localStorage.setItem("storedCollection", dojo.toJson(featureCollection));
+            console.log("Feature Collection added to storage");
+            console.log(featureCollection);
+            addLayer(featureCollection);
+          });
+        }
+      }
+
+      function addLayer(featureCollection) {
+        var fields = dojo.map(featureCollection.layerDefinition.fields, function(field) {
+          return field.name;
+        });
+        var featureLayer = new esri.layers.FeatureLayer(featureCollection, {
+          outFields: fields
+        });
+
+        var selectionSymbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 20, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255, 255, 0, 0.5]), 10), new dojo.Color([255, 255, 0, 0.9]));
+
+        featureLayer.setSelectionSymbol(selectionSymbol);
+        map.addLayers([featureLayer]);
+      }
+
+      function getLayerResource(url) {
+        var deferred = esri.request({
+          url: url,
+          content: {
+            f: 'json'
+          },
+          callbackParamName: "callback"
+        });
+        return deferred;
+      }
+
+      function initEditor(results) {
+        var featureLayerInfos = dojo.map(results, function(result) {
+          return {
+            'featureLayer': result.layer
+          };
+        });
+        featureLayer = results[0].layer;
+        var settings = {
+          map: map,
+          layerInfos: featureLayerInfos
+        };
+
+        var params = {
+          settings: settings
+        };
+        var editorWidget = new esri.dijit.editing.Editor(params, 'editorDiv');
+        editorWidget.startup();
+        map.infoWindow.resize(290, 220);
+      }
+
+      function saveCollection() {
+        //save the edited features to local storage
+        console.log('Edits saved to storage');
+        console.log(featureLayer.toJson());
+        window.localStorage.setItem("storedCollection", dojo.toJson(featureLayer.toJson()));
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar'" style="width:100%;height:100%;">
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+      <div id="leftPane" data-dojo-type="dijit.layout.ContentPane" style="width:100px;" data-dojo-props="region:'left'">
+        <div>
+          Click the Notes icon - then click location on map to add new map note. Click save
+          to save feature layer into local storage.
+          <div  data-dojo-type="dijit.form.Button" data-dojo-props="onClick:function(){saveCollection();}, iconClass:'dijitEditorIcon dijitEditorIconSave'">Save</div>       
+        </div>
+        <div id="editorDiv">
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

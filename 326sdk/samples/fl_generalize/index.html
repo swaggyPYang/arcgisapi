@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>FeatureLayer: Changing MaxAllowableOffset (based on zoom level)</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map {
+        padding:0;
+      }
+      #status {
+        background-color: black;
+        color: white;
+        padding: 3px;
+        border: solid 1px white;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+      }
+    </style>
+
+    <script>var dojoConfig = {parseOnLoad: true};</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+    dojo.require("dijit.layout.BorderContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("esri.map");
+    dojo.require("esri.layers.FeatureLayer");
+    dojo.require("dijit.form.CheckBox");
+
+    var map, featureLayer;
+    var featureLayerUrl = "https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/KSPetro/MapServer/1";
+
+    function init() {
+      map = new esri.Map("map", {
+        basemap: "topo",
+        center: [-99.5, 38.027],
+        zoom: 7
+      });
+
+      map.on("load", mapLoaded);
+
+      map.on("update-start", function(){
+        esri.show(dojo.byId("status"));
+      });
+
+      map.on("update-end", function(){
+        esri.hide(dojo.byId("status"));
+      });
+    }
+
+    function mapLoaded() {
+      featureLayer = new esri.layers.FeatureLayer(featureLayerUrl);
+
+      featureLayer.on("update-start", function(){
+        dojo.style(dojo.byId("status"), "display", "");
+      });
+      featureLayer.on("update-end", function(){
+        dojo.style(dojo.byId("status"), "display", "none");
+      });
+
+      map.addLayers([featureLayer]);
+    }
+
+    function toggleLayer(val){
+      if(val.name === 'checkBM'){
+        var basemap = map.getLayer(map.layerIds[0]);
+        basemap.visible ? basemap.hide(): basemap.show();
+      } else {
+        featureLayer.visible ? featureLayer.hide():featureLayer.show();
+      }
+    }
+
+    dojo.ready(init);
+  </script>
+</head>
+
+<body class="claro">
+  <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:false"  style="width: 100%; height: 100%; margin: 0;">
+    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" style="width:200px;">
+     <p>
+     Run the sample with Firebug's net panel open and notice that the maxAllowableOffset is different based on the zoom level.
+     </p>
+
+     <label for="checkBM">Basemap</label>
+     <input data-dojo-type="dijit.form.CheckBox" checked="basemap.layer.visible" name="checkBM" onChange="toggleLayer(this);"/>
+     <br />
+     <label for="checkFL">Feature Layer</label>
+     <input data-dojo-type="dijit.form.CheckBox" checked="featureLayer.layer.visible" name="checkFL" onChange="toggleLayer(this);"/>
+
+    </div>
+    <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'" style="border:1px solid #000;padding:0;">
+      <span id="status" style="position: absolute; z-index: 100; right: 5px; top: 5px;">
+        Loading...
+      </span>
+    </div>
+  </div>
+</body>
+
+</html>

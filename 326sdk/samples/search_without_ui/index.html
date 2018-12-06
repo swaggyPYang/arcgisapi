@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+   <title>Search widget results in labels</title>
+
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+   <style>
+      html,
+      body,
+      #map {
+         height: 100%;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+      }
+      .shadow {
+         box-shadow: 0 0 5px #888;
+      }
+      #map {
+         margin: 0;
+         padding: 0;
+      }
+      #feedback {
+         background: #fff;
+         color: #444;
+         position: absolute;
+         font-family: arial;
+         height: 125px;
+         right: 50px;
+         margin: 5px;
+         padding: 10px;
+         top: 10px;
+         width: 190px;
+         z-index: 40;
+      }
+      #note {
+         font-size: 80%;
+         font-weight: 700;
+         padding: 0 0 10px 0;
+      }
+   </style>
+
+ <script src="https://js.arcgis.com/3.26/"></script>
+   <script>
+      require([
+        "esri/map",
+        "esri/dijit/Search",
+        "esri/symbols/Font",
+        "esri/geometry/Point",
+        "esri/SpatialReference",
+         "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/PictureMarkerSymbol",
+         "esri/symbols/SimpleLineSymbol",
+        "esri/Color",
+        "esri/symbols/TextSymbol",
+
+        "dijit/registry",
+        "dijit/form/Button",
+        "dojo/parser",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "dojo/domReady!"
+      ], function (
+            Map, Search, Font, Point, SpatialReference, SimpleMarkerSymbol, PictureMarkerSymbol, SimpleLineSymbol, Color, TextSymbol, registry, Button, parser)
+
+         {
+            parser.parse();
+
+            var map = new Map("map", {
+               basemap: "gray",
+               center: [-100, 39], // lon, lat
+               zoom: 5
+            });
+
+            //Do not provide a srcNode dom for the Search widget as the UI is not displayed. 
+
+
+            var search = new Search({
+               enableLabel: true,
+               enableInfoWindow: false,
+               map: map
+            }, "");
+
+            search.startup();
+
+            registry.byId("searchGeo").on("click", doSearchGeo);
+            registry.byId("searchValue").on("click", doSearchValue);
+
+            function doSearchGeo() {
+               //create point from x/y and perform the search on it
+
+               var geo = new Point(-117.195646, 34.056397, new SpatialReference({
+                  wkid: 4326
+               }));
+
+               //highlight symbol
+               var symbol = new PictureMarkerSymbol("esri_icon.png", 20, 20);
+
+               //labeling text symbol
+               var ls = new TextSymbol().setColor(new Color([181, 56, 46, 0.9])).setFont(new Font("24px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLD, "Arial")).setOffset(11, -5).setAlign(TextSymbol.ALIGN_START);
+
+               //No sources are explicitely set so will default to ArcGIS Online World geocoding service
+               search.sources[0].highlightSymbol = symbol; //set the symbol for the highlighted symbol
+               search.sources[0].labelSymbol = ls; //set the text symbol for the label
+
+               //performs a reverse geocode 
+               search.search(geo);
+            }
+
+            function doSearchValue() {
+
+               //highlight symbol
+               var sms = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 12,
+                  new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                     new Color([255, 0, 0]), 0.8),
+                  new Color([0, 0, 0, 0.35]));
+
+               //label text symbol
+               var ls = new TextSymbol().setColor(new Color([0, 0, 0, 0.9])).setFont(new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLD, "Arial")).setOffset(15, -5).setAlign(TextSymbol.ALIGN_START);
+
+               search.sources[0].highlightSymbol = sms; //set the symbol for the highlighted symbol
+               search.sources[0].labelSymbol = ls; //set the text symbol for the label
+
+               //If multiple results are found, it will default and select the first.
+               search.search("Miami");
+            }
+         }
+      );
+   </script>
+</head>
+
+<body class="tundra">
+   <div style="width: 100%; height: 100%; margin: 0;">
+      <div id="map">
+         <div id="feedback" class="shadow">
+            <div id="info">
+               <div id="note">
+                  This sample uses Search widget functionality without explicitly setting the widget UI.
+               </div>
+
+               <button id="searchGeo" data-dojo-type="dijit/form/Button">Search by geometry
+               </button>
+               </br>
+               <button id="searchValue" data-dojo-type="dijit/form/Button">Search by value
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+</body>
+
+</html>

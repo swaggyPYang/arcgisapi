@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Layout with Overview Map</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.OverviewMap");
+
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-77.012, 38.892],
+          zoom: 16
+        });
+        dojo.connect(map, "onLoad", function(map) {
+          var overviewMap = new esri.dijit.OverviewMap({map: map},dojo.byId("overviewDiv"));
+          overviewMap.startup();
+        });
+      }
+      dojo.ready(init);
+  </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" 
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      <div id="header" class="roundedCorners" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'top'">
+        <span>
+          This is the header section
+        </span>
+      </div>
+
+      <div id="leftPane" class="roundedCorners" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'left'"
+           style="width:275px;">
+        This is the left section
+      </div>
+
+      <div id="centerPane" 
+           data-dojo-type="dijit.layout.BorderContainer" class="roundedCorners" 
+           data-dojo-props="region:'center', gutters:false">
+
+        <div id="map" 
+             data-dojo-type="dijit.layout.ContentPane" class="shadow" 
+             data-dojo-props="region:'center'"
+             style="position:relative; overflow:hidden;">
+
+          <div id="ovWin" class="shadow" style="position:absolute; right:35px; top:5px; z-Index:998; width:100px;height:100px; ">
+            <div id="overviewDiv" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+        <div id="footer" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+          This is the footer section
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

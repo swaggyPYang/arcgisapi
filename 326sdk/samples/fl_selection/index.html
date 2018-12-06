@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Selection with query geometry from another task (GP result)</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+    html, body {
+      padding:0;
+      margin:0;
+      height:100%;
+    }
+    #mapDiv {
+      height: 500px;
+    }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map, censusBlockPointsLayer, query;
+      require([
+        "esri/map", "esri/InfoTemplate",
+        "esri/graphic", "esri/layers/FeatureLayer",
+        "esri/tasks/query", "esri/tasks/QueryTask",
+        "esri/tasks/Geoprocessor", "esri/tasks/FeatureSet",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleLineSymbol", "esri/config",
+        "esri/Color", "dojo/dom", "dojo/domReady!"
+      ], function(
+        Map, InfoTemplate,
+        Graphic, FeatureLayer,
+        Query, QueryTask,
+        Geoprocessor, FeatureSet,
+        SimpleMarkerSymbol, SimpleFillSymbol,
+        SimpleLineSymbol, esriConfig,
+        Color, dom
+      ) {
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+        esriConfig.defaults.io.alwaysUseProxy = false;
+
+        map = new Map("mapDiv", {
+          basemap: "streets",
+          center: [-95.249, 38.955],
+          zoom: 14
+        });
+
+        //listen for when map is loaded and then add query functionality
+        map.on("load", initFunctionality);
+
+        censusBlockPointsLayer = new FeatureLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/0", {
+          mode: FeatureLayer.MODE_SELECTION,
+          infoTemplate: new InfoTemplate("Block: ${BLOCK}", "${*}"),
+          outFields: ["POP2000","HOUSEHOLDS","HSE_UNITS", "TRACT", "BLOCK"]}
+        );
+
+        var symbol = new SimpleMarkerSymbol();
+        symbol.style = SimpleMarkerSymbol.STYLE_SQUARE;
+        symbol.setSize(8);
+        symbol.setColor(new Color([255,255,0,0.5]));
+        censusBlockPointsLayer.setSelectionSymbol(symbol);
+
+        map.addLayer(censusBlockPointsLayer);
+
+        censusBlockPointsLayer.on("selection-complete", function() {
+          var totalPopulation = sumPopulation(censusBlockPointsLayer.getSelectedFeatures());
+          var r = "";
+          r = "<b>The total Census Block population within the drive time polygon is <i>" + totalPopulation + "</i>.</b>";
+          dom.byId('messages').innerHTML = r;
+        });
+
+        function initFunctionality() {
+          query = new Query();
+          //GP Service Endpoint
+          var gp = new Geoprocessor("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Network/ESRI_DriveTime_US/GPServer/CreateDriveTimePolygons");
+
+          // Listen for map onClick event
+          map.on("click", function(evt) {
+            censusBlockPointsLayer.clearSelection();
+            map.graphics.clear();
+            var symbol = new SimpleMarkerSymbol();
+            var graphic = new Graphic(evt.mapPoint, symbol);
+
+            var features= [];
+            features.push(graphic);
+            var featureSet = new FeatureSet();
+            featureSet.features = features;
+            var params = { "Input_Location": featureSet, "Drive_Times": 2 };
+            gp.outSpatialReference = map.spatialReference;
+            gp.execute(params);
+            dom.byId("messages").innerHTML = "<b>Executing GP Task...</b>";
+          });
+
+          // Listen for GP execute-complete event
+          gp.on("execute-complete", function(evt) {
+            var feature = evt.results[0].value.features[0];
+            var symbol = new SimpleFillSymbol(
+              SimpleFillSymbol.STYLE_NULL,
+              new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_DASHDOT,
+                new Color([255,0,0]),
+                2
+              ),
+              new Color([255,255,0,0.25])
+            );
+            feature.setSymbol(symbol);
+            map.graphics.add(feature);
+
+            query.geometry = feature.geometry;
+            censusBlockPointsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+            dom.byId("messages").innerHTML = "<b>Selecting Features...</b>";
+          });
+        }
+
+        function sumPopulation(features) {
+          var popTotal = 0;
+          for (var x = 0; x < features.length; x++) {
+            popTotal = popTotal + features[x].attributes["POP2000"];
+          }
+          return popTotal;
+        }
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    Click the map to execute a 2 minute drive time and then use that result geometry as input into a query.
+    <div id="mapDiv"></div>
+    <span id="messages"></span>
+  </body>
+</html>

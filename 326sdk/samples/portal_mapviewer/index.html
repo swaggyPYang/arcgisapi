@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Web Map Viewer</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <link rel='stylesheet' href='css/layout.css'>
+
+  <script>var dojoConfig = { parseOnLoad: true };</script>
+  <script src="https://js.arcgis.com/3.26compact/"></script>
+  <script>
+    dojo.require('esri.arcgis.Portal');
+    dojo.require('esri.arcgis.utils');
+    dojo.require("esri.map");
+    dojo.require('esri.dijit.Attribution');
+
+    var portal, items;
+    var webmaps = [], map, currentMap = 0;
+    var i18n;
+
+    function init() {
+      portal = new esri.arcgis.Portal('https://www.arcgis.com');
+      dojo.connect(portal, 'onLoad', loadPortal);
+    }
+
+    function loadPortal() {
+      //query the group and retrieve the Web Maps.
+      var params = {
+        q: 'title:Community Basemaps AND owner:esri'
+      };
+      portal.queryGroups(params)
+        .then(function (response) {
+        if (response.results.length > 0) {
+          var group = response.results[0];
+          var queryParams = {
+            q: 'type:"Web Map" -type:"Web Mapping Application"',
+            num: 10
+          };
+          group.queryItems(queryParams)
+            .then(function (response) {
+            if (response.results.length > 0) {
+              items = response.results;
+              //load the first map
+              createMap(items[0]);
+              //create thumbnail gallery
+              createThumbs(items);
+            } else {
+              console.log('This group does not contain any public web maps to display.');
+              esri.hide(dojo.byId('loadingImg'));
+            }
+
+          });
+        } else {
+          esri.hide(dojo.byId('loadingImg'));
+        }
+      });
+    }
+
+    function createMap(item) {
+      var mapDeferred = esri.arcgis.utils.createMap(item.id, dojo.create('div', {
+        id: item.id
+      }, dojo.byId('mainMap')), {
+        mapOptions: {
+          showAttribution: true,
+          slider: false
+        }
+      });
+      mapDeferred.then(function (response) {
+        map = response.map;
+        map.id = item.id;
+        map.title = item.title;
+        map.owner = item.owner;
+        map.snippet = item.snippet;
+        webmaps[currentMap] = map;
+
+        updateDetails(map);
+        esri.hide(dojo.byId('loadingImg'));
+      }, function (error) {
+        if (map) {
+          map.destroy();
+          dojo.destroy(map.container);
+          getNext();
+        }
+      });
+    }
+
+    function createThumbs(items) {
+      var frag = document.createDocumentFragment();
+      dojo.forEach(items, function (item, index) {
+        if (item.id) {
+          var thumbnail = item.thumbnailUrl || 'https://static.arcgis.com/images/desktopapp.png'; //use default image if one is not provided
+          var li = dojo.create('li', {
+            innerHTML: '<img src="' + thumbnail + '"/><p class="ellipsis">' + item.title + '</p>'
+
+          }, frag);
+          dojo.addClass(li, 'grid_2 gallery_grid');
+        }
+        dojo.connect(li, 'onclick', function () {
+          //close the thumbnail panel
+          hideMap();
+          esri.hide(dojo.byId('thumbnailContainer'));
+          currentMap = index;
+          showMap();
+        });
+      });
+      dojo.place(frag, 'thumbnailList');
+    }
+
+    function showMap() {
+      //animate the display of the next map to fade-in
+      //increment the map count div
+      var myMap = webmaps[currentMap];
+      if (myMap && myMap.id) {
+        var node = dojo.byId(myMap.id);
+        esri.show(node);
+        updateDetails(myMap);
+        var anim = dojo.fadeIn({
+          node: node
+        });
+        anim.play();
+      } else {
+        //create the map
+        esri.show(dojo.byId('loadingImg'));
+        createMap(items[currentMap]);
+      }
+    }
+
+    function updateDetails(item) {
+      dojo.byId('mapTitle')
+        .innerHTML = item.title;
+      dojo.byId('mapOwner')
+        .innerHTML = item.snippet;
+      dojo.byId('mapCount')
+        .innerHTML = dojo.string.substitute(
+        "Map ${page} of  ${total}", {
+        page: (currentMap + 1),
+        total: items.length
+      });
+    }
+
+    function hideMap() {
+      //Fade out the previous map
+      var node = dojo.byId(webmaps[currentMap].id);
+      esri.hide(node);
+      dojo.byId('mapTitle').innerHTML = '';
+      dojo.byId('mapOwner').innerHTML = '';
+      dojo.byId('mapCount').innerHTML = '';
+
+      var anim = dojo.fadeOut({
+        node: node
+      });
+      anim.play();
+    }
+
+    function getNext() {
+      //hide the existing map
+      hideMap();
+      (currentMap >= -1 && currentMap < (items.length - 1)) ? currentMap += 1 : currentMap = 0;
+      showMap();
+    }
+
+    function getPrevious() {
+      hideMap();
+      (currentMap <= items.length && currentMap > 0) ? currentMap -= 1 : currentMap = items.length - 1;
+      showMap();
+    }
+
+    function toggleGallery() {
+      var tc = dojo.byId('thumbnailContainer');
+      tc.style.display === 'none' ? esri.show(tc) : esri.hide(tc);
+    }
+
+    dojo.ready(init);
+  </script>
+</head>
+
+<body>
+<div class='container_12'>
+<div  id='mapSection' class='grid_12 rounded'>
+  <div id='mainMap' >
+ <div id='thumbnailContainer' class='gallery-thumbs-container' style='display:none;'>
+<div id='thumbnailList' class='container_12 gallery-thumbs-list'></div>
+ </div>
+     <img id="loadingImg" alt="" src="images/loading.gif" style="position:absolute; right:50%; top:50%; z-index:100;display:none;"/>
+    <div class="gallery-nav">
+        <div class="gallery-nav-right" onclick='getNext();'></div>
+        <div class="gallery-nav-left" onclick='getPrevious();'></div>
+    </div>
+  </div>
+  </div>
+
+  <div class='clear' ></div>
+  <div id='detailsSection' class='grid_12 rounded'>
+  <div class='grid_9 alpha'>
+    <div class='pod' style='padding-left:10px;'>
+      <div id='mapTitle' class='title' ></div>
+      <div class='subtitle' id='mapOwner'></div>
+    </div>
+  </div>
+
+  <div class='grid_3 omega'>
+    <div class='pod'>
+      <div id='mapCount' class='subtitle'></div>
+    </div>
+  </div>
+      <div>
+         <div id='thumbs' class='gallery-thumb' onclick='toggleGallery();'></div>
+  </div>
+  </div>
+
+</div>
+</body>
+</html>

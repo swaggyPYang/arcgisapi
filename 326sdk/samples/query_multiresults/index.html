@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>QueryTask with geometry, results as an InfoWindow</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+
+      var map, queryTask, query;
+      var symbol, infoTemplate;
+      var featureSet;
+
+      function init() {
+        map = new esri.Map("mapDiv", {
+          basemap: "satellite",
+          center: [-98.25, 38.52],
+          zoom: 8
+        });
+
+        //create and add new layer
+        var dynamicLayer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Petroleum/KGS_OilGasFields_Kansas/MapServer");
+        map.addLayer(dynamicLayer);
+
+        //Listen for click event on the map, when the user clicks on the map call executeQueryTask function.
+        dojo.connect(map, "onClick", executeQueryTask);
+
+        //build query task
+        queryTask = new esri.tasks.QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Petroleum/KGS_OilGasFields_Kansas/MapServer/0");
+
+        //Can listen for onComplete event to process results or can use the callback option in the queryTask.execute method.
+        //dojo.connect(queryTask, "onComplete", showResults);
+
+        //build query filter
+        query = new esri.tasks.Query();
+        query.outSpatialReference = {"wkid": 102100};
+        query.returnGeometry = true;
+        query.outFields = ["FIELD_NAME", "FIELD_KID", "PROD_GAS", "PROD_OIL", "STATUS"];
+
+        //create the infoTemplate to be used in the infoWindow.
+        //All ${attributeName} will be substituted with the attribute value for current feature.
+        infoTemplate = new esri.InfoTemplate("${FIELD_NAME}", "Field ID : ${FIELD_KID}<br />Produces Gas : ${PROD_GAS}<br />Produces Oil : ${PROD_OIL}<br />Status : ${STATUS}");
+
+        symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255,0,0]), 2), new dojo.Color([255,255,0,0.5]));
+      }
+
+      function executeQueryTask(evt) {
+        map.infoWindow.hide();
+        map.graphics.clear();
+
+        //onClick event returns the evt point where the user clicked on the map.
+        //This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
+        //set query geometry = to evt.mapPoint Geometry
+        query.geometry = evt.mapPoint;
+
+        //Execute task and call showResults on completion
+        queryTask.execute(query, function(fset) {
+          if (fset.features.length === 1) {
+            showFeature(fset.features[0],evt);
+          } else if (fset.features.length !== 0) {
+            showFeatureSet(fset,evt);
+          }
+        });
+      }
+
+      function showFeature(feature,evt) {
+        map.graphics.clear();
+        feature.setSymbol(symbol);
+        feature.setInfoTemplate(infoTemplate);
+        map.graphics.add(feature);
+      }
+
+      function showFeatureSet(fset,evt) {
+        //remove all graphics on the maps graphics layer
+        map.graphics.clear();
+        featureSet = fset;
+        var numFeatures = featureSet.features.length;
+        //QueryTask returns a featureSet.  Loop through features in the featureSet and add them to the infowindow.
+        var content = "";
+        for (var i=0; i<numFeatures; i++) {
+          var graphic = featureSet.features[i];
+          content = content + graphic.attributes.FIELD_NAME + " Field (<A href='#' onclick='showFeature(featureSet.features[" + i + "]);'>show</A>)<br/>";
+        }
+        map.infoWindow.setContent(content);
+        map.infoWindow.show(evt.screenPoint);
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    Click on a Petroleum Field to get more info.  When field is highlighted, click field again to get infoWindow.
+    <div id="mapDiv" style="width:800px; height:600px; border:1px solid #000;"></div>
+  </body>
+</html>

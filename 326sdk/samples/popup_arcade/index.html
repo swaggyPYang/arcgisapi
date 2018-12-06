@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Arcade in Popup</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+
+<style>
+  html, body, #viewDiv {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #info{
+    top: 0px;
+    right: 0px;
+    position: absolute;
+    z-index: 99;
+    opacity: 0.9;
+    background-color: white;
+    padding: 0px 0px 0px 10px;
+    max-width: 200px;
+  }
+</style>
+
+
+<script type="text/plain" id="predominance-arcade">
+  // Arcade expression that determines the predominant category
+  // in each feature. In this case we want to know whether more people living in
+  // a given county are participating in the labor force.
+
+
+  // The fields from which to calculate predominance
+  // The expression will return the alias of the predominant field
+
+  var fields = [
+    { value: $feature.NOT_LABORFORCE_16, alias: "NOT participating in the labor force" },
+    { value: $feature.CIVLBFR_CY, alias: "participating in the labor force" }
+  ];
+
+  // Returns the predominant category as the alias
+  // defined in the fields array. If there is a tie,
+  // then both names are concatenated and used to
+  // indicate the tie
+
+  function getPredominantCategory(fieldsArray){
+    var maxValue = -Infinity;
+    var maxCategory = "";
+    for(var k in fieldsArray){
+      if(fieldsArray[k].value > maxValue){
+        maxValue = fieldsArray[k].value;
+        maxCategory = fieldsArray[k].alias;
+      } else if (fieldsArray[k].value == maxValue){
+        maxCategory = maxCategory + "/" + fieldsArray[k].alias;
+      }
+    }
+    return maxCategory;
+  }
+
+  getPredominantCategory(fields);
+</script>
+
+<script type="text/plain" id="strength-arcade">
+  // Arcade expression determining the strength of the predominant count
+  // in each feature based on the proportion of that count to all others.
+  // A simple percentage is calculated and returned for the max value.
+
+  // Returns the share of the dominant demographic as a percentage
+  var fieldValues = [ $feature.NOT_LABORFORCE_16, $feature.CIVLBFR_CY ];
+  var winner = Max(fieldValues);
+  var total = Sum(fieldValues);
+  return (winner/total) * 100;
+</script>
+
+<script>
+require([
+  "esri/map",
+  "esri/layers/FeatureLayer",
+  "esri/renderers/UniqueValueRenderer",
+  "esri/symbols/SimpleMarkerSymbol",
+  "esri/symbols/SimpleLineSymbol",
+  "esri/Color",
+  "esri/dijit/Legend",
+  "esri/dijit/PopupTemplate",
+  "dojo/domReady!"
+], function(
+  Map, FeatureLayer, UniqueValueRenderer, SimpleMarkerSymbol,
+  SimpleLineSymbol, Color, Legend, PopupTemplate
+) {
+
+  // The expressionInfos reference Arcade expressions and
+  // assign each of them a title and name. The name is used
+  // to reference it in the PopupTemplate and the title is
+  // used to describe the value in the popup and legend.
+
+  var arcadeExpressionInfos = [
+    // Get Arcade expression returning the predominant demographic in the county:
+    // Whether the majority of people are in the labor force or not
+    {
+      name: "predominance-arcade",
+      title: "Is the majority (>50%) of the population 16+ participating in the labor force?",
+      expression: document.getElementById("predominance-arcade").text
+    },
+    // Get Arcade expression returning the share of the total comprised
+    // by the predominant category
+    {
+      name: "strength-arcade",
+      title: "% of population belonging to majority category",
+      expression: document.getElementById("strength-arcade").text
+    },
+    // Arcade expression that returns the total number of people not working
+    {
+      name: "not-working-arcade",
+      title: "Total population 16+ not employed or in labor force",
+      expression: "$feature.POP_16UP - $feature.EMP_CY"
+    },
+    // Arcade expression that returns the % of people not working
+    {
+      name: "%-not-working-arcade",
+      title: "% of population 16+ not employed or in labor force",
+      expression: "Round((($feature.POP_16UP - $feature.EMP_CY)/$feature.POP_16UP)*100) + '%'"
+    }
+  ];
+
+  // Add the expressions to a unique value renderer and create a
+  // symbol for each possible value.
+
+  var renderer = new UniqueValueRenderer({
+    valueExpression: arcadeExpressionInfos[0].expression,
+    valueExpressionTitle: arcadeExpressionInfos[0].title,
+    defaultSymbol: createSymbol("lightgray"),
+    defaultLabel: "Other/or tie",
+    uniqueValueInfos: [{
+      value: "participating in the labor force",
+      symbol: createSymbol("#6b4da2")
+    }, {
+      value: "NOT participating in the labor force",
+      symbol: createSymbol("#e86b0c")
+    }],
+    // Add an Arcade expression to an opacity visual variable. Counties where
+    // the predominant category is nearly equal with the others (54%) are very
+    // transparent. Counties where the predominant category makes up at least 66%
+    // of all people 16 and older are fully opaque.
+    visualVariables: [{
+      type: "opacityInfo",
+      valueExpression: arcadeExpressionInfos[1].expression,
+      valueExpressionTitle: arcadeExpressionInfos[1].title,
+      stops: [
+        { value: 54, opacity: 0.05, label: "< 54%" },
+        { value: 66, opacity: 1.0, label: "> 66%" }
+      ]
+    }, {
+      type: "sizeInfo",
+      field: "UNEMPRT_CY",
+      minDataValue: 5,
+      maxDataValue: 28.8,
+      minSize: 6,
+      maxSize: 50
+    }]
+  });
+
+  // Create FeatureLayer instance with popupTemplate
+  // Note the Arcade expression placeholders used in the text and fieldInfos
+  // e.g. {expression/predominance-arcade}
+  // Expression names are defined in the expressionInfos property
+
+  var serviceUrl = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/US_counties_employment_2016/FeatureServer/0";
+
+  var layer = new FeatureLayer(serviceUrl, {
+    outFields: [ "CIVLBFR_CY", "NOT_LABORFORCE_16", "COUNTY", "STATE", "POP_16UP", "UNEMPRT_CY", "UNEMP_CY", "EMP_CY" ],
+    infoTemplate: new PopupTemplate({
+      title: "{COUNTY}, {STATE}",
+      description: [ "In this county, {UNEMPRT_CY}% of the labor force is unemployed. ",
+        " {expression/strength-arcade}% of the {POP_16UP} people ages 16+",
+        " living here are {expression/predominance-arcade}.<br><br>",
+        "<b>Pop in labor force (16+):</b> {CIVLBFR_CY}<br>",
+        "<b>Employed Pop:</b> {EMP_CY}<br>",
+        "<b>Unemployed Pop:</b> {UNEMP_CY}<br>",
+        "<b>Pop 16+ not working:</b> {expression/not-working-arcade}<br>",
+        "<b>% of Pop 16+ not working:</b> {expression/%-not-working-arcade}<br>" ].join(""),
+      fieldInfos: [{
+        fieldName: "CIVLBFR_CY",
+        label: "Population in labor force (16+)",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      },  {
+        fieldName: "EMP_CY",
+        label: "Employed population",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }, {
+        fieldName: "UNEMP_CY",
+        label: "Unemployed population",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }, {
+        fieldName: "expression/not-working-arcade",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }, {
+        fieldName: "expression/%-not-working-arcade",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }, {
+        fieldName: "POP_16UP",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }, {
+        fieldName: "expression/strength-arcade",
+        format: {
+          digitSeparator: true,
+          places: 0
+        }
+      }],
+      expressionInfos: arcadeExpressionInfos
+    })
+  });
+
+  layer.setRenderer(renderer);
+
+  var map = new Map("viewDiv", {
+    basemap: "gray",
+    center: [ -83.5742, 35.05197 ],
+    zoom: 6
+  });
+
+  map.addLayer(layer);
+
+  // Create a legend when the map loads
+
+  map.on("load", function(evt){
+    var legend = new Legend({
+      map: map,
+      layerInfos: [{
+        layer: layer,
+        title: "Labor force statistics by U.S. county (2016)"
+      }]
+    }, "legendDiv");
+
+    legend.startup();
+  });
+
+  // Creates a SimpleMarkerSymbol based on an input color
+
+  function createSymbol (color){
+    var outline = new SimpleLineSymbol()
+      .setColor(new Color([ 0, 0, 0, 0.2 ]))
+      .setWidth(0.5);
+
+    return new SimpleMarkerSymbol()
+      .setColor(new Color(color))
+      .setOutline(outline);
+  }
+
+});
+</script>
+</head>
+
+<body class="claro">
+  <div id="viewDiv"></div>
+  <div id="info"><div id="legendDiv"></div></div>
+</body>
+
+</html>

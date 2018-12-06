@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Lawrence, KS by age and size</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+    }
+
+    #meta {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      width: 20em;
+      height: 19em;
+      z-index: 40;
+      background: #ffffff;
+      color: #777777;
+      padding: 5px;
+      border: 2px solid #666666;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      font-family: arial;
+      font-size: 0.9em;
+    }
+
+    #meta h3 {
+      color: #666666;
+      font-size: 1.1em;
+      padding: 0px;
+      margin: 0px;
+      display: inline-block;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "dojo/_base/array", "esri/Color", "esri/dijit/PopupTemplate", "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/FeatureLayer",
+      "esri/map", "esri/renderers/BlendRenderer", "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleMarkerSymbol", "dojo/domReady!"
+    ], function (array, Color, PopupTemplate, ArcGISTiledMapServiceLayer, FeatureLayer, Map, BlendRenderer, SimpleFillSymbol, SimpleLineSymbol,
+      SimpleMarkerSymbol){
+
+      map = new Map("map", {
+        basemap: "gray", //"topo"
+        center: [-95.28, 38.959],
+        zoom: 13
+      });
+
+      var layerUrl = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Lawrence_KS_Demographic_Info/FeatureServer/0";
+
+      //Set the blendRenderer's parameters
+      var blendRendererOptions = {
+        //blendMode:"color" //By default, it uses "source-over", uncomment to display different mode
+        //See: http://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+        symbol: new SimpleMarkerSymbol().setOutline(new SimpleLineSymbol().setWidth(0)),
+        fields: [
+          {
+            field: "TotalPop2015_above30", //.65 to .26
+            color: new Color("#0000e6") //blue
+          }, {
+            field: "POP2015_20to30", //.44 to .1
+            color: new Color("#e60000") //red
+          }, {
+            field: "PopUnder18_2015", //.3 to .11
+            color: new Color("#00e600") //green
+          }
+        ],
+        opacityStops: [
+          {
+            value: .1,
+            opacity: 0
+          },
+          {
+            value: .65,
+            opacity: .7
+          }
+        ],
+        normalizationField: "TOTPOP_CY"
+      };
+      renderer = new BlendRenderer(blendRendererOptions);
+
+      //set background fill symbol to show census block outlines
+      renderer.backgroundFillSymbol = new SimpleFillSymbol().setColor(null).setOutline(new SimpleLineSymbol().setWidth(1).setColor(new Color([
+        200, 200, 200
+      ])));
+
+      //size the markers by the total households
+      renderer.setVisualVariables([
+        {
+          type: "sizeInfo",
+          field: "TOTPOP_CY",
+          minSize: 5,
+          maxSize: 50,
+          minDataValue: 50,
+          maxDataValue: 1000
+        }
+      ]);
+
+      //generate popup definition
+      var template = new PopupTemplate({
+        "fieldInfos": [
+          {
+            "fieldName": "POP2015_20to30",
+            "label": "Population age 20 to 29",
+            "visible": true,
+            "format": {
+              "places": 0,
+              "digitSeparator": true
+            }
+          }, {
+            "fieldName": "TotalPop2015_above30",
+            "label": "Population age 30 and above",
+            "visible": true,
+            "format": {
+              "places": 0,
+              "digitSeparator": true
+            }
+          }, {
+            "fieldName": "PopUnder18_2015",
+            "label": "Population age 19 and under",
+            "visible": true,
+            "format": {
+              "places": 0,
+              "digitSeparator": true
+            }
+          }, {
+            "fieldName": "TOTPOP_CY",
+            "label": "Total Population",
+            "visible": true,
+            "format": {
+              "places": 0,
+              "digitSeparator": true
+            }
+          }
+        ]
+      });
+
+      layer = new FeatureLayer(layerUrl, {
+        outFields: ["TOTPOP_CY", "PopUnder18_2015", "TotalPop2015_above30", "POP2015_20to30"],
+        opacity: 1,
+        infoTemplate: template
+      });
+
+      layer.setRenderer(renderer);
+      map.addLayer(layer);
+
+    });
+     </script>
+  </head>
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width: 100%; height: 100%; margin: 0;">
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+         <div id="meta">
+            <h3>Lawrence, Kansas age groups displayed using a BlendRenderer in addition to total population by size</h3>
+            <br>
+            <br>This sample focuses on Lawrence, KS, where it displays age concentrations with a BlendRenderer. In addition, it also displays the total population in each block using size.
+            <ul>
+               <li>Red: 20-29</li>
+               <li>Blue: 30 and above</li>
+               <li>Green: Under 19</li>
+            </ul>
+            The more opaque the color, the higher the concentration for that age group. In addition, the larger the symbol, the higher the population density for that block.
+         </div>
+      </div>
+    </div>
+  </body>
+</html>

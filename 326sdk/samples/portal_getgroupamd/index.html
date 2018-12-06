@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Group ID Finder</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojo/resources/dojo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dgrid/css/dgrid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dgrid/css/skins/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <script>
+      //async is a new dojoConfig option. The default value of false will load all the Dojo base modules
+      //here we set it to true to take advantage of the asynchronous nature of dojo and the the base modules
+      //are not automatically loaded.
+      var dojoConfig = { async: true };
+    </script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+    //require function accepts an array of module ids and a function. The modules are provided as return variables passed as arguments to the function. This replaces the dojo.requires statements.
+      require([
+        "dojo/parser",
+        "dojo/ready",
+        "dojo/dom",
+        "dojo/dom-construct",
+        "dojo/_base/array",
+        "dijit/registry",
+        "dojo/on",
+        "esri/arcgis/Portal",
+        "esri/config",
+        "esri/lang",
+        "dgrid/Grid",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane"
+      ],function(
+        parser,
+        ready,
+        dom,
+        domConstruct,
+        array,
+        registry,
+        on,
+        arcgisPortal,
+        config,
+        esriLang,
+        Grid
+      ) {
+        var portal, portalUrl, groupGrid;
+
+        //Replaces dojo.ready / dojo.addOnLoad
+        ready(function() {
+          parser.parse(); //replaces parseOnLoad = true in dojoConfig
+
+          portalUrl = document.location.protocol + '//www.arcgis.com';
+
+          //create the portal
+          portal = new arcgisPortal.Portal(portalUrl);
+
+          on(portal, 'load', function(p) {
+            dom.byId('groupFinderSubmit').disabled = false;
+            dom.byId('signIn').disabled = false;
+
+            //hook up the sign-in click event
+            on(dom.byId('signIn'),'click', signIn);
+
+            //search when enter key is pressed or button is clicked
+            on(dom.byId('groupFinderSubmit'), 'click', findArcGISGroup);
+
+            on(dom.byId('groupFinder') , 'keyup', function(e){
+              if (e.keyCode === 13) {
+                findArcGISGroup();
+              }
+            });
+          });
+        });
+
+        // find groups based on input keyword
+        function findArcGISGroup() {
+          var keyword = dom.byId('groupFinder').value;
+          var params = {
+            q:  keyword,
+            sortField:'modified',
+            sortOrder:'desc',
+            num:20  //find 20 items - max is 100
+          };
+          portal.queryGroups(params).then(function (data) {
+            showGroupResults(data);
+          });
+        }
+
+
+        //display a list of groups that match the input user name
+        function showGroupResults(response) {
+          //clear any existing results
+          var data = [];
+            if (groupGrid) {
+              groupGrid.refresh();
+            }
+            if (response.total > 0) {
+              //create an array of attributes for each group - we'll display these in a dojo dgrid
+              data = array.map(response.results, function (group) {
+                return {
+                  'snippet': group.snippet,
+                  'title': group.title,
+                  'url': group.url,
+                  'thumbnail': group.thumbnailUrl || '',
+                  'id': group.id,
+                  'owner': group.owner
+                };
+              });
+              //create the grid
+              groupGrid = new Grid({
+                columns: {
+                  thumbnail: 'Group Icon',
+                  title: 'Group',
+                  snippet: 'Description',
+                  id: 'Group ID'
+                },
+                renderRow: renderTable,
+                //this function renders the table in a non-grid looking view
+                showHeader: false
+              }, "grid");
+              groupGrid.renderArray(data);
+
+            } else {
+              dom.byId('groupResults').innerHTML = '<h2>Group Results</h2><p>No groups were found. If the group is not public use the sign-in link to sign in and find private groups.</p>';
+            }
+          }
+
+          function renderTable(obj, options) {
+
+            var template = '<div class="thumbnail"><img src=${thumbnail} width="50" height="50"/></div><a target="_blank" class="title" href=${url}>${title}</a><span class="owner"> (${owner} ) </span><div class="summary">${snippet} </div><textarea class="group=id" readonly="readonly" rows="1" cols="30">${id}</textarea>';
+
+            obj.url = portalUrl + '/home/group.html?groupid=id:' + obj.id;
+            obj.thumbnail = obj.thumbnail || '';
+
+            //domConstruct.create is a replacement for dojo.create
+            return div = domConstruct.create("div",{
+              innerHTML : esriLang.substitute(obj,template)
+            });
+
+          }
+
+          // gets private groups as well
+          function signIn() {
+            var signInLink = dom.byId('signIn');
+
+            if (signInLink.innerHTML.indexOf('In') !== -1) {
+                portal.signIn().then(function (loggedInUser) {
+                    signInLink.innerHTML = "Sign Out";
+                    findArcGISGroup();   // update results
+                }, function (error) {
+                  signInLink.innerHTML = 'Sign In';   //error so reset sign in link
+                });
+            } else {
+              portal.signOut().then(function (portalInfo) {
+                signInLink.innerHTML = "Sign In";
+                findArcGISGroup();
+              });
+            }
+          }
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false"
+    style="width:100%;height:100%;margin:0;">
+      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+        <h1>ArcGIS Online Group ID Finder</h1>
+        <a id="signIn" disabled='disabled'>Sign In</a>
+        <p>Find group ids based on search term. Sign-in to search for private groups.</p>
+        <input name="groupFinder"  id="groupFinder" placeholder="username" value="esri" size="30" />
+        <input name="groupFinderSubmit" disabled='disabled' type="submit" value="Submit" id="groupFinderSubmit" />
+      </div>
+      <div id='gridpane' data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+        <div id='grid'></div>
+        <div id="groupResults"></div>
+      </div>
+    </div>
+  </body>
+</html>

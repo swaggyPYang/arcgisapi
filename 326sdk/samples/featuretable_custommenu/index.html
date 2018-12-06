@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+  <title>FeatureTable - Custom Menu Items</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <script src="https://js.arcgis.com/3.26/"></script>
+
+  <style>
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/dijit/FeatureTable",
+      "esri/geometry/Extent",
+      "esri/graphicsUtils",
+      "esri/tasks/query",
+      "esri/symbols/PictureMarkerSymbol",
+      "esri/map",
+      "dojo/dom",
+      "dojo/parser",
+      "dojo/ready",
+      "dojo/on",
+      "dijit/layout/ContentPane",
+      "dijit/layout/BorderContainer"
+    ], function (
+      FeatureLayer, FeatureTable, Extent, graphicsUtils, Query, PictureMarkerSymbol, Map,
+      dom, parser, ready, on, ContentPane, BorderContainer
+    ) {
+
+      parser.parse();
+
+      ready(function(){
+        var map = new Map("map",{
+          basemap: "dark-gray", 
+          extent: new Extent({xmax: -13035353.854156237, xmin: -13053431.211345658,
+            ymax: 4038351.1313028745, ymin: 4034089.766975982,
+            "spatialReference":{"wkid":102100,"latestWkid":3857}
+          })
+        });
+
+        //Load a FeatureTable to the application once map loads
+        map.on("load", loadTable);
+
+        function loadTable(){
+    
+          // editable FeatureLayer
+          var myFeatureLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/RedlandsEmergencyVehicles/FeatureServer/1", {
+            mode: FeatureLayer.MODE_ONDEMAND,
+            outFields: ["*"],
+            visible: true,
+            id: "fLayer2"
+          });
+
+          // set a selection symbol for the featurelayer
+          var selectionSymbol = new PictureMarkerSymbol("https://sampleserver6.arcgisonline.com/arcgis/rest/services/RedlandsEmergencyVehicles/FeatureServer/1/images/3540cfc7a09a7bd66f9b7b2114d24eee", 48 ,48);
+            
+          myFeatureLayer.setSelectionSymbol(selectionSymbol);
+
+          // listen to featurelayer click event to handle selection 
+          // from layer to the table. 
+          // when user clicks on a feature on the map, the corresponding 
+          // record will be selected in the table.   
+          myFeatureLayer.on("click", function(evt) {
+            var idProperty = myFeatureLayer.objectIdField,
+              feature,
+              featureId,
+              query;
+ 
+            if (evt.graphic && evt.graphic.attributes && evt.graphic.attributes[idProperty]) {
+              feature = evt.graphic,
+              featureId = feature.attributes[idProperty];
+ 
+              query = new Query();
+              query.returnGeometry = false;
+              query.objectIds = [featureId];
+              query.where = "1=1";
+ 
+              myFeatureLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+            }
+          });
+ 
+          // Redlands police vehicle locations layer
+          // this layer is an editable layer 
+          map.addLayer(myFeatureLayer);
+
+          //create new FeatureTable and set its properties 
+          var myFeatureTable = new FeatureTable({
+            featureLayer : myFeatureLayer,
+            map : map, 
+            editable: true,
+            syncSelection: true,
+            dateOptions: {
+              datePattern: 'M/d/y', 
+              timeEnabled: true,
+              timePattern: 'H:mm',
+            },
+            // use fieldInfos object to change field's label (column header), 
+            // change the editability of the field, and to format how field values are displayed
+            // you will not be able to edit callnumber field in this example. 
+            fieldInfos: [
+              {
+                name: 'callnumber', 
+                alias: 'Call Number', 
+                editable: false //disable editing on this field 
+              },
+              {
+                name: 'speed', 
+                alias: 'Current Speed', 
+                format: {
+                  template: "${value} mph" //add mph at the of the value
+                }
+              },
+              {
+                name: 'type', 
+                alias: 'Vehicle Type'
+              },
+              {
+                name: 'unitname', 
+                alias: 'Unit Name'
+              }
+            ],
+            // add custom menu functions to the 'Options' drop-down Menu 
+             menuFunctions: [
+            {
+              label: "Filter Available Emergency Vehicles", 
+              callback: function(evt){
+                console.log(" -- evt: ", evt);
+                // set definition expression on the layer
+                // show only available emergency vehicles 
+                myFeatureLayer.setDefinitionExpression("status = 0");
+
+                // call FeatureTable.refresh() method to re-fetch features
+                // from the layer. Table will only show records that meet 
+                // layer's definition expression creteria.  
+                myFeatureTable.refresh();
+              }
+            },{
+              label: "Show All Emergency Vehicles", 
+              callback: function(evt){
+                console.log(" -- evt: ", evt);
+                myFeatureLayer.setDefinitionExpression("1=1");
+                myFeatureTable.refresh();
+              }
+            }]
+          }, 'myTableNode');
+
+          myFeatureTable.startup();
+
+          // listen to refresh event 
+          myFeatureTable.on("refresh", function(evt){
+            console.log("refresh event - ", evt);
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body class="claro esri">
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="width:100%; height:100%;">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', splitter:true" style="height:50%">
+      <div id="map"></div>
+    </div>
+    <div id="bot" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom', splitter:true" style="height:50%;">
+      <div id="myTableNode"></div>
+    </div>
+  </div>
+</body>
+</html>

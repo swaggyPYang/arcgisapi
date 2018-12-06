@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Client-side projection</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/dijit/calcite.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #mapDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #coordinateString {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      z-index: 99999;
+      background: white;
+      padding: 5px;
+      font: "Helvetica Neue";
+    }
+
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/map",
+      "esri/request",
+      "esri/config",
+      "esri/geometry/Point",
+      "esri/SpatialReference",
+      "esri/geometry/projection",
+      "esri/geometry/coordinateFormatter",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/Color",
+      "esri/graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/basemaps",
+      "dojo/domReady!"
+    ], function (Map, esriRequest, esriConfig,
+      Point, SpatialReference, projection, coordinateFormatter,
+      SimpleLineSymbol, SimpleMarkerSymbol,
+      Color, Graphic, GraphicsLayer, esriBasemaps) {
+
+      // Use CORS to get earthquakes geojson
+      esriConfig.defaults.io.corsEnabledServers.push("earthquake.usgs.gov"); // supports CORS
+
+      // check if the client side projection engine is supported in the browser. 
+      // The browser must support WebAssembly.
+      if (!projection.isSupported()) {
+        alert("client-side projection is not supported");
+        return;
+      }
+
+      // load the projection module 
+      const projectionPromise = projection.load();
+
+      // request all earthquakes for last week as geojson
+      const dataRequestPromise = esriRequest({
+        url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson",
+        handleAs: 'json'
+      });
+
+      // load the coordinate formatter module
+      coordinateFormatter.load();
+
+      // coordinateFormatter spatial reference 
+      const geoSpatialReference = new SpatialReference({
+        wkid: 4326
+      });
+
+      // add a dark gray basemap in winkel III projection
+      esriBasemaps.winkel = {
+        baseMapLayers: [{
+          url: "https://arcgis1.storymaps.esri.com/arcgis/rest/services/basemaps/Esri_WinkelTripel_dark_gray/MapServer"
+        }],
+        thumbnailUrl: "",
+        title: "Winkel"
+      };
+
+      const viewSpatialReference = new SpatialReference({
+        wkid: 54042 // winkel III
+      });
+
+      // simple marker symbol to represent earthquake locations
+      const earthquakeMarker = new SimpleMarkerSymbol("solid", 8, null, new Color([238, 69, 0, 0.5]))
+
+      // center of the map
+      const point = new Point({
+        x: 6832.430696818978,
+        y: -209082.39095501788,
+        spatialReference: viewSpatialReference
+      });
+
+      // create a map with winkel III basemap
+      const map = new Map("mapDiv", {
+        basemap: "winkel",
+        center: point,
+        scale: 166418924.8107909
+      });
+
+      map.on("load", function () {
+        // earthquakes graphicslayer
+        const graphicsLayer = new GraphicsLayer();
+        map.addLayer(graphicsLayer);
+
+        projectionPromise.then(function () {
+
+          // read the geojson data from esriRequest promise
+          dataRequestPromise.then(function (response) {
+
+              // loop through geojson earthquakes and process the data
+              response.features.map(function (feature, i) {
+                const inSpatialReference = new SpatialReference({
+                  wkid: 4326
+                });
+                // create a point from a geoJSON point and set its spatialReference to WGS84
+                const point = new Point(feature.geometry.coordinates, inSpatialReference);
+
+                // project the point from WGS84 to winkel III projection
+                const projectedPoint = projection.project(point, viewSpatialReference);
+
+                // create new graphic and set its geometry to the projected point
+                const attributes = {
+                  ObjectID: i
+                };
+                const graphic = new Graphic(projectedPoint, earthquakeMarker, attributes);
+
+                // add the graphic representing earthquake location to the graphicslayer
+                graphicsLayer.add(graphic);
+              });
+            })
+            .otherwise(function (error) {
+              console.log("error happened while projecting", error);
+            });
+        });
+      });
+
+      // listen to mouse-move event of the map and print out the location of the mouse
+      // on the map in decimal degrees using coordinate formatter.
+      map.on("mouse-move", function (evt) {
+        // exit if coordinateFormatter or projection modules are not loaded 
+        if (!coordinateFormatter.isLoaded() || !projection.isLoaded()) {
+          return;
+        }
+        // The point's spatial reference should either be WGS84 or a geographic coordinate system
+        // so project the point from Winkel III to WGS84. 
+        const wgs84Point = projection.project(evt.mapPoint, geoSpatialReference);
+
+        // display the point coordinates in decimal degrees
+        if (wgs84Point) {
+          document.getElementById("coordinateString").innerHTML = "Decimal Degrees: " +
+            coordinateFormatter.toLatitudeLongitude(wgs84Point, "dd", 3);
+        }
+      });
+    });
+
+  </script>
+</head>
+
+<body class="calcite">
+  <div id="coordinateString"></div>
+  <div id="mapDiv"></div>
+</body>
+
+</html>

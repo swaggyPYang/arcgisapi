@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Measure Distances</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html,body,#main {
+      height:100%;
+      width:100%;
+      margin:0;
+      padding:0;
+      }
+
+      .shadow {
+      background-color:#FFF;
+      box-shadow:0 6px 3px -3px #888;
+      -moz-border-radius:6px;
+      -moz-box-shadow:0 6px 3px -3px #888;
+      -webkit-border-radius:6px;
+      -webkit-box-shadow:0 6px 3px -3px #888;
+      padding:8px;
+      }
+
+      .togglebutton {
+      color:#000;
+      font-family:Helvetica, Calibri, Arial, sans-serif;
+      font-size:16px;
+      text-align:center;
+      text-decoration:none;
+      margin:0;
+      padding:5px;
+      }
+
+      .togglebutton.mousedown {
+      background:url(images/buttonbg.jpg) repeat-x scroll left center transparent;
+      }
+
+      .floatingWindow {
+      background:url(images/blue.png) repeat scroll left top transparent;
+      border:solid 1px #00628B;
+      color:#000;
+      font-family:Tahoma;
+      position:absolute;
+      text-align:left;
+      -webkit-border-radius:10px;
+      -moz-border-radius:10px;
+      border-radius:10px;
+      padding:10px;
+      }
+
+      .title {
+      font-size:10pt;
+      padding-left:5px;
+      }
+
+      .details {
+      font-size:8pt;
+      padding:10px;
+      }
+
+      .disabled {
+        color:gray;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.dijit");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.form.CheckBox");
+      dojo.require("dijit.form.Button");
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.DistanceParameters");
+      dojo.require("esri.tasks.query");
+      dojo.require("esri.tasks.locator");
+
+      var geometryService;
+      var baseLayers = [];
+      var map, locator;
+      var endGraphic;
+      var units;
+      var totalDistance = 0, inputPoints = [], legDistance = [];
+
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+
+        map = new esri.Map("map", {
+          center: [-102.52, 46.779],
+          zoom: 4,
+          slider: false
+        });
+        
+        dojo.connect(map, "onClick", mapClickHandler);
+        
+        //add the basemaps (imagery, topo, street map). The visibility for the imagery and topo is set
+        //to false for initial display
+        var imagery = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", {
+            id: "imagery",
+            visible: false
+        });
+        baseLayers.push(imagery);
+        var streetMap = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer", {
+            id: "streetMap"
+        });
+        baseLayers.push(streetMap);
+        var topoMap = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer", {
+            id: "topo",
+            visible: false
+        });
+        baseLayers.push(topoMap);
+        map.addLayers(baseLayers);
+
+        locator = new esri.tasks.Locator("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Locators/ESRI_Geocode_USA/GeocodeServer");
+        dojo.connect(locator, "onAddressToLocationsComplete", function(results) {
+          if (results.length > 0) { //zoom to the first match
+            var result = results[0];
+            //results returned in geographic, convert to web mercator to display
+            map.centerAndZoom(esri.geometry.geographicToWebMercator(result.location), 14);
+          }
+        });
+        geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+      }
+
+      function mapClickHandler(evt) {
+        var inPoint = new esri.geometry.Point(evt.mapPoint.x, evt.mapPoint.y, map.spatialReference);
+        inputPoints.push(inPoint);
+        //define the symbology for the graphics
+        var markerSymbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE, 12, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([204, 102, 51]), 1), new dojo.Color([158, 184, 71, 0.65]));
+        var polylineSymbol = new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([204, 102, 51]), 4);
+        var font = new esri.symbol.Font("18px", esri.symbol.Font.STYLE_NORMAL, esri.symbol.Font.VARIANT_NORMAL, esri.symbol.Font.WEIGHT_BOLDER);
+        var textSymbol;
+         
+        if (inputPoints.length === 1) { //start location label
+          textSymbol = new esri.symbol.TextSymbol("Start", font, new dojo.Color([204, 102, 51]));
+          textSymbol.yoffset = 8;
+          map.graphics.add(new esri.Graphic(evt.mapPoint, textSymbol));
+        }
+
+        if (inputPoints.length >= 2) { //end location label
+          textSymbol = new esri.symbol.TextSymbol("Finish", font, new dojo.Color([204, 102, 51]));
+          textSymbol.yoffset = 8;
+          if (endGraphic) { //if an end label already exists remove it
+              map.graphics.remove(endGraphic);
+          }
+          endGraphic = new esri.Graphic(evt.mapPoint, textSymbol);
+          map.graphics.add(endGraphic);
+        }
+          
+        //add a graphic for the clicked location
+        map.graphics.add(new esri.Graphic(evt.mapPoint, markerSymbol));
+
+        //if there are two input points call the geometry service and perform the distance operation
+        if (inputPoints.length >= 2) {
+          dojo.style(dojo.byId("distanceDetails"), "display", "block");
+          var distParams = new esri.tasks.DistanceParameters();
+          distParams.distanceUnit = esri.tasks.GeometryService.UNIT_STATUTE_MILE;
+
+          distParams.geometry1 = inputPoints[inputPoints.length - 2];
+          distParams.geometry2 = inputPoints[inputPoints.length - 1];
+          distParams.geodesic = true;
+
+          //draw a polyline to connect the input points
+          var polyline = new esri.geometry.Polyline(map.spatialReference);
+          polyline.addPath([distParams.geometry1, distParams.geometry2]);
+          map.graphics.add(new esri.Graphic(polyline, polylineSymbol));
+          //Calculate the geodesic distance 
+          geometryService.distance(distParams, function(distance) {
+            if (isNaN(distance)) {
+                distance = 0;
+            }
+            legDistance.push(dojo.number.format(distance, {
+                places: 2
+            }));
+            totalDistance += distance;
+            var content = "";
+            dojo.forEach(legDistance, function(leg, index) {
+                content = content + "<b>Leg " + (index + 1) + "</b>" + ": " + leg + "<br />";
+            });
+            content = content + "<b>Total:</b> " + dojo.number.format(totalDistance, {
+                places: 2
+            }) + " miles <br />";
+            dojo.byId('distanceDetails').innerHTML = content;
+          });
+        }
+      }
+
+      function resetMap() {
+        map.graphics.clear();
+        inputPoints.length = 0;
+        totalDistance = 0;
+        legDistance.length = 0;
+        dojo.byId("distanceDetails").innerHTML = "";
+        dojo.style(dojo.byId("distanceDetails"), "display", "none");
+      }
+
+      function locate() {
+        resetMap();
+        var address = {
+          Zip: dojo.byId('zip').value
+        };
+        locator.addressToLocations(address);
+      }
+
+      function toggleBaseLayer(name) {
+        if (map !== null) {
+          dojo.forEach(baseLayers, function(baseLayer) {
+            (baseLayer.id === name) ? baseLayer.show() : baseLayer.hide();
+          });
+        }
+      }
+
+      dojo.ready(init);
+      </script>
+  </head>
+  
+  <body class="soria">
+  <div id="mainWindow" 
+       data-dojo-type="dijit.layout.BorderContainer" 
+       data-dojo-props="design:'sidebar', gutters:false" 
+       style="width: 100%; height: 100%; margin: 0;">
+
+      <div id="centerPane" 
+           data-dojo-type="dijit.layout.BorderContainer" 
+           data-dojo-props="region:'center', gutters:false" 
+           style="margin:2px 2px 2px 2px;">
+
+          <div id="map" 
+               data-dojo-type="dijit.layout.ContentPane" 
+               data-dojo-props="region:'center'" 
+               style="position:relative; overflow:hidden;">
+
+            <div id="detailsWindow" class="floatingWindow" style="left:25px;top:25px;z-index:998;width:250px;">
+              <div class="shadow">
+                <div class="title">
+                    Enter a zip code to zoom to the desired location - then click two or more
+                    input points on the map to calculate the distance.
+                </div>
+                <div class="details">
+                    <input type="text" id="zip" size="10" value="98506" />
+                    <div dojoType="dijit.form.Button" onClick="locate();">
+                        Go
+                    </div>
+                    <div dojoType="dijit.form.Button" id="resetButton" onClick="resetMap();">
+                        Clear Route
+                    </div>
+                    <br />
+                    <div id="distanceDetails" style="padding:5px;overflow:auto;max-height:300px;display:none;">
+                    </div>
+                    <br />
+                </div>
+              </div>
+            </div>
+              <div style="position:absolute; top:5px; right:30px; z-index:999; color:black;">
+                  <div data-dojo-type="dijit.form.Button" id="streetMap" class="togglebutton" onClick="toggleBaseLayer('streetMap');">
+                      Street Map
+                  </div>
+                  <div data-dojo-type="dijit.form.Button" id="imagery" class="togglebutton" onClick="toggleBaseLayer('imagery');">
+                      Imagery
+                  </div>
+                  <div data-dojo-type="dijit.form.Button" id="topo" class="togglebutton" onClick="toggleBaseLayer('topo');">
+                      Topo
+                  </div>
+              </div>
+          </div>
+      </div>
+  </body>
+
+</html>

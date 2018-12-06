@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title> World Street Map</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+    </style>
+
+    <script>var dojoConfig = {parseOnLoad: true};</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      
+      var map;
+      
+      dojo.ready(function() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-0.136, 51.510],
+          zoom: 15
+        });
+      });
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="map"></div>
+  </body>
+</html>

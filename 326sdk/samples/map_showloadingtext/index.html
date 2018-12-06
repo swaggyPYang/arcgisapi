@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+
+    <title>Map Loading Text</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    
+    <style>
+      #mapDiv {
+        border: 1px solid #666;
+      }
+      #status {
+        background-color: black; 
+        color: white; 
+        padding: 3px; 
+        border: solid 3px white;
+        border-radius: 5px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      
+      var map;
+      
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [117.773, 28.498],
+          zoom: 6
+        });
+        
+        dojo.connect(map, "onUpdateStart", function(){
+          esri.show(dojo.byId("status"));
+        });
+        dojo.connect(map, "onUpdateEnd", function(){
+          esri.hide(dojo.byId("status"));
+        });
+
+        //Takes a URL to a non cached map service.
+        var dynamicMapServiceLayer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Population_World/MapServer");
+        dynamicMapServiceLayer.setOpacity(0.4);
+        map.addLayer(dynamicMapServiceLayer);
+      }
+      dojo.ready(init);
+    </script>
+
+  </head>
+  <body class="claro">
+    <div id="map" style="position:relative; width:1024px; height:512px; border:1px solid #000;">
+      <span id="status" style="position: absolute; z-index: 100; right: 5px; top: 5px;">
+      Loading...
+      </span>
+    </div>
+  </body>
+
+</html>

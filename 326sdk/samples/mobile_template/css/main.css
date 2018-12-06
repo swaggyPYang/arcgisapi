@@ -1,0 +1,17 @@
+html, body, .mblView {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+#mapView {
+  /*height:	100%;*/
+}
+
+#map {
+  position:relative;
+  width:	100%;
+  height:	100%;
+}
+

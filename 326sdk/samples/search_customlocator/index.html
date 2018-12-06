@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Search widget using custom locator</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #FFFFFF;
+      overflow: hidden;
+      font-family: "Trebuchet MS";
+    }
+
+    #search {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: 20px;
+      left: 75px;
+    }
+
+    .arcgisSearch .searchGroup .searchInput {
+      width: 15.625rem;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/map",
+      "esri/tasks/locator",
+      "esri/dijit/Search",
+      "esri/symbols/PictureMarkerSymbol",
+      "esri/InfoTemplate",
+      "dojo/domReady!"
+    ], function (Map, Locator, Search, PictureMarkerSymbol, InfoTemplate){
+      var map;
+      var locatorUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Locators/Composite_HBR_Asset/GeocodeServer/";
+      map = new Map("map", {
+        basemap: "topo",
+        center: [4.8, 52], // lon, lat
+        zoom: 9
+      });
+
+      var search = new Search(
+        {
+          sources: [
+            {
+              //Pass in the custom locator to the sources
+              locator: new Locator(locatorUrl),
+              singleLineFieldName: "AssetID",
+              outFields: ["Match_addr"],
+              name: "HBR_Asset",
+              placeholder: "H-L-N-EW-090-GLO-001-403-OWT",
+              highlightSymbol: new PictureMarkerSymbol("https://js.arcgis.com/3.26/esri/dijit/Search/images/search-pointer.png", 36, 36).setOffset(9, 18),
+              //Create an InfoTemplate
+              infoTemplate: new InfoTemplate("Asset ID", "ID: ${Match_addr}")
+            }
+          ],
+          map: map,
+          enableSearchingAll: false,
+          autoComplete: true,
+          value: "H-L-N-EW-090-GLO-001-403-OWT"
+        }, "search");
+
+      search.startup();
+    });
+  </script>
+</head>
+
+<body>
+  <div id="search"></div>
+  <div id="map"></div>
+</body>
+</html>

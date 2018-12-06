@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Full Map Layout</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+
+      dojo.require("esri.map");
+      dojo.require("esri.IdentityManager");
+      dojo.require("esri.arcgis.utils");
+        
+      var map;
+
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications. 
+        esri.config.defaults.geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+      
+        var urlObject = esri.urlToObject(document.location.href);
+        var webmap = "59357ba9bd06409a99c0eb89f9089a40";
+
+        if (urlObject.query) {
+          webmap = urlObject.query.webmap;
+        }
+        
+        var mapDeferred = esri.arcgis.utils.createMap(webmap, "mapDiv", {
+          mapOptions: {
+            slider: false
+          },
+          geometryServiceURL: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
+        });
+
+        mapDeferred.then(function(response) {
+          map = response.map;
+          
+        },function(error) {
+          console.log("Map creation failed: ", dojo.toJson(error));
+        });
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body>
+    <div id="mapDiv"></div>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+html, body { 
+  font-family: arial;
+  height: 100%; width: 100%; margin: 0; padding: 0; 
+}
+#map { 
+  background: #eee;
+  margin: 0; 
+  padding: 0; 
+}
+#controls {
+  background: #fff;
+  bottom: 0px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  left: 50%;
+  margin: 0 -25em;
+  padding: 5px 5px 30px 5px;
+  position: absolute;
+  width: 50em;
+  z-index: 40; 
+  -moz-box-shadow: 0 0 5px #888;
+  -webkit-box-shadow: 0 0 5px #888;
+  box-shadow: 0 0 5px #888;
+}
+#controls label, #controls input, #controls button {
+  font-size: 1.2em;
+}
+#controls label {
+  display: inline-block;
+  width: 10%;
+}
+#controls input {
+  text-align: center;
+}
+span#extent, span#center {
+  display: inline-block;
+  font-size: 0.9em;
+  padding: 0 0 8px 0;
+  width: 88%;
+}
+/* change text selection color to call out the extent
+ thanks:  http://css-tricks.com/overriding-the-default-text-selection-color-with-css/ */
+span#extent::selection, span#center::selection {
+  background: #fff2a8;
+}
+span#extent::-moz-selection, span#center::-moz-selection {
+  background: #fff2a8;
+}
+span#extent:hover, span#center:hover {
+  cursor: pointer;
+}
+#instructions p {
+  margin: 0 0 10px 0;
+}
+#wkidWrapper label {
+  width: 10%;
+}
+#wkidWrapper .wkidList { 
+  width: 88%; 
+}

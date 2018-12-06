@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>QueryTask with geometry, results as an InfoWindow</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+
+      var map, queryTask, query;
+      var symbol, infoTemplate;
+
+      function init() {
+        map = new esri.Map("mapDiv");
+
+        //create and add new layer
+        var layer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer");
+        map.addLayer(layer);
+
+        //Listen for click event on the map, when the user clicks on the map call executeQueryTask function.
+        dojo.connect(map, "onClick", executeQueryTask);
+
+
+        //build query task
+        queryTask = new esri.tasks.QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer/1");
+
+        //Can listen for onComplete event to process results or can use the callback option in the queryTask.execute method.
+        //dojo.connect(queryTask, "onComplete", showResults);
+
+        //build query filter
+        query = new esri.tasks.Query();
+        query.returnGeometry = true;
+        query.outFields = ["STATE_NAME", "STATE_FIPS", "STATE_ABBR", "HYPERLINK", "AREA"];
+
+        //create the infoTemplate to be used in the infoWindow.
+        //All ${attributeName} will be substituted with the attribute value for current feature.
+        infoTemplate = new esri.InfoTemplate("${STATE_NAME}", "State Fips: ${STATE_FIPS}<br />Abbreviation: ${STATE_ABBR}<br />Area: ${AREA}");
+
+        symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT, new dojo.Color([255,0,0]), 2), new dojo.Color([255,255,0,0.5]));
+
+      }
+
+      function executeQueryTask(evt) {
+        //onClick event returns the evt point where the user clicked on the map.
+        //This is contains the mapPoint (esri.geometry.point) and the screenPoint (pixel xy where the user clicked).
+        //set query geometry = to evt.mapPoint Geometry
+        query.geometry = evt.mapPoint;
+
+        //Execute task and call showResults on completion
+        queryTask.execute(query, showResults);
+      }
+
+      function showResults(featureSet) {
+        //remove all graphics on the maps graphics layer
+        map.graphics.clear();
+
+        var features = featureSet.features;
+
+        //QueryTask returns a featureSet.  Loop through features in the featureSet and add them to the map.
+        dojo.forEach(features,function(feature){
+          var graphic = feature;
+          graphic.setSymbol(symbol);
+
+          //Set the infoTemplate.
+          graphic.setInfoTemplate(infoTemplate);
+
+          //Add graphic to the map graphics layer.
+          map.graphics.add(graphic);
+          
+        });
+
+        dojo.connect(map.graphics, "onMouseMove", function(evt) {
+          var g = evt.graphic;
+          map.infoWindow.setContent(g.getContent());
+          map.infoWindow.setTitle(g.getTitle());
+          map.infoWindow.show(evt.screenPoint,map.getInfoWindowAnchor(evt.screenPoint));
+        });
+        dojo.connect(map.graphics, "onMouseOut", function() {map.infoWindow.hide();} );
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    Click on a state to get more info.  When state is highlighted, move mouse over state to get more info.
+    <div id="mapDiv" style="width:600px; height:600px; border:1px solid #000;"></div>
+  </body>
+</html>

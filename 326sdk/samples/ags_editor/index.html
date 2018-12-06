@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Editing layout using map data from ArcGIS.com</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "dojo/ready",
+        "dojo/parser",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "esri/map",
+        "esri/config",
+        "esri/tasks/GeometryService",
+        "esri/urlUtils",
+        "esri/arcgis/utils",
+        "dojo/dom",
+        "dojo/_base/array",
+        "esri/dijit/editing/Editor",
+        "dojo/domReady!"
+        ], function(
+          ready,
+          parser,
+          BorderContainer,
+          ContentPane,
+          Map,
+          config,
+          GeometryService,
+          urlUtils,
+          arcgisUtils,
+          dom,
+          array,
+          Editor
+        ) {
+
+          ready(function(){
+            parser.parse();
+            config.defaults.io.proxyUrl = "/proxy/";
+            config.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+            //check to see if a webmap was specified using URL params. If not use the
+            //hardcoded webmap id
+            var urlObject = urlUtils.urlToObject(document.location.href);
+            var webmap = "a193c5459e6e4fd99ebf09d893d65cf0";
+            if(urlObject.query && urlObject.query.webmap){
+              webmap = urlObject.query.webmap;
+            }
+
+
+            //create the map
+            arcgisUtils.createMap(webmap, "map", {
+              mapOptions: {
+                sliderStyle: "large"
+              },
+              ignorePopups: true
+
+            }).then(function(response){
+
+              var map = response.map;
+                dom.byId("title").innerHTML = response.itemInfo.item.title;
+                dom.byId("snippet").innerHTML = response.itemInfo.item.snippet;
+                dom.byId("dataSource").innerHTML = "<a target='_blank' href='https://www.arcgis.com/home/item.html?id=" + webmap + "'>View data details</a>";
+
+                //create the editor widget
+                var layerInfo = [];
+
+                var layers = response.itemInfo.itemData.operationalLayers;
+                array.forEach(layers, function (layer){
+                  layerInfo.push({
+                    "featureLayer": layer.layerObject
+                  });
+                });
+
+
+                var settings = {
+                  map: map,
+                  layerInfos: layerInfo
+                };
+
+                var editorWidget = new Editor({
+                  settings: settings
+                },"editorDiv");
+                editorWidget.startup();
+
+            });
+
+        });
+
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline'"
+   style="width:100%; height:100%;">
+      <div id="header" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        <div id="title">
+        </div>
+        <div id="snippet">
+        </div>
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" id="leftPane" data-dojo-props="region:'left'">
+        <div id="editorDiv">
+        </div>
+      </div>
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+      <div id="footer" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+        <div id="dataSource"></div>
+      </div>
+    </div>
+  </body>
+
+</html>

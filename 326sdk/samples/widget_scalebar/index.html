@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Map with scalebar</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/dijit/calcite.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/esri/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{padding:0;}
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map", "esri/dijit/Scalebar",
+        "dojo/parser",
+
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, Scalebar,
+        parser
+      ) {
+        parser.parse();
+
+        map = new Map("map", {
+          basemap: "topo",
+          center: [-116.093, 34.218],
+          zoom: 7
+        });
+
+        var scalebar = new Scalebar({
+          map: map,
+          // "dual" displays both miles and kilometers
+          // "english" is the default, which displays miles
+          // use "metric" for kilometers
+          scalebarUnit: "dual"
+        });
+      });
+    </script>
+  </head>
+
+  <body class="calcite">
+    <div data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline', gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+
+      <div id="map"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'"
+           style="overflow:hidden;">
+      </div>
+
+    </div>
+  </body>
+</html>

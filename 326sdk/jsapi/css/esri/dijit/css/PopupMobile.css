@@ -1,0 +1,479 @@
+/*******************
+ * esri.mobile.PopupMobile
+ *******************/
+
+.esriPopupMobile {
+  position: absolute;
+  z-index: 40;
+  box-shadow: 0 0 0.75em #111; -moz-box-shadow: 0 0 0.75em #111; -webkit-box-shadow: 0 0 0.75em #111; -o-box-shadow: 0 0 0.75em #111;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px;
+}
+
+.esriMobilePopupNavigator {
+  position:absolute;
+  top:42px;
+  overflow:hidden;
+  width:100%;
+  height:18px;
+  background:#ddd;
+  z-index:42;
+  text-align:center;
+  padding-bottom:3px;
+}
+
+.esriMobilePopupInfoView {
+	display:none;
+	position:absolute;
+	top:42px;
+	overflow:hidden;
+	width:100%;
+  height:100%;
+	background:#fff;
+	z-index:42;
+	padding-bottom:30px;
+	padding-left:2px;
+	/*min-height: 980px;*/
+	/*visibility:hidden;*/
+}
+
+.esriPopupMobile .hidden {
+  display: none;
+}
+
+.esriPopupMobile .sizer {
+  width: 260px;
+}
+
+.esriPopupMobile a[href] {
+  color: #336699;
+  text-decoration: underline;
+}
+
+.esriPopupMobile .titlePane {
+	/*
+  background:-webkit-gradient(
+  linear,
+  left bottom,
+  left top,
+  color-stop(0.25, rgba(9,49,66,0.8)),
+  color-stop(0.82, rgba(83,134,163,0.8))
+  );
+  background:-moz-linear-gradient(
+  center bottom,
+  rgba(9,49,66, 0.8) 25%,
+  rgba(83,134,163, 0.8) 82%
+  );
+  */
+  /*commented out the background rgba since it didn't work in IE
+  and replaced with the color (#0E3043).*/
+	/*background: rgba(14, 48, 67, 1.0);  */
+  background: none repeat scroll 0 0 #0E3043;
+  color: #FFFFFF;
+  height:40px;
+  padding-left: 35px;
+  padding-right:35px;
+  border-radius: 6px ; -moz-border-radius: 6px; -webkit-border-radius: 6px;
+  cursor: default;
+  border: 2px solid #fff;
+}
+
+.esriPopupMobile .titlePane .title {
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden; 
+	font-size:10pt;
+  font-weight:bold;
+  width:174x;
+  line-height:18px;
+  margin-top:3px;
+}
+
+.esriPopupMobile .titlePane .footer {
+	font-size:9pt;
+	font-style:italic;
+	line-height:10px;
+}
+
+.esriPopupMobile .titlePane .spinner {
+  /*position: absolute; top: 2px; right: 57px;*/
+  float: left;
+  margin-top: 4px;
+  margin-right: 4px;
+  cursor: pointer; 
+  /*image for IE */
+  background: url(../images/spinner.gif) no-repeat;
+  /*background: url("data:image/gif;base64,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");
+  */
+  width: 16px; height: 16px;
+  background-position: 0px 0px;
+}
+
+.esriPopupMobile .titleButton {
+  position: absolute; top: 2px;
+  cursor: pointer; 
+  /*background: url(../images/popup.png) no-repeat;*/
+}
+
+.esriPopupMobile .titleButton.close {
+	top: 6px;
+  left: 3px;
+  /*background-position: 0 -171px; width: 12px; height: 17px;*/
+  width:32px;
+  height:32px;
+  /*added background image
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAAIySURBVFhH7VYhT8NQEJ6YmCRTSzAEQQgKiSKbQ9aBJAExyU+YWzLDzJhEIidRZHJycnIJBokEtfF9zV1zPNq+a7Ft8tLX9u6777539/pareZqFHAqsN/vT3e73RzjA/M/F95/YjzjQ98J6TMDYE+As6B43mIszdhYRnyP53NfhBIrgjCYgguRXGBRaEwlaI/7F25JbRISXMGY0ZEHTBSbG0Wqk2AwzZxZewKHNvB7UCUwv6iEAYeFOC8rOQbGwHkUnLUbh9KbNey5HXMMgdMxXeNbCq14sv9PcPU1S7Fy4WkVs6qtA54HprDeMG/zO+6HGN/y7R33buBHFdgRvOKFLPJv8tji28SQGAoBktHrMs/P1FTqU3oJgUUBgTa+24BPJvh9ETBsRmI3isWnpNxEClsvkFzjT8uAgTeM4Wb+YvhSBgibO5M5p2cR+1QBEBl7FSisWOAcY2jRKY+sKAtqIN0Z2RFRAqxYqdqD0BgYtgZIwhblpAjc7KrxHRHGr0Vs8X5qpL/N6YJBSILbsOBto9kLYCIO/O931AnzaxN8Zt53zZJQlRMbCARW7vVXRzit3W1TkhZwbiQ4NyL/tg7jvsk2cUkXGMGfZ4l0B3QVX87apb1bBwA+iTmYzOskkProj0RIrPF8Fel3Zr00xOsHN0XGbLKDKFtK/vMjEkIw3nkUy86F0srxnvdKw26gGtrPpj5+TUlUyPkLzkvCKMIDC7dWZs6T8Vie+1WxGvtGASrwAxhByzDtneIfAAAAAElFTkSuQmCC");
+  */
+  background: url(../images/whitex.png) no-repeat;
+}
+
+.esriPopupMobile .titleButton.arrow {
+	top: 6px;
+  right: 3px;
+  /*background-position: 0 -171px; width: 12px; height: 17px;*/
+  width:32px;
+  height:32px;
+ /* added background image and commented out base64
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAALbSURBVFhH7ZY/TFRBEMZRRBD/HKCC/0AiUamMjQnl2VtcaWNPaWl5MTGX2FDSiZUUFpSWZyUlBQU25kUatbrS0Nz5+15mX4b1HfuOM1ETNpns7u3szDffzsy7kZGT8T8x0Ov1ppHZv4IZx4+63e5b5Afr3wa/d5ANDup/FCAGr2H4nffI/ivyCWmb7EXnbfYPhwbS+/xlBQf7wTjr96wf6xmQ68iV4IT1MuctMSF95p9MjWODUATO2Ef2D+QQqZncYD6H3PFOjLF1x8jgILi8iPPMItG7ziGXkUsm9wzMFPNCWZTcfx6YYL0yEBNc2LLLbUfxLUWniF10YuQ8Mt8HxJrZ2akMQNQH5HLoAMjZBURAOiUgpmMn6EwQzDfTrfYUVkpKorUSg4p2zOh3GHrjbE4LYHzHPcV2JRZC4mFsuewCv99E8obkEdheSbkYJaVYUEVoHDorBWT07x2F1qK9yrwUgbjNflJ3mU8FGy6nVpMsGICtlCJ6C3KC3HcgOqzzsmQedfnTNJ1myq4u6v03kooWJerKCf8cncCAAZztHhy8ZJ1VsmsANqsCMGfqD8VwkYuhGeugCqyVtGsAkhkrw4jyQAnpx0xJDuSdURWRBKCMtayd6qeMLZWdHNci53fZnykpxcwApDsizj8chZYz0a1mFEeuDinKi+wXELVhs5clozfqGnZBHWwiqml1Q1Gv2Q9VxKgBqPk7ANg2e+n3d3W7Y9aLshG1yEUD6Z3Pm/Oi7Jydp+Zcjaho60kmUK47Dw2X6Xl0nHXsPPSC8dgo5/qc5x2wUvKVJM5qAIGBF6wnEWV9YEG9X7TrAzUWPVXD/ZdYT0bcTyF8SCyKXfZPWB96Y/ZnXd0r6rYDfnznzugzjH53RvfZv2H/mlkJ21SDQYr/hVbK6ZqvSg1O5vQMSOazL17r26/P+EAJNwAINR+J6vqVRa5/xS2tkXpVW0PpKRmHMnBy+V9j4BeOwLjFLyR3DwAAAABJRU5ErkJggg==");
+ */
+  background: url(../images/whiter.png) no-repeat;
+}
+
+.esriPopupMobile .titleButton.prev {
+  top: 26px;
+	left:76px;
+	width:18px;
+	height:11px;
+	/*background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAJCAYAAADtj3ZXAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAA3UlEQVQoU2NgIAGUl5f7v3v3zn/37t3n////n45Xa1pamvqZM2f8Dh061Pf+/ftzT58+/f/nzx+gPjBowNA8c+ZMv02bNvWdP3/+HFDDs69fv8IUo9MNDB0dHerPnj3z3bBhw9kvX76cff36NS7FmJrPnj27/8GDB8RqQFbXwBAaGiq5atUqYyAuvnLlyubnz5/fxONUZM31GH4GhqjU3bt3jefNm7f58+fPm+/du4fbz4RiauLEiSZA3SaHDx/e/OTJk5tv377FHdr4DANGndSRI0dMtmzZUgKMjSgAAhs1Rpznru8AAAAASUVORK5CYII=");*/
+	 /* added image for ie
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAALCAYAAAByF90EAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAADlSURBVDhPY2AgE6SlpamfOXPG79ChQ30kG1FeXu7/7t07/927d5//jwQIGoRs6/v37889ffr0/58/f5DNALOxGjRz5ky/TZs29Z0/f/4cUPOzr1+/YmhEFwAb1NHRof7s2TPfDRs2nP3y5cvZ169fE9SI1aCzZ8/uf/DgAcmaMcIoNDRUctWqVcZAXHzlypXNz58/v0mMdwgGNjBmpO7evWs8b968zZ8/f9587949gq4lGGsgBRMnTjQBmmRy+PDhzU+ePLn59u1b4mINn+nA5CB15MgRky1btpQQ9BpRzgQqQk/ZAJ57kAPSvGGdAAAAAElFTkSuQmCC");
+  */
+  background: url(../images/leftlongarrow.png) no-repeat;
+}
+
+.esriPopupMobile .titleButton.next {
+	top: 26px;
+	right:76px;
+	width:18px;
+	height:11px;
+	/*background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAJCAYAAADtj3ZXAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41Ljg3O4BdAAAA0UlEQVQoU5WRPQqEQAyFPYp7E8c7eAWvYOnuEbzBNjbTCjY2DoiVlYVWOlb+IWIrFtlEWBBdFw2kGMj75r1ESdNUuK4r6rrWLct6KHeqKAqgmucZhmGo8C08z3thM8Mw/sO+4pWwKQRB0zRVEAThOI7Mtm12MHUm3oKWZQEpJSAkRNgzSRINI6rKFfHeVZ7nkGXZ+5J4mibouk7GcRwiSHMcR1sj/PqZbJZlCW3brjajKGKmaaqnmfu+J3fC931BC8JMxwXt1TRMp+Gc63dOTLMf0TEvmT6rXY8AAAAASUVORK5CYII=");*/
+	/* added image for IE
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAALCAYAAAByF90EAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAADoSURBVDhPY2AAgkOHDvWdOXPGLy0tTR3EJxv8RwK7d+8+/+7dO//y8nJ/kg1ENgjE/vPnz/+nT5/+f//+/TmSXItuEDr/69evIEOfnT9//tymTZv6Zs6c6YfVtYQMQpd//fr1/y9fvpzdsGHD2WfPnvl2dHRAwpZUg5DVP3jw4P/Zs2f3k2wQyJvPnz+/eeXKlc2rVq0qBmLj0NBQSaIMunfv3v/Pnz9vnjdv3ua7d+8aA2NUiqgwevv27f8nT57cPHz48GagN0wmTpxoQlRSQPbzli1bSo4cOWICTJzYbcVnIklpBYdBAJfgkANX1pE2AAAAAElFTkSuQmCC");
+  */
+  background: url(../images/rightlongarrow.png) no-repeat;
+}
+
+.esriPopupMobile .pointer {
+  position: absolute;
+}
+
+.esriPopupMobile .pointer.top {
+  left: 118px;
+  top: -10px;
+  width:24px;
+  height:12px;
+  margin-left: 0px;
+  /*added image for IE
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAMCAYAAAB4MH11AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NUE1QTBBRkE3MkFBMTFFMEI5QkNFOTcyRjZCNjVGMUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NUE1QTBBRkI3MkFBMTFFMEI5QkNFOTcyRjZCNjVGMUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1QTVBMEFGODcyQUExMUUwQjlCQ0U5NzJGNkI2NUYxQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1QTVBMEFGOTcyQUExMUUwQjlCQ0U5NzJGNkI2NUYxQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3BZYkAAAGZSURBVHjapJHNSwJhEIdn1dWsqP9DCJIuGeTBCgIhgsAiohJMIskkNU2XIpOsCCvo2rFbl0CwkxFheVEJQahbh67mF3kofZt3ccVVisUGnsMsu89vZgcIISCBLsSK3CBvyDkik/KtFLkKcRBxVZBTKSFSJvdSY6FUJktb+2TEZG0OCf8nQI34BfmiO0CUmlHSrx0nhgVbc8hxJwFUviPI5zY4otLoSd/gGA8NmVi2N4cc/hbA8Cni6kb8iA/lYPEdQCQWB6WSFb3EMAzotAMQvQzTtoKc0W9aZbKWvgcJCHKzNwiRu3Y5LTpYIp0B44qTtmrEgez9FUDlQcSZL5ZhfnMXovdPoGTb5ULVMOQxlYHpVY8Q4kI40ab1X9SLHCFrH8USmNY5iCefgWUVIKXkMhkYdENwfRGi7Wd90JCwAZWf8PJCCWZs2xBPSZfTqtZqEEskYdbONd/QJWzAr5ArFGHK6oZU9gVYhXR54yYIK5fDpH4YrsKNU7zzN8jli2C0OCGdfe1Izk+KfH1X4fYhAWZPsPH8R4ABALPW1dE0BK5DAAAAAElFTkSuQmCC");;
+  */
+  background: url(../images/pointertop.png) no-repeat;
+}
+
+.esriPopupMobile .pointer.bottom {
+  left: 50%;
+  bottom:-10px;
+  width:24px;
+  height:12px;
+  margin-left: 0px;
+  /*added image for IE
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAMCAYAAAB4MH11AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NUE1QTBBRkU3MkFBMTFFMEI5QkNFOTcyRjZCNjVGMUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NUE1QTBBRkY3MkFBMTFFMEI5QkNFOTcyRjZCNjVGMUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1QTVBMEFGQzcyQUExMUUwQjlCQ0U5NzJGNkI2NUYxQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1QTVBMEFGRDcyQUExMUUwQjlCQ0U5NzJGNkI2NUYxQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PkPPimgAAAFGSURBVHjaYvwPBAxA4JVcxHD03CUGagBbUwOGLbN6wGxGmAUg4BKXy3D68nWKDHcwN2LYOKMLzmcCWQLEYOv2LJrMYKCpRrbh7rbmyIY3g8xmRPLABCDOBzFsItIZLt+8S5LhXvZWDMsnNMG4DUDcCAsiZHWTgTgHxLAISWG4fvcBUYYHuNozLOyqhXErgbgDxkG3AARmAHE6iGEckMBw5+ETvIaHe7swzGqpgHHLgLgbWR6bBaA4mQPESSCOoV88w73HT7EaHuXrxjC9qQzGBQXvJAzDsFgAAmxAPBOIE379/sNgGpTI8ODJcxQFcQGeDJPri2HcDKh6TACyAAfmAOKFoGT889fv/1oekf/5DJzBuLh90n8kkILHDLwWgDAXEC9FtgTN8AQC+glaAMJ8MEvQQAQReomyANmSh1A6gkh9DAABBgD2e347tJtbbAAAAABJRU5ErkJggg==");
+  */
+  background: url(../images/pointerbottom.png) no-repeat;
+}
+
+/*
+.esriMobilePopupNavigator .expandedTitleButton.prev {
+	display:inline-block;
+	margin-right:8px;
+	width:18px;
+	height:11px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAALCAYAAAByF90EAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAADlSURBVDhPY2AgE6SlpamfOXPG79ChQ30kG1FeXu7/7t07/927d5//jwQIGoRs6/v37889ffr0/58/f5DNALOxGjRz5ky/TZs29Z0/f/4cUPOzr1+/YmhEFwAb1NHRof7s2TPfDRs2nP3y5cvZ169fE9SI1aCzZ8/uf/DgAcmaMcIoNDRUctWqVcZAXHzlypXNz58/v0mMdwgGNjBmpO7evWs8b968zZ8/f9587949gq4lGGsgBRMnTjQBmmRy+PDhzU+ePLn59u1b4mINn+nA5CB15MgRky1btpQQ9BpRzgQqQk/ZAJ57kAPSvGGdAAAAAElFTkSuQmCC");
+}
+
+.esriMobilePopupNavigator .expandedTitleButton.next {
+	display:inline-block;
+	margin-left:8px;
+	width:18px;
+	height:11px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAALCAYAAAByF90EAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAADoSURBVDhPY2AAgkOHDvWdOXPGLy0tTR3EJxv8RwK7d+8+/+7dO//y8nJ/kg1ENgjE/vPnz/+nT5/+f//+/TmSXItuEDr/69evIEOfnT9//tymTZv6Zs6c6YfVtYQMQpd//fr1/y9fvpzdsGHD2WfPnvl2dHRAwpZUg5DVP3jw4P/Zs2f3k2wQyJvPnz+/eeXKlc2rVq0qBmLj0NBQSaIMunfv3v/Pnz9vnjdv3ua7d+8aA2NUiqgwevv27f8nT57cPHz48GagN0wmTpxoQlRSQPbzli1bSo4cOWICTJzYbcVnIklpBYdBAJfgkANX1pE2AAAAAElFTkSuQmCC");
+}
+*/
+
+/*NavigationBar css*/
+.esriMobileNavigationBar {
+  overflow:hidden;
+  position:absolute;
+  z-index:41;
+  top:0px;
+  /*background:-moz-linear-gradient(top, #5c5c5c, #000);
+  background:-webkit-gradient(linear, left top, left bottom, from(#5c5c5c), to(#000));*/
+  background-color:#639BBC;
+  background-image:-webkit-gradient(
+  linear,
+  left bottom,
+  left top,
+  color-stop(0.25, rgb(10,77,106)),
+  color-stop(0.82, rgb(99,155,188))
+  );
+  background-image:-moz-linear-gradient(
+  center bottom,
+  rgb(10,77,106) 25%,
+  rgb(99,155,188) 82%
+  );
+  /*added this to support gradient background on IE an alternate
+  approach would be to just supply a background color (no gradient)*/
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#639BBC', endColorstr='#0A4D6A');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#639BBC', endColorstr='#0A4D6A')";
+
+  width:100%;
+  height:42px;	
+  margin:0 auto;
+  clear:both;
+  font-family:Helvetica,Arial,sans-serif;
+  display:block;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem {
+  display:block;
+  margin-top:5px;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.left {
+  width:32px;
+  height:32px;
+  float:left;
+  position:absolute;
+  left:0;
+  top:0;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.right {
+  width:32px;
+  height:32px;
+  float:right;
+  position:absolute;
+  right:0;
+  top:0;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.right1 {
+  width:32px;
+  height:32px;
+  float:right;
+  position:absolute;
+  right:36px;
+  top:0;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.right1.hidden {
+	display:none;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.right2 {
+  width:32px;
+  height:32px;
+  float:right;
+  position:absolute;
+  right:74px;
+  top:0;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.right2.hidden {
+	display:none;
+}
+
+.esriMobileNavigationBar .esriMobileNavigationItem.center {
+  display:block;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  margin:0.6em 32px 0.8em 32px;
+  outline:0 none !important;
+  overflow:hidden;
+  padding:0;
+  text-align:center;
+  white-space:nowrap;
+  text-overflow:ellipsis;	
+}
+/*Info View CSS*/
+.esriMobileInfoView {
+	/*min-height: 980px;*/
+	position:absolute;
+	top:42px;
+	width:100%;
+	background:#fff;
+	display:none;
+	z-index:42;
+	opacity:1.0;
+	overflow:hidden;
+}
+
+.esriMobileInfoViewPartial {
+	/*border-top: 2px solid #333;*/
+	border-bottom: 2px solid #333;
+	position:absolute;
+	overflow:hidden;
+	/*bottom:-14px;*/
+	top:42px;
+	width:100%;
+	height:90px;
+	background:#fff;
+	z-index:42;
+	opacity:1.0;
+	/*-webkit-transition:all 0.4s ease-in-out;*/
+}
+
+.esriMobileInfoView .esriMobileInfoViewSection {
+	margin: 6px;
+	padding: 6px;
+	border: solid 2px rgba(0,0,0,0.5);
+	background-color: rgba(255,255,255,0.75);
+	-webkit-border-radius: 10px;
+	-webkit-box-sizing: border-box;
+	/*-webkit-box-shadow: 6px 6px 3px #888;*/
+}
+
+.esriMobileInfoViewPartial .esriMobileInfoViewSection {
+	margin: 6px;
+	padding: 6px;
+	border: solid 2px rgba(0,0,0,0.5);
+	background-color: rgba(255,255,255,0.75);
+	-webkit-border-radius: 10px;
+	-webkit-box-sizing: border-box;
+	/*-webkit-box-shadow: 6px 6px 3px #888;*/
+}
+
+.esriMobileInfoView .esriMobileInfoViewItem {
+	margin: 0px;
+	/* 
+	If dojox.mobile is included, the default font color on Android (Chrome) is overridden to white, thereby giving the appearence
+	there is no content in the popup (white on white) CM
+	*/
+	color: #000000;
+}
+
+.esriMobileInfoViewPartial .esriMobileInfoViewItem {
+	margin: 0px;	
+}
+
+.esriMobileInfoView .esriMobileInfoViewItem .round {
+	-webkit-border-radius: 10px;
+	border: solid 1px #888;
+	/*background-color: rgba(255,255,255,0.75);*/
+	padding: 4px;
+	margin: 2px;
+	text-align: left;
+	/*-webkit-box-sizing: border-box;*/
+	/*-webkit-box-shadow: 6px 6px 3px #888;*/
+	-webkit-box-shadow: 0 0 0 #888;
+	overflow:hidden;
+}
+
+.esriMobileInfoViewPartial .esriMobileInfoViewItem .round {
+	-webkit-border-radius: 10px;
+	border: solid 1px #888;
+	/*background-color: rgba(255,255,255,0.75);*/
+	padding: 4px;
+	margin: 2px;
+	text-align: left;
+	/*-webkit-box-sizing: border-box;*/
+	/*-webkit-box-shadow: 6px 6px 3px #888;*/
+	-webkit-box-shadow: 0 0 0 #888;
+	overflow:hidden;
+}
+
+
+.esriMobileInfoViewItem .square {
+	border-bottom: solid 1px #888;
+	border-left: solid 1px #888;
+	border-right: solid 1px #888;
+	margin-left:5px;
+	margin-right:5px;
+	padding: 4px;
+	text-align: left;
+	overflow:hidden;
+	position:relative;
+}
+
+.esriMobileInfoViewItem .square .leftDiv {
+	font-size:12px;
+	color:#024672;
+	float:left;
+	width:60px;
+	margin-left:2px;
+}
+
+.esriMobileInfoViewItem .square .contentDiv {
+	margin-top:12px;
+	margin-left:50px;
+	padding-right:2px;
+	height:100%;
+	text-overflow:ellipsis;
+}
+
+.esriMobileInfoViewItem .square .title {
+	font-size:20px;
+	font-weight:bold;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	color:#333;
+}
+
+.esriMobileInfoViewItem .square .desc {
+	padding-right:32px;
+	overflow:hidden;
+  font-size:13px;
+  color:#222;
+	margin-left:2px;
+	text-overflow:ellipsis;
+}
+
+.esriMobileInfoViewItem .square .arrow {
+	position:absolute;
+  top:16px;
+	right:10px;
+	width:32px;
+	height:32px;
+  /*added image for IE
+	background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAACuSURBVFhH7ZbNCcAgDIU9d4QO0FG6lsMIolcRFB3O/oDFQ8VekliI4NX35T2jEYLXnxzIORfvfSFhTikVKeW90SFacVSIsu1LjPGpvIqjQiilugBocTBEbTt24qsT1lr4x2oUxxQQxhh6Jy6I80Fbwf6PURRaazgXphYHzX9UOWgHjMSdc3SZszhIr5NmflUUQuhORKCZt3a+zYVo4hWknYzRxVsIMnGQG86Hng4cOv0UzCALAz8AAAAASUVORK5CYII=");
+  */
+  background: url(../images/squarearrow.png) no-repeat;
+}
+
+.esriMobileInfoViewItem .square .thumbnail {
+	float:left;
+	margin-top:3px;
+	margin-bottom:3px;
+	width:48px;
+	height:48px;
+}
+
+.esriMobileInfoViewItem .square.first {
+	margin-top:10px;
+	border-top: solid 1px #888;
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+}
+
+.esriMobileInfoViewItem .square.last {
+	-webkit-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+}
+
+.esriMobileInfoView .esriMobileInfoViewItem .gallery {
+    margin: 10px 10px 60px 12px;
+}
+
+

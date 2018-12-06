@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=yes">
+    
+    <title>Mobile Gallery</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/mobile/themes/iphone/iphone.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <script>var dojoConfig = { parseOnLoad : true };</script>
+
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script language="JavaScript">
+      dojo.require("esri.dijit.Gallery");
+      // dojoConfig = dojo.config;
+      dojo.require("dojox.mobile.parser");
+      dojo.require("dojox.mobile");
+      dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+
+      var itemsArray;
+
+      function init() {
+        itemsArray = [{
+          "id" : "avgHouseholdSize",
+          "title" : "Average Household Size",
+          "description" : "This thematic map presents the average household size in the United States in 2010.",
+          "thumbnailUrl" : "images/avghousehold.png"
+        }, {
+          "id" : "popChange",
+          "title" : "Population Change 1990 - 2000",
+          "description" : "This thematic map indicates the annual compound rate of total population change in the United States from 1990 to 2000. Total Population is the total number of residents in an area.",
+          "thumbnailUrl" : "images/popchange.png"
+        }, {
+          "id" : "daytimePopulation",
+          "title" : "Daytime Population",
+          "description" : "This thematic map presents the daytime population ratio in the United States in 2009. This ratio represents the daytime population, measured as the number of workers who are employed in the area during the day, relative to the resident population of the area.",
+          "thumbnailUrl" : "images/daytimePop.png"
+        }, {
+          "id" : "medHomeValue",
+          "title" : "Median Home Value",
+          "description" : "This thematic map presents the median value of houses in the United States in 2010. The 2010 median home value is an estimate of home value based on total owner occupied units.",
+          "thumbnailUrl" : "images/medHomeValue.png"
+        }, {
+          "id" : "medAge",
+          "title" : "Median Age - 2010",
+          "description" : "This thematic map presents the median age of people in the United States in 2010. The 2010 Median Age is based on the age of each person in complete years.",
+          "thumbnailUrl" : "images/medAge.png"
+        }, {
+          "id" : "medIncome",
+          "title" : "Median Income - 2010",
+          "description" : "This thematic map presents the median household income in the United States in 2010. The 2010 Median Household Income is an estimate of income for the calendar year 2009.",
+          "thumbnailUrl" : "images/medIncome.png"
+        }];
+        var params = {};
+        params.items = itemsArray;
+        params.showTitle = false;
+        gallery = new esri.dijit.Gallery(params, "galleryDiv");
+
+        dojo.connect(gallery, "onSelect", function(item) {
+          //details about the selected item
+          dojo.byId("selectedDetails").innerHTML = "<b>Selected Item: </b>" + item.title + "<br />" + item.description;
+        });
+
+        //set selected item to the first
+        gallery.select(params.items[2]);
+        gallery.setFocus(params.items[3]);
+        gallery.startup();
+      }
+
+      function orientationChanged() {
+        if(map) {
+          map.reposition();
+          map.resize();
+        }
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body onorientationchange="orientationChanged();">
+    <div id="homeView" data-dojo-type="dojox.mobile.View" selected="true">
+      <h1 data-dojo-type="dojox.mobile.Heading">Mobile Gallery</h1>
+      <div id="galleryDiv"></div>
+      <h2 data-dojo-type="dojox.mobile.RoundRectCategory">Item Details</h2>
+      <div data-dojo-type="dojox.mobile.RoundRect" id="selectedDetails"></div>
+    </div>
+  </body>
+</html>

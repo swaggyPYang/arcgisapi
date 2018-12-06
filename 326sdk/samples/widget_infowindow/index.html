@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    
+
+    <title>Info Window Lite</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv { height: 100%; margin: 0; padding: 0; } 
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+
+      require([
+        "esri/map", 
+        "esri/dijit/InfoWindowLite",
+        "esri/InfoTemplate",
+        "esri/layers/FeatureLayer",
+        "dojo/dom-construct",
+        "dojo/domReady!"
+      ], function(
+          Map,
+          InfoWindowLite,
+          InfoTemplate,
+          FeatureLayer,
+          domConstruct
+         ) {
+
+        var map = new Map("mapDiv", {
+          basemap: "topo",
+          center: [-98.416, 39.781],
+          zoom: 6
+        });
+
+        var infoWindow = new InfoWindowLite(null, domConstruct.create("div", null, null, map.root));
+        infoWindow.startup();
+        map.setInfoWindow(infoWindow);
+
+        var template = new InfoTemplate();
+        template.setTitle("<b>${STATE_NAME} - ${STATE_ABBR}</b>");
+        template.setContent("${STATE_NAME} is in the ${SUB_REGION} sub region.");
+
+        //add a layer to the map
+        var featureLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          infoTemplate:template,
+          outFields: ["STATE_NAME" , "SUB_REGION", "STATE_ABBR"]
+        });
+        map.addLayer(featureLayer);
+
+        map.infoWindow.resize(200, 75);
+
+      });
+    </script>
+  </head>
+  
+  <body>
+    <div id="mapDiv"></div>
+  </body>
+
+</html>

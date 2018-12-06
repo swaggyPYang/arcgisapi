@@ -1,0 +1,1082 @@
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400,300,700);
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #ced8db;
+  font-family: 'Titillium Web', monospace;
+}
+.wrapper {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  height: 100%;
+}
+.wrapper .header-container {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  justify-content: space-between;
+  -webkit-justify-content: space-between;
+  /* Safari 6.1+ */
+  -ms-flex-pack: justify;
+  /* ie */
+  padding: 0.75em 1.5em;
+  background: #363636;
+  color: #ecf0f1;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  /* Safari 6.1+ */
+}
+.wrapper .header-container p {
+  margin: 0;
+}
+.wrapper .header-container .title {
+  font-size: 1.75em;
+  font-weight: bold;
+  margin: 0;
+}
+.wrapper .header-container .title a {
+  margin: 0;
+  padding: 0;
+}
+.wrapper .header-container .title a img {
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  width: 1.5em;
+}
+.wrapper .header-container .title span {
+  padding-left: 0.25em;
+}
+.wrapper .header-container .title:hover {
+  color: #ffffff;
+}
+.wrapper .header-container .sub-title {
+  font-size: 1em;
+  line-height: 3em;
+  font-weight: 300;
+  color: #ecf0f1;
+}
+.wrapper .selection-container {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  flex-flow: row wrap;
+  -webkit-flex-flow: row wrap;
+  /* Safari 6.1+ */
+  justify-content: center;
+  -webkit-justify-content: center;
+  /* Safari 6.1+ */
+  -ms-flex-pack: center;
+  /* ie */
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  /* Safari 6.1+ */
+}
+.wrapper .selection-container .modules-container {
+  width: 350px;
+  background: #ffffff;
+  padding: 1em;
+  margin: 1em;
+  color: rgba(48, 69, 92, 0.8);
+  font-size: 1em;
+}
+.wrapper .selection-container .modules-container .title {
+  margin: 0;
+  font-size: 1.25em;
+  font-weight: bold;
+  padding: 1em;
+}
+.wrapper .selection-container .modules-container ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wrapper .selection-container .modules-container ul li {
+  border-left: 1px dotted #dce7eb;
+  border-right: 1px dotted #dce7eb;
+  border-top: 1px dotted #dce7eb;
+}
+.wrapper .selection-container .modules-container ul li p {
+  margin: 0;
+  padding: 1em;
+  cursor: pointer;
+}
+.wrapper .selection-container .modules-container ul li:nth-last-child(1) {
+  border-bottom: 1px dotted #dce7eb;
+}
+.wrapper .selection-container .modules-container ul li:hover {
+  background: #ecf0f1;
+}
+.wrapper .playground-container {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  background: #ced8db;
+  -webkit-box-flex: 1 1 100%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 100%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 100%;
+  /* Chrome */
+  -ms-flex: 1 1 100%;
+  /* IE 10 */
+  flex: 1 1 100%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  /* We tell all items to be 100% width
+    .generator-block, .map-block {
+      flex: 1 100%;
+    }*/
+}
+.wrapper .playground-container .generator-block {
+  order: 2;
+  -webkit-order: 2;
+  /* Code for Safari 6.1 and newer */
+  -ms-flex-order: 2;
+  width: 40%;
+  -webkit-box-flex: 0 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 0 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 0 1 auto;
+  /* Chrome */
+  -ms-flex: 0 1 auto;
+  /* IE 10 */
+  flex: 0 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+}
+.wrapper .playground-container .generator-block .play-block {
+  -webkit-box-flex: 1.5 0 0;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1.5 0 0;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1.5 0 0;
+  /* Chrome */
+  -ms-flex: 1.5 0 0;
+  /* IE 10 */
+  flex: 1.5 0 0;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -ms-flex: 1.5 0 auto;
+  /* ie fix */
+  background: #ffffff;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu {
+  background: #e1e7e9;
+  z-index: 3;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li {
+  padding: 0.75em;
+  cursor: pointer;
+  color: #ffffff;
+  background: #bdc3c7;
+  position: relative;
+  text-align: center;
+  width: 1.1em;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.75em;
+  background: #95a5a6;
+  width: 2.5em;
+  z-index: -1;
+  -webkit-transition: -webkit-transform 0.25s ease-in-out;
+  -moz-transition: -moz-transform 0.25s ease-in-out;
+  -o-transition: -o-transform 0.25s ease-in-out;
+  transition: transform 0.25s ease-in-out;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li:hover {
+  background: #95a5a6;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li:hover span {
+  -webkit-transform: translateX(-4em);
+  -moz-transform: translateX(-4em);
+  -o-transform: translateX(-4em);
+  transform: translateX(-4em);
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li:active {
+  background: #87999a;
+}
+.wrapper .playground-container .generator-block .play-block .play-block-menu ul li:active span {
+  background: #87999a;
+}
+.wrapper .playground-container .generator-block .play-block #play-area {
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  font-size: 1.15em;
+  position: relative;
+  z-index: 3;
+  background: #ffffff;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container {
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  position: relative;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block {
+  padding: 1.5em;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block button {
+  display: none;
+  width: 100%;
+  color: #2ecc71;
+  padding: 1em;
+  font-size: 1em;
+  background: #ffffff;
+  outline: none;
+  border: 1px solid #2ecc71;
+  border-radius: 5px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block button:active {
+  position: relative;
+  top: 2px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul .flexer {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  justify-content: space-between;
+  -webkit-justify-content: space-around;
+  /* Safari 6.1+ */
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li:first-child {
+  margin-top: 0em;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li {
+  position: relative;
+  padding: 0;
+  margin-top: 0.5em;
+  border: 1px dotted #dce7eb;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-name {
+  -webkit-box-flex: 1 1 25%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 25%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 25%;
+  /* Chrome */
+  -ms-flex: 1 1 25%;
+  /* IE 10 */
+  flex: 1 1 25%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  margin: 0;
+  padding: 0.5em 1em;
+  font-size: 0.85em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-name span {
+  color: #f06060;
+  font-weight: bolder;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container {
+  -webkit-box-flex: 1 1 75%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 75%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 75%;
+  /* Chrome */
+  -ms-flex: 1 1 75%;
+  /* IE 10 */
+  flex: 1 1 75%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  color: rgba(48, 69, 92, 0.8);
+  border-left: 1px dotted #dce7eb;
+  font-size: 0.85em;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container p {
+  margin: 0;
+  padding: 0.5em 0.5em 0.5em 0.75em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type="number"],
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type="text"] {
+  cursor: pointer;
+  -webkit-box-sizing: border-box;
+  /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;
+  /* Firefox, other Gecko */
+  box-sizing: border-box;
+  /* Opera/IE 8+ */
+  border-radius: 0 !important;
+  border: 0;
+  background: transparent;
+  padding: 0.5em 0.5em 0.5em 0.75em;
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type="number"]:focus,
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type="text"]:focus {
+  outline: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range] {
+  -webkit-appearance: none;
+  -webkit-box-flex: 0.5 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 0.5 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 0.5 1 auto;
+  /* Chrome */
+  -ms-flex: 0.5 1 auto;
+  /* IE 10 */
+  flex: 0.5 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  margin: 0.5em 0.5em 0.5em 0.75em;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]:focus {
+  outline: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-webkit-slider-runnable-track {
+  height: 8.4px;
+  cursor: pointer;
+  background: #bdc3c7;
+  border-radius: 1.3px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 3px;
+  background: #e1e7e9;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #bdc3c7;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-moz-range-track {
+  height: 8.4px;
+  cursor: pointer;
+  background: #bdc3c7;
+  border-radius: 1.3px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 3px;
+  background: #e1e7e9;
+  cursor: pointer;
+  margin-top: -6px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-ms-track {
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-ms-fill-lower {
+  background: #bdc3c7;
+  border-radius: 2.6px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-ms-fill-upper {
+  background: #bdc3c7;
+  border-radius: 2.6px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]::-ms-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  height: 8.4px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]:focus::-ms-fill-lower {
+  background: #bdc3c7;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container input[type=range]:focus::-ms-fill-upper {
+  background: #bdc3c7;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container {
+  display: block;
+  background: #ffffff;
+  color: #555555;
+  padding: 0.5em 1em;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"] {
+  position: absolute;
+  z-index: 9999;
+  top: 1em;
+  opacity: 0;
+  cursor: pointer;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:hover,
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:focus,
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:hover + label,
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:focus + label {
+  border-color: #ecf0f1;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:checked + label {
+  position: relative;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container label {
+  z-index: 9998;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"] + label::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  margin-right: .5em;
+  position: relative;
+  top: .23em;
+  display: inline-block;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"] + label:hover::after {
+  opacity: 0.3;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .checkbox-container input[type="checkbox"]:checked + label::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 7.5px;
+  left: 3px;
+  width: 9px;
+  height: 5px;
+  border: 3px solid #bdc3c7;
+  border-top: none;
+  border-right: none;
+  background: transparent;
+  opacity: 1;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .arrow {
+  margin: 0;
+  padding: 0;
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .arrow select {
+  width: 100%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  /*REMOVES DEFAULT CHROME & SAFARI STYLE*/
+  -moz-appearance: none;
+  /*REMOVES DEFAULT FIREFOX STYLE*/
+  border-radius: 0 !important;
+  background: transparent;
+  border: 0;
+  padding: 0.5em 1.75em 0.5em 0.75em;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .arrow select option {
+  background: #ffffff;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .arrow select:focus {
+  outline: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-value-container .arrow::after {
+  /*  Custom dropdown arrow */
+  content: "";
+  position: absolute;
+  top: 0.9em;
+  right: 0.5em;
+  width: 6px;
+  height: 6px;
+  border: 4px solid #bdc3c7;
+  border-top: none;
+  border-right: none;
+  background: transparent;
+  opacity: 1;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .nested-property-container {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  justify-content: space-between;
+  -webkit-justify-content: space-around;
+  /* Safari 6.1+ */
+  cursor: pointer;
+  background: #e9f3fe;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .nested-property-container p {
+  -webkit-box-flex: 1 1 25%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 25%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 25%;
+  /* Chrome */
+  -ms-flex: 1 1 25%;
+  /* IE 10 */
+  flex: 1 1 25%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  margin: 0;
+  padding: 0.5em 1em;
+  font-size: 0.85em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .nested-property-container div {
+  -webkit-box-flex: 1 1 75%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 75%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 75%;
+  /* Chrome */
+  -ms-flex: 1 1 75%;
+  /* IE 10 */
+  flex: 1 1 75%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  border-left: 1px dotted #dce7eb;
+  color: rgba(48, 69, 92, 0.8);
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .nested-property-container div p {
+  padding: 0.5em 0.75em;
+  margin-bottom: -0.5em;
+  text-align: left;
+  display: inline-block;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .property-values-container {
+  background: #f4f9fe;
+  padding: 0.75em 1em;
+  font-size: 0.85em;
+  color: rgba(48, 69, 92, 0.8);
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
+  display: block;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .list-checkbox {
+  position: absolute;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .list-checkbox:checked ~ .property-values-container {
+  display: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .list-checkbox:checked ~ .nested-property-container {
+  background: transparent;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .colorDiv .property-value {
+  margin: 0.25em 0.75em;
+  width: 100%;
+  background: #e74c3c;
+  cursor: pointer;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .colorDiv .esriColorPicker {
+  border: 1px solid #ecf0f1;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li .colorDiv .esriColorPicker .esriPaletteOptions {
+  display: none;
+}
+.wrapper .playground-container .generator-block .play-block #play-area .data-container .data-block ul li:hover {
+  border: 1px dashed #dce7eb;
+}
+.wrapper .playground-container .generator-block .code-container {
+  -webkit-box-flex: 1 0 0;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 0 0;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 0 0;
+  /* Chrome */
+  /* IE 10 */
+  flex: 1 0 0;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -ms-flex: 1 0 0;
+  /* ie fix */
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu {
+  background: #ecf0f1;
+  z-index: 1;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li {
+  padding: 0.75em;
+  cursor: pointer;
+  color: #ffffff;
+  background: #bdc3c7;
+  position: relative;
+  text-align: center;
+  width: 1.1em;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.75em;
+  background: #95a5a6;
+  width: 2.5em;
+  z-index: -1;
+  -webkit-transition: -webkit-transform 0.25s ease-in-out;
+  -moz-transition: -moz-transform 0.25s ease-in-out;
+  -o-transition: -o-transform 0.25s ease-in-out;
+  transition: transform 0.25s ease-in-out;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li:first-child {
+  border-bottom: 2px solid #95a5a6;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul .active {
+  background: #95a5a6;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li:hover,
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul .zeroclipboard-is-hover {
+  background: #95a5a6;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li:hover span,
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul .zeroclipboard-is-hover span {
+  -webkit-transform: translateX(-4em);
+  -moz-transform: translateX(-4em);
+  -o-transform: translateX(-4em);
+  transform: translateX(-4em);
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li:active,
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul .zeroclipboard-is-active {
+  background: #87999a;
+}
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul li:active span,
+.wrapper .playground-container .generator-block .code-container .code-block-menu ul .zeroclipboard-is-active span {
+  background: #87999a;
+}
+.wrapper .playground-container .generator-block .code-container .code-block {
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  background: #272822;
+  padding: 1em 1.5em 1em 0.25em;
+  overflow: auto;
+  font-size: 1.15em;
+  position: relative;
+  z-index: 1;
+}
+.wrapper .playground-container .generator-block .code-container .code-block textarea {
+  background: #272822;
+  border: none;
+  resize: none;
+}
+.wrapper .playground-container .map-block {
+  order: 1;
+  -webkit-order: 1;
+  /* Code for Safari 6.1 and newer */
+  -ms-flex-order: 1;
+  -webkit-box-flex: 1 1 auto;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 auto;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 auto;
+  /* Chrome */
+  -ms-flex: 1 1 auto;
+  /* IE 10 */
+  flex: 1 1 auto;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  background: #ffffff;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.wrapper .playground-container .map-block #mapDiv {
+  -webkit-box-flex: 1 1 100%;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1 1 100%;
+  /* OLD - Firefox 19- */
+  -webkit-flex: 1 1 100%;
+  /* Chrome */
+  -ms-flex: 1 1 100%;
+  /* IE 10 */
+  flex: 1 1 100%;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  position: relative;
+}
+.wrapper .playground-container .map-block #mapDiv #clearGraphicsbtn {
+  position: absolute;
+  display: block;
+  top: 1em;
+  right: 19em;
+  outline: none;
+  border: none;
+  background: #ffffff;
+  color: #555555;
+  padding: 0.25em 0.75em;
+  z-index: 9999;
+  border: 1px dotted #dce7eb;
+  /*** change later ***/
+  display: none;
+}
+.wrapper .playground-container .map-block #mapDiv #clearGraphicsbtn:active {
+  top: 1.15em;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container {
+  position: absolute;
+  display: block;
+  top: 1em;
+  right: 27.25em;
+  background: #ffffff;
+  color: #555555;
+  padding: 0.23em 0.75em 0.25em 0.75em;
+  z-index: 9999;
+  border: 1px dotted #dce7eb;
+  /*** change later ***/
+  display: none;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container label,
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input {
+  cursor: pointer;
+  color: #555555;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  curser: pointer;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:hover,
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:focus,
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:hover + label,
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:focus + label {
+  border-color: #ecf0f1;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:checked + label {
+  position: relative;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"] + label::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  margin-right: .5em;
+  position: relative;
+  top: .23em;
+  display: inline-block;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"] + label:hover::after {
+  opacity: 0.3;
+}
+.wrapper .playground-container .map-block #mapDiv .useToolbar-container input[type="checkbox"]:checked + label::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 7.5px;
+  left: 3px;
+  width: 9px;
+  height: 5px;
+  border: 3px solid #bdc3c7;
+  border-top: none;
+  border-right: none;
+  background: transparent;
+  opacity: 1;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container {
+  position: absolute;
+  display: block;
+  top: 1em;
+  right: 1em;
+  background: #ffffff;
+  color: #555555;
+  z-index: 2;
+  border: 1px dotted #dce7eb;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container span {
+  padding: 0 0.75em;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container .arrow {
+  margin: 0;
+  padding: 0;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container .arrow select {
+  cursor: pointer;
+  -webkit-appearance: none;
+  /*REMOVES DEFAULT CHROME & SAFARI STYLE*/
+  -moz-appearance: none;
+  /*REMOVES DEFAULT FIREFOX STYLE*/
+  border: 0 !important;
+  /*REMOVES BORDER*/
+  border-radius: 0 !important;
+  background: #ecf0f1;
+  padding: 0.25em 1.75em 0.25em 0.75em;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container .arrow select option {
+  background: #ffffff;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container .arrow select:focus {
+  outline: none;
+}
+.wrapper .playground-container .map-block #mapDiv .basemap-container .arrow::after {
+  /*  Custom dropdown arrow */
+  content: "";
+  position: absolute;
+  top: 0.7em;
+  right: 0.5em;
+  width: 6px;
+  height: 6px;
+  border: 4px solid #bdc3c7;
+  border-top: none;
+  border-right: none;
+  background: transparent;
+  opacity: 1;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.msg-container {
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  background: #f06060;
+  color: #ffffff;
+  font-size: 1.15em;
+  font-weight: bold;
+  padding: 0.5em 1em;
+  display: none;
+}
+.msg-container p {
+  margin: 0;
+  opacity: 0.85;
+}
+/*** Prism backgound change ***/
+code[class*="language-"] {
+  background: #333333;
+}
+/*** Hide colorpicker tooltip ***/
+.dijitTooltip {
+  display: none;
+}
+/*** Hide colorpicker preview ***/
+.esriColorPicker .esriSwatchPreview.esriContainer {
+  display: none;
+}
+/*** change code mirror height ***/
+.CodeMirror {
+  height: 100%;
+}
+.CodeMirror-linenumber {
+  color: #555555 !important;
+  font-size: 0.85em;
+  padding-top: 0.15em;
+}
+.CodeMirror pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+}

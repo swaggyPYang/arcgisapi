@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Flickr Photos</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height:100%;
+        width:100%;
+        margin:0;
+        padding:0;
+      }
+
+      .esriPopup  img{
+        max-width: 200px;
+        max-height: 133px;
+        border: solid 2px #000;
+      }
+      body {
+        background-color:#FFF;
+        overflow:hidden;
+        font-family:"Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+
+      var map;
+
+      function init() {
+        map = new esri.Map("map",{
+          basemap: "dark-gray",
+          center: [ 6.15 , 46.20 ], //long, lat
+          zoom: 3
+        });
+        dojo.connect(map,"onLoad", loadPhotos);
+      }
+
+      function loadPhotos(){
+        var flickrPhotos = esri.request({
+          url: "https://api.flickr.com/services/feeds/geo",
+          content:{
+              format:"json",
+              tagmode: "any",
+              tags: "mountain"
+          },
+          callbackParamName: "jsoncallback"
+        });
+        flickrPhotos.then(addPhotos);
+      }
+
+      function addPhotos(data){
+       var symbol = new esri.symbol.PictureMarkerSymbol("https://esri.box.com/shared/static/xcn0g690x5a8xb4visu6jqssqoc98xby.png", 32, 32);
+       var template = new esri.dijit.PopupTemplate({
+          title: "{title}",
+          description:"{description}"
+        });
+
+        dojo.forEach(data.items, function(item){
+          var loc = new esri.geometry.Point(item.longitude, item.latitude);
+          map.graphics.add(new esri.Graphic(loc, symbol, item, template));
+        });
+
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    <div id="map"></div>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      body{
+        overflow: hidden; font-family:"Trebuchet MS";
+      } 
+      #header {
+        height:30px; padding:15px; overflow:hidden;
+        background-color: #d0eff3; 
+        color: #80a8c1; font-size: 21pt; text-align: left;
+        border: solid 2px #80a8c1;
+        font-weight: bold;
+      } 
+      #leftPane {
+        background-color: #fafafa; color: #80a8c1;
+        border: solid 2px #80a8c1;
+      } 
+      #centerPane { 
+        border: none;
+      } 
+      #footer {
+        background-color: #fafafa; color: #80a8c1; font-size: 15pt;
+        text-align: center; border: solid 2px #80a8c1; margin:10px; padding:10px;
+        height:30px;
+      } 
+      .roundedCorners {
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -o-border-radius: 4px;
+      }
+
+      /*Example of a id selector, using the # side with an element name will
+      apply this style to a single unique element, in this case the html element
+      with an id of 'map'.*/
+      #map{ 
+        margin: 5px; 
+        border: solid 10px #80a8c1;
+      } 
+      .dijitBorderContainer, .dijitGutter {
+        background-color: #d0eff3 !important;
+      } 
+      /*Example of a class selector, using a period in front of an HTML elment
+      allows you to specify a style for multiple elements. All elements with
+      a class attribute set to the specified value will have this style applied.*/
+      .shadow { 
+        padding:8px;
+        -moz-border-radius: 6px; 
+        -webkit-border-radius: 6px; 
+        -moz-box-shadow: 0px 6px 3px -3px #888;
+        -webkit-box-shadow: 0px 6px 3px -3px #888;
+        box-shadow: 0px 6px 3px -3px #888; 
+        background-color:white; border: solid 4px #80a8c1;
+      }

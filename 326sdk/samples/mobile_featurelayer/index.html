@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Feature Layer</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+      .esriSimpleSlider  div {
+        height: 30px !important;
+        width: 30px !important;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.tasks.query");
+
+      var map;
+
+      function init() {
+        //onorientationchange doesn't always fire in a timely manner in Android so check for both orientationchange and resize
+        var supportsOrientationChange = "onorientationchange" in window, orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+
+        window.addEventListener(orientationEvent, function() {
+          orientationChanged();
+        }, false);
+
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-104.808, 39.719],
+          zoom: 8
+        });
+
+        dojo.connect(map, "onLoad", function(evt) {
+          //add a feature layer
+          var content = "<b>Name</b>: ${NAME} <br /><b>Population</b>: ${POP2007}";
+
+          var infoTemplate = new esri.InfoTemplate("County Details", content);
+          map.infoWindow.resize(225, 75);
+          var featureLayer = new esri.layers.FeatureLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/3", {
+            mode : esri.layers.FeatureLayer.MODE_ONDEMAND,
+            outFields : ["NAME", "POP2007"],
+            infoTemplate : infoTemplate
+          });
+          var rend = new esri.renderer.SimpleRenderer(new esri.symbol.SimpleFillSymbol().setColor(new dojo.Color([254, 216, 93, 0.6])));
+          featureLayer.setRenderer(rend);
+
+          featureLayer.setSelectionSymbol(new esri.symbol.SimpleFillSymbol().setColor(new dojo.Color([0, 255, 255, 0.6])));
+
+          dojo.connect(featureLayer, 'onClick', function(evt) {
+            //select the clicked feature
+            var query = new esri.tasks.Query();
+            query.geometry = evt.mapPoint;
+            featureLayer.selectFeatures(query, esri.layers.FeatureLayer.SELECTION_NEW);
+          });
+
+          map.addLayer(featureLayer);
+        });
+      }
+
+      function orientationChanged() {
+        console.log("Orientation changed: " + window.orientation);
+        if(map) {
+          map.reposition();
+          map.resize();
+        }
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body >
+    <div id="map"></div>
+  </body>
+</html>

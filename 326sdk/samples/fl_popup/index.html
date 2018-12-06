@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Popup</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esriScalebar {
+      padding: 20px 20px;
+    }
+
+    .esriPopup.myTheme .titlePane,
+    .dj_ie7 .esriPopup.myTheme .titlePane .title {
+      background-color: #899752;
+      color: #333333;
+      font-weight: bold;
+    }
+
+    .esriPopup.myTheme .titlePane {
+      border-bottom: 1px solid #121310;
+    }
+
+    .esriPopup.myTheme a {
+      color: #d6e68a;
+    }
+    .esriPopup.myTheme .pointer.top{
+      background-color:#899752;
+    }
+    .esriPopup.myTheme .outerPointer,  .esriPopup.myTheme .pointer.bottom{
+      background-color:#424242;
+    }
+
+    .esriPopup.myTheme .contentPane,
+    .esriPopup.myTheme .actionsPane {
+      border-color: 1px solid #121310;
+      background-color: #424242;
+      color: #ffffff;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+
+    require([
+      "esri/config",
+      "esri/InfoTemplate",
+      "esri/map",
+      "esri/dijit/Popup",
+      "esri/dijit/PopupTemplate",
+      "esri/geometry/Extent",
+      "esri/layers/FeatureLayer",
+      "esri/layers/ArcGISTiledMapServiceLayer",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/tasks/GeometryService",
+      "esri/tasks/query",
+      "dojo/dom-construct",
+      "dojo/dom-class",
+      "dojo/parser",
+      "esri/Color",
+      "dojo/_base/lang",
+      "dojo/date/locale",
+      "dojo/domReady!"
+    ],
+      function (
+        esriConfig, InfoTemplate, Map, Popup, PopupTemplate, Extent, FeatureLayer,
+        ArcGISTiledMapServiceLayer, SimpleFillSymbol, SimpleLineSymbol,
+        GeometryService, Query, domConstruct, domClass, parser, Color, lang, locale
+      ) {
+
+        parser.parse();
+
+        var popup = new Popup({
+          fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+              new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+        }, domConstruct.create("div"));
+
+        domClass.add(popup.domNode, "myTheme");
+
+        map = new Map("map", {
+          basemap: "topo",
+          center: [-122.402, 37.795],
+          zoom: 18,
+          infoWindow: popup
+        });
+
+
+
+        map.on("click", function (event) {
+          var query = new Query();
+          query.geometry = pointToExtent(map, event.mapPoint, 10);
+          var deferred = featureLayer.selectFeatures(query,
+            FeatureLayer.SELECTION_NEW);
+          map.infoWindow.setFeatures([deferred]);
+          map.infoWindow.show(event.mapPoint);
+        });
+
+        var incidentLayer = new ArcGISTiledMapServiceLayer ("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Street_Trees/MapServer");
+        map.addLayer(incidentLayer);
+
+        var template = new InfoTemplate();
+        template.setContent(getTextContent);
+
+        var featureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/SFStreetTreesRendered/FeatureServer/0",
+          {
+            mode: FeatureLayer.MODE_SELECTION,
+            outFields: ["*"],
+            infoTemplate: template
+          });
+
+        map.addLayer(featureLayer);
+
+        function getTextContent (graphic) {
+          var attributes = graphic.attributes;
+          var scientificAndCommonName =
+            attributes.qSpecies
+            .replace('"', "")
+            .split("::")
+            .map(function (name) {
+              return lang.trim(name);
+            });
+          var scientificName = scientificAndCommonName[0];
+          var commonName = scientificAndCommonName[1];
+          var speciesName;
+
+          if (commonName) {
+            speciesName = "<b>" + commonName + "</b><br/>" +
+                          "<i>" + scientificName + "</i>";
+          }
+          else {
+            speciesName = "<i>" + scientificName + "</i>";
+          }
+
+          return  speciesName + "<br>" +
+                  attributes.qAddress + "<br/>" +
+                  "Planted on " + formatDate(attributes.PlantDate);
+        }
+
+        function formatDate (value) {
+          var inputDate = new Date(value);
+          return locale.format(inputDate, {
+            selector: 'date',
+            datePattern: 'MMMM d, y'
+          });
+        }
+
+        function pointToExtent (map, point, toleranceInPixel) {
+          var pixelWidth = map.extent.getWidth() / map.width;
+          var toleranceInMapCoords = toleranceInPixel * pixelWidth;
+          return new Extent(point.x - toleranceInMapCoords,
+                            point.y - toleranceInMapCoords,
+                            point.x + toleranceInMapCoords,
+                            point.y + toleranceInMapCoords,
+                            map.spatialReference);
+        }
+      });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="map"></div>
+</body>
+
+</html>

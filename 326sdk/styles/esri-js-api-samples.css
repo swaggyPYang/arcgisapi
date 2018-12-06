@@ -1,0 +1,132 @@
+.rounded {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.rounded-bottom {
+  -moz-border-radius-bottomleft: 2px;
+  -webkit-border-bottom-left-radius: 2px;
+  -ms-border-bottom-left-radius: 2px;
+  -o-border-bottom-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  -moz-border-radius-bottomright: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.shadow {
+  -webkit-box-shadow: inset 0px 0px 1px 0px rgba(255, 255, 255, 0.75), 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: inset 0px 0px 1px 0px rgba(255,255,255,0.75), 0px 2px 5px 0px rgba(0,0,0,0.25);
+  box-shadow: inset 0px 0px 1px 0px rgba(255,255,255,0.75), 0px 2px 5px 0px rgba(0,0,0,0.25);
+}
+
+.gray-text {
+  color: #777;
+}
+
+.header-wrapper {
+  margin-bottom: 10px;
+}
+
+#spinner {
+  display: inline-block;
+  float: right;
+  height: 24px;
+  padding: 35px 140px 0 0;
+  visibility: hidden;
+  width: 24px;
+}
+
+#samplePane {
+  padding: 0 15px 0 0;
+}
+
+.results-wrapper {
+  margin: 0 10px 0 0;
+}
+
+.results-wrapper #resultCount {
+  font-size: 14px;
+  margin: 0 0 1em 0.8em;
+}
+
+.results-wrapper ul {
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+
+.results-wrapper ul li {
+  background: none;
+  border: 1px solid #EEE;
+  display: inline-block;
+  height: 133px;
+  margin: 0 0 10px 0;
+  padding: 10px 0 10px 0;
+  vertical-align: middle;
+  width: 98%;
+}
+
+.results-wrapper ul li:hover {
+  -moz-box-shadow: 0 0 3px #888;
+  -webkit-box-shadow: 0 0 3px #888;
+  box-shadow: 0 0 3px #888;
+}
+
+.results-wrapper ul li.left {
+  margin: 0 10px 10px 0;
+}
+
+.results-wrapper ul li img {
+  border: none;
+  height: 133px;
+  padding: 0 10px 0 10px;
+  width: 200px;
+}
+
+.results-wrapper ul li span {
+  font-size: 12px;
+}
+
+.results-wrapper ul li a {
+  color: #636363;
+}
+
+.results-wrapper ul li p {
+  margin: 0;
+}
+
+.break-word {
+  word-wrap: break-word;
+}
+
+.break-word p b {
+  color: #636363;
+}
+
+.no-results {
+  padding: 10px 0 10px 0;
+}
+
+/* media query to show two sample thumbnails and descriptions per line when the browser window is > 1200px wide */
+@media only screen and (min-width: 1200px) {
+  .results-wrapper ul li {
+    width: 49%;
+  }
+}
+
+.footnote {
+    border-top: 1px solid #cccccc;
+    text-align:center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: .8em;
+    margin-top: 20px;
+}
+
+.btn-separator {
+    background: #007AC2;
+    margin-right: 5px;
+    padding-left: 1px;
+}
+

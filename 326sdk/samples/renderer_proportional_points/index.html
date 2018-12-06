@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Proportional symbols for points</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/InfoTemplate",
+        "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, InfoTemplate
+      ){
+
+        map = new Map("map", {
+          basemap:"streets",
+          center: [-82.441, 35.612],
+          zoom: 17
+        });
+
+        var template = new InfoTemplate("${Cmn_Name}", "<i>${Sci_Name}</i><br><br>The ${Cmn_Name} is <b>${Height} feet</b> tall with a total ground area of <b>${GroundArea} square feet</b>.  This tree sequestors <b>${C_Seq} pounds</b> of carbon per year.");
+
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Warren_College_Trees/FeatureServer/0", {
+          mode: FeatureLayer.MODE_SNAPSHOT,
+          orderByFields: [ "GroundArea DESC" ],
+          outFields: ["Cmn_Name", "GroundArea", "Sci_Name", "Height", "C_Seq"],
+          infoTemplate: template
+        });
+
+        var sizeInfo = {
+          field:"GroundArea",
+          valueUnit:"feet",
+          valueRepresentation:"area"
+        };
+        
+        layer.on("load", function() {
+          layer.renderer.setSizeInfo(sizeInfo);
+          layer.copyright = "Warren Wilson Center Campus Tree Study";
+        });
+        
+        map.addLayers([layer]);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map">
+      
+      <div style="font-family: Lucida Grande,Helvetica,Arial,Verdana,sans-serif; font-size: 14px; position: absolute; right: 7px; top: 7px; z-index: 100; padding: 5px; border: 2px solid #666666; border-radius: 5px; background-color: white; width:175px;">
+        <div id="tree_legend">
+          <div style="padding: 6px; text-align: center;">
+            Warren Wilson Center Campus <a href="https://www.warren-wilson.edu/~treemap/index.php" target="_blank">Tree Study</a><br><br>Map depicts tree canopy size and yearly carbon sequestration. Darker green trees sequestor more carbon.  Touch a tree for more information.
+          </div>
+    </div>
+  </body>
+</html> 

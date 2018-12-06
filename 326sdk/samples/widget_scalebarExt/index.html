@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Scalebar</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css"> 
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script> 
+      dojo.require("dojo.parser");
+      dojo.require("esri.dijit.Scalebar");
+      dojo.require("esri.map");
+
+      var map;
+ 
+      function initialize() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-116.093, 34.218],
+          zoom: 7
+        });
+
+        
+        var scalebar = new esri.dijit.Scalebar({
+          map: map,
+          scalebarUnit: "english"
+        }, dojo.byId("scalebar"));
+
+      }
+ 
+      dojo.ready(initialize);
+    </script> 
+  </head> 
+  
+  <body class="claro"> 
+    <div id="map" style="position: relative; width: 900px; height: 500px; border: 1px solid #000;"></div>
+    <div id="scalebar" style="position:absolute;left:100px;top:530px;"></div>
+  </body> 
+ 
+</html>

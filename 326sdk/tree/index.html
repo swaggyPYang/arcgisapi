@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10">
+    <title>API Tree Chart | API Reference | ArcGIS API for JavaScript</title>
+    <script src="d3.min.js"></script>
+    <style>
+      .node circle {
+        stroke: #000;
+        stroke-width: 1px;
+        cursor: pointer;
+      }
+      .node {
+        font: 12px Arial;
+      }
+      .link {
+        fill: none;
+        stroke: #ddd;
+        stroke-width: 1.5px;
+      }
+      #info {
+        position: fixed;
+        top: 0px;
+        left: 715px;
+        font-family: Arial;
+      }
+      #detail {
+        -webkit-column-width: 250px;
+        -moz-column-width: 250px;
+        column-width: 250px;
+      }
+      #legend {
+        position: fixed;
+        bottom: 30px;
+        left: 10px;
+        width: 70px;
+        height: 80px;
+        padding: 5px;
+        background-color: #ddd;
+      }
+      @-moz-document url-prefix() {
+        #detail {
+          overflow-y: scroll;
+        }
+      }
+      #backtoapi {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        font: 12px Arial;
+      }
+
+      .legend {
+        background: #ccc;
+        box-sizing: border-box;
+        bottom: 30px;
+        height: 130px;
+        left: 10px;
+        padding: 5px;
+        position: absolute;
+        width: 130px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      var i = 0, width = 700, minHeight = 600, root;
+      var height = document.documentElement.clientHeight > minHeight ? document.documentElement.clientHeight : minHeight; 
+      var tree = d3.layout.tree().size([height - 20, width]);
+      var diagonal = d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; });
+      
+      var vis = d3.select("body").style("overflow", "hidden")
+        .append("div").attr("id", "chart").style("width", width + "px").style("height", document.documentElement.clientHeight + "px").style("overflow-y", "auto").style("overflow-x", "hidden")
+        .append("svg").attr("width", width).attr("height", height - 20)
+        .append("g").attr("transform", "translate(10,0)");
+      var textbox = d3.select("body").append("div").attr("id", "info").html("<h2><<< Click a node for more info</h2>");
+
+      // create an SVG legend
+      var legendData = [{
+        "fill": "black",
+        "name": "Class"
+      }, {
+        "fill": "gray",
+        "name": "Object"
+      }, {
+        "fill": "white",
+        "name": "Folder"
+      }];
+      var legend = d3.select("body")
+          .append("div")
+          .attr("class", "legend")
+          .append("svg");
+      legend.selectAll("g")
+          .data(legendData)
+          .enter()
+          .append("g")
+          .append("circle")
+          .attr({
+            "cx": 30,
+            "cy": function(d, i) { return i * 30 + 40; },
+            "r": 12,
+            "fill": function(d) { return d.fill; },
+            "stroke": "#000"
+          });
+      legend.append("g")
+          .selectAll("text")
+          .data(legendData)
+          .enter()
+          .append("text")
+          .text(function(d) { return d.name; })
+          .attr({
+            "x": 50,
+            "y": function(d, i) { return i * 30 + 40; },
+            "fill": "#000",
+            "font-family": "sans-serif",
+            "font-size": 14,
+            "dominant-baseline": "central"
+          });
+      legend.append("text")
+          .text("Legend")
+          .attr({
+            "font-family": "sans-serif",
+            "font-size": 14,
+            "fill": "#000",
+            "x": 5,
+            "y": 15
+          });
+
+      d3.select("body").append("div").attr("id", "backtoapi")
+        .html("<a href=\"../jsapi/\">Go back to API reference.</a>");
+
+      d3.json("treedata.json", function(json) {
+        root = json;
+        root.x0 = (height - 20) / 2;
+        root.y0 = 0;
+
+        // Initialize the display to show only one folder.
+        root.children.forEach(toggle);
+        //expand(root.children[16]);
+        update(root);
+      });
+
+      function update(source) {
+        var duration = d3.event && d3.event.altKey ? 5000 : 500;
+        var nodes = tree.nodes(root),
+            links = tree.links(nodes);
+        nodes.forEach(function(d) { d.y = d.depth * 160; });
+
+        // Update the nodes
+        var node = vis.selectAll(".node")
+            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+        // Enter any new nodes at the parent's previous position.
+        var nodeEnter = node.enter().append("svg:g")
+            .attr("class", "node")
+            .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        circleStyle(nodeEnter.append("svg:circle").on("click", afterClick));
+        textStyle(nodeEnter.append("svg:text").on("click", afterClick));
+
+        // Transition nodes to their new position.
+        var nodeUpdate = node.transition()
+            .duration(duration)
+            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+        circleStyle(nodeUpdate.select("circle"));
+        textStyle(nodeUpdate.select("text"));
+
+        // Transition exiting nodes to the parent's new position.
+        var nodeExit = node.exit().transition()
+            .duration(duration)
+            .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+            .remove();
+        circleStyle(nodeExit.select("circle"));
+        textStyle(nodeExit.select("text"));
+
+        // Update the links
+        var link = vis.selectAll("path.link")
+            .data(tree.links(nodes), function(d) { return d.target.id; });
+
+        // Enter any new links at the parent's previous position.
+        link.enter().insert("svg:path", "g")
+            .attr("class", "link")
+            .attr("d", function(d) {
+              var o = {x: source.x0, y: source.y0};
+              return diagonal({source: o, target: o});
+            })
+          .transition()
+            .duration(duration)
+            .attr("d", diagonal);
+
+        // Transition links to their new position.
+        link.transition()
+            .duration(duration)
+            .attr("d", diagonal);
+
+        // Transition exiting nodes to the parent's new position.
+        link.exit().transition()
+            .duration(duration)
+            .attr("d", function(d) {
+              var o = {x: source.x, y: source.y};
+              return diagonal({source: o, target: o});
+            })
+            .remove();
+
+        // Stash the old positions for transition.
+        nodes.forEach(function(d) {
+          d.x0 = d.x;
+          d.y0 = d.y;
+        });
+      };
+
+      function toggle(d) {
+        if (d.children) {
+          d._children = d.children;
+          d.children = null;
+        }
+      };
+
+      function expand(d) {
+        if (d._children) {
+          d.children = d._children;
+          d._children = null;
+        }
+      };
+      
+      function circleStyle(circle){
+        circle.attr("r", 6)
+              .style("fill", function(d) { return d.type === "class" ? "#000" : d.type === "object" ? "#aaa" : "#fff" ; });
+      };
+      
+      function textStyle(text){
+        text.attr("dx", 12).attr("dy", 3)
+            .style("text-anchor", function(d) { return d.children ? "start" : "start"; }).text(function(d) { return d.name; })
+            .style("cursor","pointer");
+      };
+      
+      function afterClick(d){
+        showInfo(d);
+        if (d.type === 'folder' && d.depth === 1) {
+          root.children.forEach(toggle);
+          expand(root.children[d.parent.children.indexOf(d)]);
+          update(d);
+        };
+      };
+      
+      function showInfo(d){
+        console.log(d);
+        var html = "<h1>" + d.name + "</h1><div>" + d.path.split('.').join(' > ') + " (" + capitalize(d.type) + ")</div>"; // Add module path
+        if (d.masters !== undefined ) { // Add master classes if it has any
+          html += "<div><b>Inherits attributes from:</b> " + d.masters.join(', ') + "</div>";
+        };
+        if (d.attributes !== undefined ) { // Add sample; add attributes if it has any
+          html += "<div id=\"detail\">";
+          html += "<p><b>Samples</b></p><div>Search for <a href=\"../jssamples/#search/" + d.name + "\">samples</a> that use this class.</div>";
+          ['constructors','properties','methods','events'].forEach(function(key){
+            if (d.attributes[key] != undefined) {
+              html += "<p><b>" + capitalize(key) + "</b></p><div>" + URLize(d.name,d.attributes[key]).join("<br>") + "</div>";
+            };
+          });
+          html += "</div>";
+        };
+        d3.select("#info").html(html).style("height", (document.documentElement.clientHeight) + "px").style("width", (document.documentElement.clientWidth - 715) + "px")
+          .style("overflow-y", "auto").style("overflow-x", "hidden");
+        d3.select("#detail").style("height", (document.documentElement.clientHeight - 120) + "px"); // // Use column layout for detail
+        var detailNode = d3.select("#detail").node();
+        if (detailNode && detailNode.scrollWidth > detailNode.clientWidth) { // If the detail div overflows, allow vertical scrolling
+          d3.select("#detail").style("height", null).style("width", (document.documentElement.clientWidth - 715) + "px");
+        };
+      };
+      
+      function URLize(classname,propertyList) {
+        newList = [];
+        propertyList.forEach(function(property){
+          if (typeof(property) === 'object') {
+            newList.push("<a href=\"../jsapi/" + classname.toLowerCase() + ".html#" + property.url + "\">" + property.name + "</a>");
+          } else {
+            newList.push("<a href=\"../jsapi/" + classname.toLowerCase() + ".html#" + property + "\">" + property + "</a>");
+          };
+        });
+        return newList;
+      };
+      
+      function capitalize(string){
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      };
+    </script>
+  </body>
+</html>

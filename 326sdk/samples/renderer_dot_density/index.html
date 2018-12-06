@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Dot density renderer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 1em 1em 0 1em;
+        background: #fff;
+        font: 14px sans-serif;
+        width: 200px;
+        text-align: center;
+        border-radius: 0 0 0 10px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/geometry/Extent", 
+        "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/FeatureLayer", 
+        "esri/InfoTemplate", "esri/renderers/DotDensityRenderer", 
+        "esri/renderers/ScaleDependentRenderer", "esri/dijit/Legend",
+        "esri/Color", "dojo/_base/array", "dojo/dom", "dojo/domReady!"
+      ], function(
+        Map, Extent, 
+        ArcGISTiledMapServiceLayer, FeatureLayer, 
+        InfoTemplate, DotDensityRenderer, 
+        ScaleDependentRenderer, Legend, 
+        Color, array, dom
+      ) {
+        map = new Map("map", {
+          extent: new Extent({"xmin":-2460944,"ymin":-1389910,"xmax":2297115,"ymax":1643787,"spatialReference":{"wkid":102003}}),
+          maxScale: 5000000,
+          minScale: 20000000
+        });
+        
+        var basemap = new ArcGISTiledMapServiceLayer("https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/Dark_Gray_Albers_North_America_Base/MapServer");
+        map.addLayer(basemap);
+        
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/USA_County_Crops_2007/FeatureServer/0", {
+          outFields: ["STATE", "COUNTY", "M163_07"],
+          infoTemplate: new InfoTemplate("${COUNTY}, ${STATE}", "Corn Planted: ${M163_07:NumberFormat} Acres")
+        });
+        layer.setDefinitionExpression("M163_07>10000");
+        
+        // update the alias for the field being mapped so it 
+        // displays nicely in the legend
+        layer.on("load", function(e) {
+          array.forEach(e.layer.fields, function(field) {
+            if ( field.alias === "M163_07" ) {
+              field.alias = "Acres of Corn";
+            }
+          });
+        });
+        
+        var renderer = new ScaleDependentRenderer({
+          rendererInfos: [{
+            renderer: new DotDensityRenderer({
+              fields: [{
+                name: "M163_07",
+                color: new Color("#CC8800")
+              }],
+              dotValue: 3200,
+              dotSize: 1
+            }),
+          maxScale: 17000000,
+          minScale: 20000001
+          }, {
+            renderer: new DotDensityRenderer({
+              fields: [{
+                name: "M163_07",
+                color: new Color("#CC8800")
+              }],
+              dotValue: 1600,
+              dotSize: 1
+            }),
+          maxScale: 8500000,
+          minScale: 17000000
+          }, {
+            renderer: new DotDensityRenderer({
+              fields: [{
+                name: "M163_07",
+                color: new Color("#CC8800")
+              }],
+              dotValue: 800,
+              dotSize: 1
+            }),
+          maxScale: 5000000,
+          minScale: 8500000
+          }]
+        });
+        layer.setRenderer(renderer);
+        map.addLayers([layer]);
+        
+        var refLayer = new ArcGISTiledMapServiceLayer("https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/Dark_Gray_Albers_North_America_Reference/MapServer");
+        map.addLayer(refLayer);
+
+        map.on("layers-add-result", function(e) {
+          var corn = e.layers[0].layer;
+          var legend = new Legend({
+            map: map, 
+            layerInfos: [{ 
+              layer: corn,
+              title: "US Corn Production (2007)" 
+            }]
+          }, "legend");
+          legend.startup();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="info">
+      <div id="legend"></div>
+    </div>
+  </body>
+</html>  

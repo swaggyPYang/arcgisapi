@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Find Address</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map {
+        padding: 0;
+        border: solid 2px #666;
+        margin: 0 5px 5px 5px;
+      }
+      #header {
+        border: solid 2px #666;
+        color: #666;
+        font-family: sans-serif;
+        font-size: 1.1em;
+        height: auto;
+        margin: 5px;
+        overflow: hidden;
+        padding: 10px 0 10px 20px;
+        text-align:left;
+      }
+      .roundedCorners {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/tasks/locator", "esri/graphic",
+        "esri/geometry/webMercatorUtils",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/InfoTemplate", "esri/Color",
+        "dojo/number", "dojo/parser", "dojo/dom", "dijit/registry",
+
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, Locator, Graphic,
+        webMercatorUtils,
+        SimpleMarkerSymbol, SimpleLineSymbol,
+        InfoTemplate, Color,
+        number, parser, dom, registry
+      ) {
+        parser.parse();
+
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-95.273, 38.95],
+          zoom: 14
+        });
+
+        var locator = new Locator("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
+
+        var infoTemplate = new InfoTemplate("Location", "Address: ${Address}");
+        var symbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_CIRCLE,
+          15,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([0, 0, 255, 0.5]),
+            8
+          ),
+          new Color([0, 0, 255])
+        );
+
+        locator.on("location-to-address-complete", function(evt) {
+          if (evt.address.address) {
+            var address = evt.address.address;
+            var location = webMercatorUtils.geographicToWebMercator(evt.address.location);
+            //this service returns geocoding results in geographic - convert to web mercator to display on map
+            // var location = webMercatorUtils.geographicToWebMercator(evt.location);
+            var graphic = new Graphic(location, symbol, address, infoTemplate);
+            map.graphics.add(graphic);
+
+            map.infoWindow.setTitle(graphic.getTitle());
+            map.infoWindow.setContent(graphic.getContent());
+
+            //display the info window with the address information
+            var screenPnt = map.toScreen(location);
+            map.infoWindow.resize(200,100);
+            map.infoWindow.show(screenPnt, map.getInfoWindowAnchor(screenPnt));
+          }
+        });
+
+        map.on("click", function(evt) {
+          map.graphics.clear();
+          locator.locationToAddress(webMercatorUtils.webMercatorToGeographic(evt.mapPoint), 100);
+        });
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline', gutters:false"
+         style="width:100%; height:100%;">
+
+      <div id="header" class="roundedCorners"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'top'">
+
+        <span>Click the map to get the address for the input location.</span>
+
+      </div>
+
+      <div id="map" class="roundedCorners"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'">
+      </div>
+
+    </div>
+  </body>
+</html>

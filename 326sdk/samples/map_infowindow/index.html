@@ -1,0 +1,55 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Non graphic info window</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+          "esri/map",
+          "dojo/domReady!"
+        ], function(
+          Map
+        ){
+          map = new Map("map", {
+            basemap: "satellite",
+            center: [-116.96, 33.184],
+            zoom: 7
+          });  
+
+          map.on("load", function(){
+            map.infoWindow.resize(250,100);
+          });
+
+          map.on("click", addPoint);
+
+          function addPoint(evt) {
+            var latitude = evt.mapPoint.getLatitude();
+            var longitude = evt.mapPoint.getLongitude();
+            map.infoWindow.setTitle("Coordinates");
+            map.infoWindow.setContent(
+              "lat/lon : " + latitude.toFixed(2) + ", " + longitude.toFixed(2) + 
+              "<br>screen x/y : " + evt.screenPoint.x + ", " + evt.screenPoint.y
+            );
+            map.infoWindow.show(evt.mapPoint, map.getInfoWindowAnchor(evt.screenPoint));
+          }
+        });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

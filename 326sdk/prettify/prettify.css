@@ -1,0 +1,133 @@
+/* Strings */
+.str {
+  /*color: #999999*/
+  color: #dd1144;
+}
+/* Keywords */
+.kwd {
+  /*color: #000088*/
+  color: #333333;
+  font-weight: bold;
+}
+/* Comments */
+.com {
+  /*color: #008800*/
+  color: #999988;
+}
+/* Type names */
+.typ {
+  color: #000000
+}
+/* Literal values */
+.lit {
+  /*color: #006666*/
+  color: #009999;
+}
+/* Punctuation */
+.pun {
+  color: #666600
+}
+/* Plain text */
+.pln {
+  /*color: #000000*/
+  color: #595959;
+}
+/* Markup tag names */
+.tag {
+  /*color: #000088*/
+  color: #000080
+}
+/* Markup attribute names */
+.atn {
+  /*color: #660066*/
+  color: teal;
+}
+/* Markup attribute value */
+.atv {
+  /*color: #999999*/
+  color: #ca0013;
+}
+/* Declaration or variable name */
+.dec {
+  /*color: #660066*/
+  color: #999999;
+  font-weight: bold;
+}
+
+pre.prettyprint {
+  /*padding: 2px;*/
+  /*background: none repeat scroll 0 0 #E5EFF7;*/
+  /*margin-left: 1em;*/
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 0.0625em;
+  padding: 0.5em 0 0.5em 0.5em;
+  background: #fafafa;
+  border-color: #ddd;
+  border-width: 2px;
+  white-space: pre;
+}
+
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0
+}
+
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 {
+  list-style-type: none;
+}
+
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+  background: #eeeeee
+}
+
+@media print {
+
+  .str {
+    color: #006600
+  }
+
+  .kwd {
+    color: #000066;
+    font-weight: bold
+  }
+
+  .com {
+    color: #660000;
+    font-style: italic
+  }
+
+  .typ {
+    color: #440044;
+    font-weight: bold
+  }
+
+  .lit {
+    color: #004444
+  }
+
+  .pun {
+    color: #444400
+  }
+
+  .pln {
+    color: #000000
+  }
+
+  .tag {
+    color: #000066;
+    font-weight: bold
+  }
+
+  .atn {
+    color: #440044
+  }
+
+  .atv {
+    color: #006600
+  }
+}

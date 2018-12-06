@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+<title>Persisting Identity Manager Info</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<style>
+  html, body {
+    height: 98%;
+    width: 99%;
+    margin: 0;
+    padding-top: 4px;
+    padding-left: 4px;
+  }
+
+  #rightPanel {
+    width: 140px;
+    border: 2px solid #617798;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  #mapCanvas {
+    border-top: 2px solid #617798;
+    border-bottom: 2px solid #617798;
+    border-left: 2px solid #617798;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 0px;
+  }
+</style>
+
+<script src="https://js.arcgis.com/3.26/"></script>
+<script>
+  var map, cred = "esri_jsapi_id_manager_data"; // cookie/local storage name
+
+  require([
+    "dojo/_base/unload",
+    "dojo/cookie",
+    "dojo/json",
+    "dojo/parser", "esri/config", "esri/IdentityManager", "esri/layers/FeatureLayer",
+    "esri/map",
+    "dijit/layout/BorderContainer",
+    "dijit/layout/ContentPane",
+    "dojo/domReady!",
+  ], function (baseUnload,
+    cookie,
+    JSON,
+    parser, esriConfig, esriId, FeatureLayer,
+    Map){
+
+    // store credentials/serverInfos before the page unloads
+    baseUnload.addOnUnload(storeCredentials);
+
+    // look for credentials in local storage
+    loadCredentials();
+
+    parser.parse();
+
+    esriConfig.defaults.io.proxyUrl = "/proxy/";
+
+    map = new Map("mapCanvas", {
+      basemap: "topo",
+      center: [-120.723, 35.165],
+      zoom: 12
+    });
+
+    //add the secure service - token is required
+    var secureLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/SaveTheBay/FeatureServer/0",
+      {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        outFields: ["*"]
+      });
+    map.addLayer(secureLayer);
+
+    function loadCredentials(){
+      var idJson, idObject;
+
+      if (supports_local_storage()) {
+        // read from local storage
+        idJson = window.localStorage.getItem(cred);
+      }
+      else {
+        // read from a cookie
+        idJson = cookie(cred);
+      }
+
+      if (idJson && idJson != "null" && idJson.length > 4) {
+        idObject = JSON.parse(idJson);
+        esriId.initialize(idObject);
+      }
+      else {
+        // console.log("didn't find anything to load :(");
+      }
+    }
+
+    function storeCredentials(){
+      // make sure there are some credentials to persist
+      if (esriId.credentials.length === 0) {
+        return;
+      }
+
+      // serialize the ID manager state to a string
+      var idString = JSON.stringify(esriId.toJson());
+      // store it client side
+      if (supports_local_storage()) {
+        // use local storage
+        window.localStorage.setItem(cred, idString);
+        // console.log("wrote to local storage");
+      }
+      else {
+        // use a cookie
+        cookie(cred, idString, {expires: 1});
+        // console.log("wrote a cookie :-/");
+      }
+    }
+
+    function supports_local_storage(){
+      try {
+        return "localStorage" in window && window["localStorage"] !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+  });
+  </script>
+</head>
+
+<body class="tundra">
+  <div data-dojo-type="dijit/layout/BorderContainer"
+    data-dojo-props="design:'headline',gutters:false"
+    style="position:relative;width:100%;height:100%;">
+   <div id="mapCanvas"
+     data-dojo-type="dijit/layout/ContentPane"
+     data-dojo-props="region:'center'">
+   </div>
+   
+   <div id="rightPanel"
+     data-dojo-type="dijit/layout/ContentPane"
+     data-dojo-props="region:'right'">
+     <p>
+      This sample shows how to view a secure map service using token-based authentication. Use the following credentials
+      to test the application:</br>
+       User Name: <b>user1</b></br>
+       Password: <b>user1</b>
+     </p>
+   </div>
+  </div>
+
+</body>
+</html>

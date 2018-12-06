@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Set Map Extent Using Second Service</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      var myMap, myService1, myService2;
+
+      function initLayers() {
+        var primaryMapServiceURL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer";
+        myService1 = new esri.layers.ArcGISTiledMapServiceLayer(primaryMapServiceURL);
+
+        var secondaryMapServiceURL = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Petroleum/KGS_OilGasFields_Kansas/MapServer";
+        myService2 = new esri.layers.ArcGISDynamicMapServiceLayer(secondaryMapServiceURL, {opacity:0.75});
+
+        var layerLoadCount = 0;
+        //When both layers have loaded, run createMapAddLayers
+
+        if (myService1.loaded) {
+          layerLoadCount += 1;
+          if (layerLoadCount === 2) {
+            createMapAddLayers(myService1,myService2);
+          }
+        } else {
+          dojo.connect(myService1, "onLoad", function(service) {
+            layerLoadCount += 1;
+            if (layerLoadCount === 2) {
+              createMapAddLayers(myService1,myService2);
+            }
+          });
+        }
+
+        if (myService2.loaded) {
+          layerLoadCount += 1;
+          if (layerLoadCount === 2) {
+            createMapAddLayers(myService1,myService2);
+          }
+        } else {
+          dojo.connect(myService2, "onLoad", function(service) {
+            layerLoadCount += 1;
+            if (layerLoadCount === 2) {
+              createMapAddLayers(myService1,myService2);
+            }
+          });
+        }
+      }
+
+      //Create a map, set the extent, and add the services to the map.
+      function createMapAddLayers(myService1,myService2) {
+        //create map
+        //convert the extent to Web Mercator 
+        myMap = new esri.Map("mapDiv", { extent:esri.geometry.geographicToWebMercator(myService2.fullExtent) });
+        myMap.addLayer(myService1);
+        myMap.addLayer(myService2);
+      }
+
+      dojo.ready(initLayers);
+    </script>
+  </head>
+  <body class="claro">
+    <div id="mapDiv" style="width:600px; height:400px; border:1px solid #000;"></div>
+    <br/>
+    This map shows two services:
+    <ul>
+    <li>An ArcGIS Online tiled service that has a world extent.</li>
+    <li>A second dynamic service with an extent of the State of Kansas.  This is the extent used when the maps are first displayed. </li>
+    </ul>
+
+    Note that if you want to combine two tiled services in the same map, they must have the same tile configuration.
+  </body>
+</html>

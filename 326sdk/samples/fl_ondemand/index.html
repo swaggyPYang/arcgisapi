@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>FeatureLayer On Demand</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/InfoTemplate", "esri/layers/FeatureLayer",
+        "dojo/parser", "dojo/domReady!"
+      ], function(
+        Map, InfoTemplate, FeatureLayer,
+        parser
+      ) {
+        parser.parse();
+        map = new Map("mapDiv", {
+          basemap: "national-geographic",
+          center: [-96.541, 38.34],
+          zoom: 6
+        });
+
+        map.on("load", initOperationalLayer);
+
+        function initOperationalLayer() {
+          var infoTemplate = new InfoTemplate("${state_name}", "Population (2000):  ${pop2000:NumberFormat}");
+          var featureLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/2",{
+            mode: FeatureLayer.MODE_ONDEMAND,
+            outFields: ["*"],
+            infoTemplate: infoTemplate
+          });
+
+          map.addLayer(featureLayer);
+          map.infoWindow.resize(155,75);
+        }
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div id="mapDiv">
+    </div>
+  </body>
+</html>

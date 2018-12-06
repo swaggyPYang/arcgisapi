@@ -1,0 +1,11 @@
+﻿/* Outer (layout table) grid */
+
+.outerAdjustableGrid.esriGEAdjustableGrid {
+    position: relative;
+}
+
+    /* ValueField */
+
+    .outerAdjustableGrid.esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField {
+        overflow: visible;
+    }

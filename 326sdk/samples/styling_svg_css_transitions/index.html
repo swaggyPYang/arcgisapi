@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+<title>USA County Population Change over 25 Years</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<style>
+  html, body, #mainWindow {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: white;
+    overflow: hidden;
+    font-family: "Trebuchet MS";
+  }
+
+  #loading {
+    background: #fff;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+  }
+
+  #loadingMessage {
+    color: #000;
+    margin: 0 auto;
+    padding: 150px 0 0 0;
+    text-align: center;
+    width: 200px;
+  }
+
+  .shadow {
+    -moz-box-shadow: 0 0 5px #888;
+    -webkit-box-shadow: 0 0 5px #888;
+    box-shadow: 0 0 5px #888;
+  }
+
+  #map {
+    background-color: white;
+  }
+
+  #feedback {
+    background: #fff;
+    color: #000;
+    font-family: arial;
+    height: auto;
+    left: 30px;
+    margin: 5px;
+    padding: 10px;
+    position: absolute;
+    text-align: center;
+    top: 30px;
+    visibility: hidden;
+    width: 200px;
+    z-index: 10;
+  }
+
+  #currentYear {
+    display: inline-block;
+    height: 25px;
+    text-align: center;
+    width: 50px;
+  }
+
+  #play, #pause {
+    cursor: pointer;
+    display: none;
+    width: 50px;
+  }
+
+  #legend {
+    padding: 10px 0 0 0;
+  }
+
+  #legend table table td {
+    text-align: left;
+  }
+
+  /* animate color transition when years change */
+  #counties_layer path {
+    transition: fill 1.15s, fill-opacity 1.15s, stroke 1.15s, stroke-opacity 1.15s;
+    -webkit-transition: fill 1.15s, fill-opacity 1.15s, stroke 1.15s, stroke-opacity 1.15s;
+  }
+
+  #counties_layer path[data-relgrowth="no-data"] {
+    stroke: rgb(255, 255, 255);
+    stroke-width: 1pt;
+    stroke-opacity: 1;
+  }
+
+  #counties_layer path[data-relgrowth="zero-or-less"] {
+    fill: rgb(175, 141, 195); /* purple */
+    fill-opacity: 1;
+    stroke: rgb(175, 141, 195);
+    stroke-width: 1pt;
+    stroke-opacity: 1;
+  }
+
+  #counties_layer path[data-relgrowth="lt-US"] {
+    fill: rgb(225, 236, 231); /* light */
+    fill-opacity: 1;
+    stroke: rgb(225, 236, 231);
+    stroke-width: 1pt;
+    stroke-opacity: 1;
+  }
+
+  #counties_layer path[data-relgrowth="gt-US"] {
+    fill: rgb(127, 191, 123); /* green */
+    fill-opacity: 1;
+    stroke: rgb(127, 191, 123);
+    stroke-width: 1pt;
+    stroke-opacity: 1;
+  }
+
+</style>
+
+<script src="https://js.arcgis.com/3.26/"></script>
+<script>
+  require([
+    "esri/map",
+    "esri/layers/FeatureLayer",
+    "esri/dijit/Legend",
+    "esri/InfoTemplate",
+
+    "esri/renderers/ClassBreaksRenderer",
+    "esri/symbols/SimpleFillSymbol",
+    "esri/symbols/SimpleLineSymbol",
+
+    "dojo/_base/array",
+    "esri/Color",
+    "dojo/_base/fx",
+    "dojo/_base/lang",
+    "dojo/Deferred",
+
+    "dojo/dom",
+    "dojo/dom-construct",
+    "dojo/dom-style",
+    "dojo/number",
+    "dojo/on",
+    "dojo/parser",
+    "dojo/string",
+
+    "dojox/data/CsvStore",
+    "dijit/layout/BorderContainer",
+    "dijit/layout/ContentPane",
+    "dojo/domReady!"
+  ], function (Map, FeatureLayer, Legend, InfoTemplate,
+    ClassBreaksRenderer, SimpleFillSymbol, SimpleLineSymbol,
+    arrayUtils, Color, fx, lang, Deferred,
+    dom, domConstruct, domStyle, number, on, parser, string,
+    CsvStore){
+    parser.parse();
+    var map, layer, currentYear = 1971, currentUSPgr, timer;
+
+    map = new Map("map", {
+      basemap: "gray",
+      center: [-104.16, 39.342],
+      zoom: 4,
+      slider: false
+    });
+    map.on("load", function (){
+      loadCSV().then(function (csvData){
+        setYear = lang.hitch(csvData, setYear);
+        setYear(1971);
+        layer = addCounties(csvData);
+      });
+    });
+
+    // set up play/pause buttons
+    on(dom.byId("pause"), "click", function (){
+      domStyle.set(this, "display", "none");
+      domStyle.set("play", "display", "inline-block");
+      pause();
+    });
+    on(dom.byId("play"), "click", function (){
+      domStyle.set(this, "display", "none");
+      domStyle.set("pause", "display", "inline-block");
+      play();
+    });
+
+    function addCounties(csvData){
+      var content = "<b>FIPS</b>: ${FIPS} \
+                      <br><b>Percent Change</b>: ${RATE}"; // \
+      // <br><National Average: ${NATLAVG}";
+      var infoTemplate = new InfoTemplate("${NAME} County", content);
+
+      var counties = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Census_Counties_20m/FeatureServer/0",
+        {
+          id: "counties",
+          infoTemplate: infoTemplate,
+          outFields: ["NAME", "FIPS"],
+          styling: false
+        });
+
+      counties.on("load", function (){
+        on.once(counties, "update-end", function (){
+          var renderer = createRenderer(currentYear, "FIPS", csvData);
+          counties.setRenderer(renderer);
+          createLegend(counties);
+          domStyle.set("pause", "display", "inline-block");
+          play();
+        });
+        fadeOutLoading();
+      });
+
+      if (counties.surfaceType === "svg") {
+        counties.on("graphic-draw", function (evt){
+          var attrs = evt.graphic.attributes;
+          var joinKey = attrs && attrs.FIPS;
+          var relgrowth = "no-data";
+
+          if (joinKey && csvData[joinKey] && csvData[joinKey][currentYear]) {
+            var countyPgr = getGrowthRate(csvData[joinKey][currentYear - 1], csvData[joinKey][currentYear], 1);
+
+            relgrowth = (countyPgr <= 0) ? "zero-or-less" :
+              (countyPgr <= currentUSPgr) ? "lt-US" : "gt-US";
+          }
+          attrs.RATE = number.round(countyPgr, 2) + "%";
+          evt.graphic.getNode().setAttribute("data-relgrowth", relgrowth);
+        });
+      }
+
+      map.addLayer(counties);
+      return counties;
+    }
+
+    function loadCSV(){
+      var dfd = new Deferred();
+
+      var csvStore = new CsvStore({
+        url: "county_population.csv"
+      });
+
+      csvStore.fetch({
+        onComplete: function (items, request){  //process csv data and create in memory object store.
+          var store = request.store;
+          var minYearPopulation = 1970;
+          var maxYearPopulation = 2006;
+          var counties = {};
+
+          counties.minVal = Infinity;
+          counties.maxVal = -Infinity;
+
+          arrayUtils.forEach(items, function (item){
+            var countyFips = store.getValue(item, "county_fips");
+            var stateFips = store.getValue(item, "state_fips");
+            var fips = string.pad(stateFips, 2, "0") + string.pad(countyFips, 3, "0");
+            var population = {};
+
+            population.maxVal = -Infinity;
+
+            for (var year = minYearPopulation; year <= maxYearPopulation; year++) {
+              var fieldName = "pop" + year;
+              var popValue = parseInt(store.getValue(item, fieldName), 10);
+              population[year] = popValue;
+              population.maxVal = (popValue > population.maxVal) ? popValue : population.maxVal;
+              counties.minVal = (popValue < counties.minVal) ? popValue : counties.minVal;
+              counties.maxVal = (popValue > counties.maxVal) ? popValue : counties.maxVal;
+            }
+
+            counties[fips] = population;
+          });
+          dfd.resolve(counties);
+        },
+        onError: function (err){
+          console.log("Error loading CSV: ", err.message, err);
+        }
+      });
+      return dfd;
+    }
+
+    function getGrowthRate(pt1, pt2, t2_t1){
+      return ((Math.log(pt2) - Math.log(pt1)) / (t2_t1)) * 100;
+    }
+
+    function setYear(year){
+      var csvData = this;
+      currentYear = year;
+      currentUSPgr = getGrowthRate(csvData["00000"][currentYear - 1], csvData["00000"][currentYear], 1);
+      dom.byId("currentYear").innerHTML = currentYear;
+
+      if (layer) {
+        layer.renderer._currentYear = year;
+        addBreaks(layer.renderer);
+        layer.redraw();
+        var sel = map.infoWindow.getSelectedFeature();
+        if (sel && map.infoWindow.isShowing) {
+          map.infoWindow.setFeatures([sel]);
+        }
+      }
+    }
+
+    function changeYear(incr){
+      var year;
+      if (incr < 1) {
+        year = (currentYear === 1971) ? 2006 : currentYear + incr;
+        setYear(year);
+      }
+      else if (incr > 0) {
+        year = (currentYear === 2006) ? 1971 : currentYear + incr;
+        setYear(year);
+      }
+    }
+
+    function play(){
+      if (!timer) {
+        timer = setInterval(function (){
+          changeYear(1);
+        }, 1250);
+      }
+    }
+
+    function pause(){
+      clearInterval(timer);
+      timer = null;
+    }
+
+    function createRenderer(startYear, joinField, data){
+      // renderer is used for the legend
+      var renderer = new ClassBreaksRenderer(null, "FIPS");
+      renderer._currentYear = startYear;
+      renderer._data = data;
+      addBreaks(renderer);
+      // console.log("renderer with breaks", renderer);
+      return renderer;
+    }
+
+    function createLegend(layer){
+      var legendDijit = new Legend({
+        map: map,
+        layerInfos: [
+          {
+            "layer": layer,
+            "title": "Population Change"
+          }
+        ]
+      }, "legend");
+      legendDijit.startup();
+      domStyle.set("feedback", "visibility", "visible");
+    }
+
+    function addBreaks(renderer){
+      // console.log("addBreaks", renderer);
+      var currentYear = renderer._currentYear,
+          data = renderer._data,
+          totalGrowth = getGrowthRate(data['00000'][currentYear], data['00000'][currentYear - 1], 1),
+          roundedTotalGrowth = number.round(totalGrowth, 2);
+
+      renderer.clearBreaks();
+
+      var negative = [175, 141, 195];
+      var flat = [225, 236, 231];
+      var positive = [127, 191, 123];
+
+      renderer.addBreak({
+        minValue: -Infinity,
+        maxValue: 0,
+        symbol: new SimpleFillSymbol().setColor(new Color(negative))
+          .setOutline(new SimpleLineSymbol().setColor(new Color(negative))),
+        label: "Decrease"
+      });
+
+      renderer.addBreak({
+        minValue: 0,
+        maxValue: roundedTotalGrowth,
+        symbol: new SimpleFillSymbol().setColor(new Color(flat))
+          .setOutline(new SimpleLineSymbol().setColor(new Color(flat))),
+        label: "Flat"
+      });
+
+      renderer.addBreak({
+        minValue: roundedTotalGrowth,
+        maxValue: Infinity,
+        symbol: new SimpleFillSymbol().setColor(new Color(positive))
+          .setOutline(new SimpleLineSymbol().setColor(new Color(positive))),
+        label: "Increase"
+      });
+    }
+
+    function fadeOutLoading(){
+      var fade = fx.fadeOut({
+        node: "loading",
+        onEnd: function (){
+          domConstruct.destroy(dom.byId("loading"));
+        }
+      });
+      fade.play();
+    }
+  });
+  </script>
+</head>
+
+<body>
+  <div id="loading">
+    <div id="loadingMessage">
+      Loading County and Population Data
+      <br>
+      <img src="assets/loading_gray_circle.gif">
+    </div>
+  </div>
+  <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="'design': 'headline', 'gutters': false">
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="'region': 'center'">
+      <div id="feedback" class="shadow">
+        Year:
+        <span id="currentYear">...</span>
+        |
+        <span id="play">Play</span>
+        <span id="pause">Pause</span>
+        <div id="legend"></div>
+      </div>
+
+    </div> 
+  </div> 
+</body>
+</html>

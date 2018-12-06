@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+   <title>StandardGeographyQueryTask</title>
+
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+   <style>
+      html,
+      body,
+      #map {
+         width: 100%;
+         height: 100%;
+         margin: 0;
+         padding: 0;
+      }
+   </style>
+</head>
+
+<body class="claro">
+   <script src="https://js.arcgis.com/3.26"></script>
+
+   <script>
+      var map, layer;
+
+      require([
+        "dojo/_base/array",
+        "dojo/store/Memory",
+        "dijit/form/FilteringSelect",
+        "esri/map",
+        "esri/Color",
+        "esri/graphicsUtils",
+        "esri/urlUtils",
+        "esri/layers/FeatureLayer",
+        "esri/tasks/geoenrichment/GeographyQuery",
+        "esri/tasks/geoenrichment/SubGeographyQuery",
+        "esri/tasks/geoenrichment/StandardGeographyQueryTask",
+        "dojo/domReady!"
+    ], function (
+         array,
+         Memory,
+         FilteringSelect,
+         Map,
+         Color,
+         graphicsUtils,
+         urlUtils,
+         FeatureLayer,
+         GeographyQuery,
+         SubGeographyQuery,
+         StandardGeographyQueryTask
+      ) {
+
+         // valid credentials needed to access the geoenrichment service from ArcGIS Online
+         urlUtils.addProxyRule({
+            proxyUrl: "/sproxy/",
+            urlPrefix: "geoenrich.arcgis.com"
+         });
+
+         var standardGeographyQueryTask = new StandardGeographyQueryTask();
+
+         function executeStandardGeographyTask(queryItem) {
+            if (layer) {
+               map.removeLayer(layer);
+            }
+
+            return standardGeographyQueryTask.execute(queryItem.query).then(function (result) {
+               var fs = result.featureSet;
+
+               if (fs.features.length > 0) {
+                  layer = new FeatureLayer({
+                     layerDefinition: {
+                        geometryType: fs.geometryType,
+                        fields: fs.fields
+                     },
+                     featureSet: {
+                        features: fs.features,
+                        geometryType: fs.geometryType
+                     }
+                  });
+                  var color = new Color(queryItem.color);
+                  color.a = 0.8;
+                  layer.renderer.symbol.setColor(color);
+
+                  map.addLayer(layer);
+                  map.setExtent(graphicsUtils.graphicsExtent(fs.features).expand(2));
+               }
+            });
+         }
+
+         map = new Map("map", {
+            basemap: "dark-gray",
+            center: [-119.11, 36.65],
+            zoom: 4
+         });
+
+         map.on("load", function () {
+            var queries = new Memory({
+               idProperty: "label",
+               data: [{
+                  query: new GeographyQuery({
+                     countryID: "IT",
+                     generalizationLevel: "1",
+                     geographyLayerIDs: ["IT.Postcodes2"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "Perugia"
+                  }),
+                  color: "#1f77b4",
+                  label: "Perugia, Italy"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "IE",
+                     generalizationLevel: "1",
+                     geographyLayerIDs: ["IE.RegionalAuthorities"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "Dublin"
+                  }),
+                  color: "#ff7f0e",
+                  label: "Dublin, Ireland"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "FR",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["FR.Postcodes2","FR.Postcodes5"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "Montauban"
+                  }),
+                  color: "#2ca02c",
+                  label: "Montauban, France"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "SE",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["SE.Postcodes2"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "Lund"
+                  }),
+                  color: "#d62728",
+                  label: "Lund, Sweden"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyIDs: ["92129", "92126"],
+                     geographyLayerIDs: ["US.ZIP5"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true"
+                  }),
+                  color: "#8c564b",
+                  label: "San Diego, California, US ZipCodes"
+                }, {
+                  query: new SubGeographyQuery({
+                     countryID: "US",
+                     filterGeographyIDs: ["06059"],
+                     filterGeographyLayerID: "US.Counties",
+                     generalizationLevel: "6",
+                     outSR: map.spatialReference,
+                     returnCentroids: "true",
+                     returnGeometry: "true",
+                     subGeographyLayerID: "US.Tracts"
+                  }),
+                  color: "#e377c2",
+                  label: "Orange County, CA, US(Census Tracts) centroids"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.Counties"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "orange"
+                  }),
+                  color: "#bcbd22",
+                  label: "US Counties that contain term \"Orange\""
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.Counties", "US.Places"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "orange"
+                  }),
+                  color: "#17becf",
+                  label: "US Counties and Cities that contain term \"Orange\""
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.Counties"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "San"
+                  }),
+                  color: "#aec7e8",
+                  label: "US Counties that contain term \"San\""
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.Counties"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "Name:'Orange County' AND MajorSubdivisionAbbr:CA"
+                  }),
+                  color: "#ffbb78",
+                  label: "US Counties terms \"Orange County\" and \"CA\""
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.States"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     useFuzzySearch: "true",
+                     where: "Kalifornia"
+                  }),
+                  color: "#98df8a",
+                  label: "US States Fuzzy Search: Kalifornia"
+                }, {
+                  query: new GeographyQuery({
+                     countryID: "US",
+                     generalizationLevel: "6",
+                     geographyLayerIDs: ["US.CBSA"],
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     where: "40140"
+                  }),
+                  color: "#ff9896",
+                  label: "CBSA: Riverside-San Bernardino-Ontario, CA"
+                }, {
+                  query: new SubGeographyQuery({
+                     countryID: "US",
+                     filterGeographyLayerID: "US.States",
+                     filterGeographyWhere: "California",
+                     generalizationLevel: "6",
+                     outSR: map.spatialReference,
+                     returnGeometry: "true",
+                     subGeographyLayerID: "US.Counties"
+                  }),
+                  color: "#9edae5",
+                  label: "Counties within California, United States"
+                }]
+            });
+
+            new FilteringSelect({
+               store: queries,
+               placeHolder: "Select a standard geography query",
+               searchAttr: "label",
+               style: {
+                  width: "350px",
+                  position: "absolute",
+                  left: "75px",
+                  top: "20px"
+               },
+               onChange: function () {
+                  var self = this;
+
+                  this.set("disabled", true);
+
+                  executeStandardGeographyTask(this.item).always(function () {
+                     self.set("disabled", false);
+                  });
+               }
+            }, "standardGeographyQuerySelect");
+         });
+      });
+   </script>
+
+   <div id="map"></div>
+   <div id="standardGeographyQuerySelect">
+</body>
+
+</html>

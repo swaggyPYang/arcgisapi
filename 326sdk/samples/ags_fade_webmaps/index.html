@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Fade In/Out Effect Using ArcGIS.com Webmaps</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css" />
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; }
+      .shadow {
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      .map { opacity: 0; }
+      #feedback {
+        background: #fff;
+        color: #444;
+        position: absolute;
+        font-family: arial;
+        height: 120px;
+        margin: 5px;
+        padding: 10px;
+        right: 30px;
+        top: 30px;
+        width: 300px;
+        z-index: 40;
+      }
+      #note { font-size: 80%; font-weight: 700; padding: 0 0 10px 0; }
+      #show_next { 
+        cursor: pointer; 
+        font-size: 80%;
+      }
+      #show_next:hover { border-bottom: 1px solid #444; }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "dojo/ready", 
+        "dojo/on",
+        "dojo/dom",
+        "dijit/registry",
+        "dojo/dom-construct",
+        "dojo/parser", 
+        "dijit/layout/BorderContainer", 
+        "dijit/layout/ContentPane", 
+        "esri/map",
+        "esri/arcgis/utils",
+        "esri/domUtils",
+        "dojo/fx",
+        "dojo/_base/fx"
+      ], function(
+        ready, 
+        on, 
+        dom,
+        registry,
+        domConstruct,
+        parser, 
+        BorderContainer, 
+        ContentPane,
+        Map,
+        arcgisUtils,
+        domUtils,
+        coreFx,
+        baseFx
+      ) {
+        ready(function() {
+
+          parser.parse();
+          var currentMap, previousMap, counter = -1, webmaps = [
+            "d94dcdbe78e141c2b2d3a91d5ca8b9c9", // national geographic basemap
+            "d802f08316e84c6592ef681c50178f17", // imagery
+            "dbbe6ca611ba460ea9a3ba5133d54969", // topo
+            "f28762ef94ef4700864fd57d0ef7ec7a" // streets
+          ];
+
+          on(dom.byId("show_next"), "click", nextMap);
+          loadNext();
+        
+          function loadNext(map) {
+            //create the content pane for the map
+            var mapPane = new ContentPane({
+              "content": "",
+              "id": "map" + (++counter),
+              "region": "center"
+            }, domConstruct.create("div"));
+
+            //add the newly constructed content pane to the page 
+            registry.byId("mainWindow").addChild(mapPane);
+
+            var deferred;
+            if( map && map.hasOwnProperty("extent") ){
+              deferred = arcgisUtils.createMap((webmaps[counter % webmaps.length]),mapPane.domNode.id,{
+                mapOptions: {
+                  extent: map.extent
+                }
+              });
+            } else {
+              deferred = arcgisUtils.createMap((webmaps[counter % webmaps.length]), mapPane.domNode.id);
+            }
+            deferred.then(function(response){
+              dom.byId("current_map").innerHTML = response.itemInfo.item.title;
+              fadeMap(response.map);
+            });
+          }
+
+          function fadeMap(map){
+            currentMap = map;
+
+            if ( currentMap.loaded ) {
+              if ( previousMap ) {
+                // References:
+                // http://dojotoolkit.org/documentation/tutorials/1.6/effects/
+                // http://dojotoolkit.org/documentation/tutorials/1.6/animation/
+                var combinedAnim = coreFx.combine([
+                  baseFx.fadeIn({ 
+                    node: currentMap.container, 
+                    duration: 1000
+                  }),
+                  baseFx.fadeOut({ 
+                    node: previousMap.container, 
+                    duration: 1000, 
+                    onEnd: removePrevious 
+                  })
+                ]);
+                combinedAnim.play();
+              } else {
+                baseFx.fadeIn({ node: currentMap.container }).play();
+              }
+            } else {
+              // handle map onLoad from webmap
+              map.on("load", function(){
+                fadeMap(map);
+              });
+            }
+          }
+
+          function removePrevious() {
+            previousMap.destroy();
+            domConstruct.destroy(previousMap.container);
+          }
+
+          function nextMap(){
+            if( currentMap ){
+              previousMap = currentMap;
+              loadNext(currentMap);
+            }
+          }
+        });
+      });
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div id="mainWindow"
+         data-dojo-type="dijit.layout.BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      
+      <div id="feedback" class="shadow">
+        <h3>Fade Between ArcGIS.com Webmaps</h3>
+        <div id="info">
+          <div id="note">
+            <span id="current_map"></span>
+          </div>
+          <span id="show_next">Show Next Map</span>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
+

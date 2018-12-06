@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Predominant Crop Opacity</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        background-color: #000000;
+      }
+
+      .esriAttribution {
+        background: none;
+        color: #ffffff;
+      }
+
+      #info {
+        width: 14.0625em;
+        background-color: #000;
+        color: #fff;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        padding-left: 10px;
+        padding-top: 10px;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        border-top: 2px solid #ffffff;
+        border-right: 2px solid #ffffff;
+        border-top-right-radius: 20px;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+
+    <script>
+      var map;
+      require([
+        "dojo/_base/array",
+        "dojo/number",
+        "esri/Color", "esri/dijit/Legend",
+        "esri/geometry/Extent", "esri/InfoTemplate", "esri/layers/FeatureLayer",
+        "esri/map", "esri/renderers/UniqueValueRenderer",
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "dojo/domReady!"
+      ], function (array, number, Color, Legend, Extent, InfoTemplate, FeatureLayer, Map, UniqueValueRenderer,
+        SimpleFillSymbol, SimpleLineSymbol){
+
+        map = new Map("map", {
+          minScale: 18489297,
+          maxScale: 1245436,
+          extent: new Extent({
+            "xmax": -7218373,
+            "xmin": -15045524,
+            "ymax": 7571201,
+            "ymin": 2160682,
+            "spatialReference": { "wkid": 102100}
+          })
+        });
+
+        // --------------------------------------------------------------------
+        // Custom function to format the numbers for crop values
+        // e.g., 126744 becomes 126,744
+        // --------------------------------------------------------------------
+        formatNumber = function (value, key, data){
+          return number.format(value, {places: 0, locale: "en-us"});
+        };
+
+        var featureLayerOptions = {
+          mode: FeatureLayer.MODE_AUTO,
+          outFields: ["M163_07", "M172_07", "M188_07", "M193_07", "M217_07", "COUNTY", "STATE", "AREA", "M086_07"],
+          infoTemplate: new InfoTemplate("${COUNTY}, ${STATE}",
+            "<b>Corn for grain:</b> ${M163_07:formatNumber}<br><b>All wheat for grain:</b> ${M172_07:formatNumber}<br><b>Upland cotton:</b> ${M188_07:formatNumber}<br><b>Soybeans for beans:</b> ${M193_07:formatNumber}<br><b>Vegetables:</b> ${M217_07:formatNumber}")
+        };
+        var featureLayer = new FeatureLayer("//services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/USA_County_Crops_2007/FeatureServer/0",
+          featureLayerOptions);
+
+        // --------------------------------------------------------------------
+        // Custom function to compute the crop that has the largest value
+        // in a particular count. Using a custom function with a renderer
+        // is a really powerful method of having control over symbology
+        // client-side, especially if you don't have control over the service.
+        // --------------------------------------------------------------------
+        var uniqueValueRenderer = new UniqueValueRenderer(createSymbol("#d9d9d9"), function (graphic){
+          var maxField = "Other";
+          var max = 0;
+
+          array.forEach(featureLayerOptions.outFields, function (field){
+            if (graphic.attributes[field] > max) {
+              maxField = field;
+              max = graphic.attributes[field];
+            }
+          });
+
+          return maxField;
+        });
+
+        // --------------------------------------------------------------------
+        // Helper function for creating symbols for the UniqueValueRenderer
+        // --------------------------------------------------------------------
+        function createSymbol(color){
+          return new SimpleFillSymbol()
+            .setColor(new Color(color))
+            .setOutline(
+            new SimpleLineSymbol().setColor(new Color("#999999")).setWidth(1)
+          );
+        }
+
+        uniqueValueRenderer.addValue({ value: "M217_07", symbol: createSymbol("#fd7f6f"), label: "Vegetables" });
+        uniqueValueRenderer.addValue({ value: "M188_07", symbol: createSymbol("#b2e061"), label: "Cotton" });
+        uniqueValueRenderer.addValue({ value: "M172_07", symbol: createSymbol("#bd7ebe"), label: "Wheat" });
+        uniqueValueRenderer.addValue({ value: "M193_07", symbol: createSymbol("#7eb0d5"), label: "Soybeans" });
+        uniqueValueRenderer.addValue({ value: "M163_07", symbol: createSymbol("#ffb55a"), label: "Corn" });
+
+        // --------------------------------------------------------------------
+        // Use the average data values to control opacity
+        // Field:       M086_07
+        // Description: The acres of total cropland as a percentage of land area in acres.
+        //
+        // Standard Deviation:    28.9616022263796
+        // Average:               39.457298802092
+        // Standard Deviation -1: 10.495696576
+        // Standard Deviation +1: 68.418901028
+        //
+        // For more information about statistics: see the outStatistics
+        // parameter in the ArcGIS REST API Help.
+        // --------------------------------------------------------------------
+        uniqueValueRenderer.setOpacityInfo({
+          field: "M086_07",
+          stops: [
+            { value: 10, opacity: 0   }, // -1 stddev,     transparent
+            { value: 39, opacity: 0.5 }, // average value, 50% transparent
+            { value: 68, opacity: 1   }  // +1 stddev,     completely opaque
+          ]
+        });
+
+        featureLayer.setRenderer(uniqueValueRenderer);
+        map.addLayer(featureLayer);
+
+        var legend = new Legend({
+          map: map,
+          layerInfos: [
+            {
+              layer: featureLayer,
+              title: "Acres harvested by type"
+            }
+          ]
+        }, "legend");
+
+        legend.startup();
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="info">
+      <div id="legend"></div>
+    </div>
+  </body>
+</html>

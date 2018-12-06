@@ -1,0 +1,386 @@
+/* Non customizable CSS */
+.map { overflow: hidden; }
+
+.map .esriMapContainer {
+  position: relative;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  left: 0px;
+  top: 0px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  
+  /*
+   * Fix to prevent text-align setting of a map ancestor from affecting the map:
+   * It is okay to reset text alignment here instead of .esriMapLayers and let it
+   * flow down to textual content inside the map like attribution and popups
+   * - because "left" is the default behavior and if any of those embedded
+   * components wanted non-default behavior they would already have more
+   * specific text-align setting that would continue to work with this fix.
+   */
+  text-align: left;
+}
+
+.map .esriMapContainer .esriMapLayers {
+  position: relative;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/*
+ * esri-display-object is the CSS class name of the root node (i.e. canvas)
+ * of a feature layer that is rendered using WebGL.
+ */
+.map .esriMapContainer .esriMapLayers .layerTile,
+.map .esriMapContainer .esriMapLayers .esri-display-object {
+  position: absolute;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.map .esriMapContainer .esriMapLayers > div { pointer-events: none; }
+
+/* Graphics layers using Canvas renderer need event support. */
+.map .esriMapContainer .esriMapLayers canvas { pointer-events: auto; }
+
+.map .esriMapContainer .esriMapLayers > div[data-reference="true"] { z-index: 1; }
+
+.map .esriMapContainer .esriMapLayers > div[data-reference="true"] canvas,
+.map .esriMapContainer .esriMapLayers > div[data-vectortiles="true"] canvas {
+  pointer-events: none;
+}
+
+/* http://www.randomtools.net/how-to-hide-android-webview-highlight-border-or-change-its-color-142.html */
+.map .esriMapContainer .esriMapContainer {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* User customizable CSS */
+
+/* To customize the map logo
+ * - Replace image url and size appropriately
+ */
+
+.esriControlsBR {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  z-index: 30;
+  text-align: right;
+}
+
+.esriControlsBR.withPanArrows {
+  right: 25px;
+}
+
+.esriAttribution {
+  font-size: 13px;
+  line-height: 15px;
+  /*line-height: 12px;
+  height: 24px; */
+  color: #323232;
+  display: inline-block;
+  text-align: left;
+  vertical-align: bottom;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding:0 4px;
+  margin: 0 5px 0 0;
+  background: rgba(255,255,255,0.7);
+  background: repeat left top url(../images/map/70-percent-white.png)\9; /* IE8 and below */
+}
+
+.esriAttributionOpen {
+  white-space: normal;
+  cursor: pointer;
+}
+
+.dj_ie7 .esriAttribution,
+.dj_ie6 .esriAttribution {
+  display: inline;
+}
+
+/**
+ * This technique does not handle hidden spans well. See here:
+ * http://stackoverflow.com/questions/10751378/delimiters-between-possibly-hidden-spans
+ */
+/*.esriAttributionItem:before {
+  content: " | ";
+}
+
+.esriAttributionItem:first-child:before {
+  content: "";
+}*/
+
+.esriAttributionLastItem span.esriAttributionDelim {
+  display: none;
+}
+
+.map .logo-med {
+  display: inline-block;
+  vertical-align: bottom;
+  /*position:absolute; right:5px; bottom:5px;*/
+  width:65px;
+  height:36px;
+  z-index:30;
+  background-image:url(../images/map/logo-med.png);
+  cursor:pointer;
+  _background-image:none;
+}
+
+.map .logo-sm  {
+  display: inline-block;
+  vertical-align: bottom;
+  /*position:absolute; right:5px; bottom:5px;*/
+  width:46px;
+  height:22px;
+  z-index:30;
+  background-image:url(../images/map/logo-sm.png);
+  cursor:pointer;
+  _background-image:none;
+}
+
+.dj_ie7 .map .logo-med,
+.dj_ie7 .map .logo-sm,
+.dj_ie6 .map .logo-med,
+.dj_ie6 .map .logo-sm  {
+  display: inline;
+}
+
+.map .bingLogo-lg {
+  position:absolute;
+  left:5px;
+  bottom:5px;
+  width:93px;
+  height:29px;
+  z-index:30;
+  background-image:url(../images/map/bing-logo-lg.png);
+  _background-image:none;
+}
+
+/* To customize fixed pan image:
+ * - Customize <jsapi>/images/map/fixed-pan-sprite.pdf and save as fixed-pan-sprite.png
+ * - Or modify images & CSS appropriately
+ */
+.map .esriMapContainer .fixedPan { position:absolute; width:15px; height:15px; background-image:url(../images/map/fixed-pan-sprite.png); overflow:hidden; cursor:pointer; }
+.map .esriMapContainer .panUp { background-position:-16px 0px; top:5px; }
+.map .esriMapContainer .panUpperRight { background-position:-32px 0px; right:5px; top:5px; }
+.map .esriMapContainer .panRight { background-position:-32px -16px; right:5px; }
+.map .esriMapContainer .panLowerRight { background-position:-32px -32px; right:5px; bottom:5px; }
+.map .esriMapContainer .panDown { background-position:-16px -32px; bottom:5px; }
+.map .esriMapContainer .panLowerLeft { background-position:-47px -32px; left:5px; bottom:5px; }
+.map .esriMapContainer .panLeft { background-position:-47px -16px; left:5px; }
+.map .esriMapContainer .panUpperLeft { background-position:-47px 0px; left:5px; top:5px; }
+
+.map .esriMapTooltip {
+  width: 100px;
+  word-wrap: break-word;
+  position: absolute;
+  border: 1px solid #7EABCD;
+  background-color: white;
+  padding: 5px;
+  font-size:9pt;
+  z-index: 9999;
+  
+  /* Does not work in IE */
+  -o-border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+}
+
+/***************
+ * Small Slider
+ ***************/
+.esriSimpleSlider {
+	position:absolute;
+	text-align:center;
+	border:1px solid #57585A;
+	background-color:#FFF;
+	color:#4C4C4C;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	border-radius:5px;
+/*-webkit-box-shadow: 0 0 0.5em #BBBBBB;
+  -moz-box-shadow: 0 0 0.5em #BBBBBB;
+  box-shadow: 0 0 0.5em #BBBBBB;*/
+}
+
+.esriSimpleSliderTL {
+	top:20px;
+	left:20px;
+}
+
+.esriSimpleSliderTR {
+	top:20px;
+	right:20px;
+}
+
+.esriSimpleSliderBL {
+	bottom:40px;
+/*changed from 20px to 40px to stay above bing logo */
+	left:20px;
+}
+
+.esriSimpleSliderBR {
+	bottom:45px;
+/*changed from 20px to 45px to stay above esri logo */
+	right:20px;
+}
+
+.esriSimpleSlider div {
+	width:30px;
+	height:30px;
+	font-size:24px;
+	font-family:verdana,helvetica;
+	/*font-weight:normal;*/
+	line-height:25px;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	cursor:pointer;
+}
+
+.esriSimpleSliderVertical .esriSimpleSliderIncrementButton {
+	border-bottom:1px solid #57585A;
+	-webkit-border-radius:5px 5px 0 0;
+	border-radius:5px 5px 0 0;
+}
+
+.esriSimpleSliderVertical .esriSimpleSliderDecrementButton {
+	-webkit-border-radius:0 0 5px 5px;
+	border-radius:0 0 5px 5px;
+}
+
+/* Let's align with bing and esri logos */
+.esriSimpleSliderHorizontal.esriSimpleSliderBL {
+	left:5px;
+}
+
+.esriSimpleSliderHorizontal.esriSimpleSliderBR {
+	right:5px;
+}
+
+.esriSimpleSliderHorizontal .esriSimpleSliderIncrementButton {
+	float:right;
+	-webkit-border-radius:0 5px 5px 0;
+	border-radius:0 5px 5px 0;
+}
+
+.esriSimpleSliderHorizontal .esriSimpleSliderDecrementButton {
+	float:left;
+	border-right:1px solid #57585A;
+	-webkit-border-radius:5px 0 0 5px;
+	border-radius:5px 0 0 5px;
+}
+
+.esriSimpleSliderDecrementButton:hover,.esriSimpleSliderIncrementButton:hover {
+	background-color:#eee;
+}
+
+.esriSimpleSliderDecrementButton:active,.esriSimpleSliderIncrementButton:active {
+	background-color:#ddd;
+}
+
+.esriSimpleSliderDisabledButton,.esriSimpleSliderDisabledButton:active,.esriSimpleSliderDisabledButton:hover {
+	cursor:default;
+	background-color:#f4f4f4;
+	color:#bbb;
+}
+
+.esriSimpleSliderHorizontal .esriSimpleSliderIncrementButton.dj_ie67Fix {
+	float:none;
+	text-align:center;
+}
+
+/* Large Slider */
+
+.esriLargeSlider {
+  position: absolute;
+}
+
+.esriLargeSliderTL {
+  top: 30px;
+  left: 30px;
+}
+
+.esriLargeSliderTR {
+  top: 30px;
+  right: 15px;
+}
+
+.esriLargeSliderBL {
+  bottom: 40px; /*changed from 30px to 40px to stay above bing logo */
+  left: 30px;
+}
+
+.esriLargeSliderBR {
+  bottom: 45px; /*changed from 30px to 45px to stay above bing logo */
+  right: 15px;
+}
+
+.esriLargeSliderVertical {
+  height: 200px;
+}
+
+.esriLargeSliderHorizontal {
+  width: 200px;
+}
+
+/* Let's align with bing and esri logos */
+.esriLargeSliderHorizontal.esriLargeSliderBL {
+  left: 5px;
+}
+.esriLargeSliderHorizontal.esriLargeSliderBR {
+  right: 5px;
+}
+
+.esriLargeSliderHorizontal .esriLargeSliderTicks {
+  height: 5px;
+}
+
+.esriLargeSliderVertical .esriLargeSliderTicks {
+  width: 5px;
+}
+
+.esriLargeSliderHorizontal .esriLargeSliderLabels {
+  height: 2em;
+  font-family: Verdana;
+  font-size: 50%;
+}
+
+.esriLargeSliderVertical .esriLargeSliderLabels {
+  width: 2em;
+  font-family: Verdana;
+  font-size: 50%;
+}
+
+.esriIconFallbackText {
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  position: absolute;
+  height: 1px;
+  width: 1px;
+}
+
+.heatmapImgLyr img{
+  -webkit-transition: opacity .25s ease;
+     -moz-transition: opacity .25s ease;
+      -ms-transition: opacity .25s ease;
+       -o-transition: opacity .25s ease;
+          transition: opacity .25s ease;
+}
+
+.heatmapImgLyr img:nth-last-child(n+2){
+  opacity: 0;
+}

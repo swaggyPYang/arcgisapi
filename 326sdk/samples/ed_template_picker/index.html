@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Template Picker Widget</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    .itemLabel{
+      color:#266A2E;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/dijit/editing/TemplatePicker",
+
+      "dojo/_base/array",
+      "dojo/dom",
+
+      "dojo/domReady!"
+    ], function(
+      FeatureLayer, TemplatePicker,
+      arrayUtils, dom
+    ) {
+      var layerUrls = [
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/0",
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/1",
+        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/2"
+      ];
+      var layers = [], count = layerUrls.length;
+
+      var loadFunc = function(evt) {
+        count--;
+        layers.push(evt.layer);
+        if (!count) {
+          console.info("Layers loaded");
+          createTemplatePicker(layers);
+        }
+      };
+
+      arrayUtils.forEach(layerUrls, function(url) {
+        var layer = new FeatureLayer(url);
+        layer.on("Load", loadFunc);
+      });
+
+      function createTemplatePicker(layers) {
+        var widget = new TemplatePicker({
+          featureLayers: layers,
+          rows: "auto",
+          columns: 9,
+          showTooltip: true,
+          style: "height: 100%; width: 900px;"
+        }, "templatePickerDiv");
+        
+        widget.startup();
+        
+        widget.on("selection-change", function() {
+          var selected = widget.getSelected();
+          console.log(selected);
+
+          var infoDiv = dom.byId("info");
+          if (selected) {
+            infoDiv.innerHTML = selected.template.name;
+          } else {
+            infoDiv.innerHTML = "";
+          }
+        });
+      }
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <p>
+    Template Picker Widget Samples:<br/>
+    Click on an item to select. Click again to de-select.<br/>
+  </p>
+  
+  <div id="containerDiv" style="height:650px;width:900px;">
+    <div id="templatePickerDiv"></div>
+  </div>
+  <p>
+    Selected template label: <span id="info" style="font-weight: bold;"></span>
+  </p>
+</body>
+</html>

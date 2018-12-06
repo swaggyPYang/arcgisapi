@@ -1,0 +1,72 @@
+      html,body {
+        height:100%;
+        width:100%;
+        margin:0;
+        padding:0;
+      }
+
+      body {
+        overflow:hidden;
+        font-family:"Trebuchet MS";
+      }
+
+      #header {
+        height:30px;
+        overflow:hidden;
+        background-color:#d0eff3;
+        color:#80a8c1;
+        font-size:21pt;
+        text-align:left;
+        border:solid 2px #80a8c1;
+        font-weight:700;
+        padding:15px;
+      }
+
+      #leftPane {
+        background-color:#fafafa;
+        color:#80a8c1;
+        border:solid 2px #80a8c1;
+        width:20%;
+      }
+
+      #centerPane {
+        border:none;
+      }
+
+      #footer {
+        background-color:#fafafa;
+        color:#80a8c1;
+        font-size:15pt;
+        text-align:center;
+        border:solid 2px #80a8c1;
+        height:30px;
+        margin:10px;
+        padding:10px;
+      }
+
+      .roundedCorners {
+        -moz-border-radius:4px;
+        -webkit-border-radius:4px;
+        border-radius:4px;
+      }
+
+      #map {
+        border:solid 10px #80a8c1;
+        margin:5px;
+      }
+
+      .dijitBorderContainer,.dijitGutter {
+        background-color:#d0eff3!important;
+      }
+
+      .shadow {
+        -moz-border-radius:6px;
+        -webkit-border-radius:6px;
+         border-radius:6px;
+        -moz-box-shadow:0 6px 3px -3px #888;
+        -webkit-box-shadow:0 6px 3px -3px #888;
+        box-shadow:0 6px 3px -3px #888;
+        background-color:#FFF;
+        border:solid 4px #80a8c1;
+        padding:8px;
+      }

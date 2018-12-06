@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+   <title>Generate classed color breaks renderer</title>
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+   <style>
+      html,
+      body {
+         height: 100%;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+      }
+      #map {
+         margin: 0;
+         padding: 0;
+      }
+      #feedback {
+         position: absolute;
+         height: 410px;
+         font-family: arial;
+         margin: 5px;
+         padding: 10px;
+         z-index: 40;
+         background: #fff;
+         color: #444;
+         width: 300px;
+         left: 30px;
+         top: 30px;
+         box-shadow: 0 0 5px #888;
+      }
+
+      #legendWrapper {
+         padding: 20px 0 0 0;
+      }
+      #note {
+         font-size: 80%;
+         font-weight: 700;
+         padding: 0 0 10px 0;
+      }
+      h3 {
+         margin: 0 0 5px 0;
+         border-bottom: 1px solid #444;
+      }
+   </style>
+
+   <script src="https://js.arcgis.com/3.26/"></script>
+   <script>
+      //global vars
+      var layer, legend;
+
+      require([
+         
+        "esri/map",
+        "esri/dijit/PopupTemplate",
+        "esri/layers/FeatureLayer",
+        "esri/dijit/Legend",
+        "esri/renderers/smartMapping",
+
+        "dojo/_base/array",
+        "dojo/dom",
+        "dojo/dom-construct",
+        "dojo/data/ItemFileReadStore",
+        "dijit/form/FilteringSelect",
+        "dojo/parser",
+
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+
+        "dojo/domReady!"
+         
+      ], function (
+         Map,
+         PopupTemplate,
+         FeatureLayer,
+         Legend,
+         smartMapping,
+          
+         array,
+         dom,
+         domConstruct,
+         ItemFileReadStore,
+         FilteringSelect,
+         parser
+         
+      ) {
+ 
+         parser.parse();
+         
+         var mapOptions = {
+            basemap: "terrain",
+            center: [-123.113, 47.035],
+            zoom: 7,
+            slider: false
+         };
+
+         var map = new Map("map", mapOptions);
+         var fieldName = "POP2007";
+
+         // the counties map service uses the actual field name as the field alias
+        // set up an object to use as a lookup table to work with user friendly field names
+
+         var fields = {
+            "POP2007": "Population(2007)",
+            "POP07_SQMI": "Population/Square Mile(2007)",
+            "WHITE": "White",
+            "BLACK": "Black",
+            "AMERI_ES": "Native Americans",
+            "HISPANIC": "Hispanic",
+            "ASIAN": "Asian",
+            "HAWN_PI": "Native Hawaiian/Pacific Islander",
+            "MULT_RACE": "Multiple Races",
+            "OTHER": "Other"
+         };
+         var outFields = ["POP2007", "POP07_SQMI", "WHITE", "BLACK", "AMERI_ES", "ASIAN", "HAWN_PI", "OTHER", "MULT_RACE", "HISPANIC", "STATE_NAME", "NAME"];
+
+         //create popup
+          var popupTemplate = new PopupTemplate({
+            title: "{NAME} County",
+            fieldInfos: [{
+               "fieldName": fieldName,
+               "label": fields[fieldName],
+               "visible": true,
+               "format": {
+                  places: 0,
+                  digitSeparator: true
+               }
+          }],
+            showAttachments: true
+         });
+         
+         layer = new FeatureLayer("//sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2", {
+            "id": "Washington",
+            "infoTemplate": popupTemplate,
+            "mode": FeatureLayer.MODE_SNAPSHOT,
+            "outFields": outFields,
+            "opacity": 0.8
+         });
+
+         //only working with Washington state
+         layer.setDefinitionExpression("STATE_NAME='Washington'");
+         map.addLayer(layer);
+
+         layer.on("load", function () {
+             createRenderer(fieldName);
+         });
+
+         function createRenderer(field) {
+            //smart mapping functionality begins
+            smartMapping.createClassedColorRenderer({
+               layer: layer,
+               field: field,
+               basemap: map.getBasemap(),
+               classificationMethod: "quantile"
+            }).then(function (response) {
+               layer.setRenderer(response.renderer);
+               layer.redraw();
+               createLegend(map, layer, field);
+            });
+         }
+         
+         //this function gets called when fields are selected to render
+         function updateAttribute(ch) {
+             map.infoWindow.hide();
+             
+          var popupTemplateUpdated = new PopupTemplate({
+            title: "{NAME} County",
+            fieldInfos: [{ 
+              "fieldName": ch, 
+              "label": fields[ch], 
+              "visible": true, 
+              "format": { places: 0, digitSeparator: true } 
+            }],
+            showAttachments: true
+          });
+            layer.setInfoTemplate(popupTemplateUpdated);
+            createRenderer(ch);
+            layer.redraw();
+            createLegend(map, layer, ch);
+         }
+
+         //Create a legend
+         function createLegend(map, layer, field) {
+            //If applicable, destroy previous legend
+            if (legend) {
+               legend.destroy();
+               domConstruct.destroy(dom.byId("legendDiv"));
+            }
+
+           // create a new div for the legend
+            var legendDiv = domConstruct.create("div", {
+               id: "legendDiv"
+            }, dom.byId("legendWrapper"));
+
+            legend = new Legend({
+               map: map,
+               layerInfos: [{
+                  layer: layer,
+                  title: "Census Attribute: " + field
+            }]
+            }, legendDiv);
+            legend.startup();
+         }
+
+         // create a store and a filtering select for the county layer's fields
+         var fieldNames, fieldStore, fieldSelect;
+         fieldNames = {
+            "identifier": "value",
+            "label": "name",
+            "items": []
+         };
+         array.forEach(outFields, function (f) {
+            if (array.indexOf(f.split("_"), "NAME") == -1) { // exclude attrs that contain "NAME"
+               fieldNames.items.push({
+                  "name": fields[f],
+                  "value": f
+               });
+            }
+         });
+
+         fieldStore = new ItemFileReadStore({
+            data: fieldNames
+         });
+         fieldSelect = new FilteringSelect({
+            displayedValue: fieldNames.items[0].name,
+            value: fieldNames.items[0].value,
+            name: "fieldsFS",
+            required: false,
+            store: fieldStore,
+            searchAttr: "name",
+            style: {
+               "width": "290px",
+               "fontSize": "12pt",
+               "color": "#444"
+            }
+         }, domConstruct.create("div", null, dom.byId("fieldWrapper")));
+         fieldSelect.on("change", updateAttribute);
+
+      });
+   </script>
+</head>
+
+<body class="tundra">
+   <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width: 100%; height: 100%; margin: 0;">
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+         <div id="feedback">
+            <h3>Washington State</h3>
+            <div id="info">
+             Select a field to use to create a renderer for the counties in Washington state.
+            </div>
+            <div id="legendWrapper"></div>
+            <div id="fieldWrapper">
+               Currently selected attribute:
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+</html>
+
+

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Popup with Chart</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #mapDiv{padding:0;}
+    </style>
+    
+    <script>var dojoConfig = {parseOnLoad: true};</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script src="javascript/basemapgallery.js"></script>
+    <script src="javascript/ovmap.js"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+      dojo.require("esri.tasks.geometry");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+
+      // Make sure you include the theme you want here
+      dojo.require("dojox.charting.themes.Julie");
+
+      dojo.ready(pageReady);
+
+      var map, queryTask, query, template;
+
+      function pageReady() {
+        map = new esri.Map("mapDiv", {
+          basemap: "streets",
+          center: [-117.252, 34.067],
+          zoom: 12
+        });
+
+        dojo.connect(map, "onLoad", mapReady);
+
+        var censusLayer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer");
+        map.addLayer(censusLayer);
+      }
+
+      function mapReady(map) {
+        map.infoWindow.resize(270, 225);
+        dojo.connect(map, "onClick", executeQueryTask);
+
+        queryTask = new esri.tasks.QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/1");
+
+        query = new esri.tasks.Query();
+        query.returnGeometry = true;
+        query.outFields = ["*"];
+        query.outSpatialReference = map.spatialReference;
+        query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
+
+        //Reference the chart theme here too
+        template = new esri.dijit.PopupTemplate({
+          title: "Age Distribution in {FIPS}",
+          mediaInfos: [
+            {
+              type: "piechart",
+              value: { 
+                fields: [ 
+                  "AGE_UNDER5", "AGE_5_17", "AGE_18_21", "AGE_22_29", 
+                  "AGE_30_39", "AGE_40_49", "AGE_50_64", "AGE_65_UP" 
+                ],
+                theme: "Julie"
+              }
+            }
+          ]
+        });
+        
+        //Add the overview map and basemap gallery to the app
+        addBasemapGallery(map);
+        addOverview(map);
+        
+        //resize the map when the browser resizes
+        dojo.connect(dijit.byId('mapDiv'), 'resize', map,map.resize);
+      }
+
+      function executeQueryTask(evt) {
+        query.geometry = evt.mapPoint;
+       
+        var deferred = queryTask.execute(query);
+
+        deferred.addCallback(function(response) {
+          // response is a FeatureSet
+          // Let's return an array of features.
+          return dojo.map(response.features, function(feature) {
+            feature.setInfoTemplate(template);
+            return feature;
+          });
+        });
+
+       
+        // InfoWindow expects an array of features from each deferred
+        // object that you pass. If the response from the task execution 
+        // above is not an array of features, then you need to add a callback
+        // like the one above to post-process the response and return an
+        // array of features.
+        map.infoWindow.setFeatures([ deferred ]);
+        map.infoWindow.show(evt.mapPoint);
+      }
+    </script>
+  </head>
+  <body class="claro" >
+    <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:'false'" style="width: 100%; height: 100%;">
+      <div id="mapDiv" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+    </div>
+  </body>
+</html>

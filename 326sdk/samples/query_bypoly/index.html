@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>QueryTask with query geometry from another task</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map",
+        "esri/config",
+        "esri/Color",
+        "esri/tasks/QueryTask",
+        "esri/tasks/query",
+        "esri/geometry/webMercatorUtils",
+        "esri/InfoTemplate",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/symbols/SimpleFillSymbol",
+
+        "dojo/dom",
+        "dojo/domReady!"
+      ], function(
+        Map,
+        esriConfig,
+        Color,
+        QueryTask,
+        Query,
+        webMercatorUtils,
+        InfoTemplate,
+        SimpleLineSymbol,
+        SimpleFillSymbol,
+
+        dom) {
+
+        map = new Map("mapDiv", {
+          basemap: "streets",
+          center: [-118.198, 33.805],
+          zoom: 13
+        });
+
+        map.on("load", initFunctionality);
+
+        function initFunctionality(evt) {
+          var queryTask = new QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/1");
+          var queryTaskTouches = new QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/1");
+
+          //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
+          //If this null is or not available the query operation will not work.  Otherwise it will do a http post via the proxy.
+          esriConfig.defaults.io.proxyUrl = "/proxy/";
+          esriConfig.defaults.io.alwaysUseProxy = false;
+
+          // Query
+          var query = new Query();
+          query.returnGeometry = true;
+          query.outFields = ["POP2000", "POP2007", "MALES", "FEMALES", "FIPS"];
+          query.outSpatialReference = {
+            "wkid": 102100
+          };
+
+          var infoTempContent = "POP2007 = ${POP2007}<br/>POP2000 = ${POP2000}<br/>MALES = ${MALES}<br/>FEMALES = ${FEMALES}" + "<br/><A href='#' onclick='map.graphics.clear();map.infoWindow.hide();'>Remove Selected Features</A>";
+          //Create InfoTemplate for styling the result infowindow.
+          var infoTemplate = new InfoTemplate("Block: ${FIPS}", infoTempContent);
+          map.infoWindow.resize(275, 190);
+
+          var currentClick = null;
+
+          // Listen for map onClick event
+          map.on("click", function(evt) {
+            map.graphics.clear();
+            map.infoWindow.hide();
+            currentClick = query.geometry = evt.mapPoint;
+            query.spatialRelationship = Query.SPATIAL_REL_INTERSECTS;
+            queryTask.execute(query);
+            dom.byId('messages').innerHTML = "<b>1. Executing Point Intersection Query...</b>";
+          });
+
+          var firstGraphic = null;
+          // Listen for QueryTask onComplete event
+
+          queryTask.on("complete", function(evt) {
+            firstGraphic = evt.featureSet.features[0];
+            var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleFillSymbol.STYLE_SOLID, new Color([100, 100, 100]), 3), new Color([255, 0, 0, 0.20]));
+            firstGraphic.setSymbol(symbol);
+            firstGraphic.setInfoTemplate(infoTemplate);
+
+            map.graphics.add(firstGraphic);
+            query.geometry = webMercatorUtils.webMercatorToGeographic(firstGraphic.geometry);
+            query.spatialRelationship = Query.SPATIAL_REL_TOUCHES;
+            queryTaskTouches.execute(query);
+            dom.byId('messages').innerHTML = "<b>2. Executing Polygon Touches Query...</b>";
+          });
+
+          // Listen for QueryTask executecomplete event
+          queryTaskTouches.on("complete", function(evt) {
+            var fset = evt.featureSet;
+            var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleFillSymbol.STYLE_SOLID, new Color([100, 100, 100]), 2), new Color([0, 0, 255, 0.20]));
+
+            var resultFeatures = fset.features;
+            for (var i = 0, il = resultFeatures.length; i < il; i++) {
+              var graphic = resultFeatures[i];
+              graphic.setSymbol(symbol);
+              graphic.setInfoTemplate(infoTemplate);
+              map.graphics.add(graphic);
+            }
+
+            map.infoWindow.setTitle("Comparing " + firstGraphic.attributes.FIPS + " census block group with surrounding block groups");
+
+            var content = "<table border='1'><th><td>Selected</td><td>Average Surrounding</td></th>" + "<tr><td>Pop 2007</td><td>" + firstGraphic.attributes.POP2007 + "</td><td>" + average(evt.featureSet, 'POP2007') + "</td></tr>" + "<tr><td>Pop 2000</td><td>" + firstGraphic.attributes.POP2000 + "</td><td>" + average(fset, 'POP2000') + "</td></tr>" + "<tr><td>Males</td><td>" + firstGraphic.attributes.MALES + "</td><td>" + average(fset, 'MALES') + "</td></tr>" + "<tr><td>Females</td><td>" + firstGraphic.attributes.FEMALES + "</td><td>" + average(fset, 'FEMALES') + "</td></tr>" + "</table>";
+            map.infoWindow.setContent(content);
+            map.infoWindow.show(map.toScreen(currentClick), map.getInfoWindowAnchor(map.toScreen(currentClick)));
+
+            dom.byId('messages').innerHTML = "";
+          });
+        }
+
+        function average(fset, att) {
+          var features = fset.features;
+          var sum = 0;
+          var featuresLength = features.length;
+          for (var x = 0; x < featuresLength; x++) {
+            sum = sum + features[x].attributes[att];
+          }
+          return Math.round(sum / featuresLength);
+        }
+
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    Click on map to select census block group that intersects the map click and all block groups that touch selected group.
+    <div id="mapDiv" style="width: 100%; height:80%; position:relative;"></div>
+    <span id="messages"></span>
+  </body>
+</html>

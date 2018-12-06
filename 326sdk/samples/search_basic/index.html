@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+   <title>ArcGIS API for JavaScript | Basic Search</title>
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/dijit/calcite.css">
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/esri/esri.css">
+   <style>
+      html,
+      body,
+      #map {
+         height: 100%;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+      }
+      #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 20px;
+         left: 74px;
+      }
+   </style>
+   <script src="https://js.arcgis.com/3.26/"></script>
+   <script>
+      require([
+
+        "esri/map",
+        "esri/dijit/Search",
+        "dojo/domReady!"
+
+      ], function (Map, Search) {
+         var map = new Map("map", {
+            basemap: "gray",
+            center: [-120.435, 46.159], // lon, lat
+            zoom: 7
+         });
+
+         var search = new Search({
+            map: map
+         }, "search");
+         search.startup();
+
+      });
+   </script>
+</head>
+
+<body class="calcite">
+   <div id="search"></div>
+   <div id="map"></div>
+</body>
+
+</html>

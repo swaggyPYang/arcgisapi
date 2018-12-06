@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+     
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Display Visible Features</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/Grid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/soriaGrid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+
+    <style>
+      .soria .dojoxGridRowOver .dojoxGridCell { color:#000000; }
+
+      html,body {
+      height:100%;
+      width:100%;
+      margin:0;
+      }
+      body {
+      background-color:#fff;
+      font-family:arial,helvetica,sans-serif;
+      }
+      #map {
+      -moz-border-radius:4px;
+      overflow:hidden;
+      border:solid 2px #727B84;
+      margin:5px;
+      }
+
+      #rightPane {
+      font-size:10pt;
+      text-align:center;
+      width:40%;
+      overflow:none;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.dijit"); // optimize: load dijit layer
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("dojo.data.ItemFileWriteStore");
+      dojo.require("dojox.grid.DataGrid");
+      dojo.require("dijit.form.Button");
+      dojo.require("dojox.grid.cells.dijit");
+      dojo.require("dojo.number");
+      dojo.require("dijit.TooltipDialog");
+
+
+      var featureLayer, pageInfo, grid;
+      var map;
+      // grid structure
+      var layout = {
+        cells: [
+          {
+          field: "Name",
+          name: "Name",
+          width: '250px'},
+        {
+          field: "Magnitude",
+          name: "Magnitude",
+          width: 'auto',
+          formatter: formatRound}
+        ]
+      };
+
+      // Get object IDs from the table after the page is loaded
+      dojo.ready(getObjectIds);
+
+      function formatRound(value) {
+        return dojo.number.round(value, 2);
+      }
+
+
+      function getObjectIds() {
+        grid = dijit.byId("myGrid");
+        map = new esri.Map("map", {
+          basemap: "satellite",
+          center: [15.469, -10.142],
+          zoom: 2,
+          slider: false
+        });
+
+
+        map.on("load", function(){
+          featureLayer = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/Since_1970/MapServer/0", {
+            outFields: ["*"],
+            mode: esri.layers.FeatureLayer.MODE_SELECTION
+          });
+
+          map.addLayer(featureLayer);
+          featureLayer.on("mouse-over", showTooltip);
+          featureLayer.on("mouse-out", closeDialog);
+
+          featureLayer.on("load", function(){
+            //create the grid layout
+            grid.attr("structure", layout);
+            // create the query to fetch object IDs for earthquakes that have a magnitude greater than 6.0
+            //that occurred after January 1st 2007
+            var query = new esri.tasks.Query();
+            query.where = "Magnitude > 6.0 AND Num_Deaths >=1";
+            query.timeExtent = new esri.TimeExtent(new Date("01/01/2007 UTC"));
+            featureLayer.queryIds(query, function(objectIds) {
+              fetchRecords(objectIds);
+            });
+          });
+
+        });
+      }
+
+      function fetchRecords(objectIds) {
+        if (objectIds.length > 0) {
+          updatePageInformation(objectIds);
+          queryRecordsByPage(1);
+        }
+        else {
+          grid.showMessage("No matching records");
+          grid.setStore(null);
+        }
+      }
+
+      function updatePageInformation(objectIds, page) {
+        pageInfo = {
+          objectIds: objectIds,
+          totalRecords: objectIds.length,
+          totalPages: Math.ceil(objectIds.length / 10),
+          currentPage: page || 0,
+          recordsPerPage: 10
+        };
+
+        dojo.byId("pageInfo").innerHTML = pageInfo.currentPage + "/" + pageInfo.totalPages;
+        dojo.byId("recordsInfo").innerHTML = pageInfo.totalRecords;
+
+        if (pageInfo.currentPage > pageInfo.totalPages) {
+          queryRecordsByPage(pageInfo.currentPage - 1);
+        }
+      }
+
+      function queryRecordsByPage(pageNumber) {
+
+        // check if the page number is valid
+        if (pageNumber < 1 || pageNumber > pageInfo.totalPages) {
+          return;
+        }
+
+        grid.showMessage("Fetching records...");
+
+        var begin = pageInfo.recordsPerPage * (pageNumber - 1);
+        var end = begin + pageInfo.recordsPerPage;
+
+        // create the query
+        var query = new esri.tasks.Query();
+        query.objectIds = pageInfo.objectIds.slice(begin, end);
+        query.outFields = ["*"];
+
+        // Query for the records with the given object IDs and populate the grid
+        featureLayer.selectFeatures(query, esri.layers.FeatureLayer.SELECTION_NEW, function(features) {
+          updateGrid(features, pageNumber);
+        });
+      }
+
+      function updateGrid(features, pageNumber) {
+
+        // create the data store and add it to the grid
+        var items = [];
+        dojo.forEach(features, function(feature) {
+          items.push(feature.attributes);
+        });
+
+        var store = new dojo.data.ItemFileWriteStore({
+          data: {
+            items: items
+          }
+        });
+        grid.setStore(store);
+        grid.update();
+
+        // update application state
+        pageInfo.currentPage = pageNumber;
+        dojo.byId("pageInfo").innerHTML = pageInfo.currentPage + "/" + pageInfo.totalPages;
+      }
+      function showTooltip(evt){
+        closeDialog();
+        var dialog = new dijit.TooltipDialog({
+          id: "tooltipDialog",
+          content: evt.graphic.attributes.Name + "<br />" + evt.graphic.attributes.Magnitude,
+          style: "position: absolute; width: 200px; font: normal normal bold 6pt Tahoma;z-index:100"
+        });
+        dialog.startup();
+
+       dojo.style(dialog.domNode, "opacity", 0.85);
+       dijit.placeOnScreen(dialog.domNode, {x: evt.pageX, y: evt.pageY}, ["TL", "BL"], {x: 10, y: 10});
+      }
+      function closeDialog() {
+        var widget = dijit.byId("tooltipDialog");
+        if (widget) {
+          widget.destroy();
+        }
+      }
+    </script>
+  </head>
+
+  <body class="soria">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar',gutters:false"
+     style="width:98%; height:98%;">
+      <div id="map" data-dojo-type="dijit.layout.ContentPane"  data-dojo-props="region:'center'">
+      </div>
+      <div id="rightPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'">
+        <table id="myGrid" data-dojo-type="dojox.grid.DataGrid"  data-dojo-props='rowsPerPage:"10", autoHeight:true'></table>
+         <p>
+          &nbsp;&nbsp;Total records =
+          <span id="recordsInfo">
+            0
+          </span>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <button data-dojo-type="dijit.form.Button" onclick="queryRecordsByPage(pageInfo.currentPage - 1);">
+            Prev Page
+          </button>
+          &nbsp;&nbsp;
+          <span id="pageInfo">
+          </span>
+          &nbsp;&nbsp
+          <button data-dojo-type="dijit.form.Button" onclick="queryRecordsByPage(pageInfo.currentPage + 1);">
+            Next Page
+          </button>
+        </p>
+      </div>
+    </div>
+  </body>
+
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>High Performance Feature Layers</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="./css/layout.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.StackContainer");
+      dojo.require("dijit.form.HorizontalSlider");
+      dojo.require("dijit.form.HorizontalRuleLabels");
+      dojo.require("dojox.lang.functional.fold");
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+
+      var globals = {};
+      globals.map = null;
+      globals.layerUrls = [];
+      globals.layerScales = {};
+      globals.featureLayers = [];
+      globals.currentFl = null;
+      globals.redrawTimer = null;
+      globals.popSlider = null;
+
+      function init() {
+        globals.map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-94.878, 37.719],
+          zoom: 4,
+          slider: false
+        });
+
+        // States
+        globals.layerUrls.push('https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/5');
+        // Counties
+        globals.layerUrls.push('https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4');
+        // Block Groups
+        globals.layerUrls.push('https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/1');
+
+        // Define custom min/max scales for the feature layers
+        // Used after all layer information is available
+        globals.layerScales = [
+          { min: 0, max: 4000000, level: 4 },      // States
+          { min: 4000000, max: 100000, level: 8 }, // Counties
+          { min: 100000, max: 0, level: 13 }        // Block Groups
+        ];
+
+        // Popup templates
+        globals.flPopupTemplates = [];
+        // States
+        globals.flPopupTemplates.push(new esri.dijit.PopupTemplate({
+          title: "{STATE_NAME}",
+          fieldInfos: [
+            {fieldName: "POP2000", visible: true, label: "Population(2000): ", format: { places: 0, digitSeparator: true }},
+            {fieldName: "POP2007", visible: true, label: "Population(2007): ", format: { places: 0, digitSeparator: true }}
+          ]
+        }));
+        // Counties
+        globals.flPopupTemplates.push(new esri.dijit.PopupTemplate({
+          title: "{NAME}",
+          fieldInfos: [
+            {fieldName: "POP2000", visible: true, label: "Population(2000): ", format: { places: 0, digitSeparator: true }},
+            {fieldName: "POP2007", visible: true, label: "Population(2007): ", format: { places: 0, digitSeparator: true }},
+            {fieldName: "STATE_NAME", visible: true, label:"State: "}
+          ]
+        }));
+        // Block Groups
+        globals.flPopupTemplates.push(new esri.dijit.PopupTemplate({
+          title: "FIPS: {FIPS}",
+          fieldInfos: [
+            {fieldName: "POP2000", visible: true, label: "Population(2000): ", format: { places: 0, digitSeparator: true }},
+            {fieldName: "POP2007", visible: true, label: "Population(2007): ", format: { places: 0, digitSeparator: true }}
+          ]
+        }));
+
+        globals.outFields = [];
+        // States
+        globals.outFields.push(["STATE_NAME", "POP2000", "POP2007"]);
+        // Counties
+        globals.outFields.push(["NAME", "STATE_NAME", "POP2000", "POP2007"]);
+        // Block Groups
+        globals.outFields.push(["FIPS", "POP2000", "POP2007"]);
+
+        // Population slider
+        globals.popSlider = dijit.byId('populationSlider');
+        dojo.connect(globals.popSlider, 'onChange', function(evt) {
+          dojo.forEach(globals.currentFl.graphics, function(g) {
+            if ( g.attributes.POP2000 > evt ) {
+              g.hide();
+            } else {
+              g.show();
+            }
+          });
+        });
+
+        dojo.connect(globals.map, 'onLoad', initUI);
+        dojo.connect(globals.map, 'onLoad', addFeatureLayers);
+      }
+
+      function initUI(){
+        dojo.connect(globals.map, 'onZoomEnd', function() {
+          esri.hide(dojo.byId('maxLabel'));
+
+          // Hide popup when zooming in or out because geographies could change
+          globals.map.infoWindow.hide();
+        });
+
+        // Connect click event listeners for "zoom to" links
+        dojo.connect(dojo.byId('zoomStates'), 'onclick', function() {
+          globals.map.setLevel(globals.layerScales[0].level);
+        });
+        dojo.connect(dojo.byId('zoomCounties'), 'onclick', function() {
+          globals.map.setLevel(globals.layerScales[1].level);
+        });
+        dojo.connect(dojo.byId('zoomBlockGroups'), 'onclick', function() {
+          globals.map.setLevel(globals.layerScales[2].level);
+        });
+      }
+
+      function addFeatureLayers() {
+        var outline = new esri.symbol.SimpleLineSymbol()
+              .setColor(dojo.colorFromHex('#fff'));
+        var sym = new esri.symbol.SimpleFillSymbol()
+              .setColor(new dojo.Color([52, 67, 83, 0.4]))
+              .setOutline(outline);
+        var renderer = new esri.renderer.SimpleRenderer(sym);
+
+        dojo.forEach(globals.layerUrls, function(info, idx) {
+          globals.featureLayers[idx] = new esri.layers.FeatureLayer(
+            globals.layerUrls[idx], {
+              infoTemplate: globals.flPopupTemplates[idx],
+              mode: esri.layers.FeatureLayer.MODE_ONDEMAND,
+              outFields: globals.outFields[idx]
+            }
+          );
+          globals.featureLayers[idx].setRenderer(renderer);
+
+          // Apply custom min and max scales when the layer loads
+          dojo.connect(globals.featureLayers[idx], 'onLoad', function() {
+            globals.featureLayers[idx].minScale = globals.layerScales[idx].min;
+            globals.featureLayers[idx].maxScale = globals.layerScales[idx].max;
+          });
+
+          // Show popup when a feature is clicked
+          dojo.connect(globals.featureLayers[idx], "onClick", function(evt){
+            globals.map.infoWindow.setFeatures([evt.graphic]);
+            globals.map.infoWindow.show(evt.mapPoint);
+          });
+
+          // Show re-draw time
+          dojo.connect(globals.featureLayers[idx], 'onUpdateStart', calcRedraw);
+          dojo.connect(globals.featureLayers[idx], 'onUpdateEnd', calcRedraw);
+
+          // Add this FL to the map
+          globals.map.addLayer(globals.featureLayers[idx]);
+
+          // Set slider value for first layer
+          if ( idx === 0 ) {
+            dojo.connect(globals.featureLayers[idx], 'onLoad', setSliderMax);
+          }
+        });
+
+        // Keep track of visible feature layer
+        globals.currentFl = globals.featureLayers[0];
+      }
+
+      function setSliderMax(idx) {
+        if ( typeof(idx) != 'number' ) {
+          idx = 0;
+        }
+        var graphics = globals.featureLayers[idx].graphics;
+        var pops = dojo.map(graphics, function(g) { return g.attributes.POP2000; });
+        var max = dojox.lang.functional.reduce(pops, "Math.max(a,b)");
+        dijit.byId('populationSlider').attr('maximum', max);
+        dijit.byId('populationSlider').attr('value', max);
+        dojo.byId('maxLabel').innerHTML = formatMaxValue(max);
+        esri.show(dojo.byId('maxLabel'));
+      }
+
+      function formatMaxValue(max) {
+        var maxLen = (max + '').length,
+            maxFormatted = null;
+        if ( maxLen > 6 ) {
+          maxFormatted = (max / 1000000).toFixed(1) + 'M';
+        } else if ( maxLen > 3 ) {
+          maxFormatted = (max / 1000).toFixed(0) + 'K';
+        } else {
+          maxFormatted = max;
+        }
+        return maxFormatted;
+      }
+
+      function calcRedraw() {
+        // console.log('calc redraw');
+        if ( globals.redrawTimer ) {
+          var drawEnd = new Date().getTime(),
+              elapsed = drawEnd - globals.redrawTimer;
+          dojo.byId('redraw-time').innerHTML = elapsed + 'ms';
+          globals.redrawTimer = null;
+
+          // Update slider max value
+          var currentScale = esri.geometry.getScale(globals.map);
+          if ( currentScale > 4000000 ) {
+            globals.currentFl = globals.featureLayers[0];
+            setSliderMax(0);
+          } else if ( currentScale < 4000000 && currentScale > 100000 ) {
+            globals.currentFl = globals.featureLayers[1];
+            setSliderMax(1);
+          } else if ( currentScale < 100000 ){
+            globals.currentFl = globals.featureLayers[2];
+            setSliderMax(2);
+          }
+        } else {
+          globals.redrawTimer = new Date().getTime();
+        }
+      }
+
+      dojo.ready(init);
+      </script>
+  </head>
+  <body class="tundra">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer"  data-dojo-props="design:'headline',gutters:false"  style="width: 100%; height: 100%; margin: 0;">
+      
+      <div id="header"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'top'">
+        <div id="title">High Performance Maps with Feature Layers</div>
+      </div>
+
+      
+      <div id="leftPane"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'left'">
+
+        <div id="leftPaneContent"
+             data-dojo-type="dijit.layout.BorderContainer"
+             data-dojo-props="design:'headline',gutters:false"
+             style="width:100%; height:100%;">
+
+          
+          <div id="panel1" class="panel_content"
+               data-dojo-type="dijit.layout.ContentPane"
+               data-dojo-props="region:'center'">
+            <div id="description">
+              Feature layers provide a powerful and easily configurable way to serve features to a client. They are an easy way to build an application that accesses gigabytes of data and allow for rich interaction on the client while maintaining excellent performance.
+              <br /><br />
+              Features to note:
+              <ul>
+                <li><a href="https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html">JS API Feature Layers</a></li>
+                <li><a target="_blank" href="https://blogs.esri.com/esri/arcgis/2011/06/13/feature-layers-can-generalize-geometries-on-the-fly/">Generalize features on the fly</a> with <a href="https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#setmaxallowableoffset">maxAllowableOffset</a></li>
+                <li>Query hundreds of MBs of data, fetch results and display features in ~1s or less</li>
+                <li>Custom scale dependencies for fine-grained control over which layer displays at a specific scale</li>
+                <li>Interactive filtering via a slider</li>
+              </ul>
+              Zoom to:
+              <ul>
+                <li>
+                  <a href="#" id="zoomStates">States</a>
+                </li>
+                <li>
+                  <a href="#" id="zoomCounties">Counties</a>
+                </li>
+                <li>
+                  <a href="#" id="zoomBlockGroups">Census Block Gropus</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div id="redrawContentPane"
+               data-dojo-type="dijit.layout.ContentPane"
+               data-dojo-props="region:'bottom'">
+            <div id="redraw">
+              Query, fetch and refresh time:  <span id="redraw-time">N/A</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div id="map"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+        <div id="slider">
+          <div id="popSliderLabel">
+            Filter On Population(2000):
+          </div>
+          <div id="populationSlider"
+            data-dojo-type="dijit.form.HorizontalSlider"
+            data-dojo-props="showButtons:true, value:40000000, minimum:0, maximum:40000000, discreteValues:21, intermediateChanges:true"
+            style="width:200px; position: absolute; bottom: 20px; left: 20px;">
+            <ol id="sliderLabels"
+              data-dojo-type="dijit.form.HorizontalRuleLabels"
+              data-dojo-props="container:'bottomDecoration'"
+              style="height:1em;font-size:75%;color:#666;">
+              <li>
+                <span id="minLabel">0</span>
+              </li>
+              <li id="maxLabel">
+                <span id="maxLabel"></span>
+              </li>
+            </ol>
+
+          </div>
+        </div>
+
+        <div id="top-shadow"></div>
+        <div id="left-shadow"></div>
+      </div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>US Movie Genres by County</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="claro">
+    <div id="esri-map-container"></div>
+    <div id="esri-basemapgallery-container" class="esriBasemapGallery"></div>
+    <div id="esri-colorinfoslider-container">
+      <div id="title"></div>
+      <hr>
+      <div>
+        Theme:
+        <select id="color-renderer-theme">
+          <option value="high-to-low" selected>High to low</option>
+          <option value="above-and-below">Above and below</option>
+          <option value="centered-on">Centered on</option>
+          <option value="extremes">Extremes</option>
+        </select>
+      </div>
+      <div id="esri-colorinfoslider"></div>
+      <input type="checkbox" id="sliderZoomButton"/> Show histogram detail
+    </div>
+  </body>
+
+  <script>
+    var dojoConfig = {
+      has: {
+        "esri-featurelayer-webgl": 1
+      }
+    };
+  </script>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "dojo/_base/array",
+      "dojo/dom",
+      "dojo/number",
+      "dojo/on",
+      "esri/basemaps",
+      "esri/Color",
+      "esri/dijit/Basemap",
+      "esri/dijit/BasemapGallery",
+      "esri/dijit/ColorInfoSlider",
+      "esri/dijit/util/busyIndicator",
+      "esri/InfoTemplate",
+      "esri/layers/FeatureLayer",
+      "esri/map",
+      "esri/plugins/FeatureLayerStatistics",
+      "esri/renderers/smartMapping",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "dojo/domReady!"
+    ], function (
+      array, dom, number, on,
+      esriBasemaps, Color, Basemap, BasemapGallery, ColorInfoSlider, busyIndicator,
+      InfoTemplate, FeatureLayer, Map, FeatureLayerStatistics, smartMapping,
+      SimpleFillSymbol, SimpleLineSymbol
+    ){
+
+      var fipsLookup = {"30": "MT", "54": "WV", "37": "NC", "22": "LA", "45": "SC", "36": "NY", "49": "UT", "08": "CO", "24": "MD", "25": "MA", "26": "MI", "27": "MN", "06": "CA", "21": "KY", "04": "AZ", "23": "ME", "46": "SD", "47": "TN", "44": "RI", "09": "CT", "42": "PA", "29": "MO", "40": "OK", "41": "OR", "35": "NM", "05": "AR", "28": "MS", "02": "AK", "13": "GA", "01": "AL", "20": "KS", "11": "DC", "10": "DE", "39": "OH", "38": "ND", "15": "HI", "48": "TX", "17": "IL", "16": "ID", "55": "WI", "18": "IN", "31": "NE", "56": "WY", "51": "VA", "50": "VT", "53": "WA", "34": "NJ", "19": "IA", "32": "NV", "12": "FL", "33": "NH"};
+
+      // Only show the movie genre fields in the InfoTemplate
+      var movieFieldsArray = [ "MP20049a_B", "MP20050a_B", "MP20051a_B", "MP20052a_B", "MP20053a_B", "MP20054a_B", "MP20055a_B", "MP20056a_B", "MP20057a_B", "MP20058a_B"];
+      // --------------------------------------------------------------------
+      // variables that change with UI interaction
+      //
+      // BasemapGallery selection and ColorInfoSlider theme changes
+      // --------------------------------------------------------------------
+      var basemap = "gray";
+      var theme = "high-to-low";
+
+      var fieldName = "MP20044a_B"; // Attd a movie in /6 mos
+      var url = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/US_Movie_Genre_Stats/FeatureServer/0";
+      var mapOptions = {basemap: basemap, center: [-115.84, 36.14], level: 9};
+      var map = new Map("esri-map-container", mapOptions);
+      var busyIndicator = busyIndicator.create({target: "esri-colorinfoslider", imageUrl: "images/busy-indicator.gif", backgroundOpacity: 0});
+
+      // --------------------------------------------------------------------
+      // InfoTemplate and InfoWindow highlight symbol
+      // --------------------------------------------------------------------
+      FormatMovieGenreCount = function (value, key, data, options){
+        return number.format(value);
+      }
+
+      FormatFIPSToStateAbbr = function (value, key, data, options){
+        return fipsLookup[value];
+      }
+
+      // InfoWindow FillSymbol highlight
+      var sfs = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+          new Color("#5c5c5c"), 4), new Color("#fafafa")
+      );
+
+      map.infoWindow.set("fillSymbol", sfs);
+
+      var geoenrichedFeatureLayer = new FeatureLayer(url, {outFields: ["*"]});
+      var featureLayerStatistics = new FeatureLayerStatistics({layer: geoenrichedFeatureLayer, visible: false});
+
+      // --------------------------------------------------------------------
+      // Create the ColorInfoSlider widget and initialize. Pass in an initial
+      // stops parameter, will be replaced later.
+      // --------------------------------------------------------------------
+      var colorInfoSlider = new ColorInfoSlider({
+        colorInfo: {
+          stops:[
+            {color: new Color([92,92,92]), label: "50", value: 50},
+            {color: new Color([92,92,92]), label: "51", value: 51}
+          ]
+        }
+      }, "esri-colorinfoslider");
+
+      colorInfoSlider.startup();
+
+      // --------------------------------------------------------------------
+      // Create the BasemapGallery widget and populate it using the settings
+      // from esri/basemaps
+      // --------------------------------------------------------------------
+      var basemapGallery = new BasemapGallery({
+        showArcGISBasemaps: false,
+        map: map
+      }, "esri-basemapgallery-container");
+
+      for (var basemap_key in esriBasemaps) {
+
+        var esriBasemap = esriBasemaps[basemap_key];
+        basemapGallery.add(
+          new Basemap({
+            id: basemap_key,
+            layers: esriBasemap.baseMapLayers,
+            thumbnailUrl: esriBasemap.thumbnailUrl,
+            title: esriBasemap["title"]
+          })
+        );
+
+        if (basemap_key == basemap) {
+          basemapGallery.select(basemap_key);
+        }
+      }
+
+      basemapGallery.startup();
+
+      basemapGallery.on("selection-change", function (event){
+        basemap = event.target.getSelected().id;
+        if (geoenrichedFeatureLayer.loaded) {
+          updateSmartMapping();
+        }
+      });
+
+      // --------------------------------------------------------------------
+      // After the FeatureLayer loads, format the Popup and calculate the
+      // suggested scale range from the FeatureLayerStatistics plugin
+      // --------------------------------------------------------------------
+      geoenrichedFeatureLayer.on("load", function (){
+        map.addLayer(geoenrichedFeatureLayer);
+        //Configure InfoTemplate on FeatureLayer
+        var content = "<table>";
+        content += "<tr><td colspan='2' class='movie-summary'>Popular: <b>${PredominantMovieGenre}</b> by ${PredominantMovieGenreByPercent}%</td></tr>";
+        content += "<tr><td colspan='2' class='movie-desc'>Movie attendance / 6 months by Genre</td></tr>";
+
+        array.forEach(geoenrichedFeatureLayer.fields, function (field){
+          if (movieFieldsArray.indexOf(field.name) !== -1) {
+            content += "<tr><td class='attr-name'><b>" + field.alias.replace("Movie genre seen at theater/6 mo: ",
+              "") + "</b></td><td class=\"attr-value\">${" + field.name + ":FormatMovieGenreCount()}</td></tr>";
+          }
+        });
+
+        content += "</table>";
+        geoenrichedFeatureLayer.setInfoTemplate(new InfoTemplate("${NAME} County, ${STATE_FIPS:FormatFIPSToStateAbbr()}", content));
+
+        //ColorInfoSlider panel title
+        dom.byId("title").innerHTML = geoenrichedFeatureLayer.name + "<br>" + array.filter(geoenrichedFeatureLayer.fields, function (field){
+          return field.name === fieldName
+        })[0].alias;
+
+        //suggest scale range
+        featureLayerStatistics.getSuggestedScaleRange().then(function (scaleRange){
+          geoenrichedFeatureLayer.setScaleRange(scaleRange.minScale, scaleRange.maxScale);
+          map.setScale(scaleRange.minScale);
+        });
+        updateSmartMapping();
+      });
+
+      // --------------------------------------------------------------------
+      // Function for calling smartMapping and FeatureLayerStatistics plugin
+      // --------------------------------------------------------------------
+      function updateSmartMapping(){
+        busyIndicator.show();
+        //create and apply color renderer
+        smartMapping.createColorRenderer({
+          layer: geoenrichedFeatureLayer,
+          field: fieldName,
+          normalizationField: "TADULTBASE",
+          basemap: basemap,
+          theme: theme
+        }).then(function (colorRenderer){
+
+          if (!geoenrichedFeatureLayer.visible) {
+            geoenrichedFeatureLayer.show();
+          }
+          geoenrichedFeatureLayer.setRenderer(colorRenderer.renderer);
+          geoenrichedFeatureLayer.redraw();
+
+          // --------------------------------------------------------------------
+          // Calculate the Histogram
+          // --------------------------------------------------------------------
+          featureLayerStatistics.getHistogram({
+            field: fieldName,
+            normalizationField: "TADULTBASE",
+            numBins: 10
+          }).then(function (histogram){
+            // --------------------------------------------------------------------
+            // Update the ColorInfoSlider and apply FeatureLayerStatistics histogram
+            // --------------------------------------------------------------------
+            var sliderHandleInfo = getSliderHandlePositions(theme);
+            colorInfoSlider.set("colorInfo", colorRenderer.renderer.visualVariables[0]);
+            colorInfoSlider.set("minValue", colorRenderer.statistics.min);
+            colorInfoSlider.set("maxValue", colorRenderer.statistics.max);
+            colorInfoSlider.set("statistics", colorRenderer.statistics);
+            colorInfoSlider.set("histogram", histogram);
+            colorInfoSlider.set("handles", sliderHandleInfo["handles"]);
+            colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
+            busyIndicator.hide();
+
+            // --------------------------------------------------------------------
+            // process slider handle changes
+            // Object with keys: type, field, normalizationField, stops
+            // --------------------------------------------------------------------
+            colorInfoSlider.on("data-change", function (event){
+              geoenrichedFeatureLayer.renderer.setVisualVariables([event.colorInfo]);
+              geoenrichedFeatureLayer.redraw();
+            });
+
+            // recreate the renderer when the theme changes
+            dom.byId("color-renderer-theme").onchange = function (){
+              theme = this.value;
+              busyIndicator.show();
+              smartMapping.createColorRenderer({
+                layer: geoenrichedFeatureLayer,
+                field: fieldName,
+                normalizationField: "TADULTBASE",
+                basemap: basemap,
+                theme: theme
+              }).then(function (colorRenderer){
+                busyIndicator.hide();
+                geoenrichedFeatureLayer.setRenderer(colorRenderer.renderer);
+                geoenrichedFeatureLayer.redraw();
+
+                var sliderHandleInfo = getSliderHandlePositions(theme);
+                colorInfoSlider.set("minValue", colorRenderer.statistics.min);
+                colorInfoSlider.set("maxValue", colorRenderer.statistics.max);
+                colorInfoSlider.set("colorInfo", colorRenderer.renderer.visualVariables[0]);
+                colorInfoSlider.set("handles", sliderHandleInfo["handles"]);
+                colorInfoSlider.set("primaryHandle", sliderHandleInfo["primaryHandle"]);
+
+              }).otherwise(function (error){
+                busyIndicator.hide();
+                colorInfoSlider.showHistogram = false;
+                console.log("An error occurred while changing the theme, Error: %o", error);
+              });
+            };
+
+            // update the slider's zoomed state
+            dom.byId("sliderZoomButton").onchange = function(){
+
+              var zoomOptions,
+                bottomHandlerValue,
+                topHandlerValue,
+                zoomInViewBottomValue,
+                zoomInViewTopValue,
+                getHistogramParams;
+
+              // If checked
+              if(dom.byId("sliderZoomButton").checked){
+
+                // Get current handle values
+                bottomHandlerValue = colorInfoSlider.get("colorInfo").stops[0].value;
+                topHandlerValue =  colorInfoSlider.get("colorInfo").stops[4].value;
+
+                // Calculate the minimum and maximum values of the zoomed slider
+                zoomInViewBottomValue = bottomHandlerValue - (topHandlerValue - bottomHandlerValue) / 3;
+                zoomInViewTopValue = topHandlerValue + (topHandlerValue - bottomHandlerValue) / 3;
+
+                // Fallback to statistics if values are out of expected range
+                if (zoomInViewBottomValue < colorRenderer.statistics.min) {
+                  zoomInViewBottomValue = colorRenderer.statistics.min;
+                }
+                if (zoomInViewTopValue > colorRenderer.statistics.max) {
+                  zoomInViewTopValue = colorRenderer.statistics.max;
+                }
+
+                // Histogram generation using new values
+                getHistogramParams = {
+                  field: fieldName,
+                  normalizationField: "TADULTBASE",
+                  numBins: 10,
+                  minValue: zoomInViewBottomValue,
+                  maxValue: zoomInViewTopValue
+                };
+
+                // Use new FeatureLayer statisticsPlugin module
+                geoenrichedFeatureLayer.statisticsPlugin.getHistogram(getHistogramParams).then(function(histogram){
+
+                  zoomOptions = {
+                    "histogram": histogram,
+                    minSliderValue: zoomInViewBottomValue,
+                    maxSliderValue: zoomInViewTopValue
+                  };
+
+                  // Update the Slider
+                  colorInfoSlider.set("zoomOptions", zoomOptions);
+
+                });
+
+              }else{
+                // Unzoom the Slider
+                colorInfoSlider.set("zoomOptions", null);
+              }
+            }
+
+          }).otherwise(function (error){
+            busyIndicator.hide();
+            console.log("An error occurred while calculating the histogram, Error: %o", error);
+          });
+
+        }).otherwise(function (error){
+          busyIndicator.hide();
+          console.log("An error occurred while creating the color renderer, Error: %o", error);
+        });
+      }
+
+      // --------------------------------------------------------------------
+      // Update ColorInfoSlider handle positions based upon theme chosen.
+      // --------------------------------------------------------------------
+      function getSliderHandlePositions(theme){
+        switch (theme) {
+          case "high-to-low":
+            return {
+              handles: [0, 4],
+              primaryHandle: null
+            };
+          case "above-and-below":
+            return {
+              handles: [0, 2, 4],
+              primaryHandle: 2
+            };
+          case "centered-on":
+            return {
+              handles: [0, 2, 4],
+              primaryHandle: 2
+            };
+          case "extremes":
+            return {
+              handles: [0, 2, 4],
+              primaryHandle: null
+            };
+          case "group-similar":
+            return {
+              handles: [0, 1, 2, 3, 4],
+              primaryHandle: null
+            };
+        }
+      }
+
+    });
+  </script>
+</html>

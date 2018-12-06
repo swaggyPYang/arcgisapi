@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Popup - Sidebar</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      margin: 0;
+      font-family: "Open Sans";
+    }
+    
+    #leftPane {
+      width: 20%;
+      margin: 0;
+      border: none;
+    }
+    
+    #map {
+      padding: 0;
+    }
+    
+    .nav {
+      padding: 5px 10px;
+      border: solid 1px grey;
+    }
+    
+    #header {
+      text-align: center;
+      height: 60px;
+      border-bottom: solid 1px #ccc;
+    }
+  </style>
+    
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "dojo/ready",
+      "dojo/on",
+      "dojo/_base/connect",
+      "dojo/dom",
+      "dijit/registry",
+      "dojo/dom-construct",
+      "dojo/parser",
+      "dijit/layout/BorderContainer",
+      "dijit/layout/ContentPane",
+      "esri/map",
+      "esri/arcgis/utils",
+      "esri/domUtils",
+      "esri/dijit/Popup"
+    ], function(
+      ready,
+      on,
+      connect,
+      dom,
+      registry,
+      domConstruct,
+      parser,
+      BorderContainer,
+      ContentPane,
+      Map,
+      arcgisUtils,
+      domUtils,
+      Popup
+    ) {
+      ready(function() {
+
+        parser.parse();
+
+        //setup event handlers for the next/previous buttons
+        on(dom.byId("previous"), "click", selectPrevious);
+        on(dom.byId("next"), "click", selectNext);
+
+        //Create a map based on an ArcGIS Online web map id 
+        arcgisUtils.createMap("f7df9e05c12e4c6588a9c09831e1c898", "map")
+          .then(function(response) {
+            window.map = response.map;
+            //set the popup's popupWindow property to false. This prevents the popup from displaying
+            map.infoWindow.set("popupWindow", false);
+            initializeSidebar(window.map);
+          }, function(error) {
+            console.log("Map creation failed: ", dojo.toJson(error));
+          });
+
+        function initializeSidebar(map) {
+          var popup = map.infoWindow;
+
+          //when the selection changes update the side panel to display the popup info for the 
+          //currently selected feature. 
+          connect.connect(popup, "onSelectionChange", function() {
+            displayPopupContent(popup.getSelectedFeature());
+          });
+
+          //when the selection is cleared remove the popup content from the side panel. 
+          connect.connect(popup, "onClearFeatures", function() {
+            //dom.byId replaces dojo.byId
+            dom.byId("featureCount").innerHTML = "Click to select feature";
+            //registry.byId replaces dijit.byId
+            registry.byId("leftPane").set("content", "");
+            domUtils.hide(dom.byId("pager"));
+          });
+
+          //When features are associated with the map's info window update the sidebar with the new content. 
+          connect.connect(popup, "onSetFeatures", function() {
+            displayPopupContent(popup.getSelectedFeature());
+            if (popup.features.length > 1) {
+              dom.byId("featureCount").innerHTML = popup.features.length + " features selected";
+              //enable navigation if more than one feature is selected 
+              domUtils.show(dom.byId("pager"))
+            } else {
+              dom.byId("featureCount").innerHTML = popup.features.length + " feature selected";
+              domUtils.hide(dom.byId("pager"));
+            }
+          });
+        }
+
+        function displayPopupContent(feature) {
+          if (feature) {
+            var content = feature.getContent();
+            registry.byId("leftPane").set("content", content);
+          }
+        }
+
+        function selectPrevious() {
+          window.map.infoWindow.selectPrevious();
+        }
+
+        function selectNext() {
+          window.map.infoWindow.selectNext();
+        }
+      });
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" 
+    data-dojo-props="design:'headline',gutters:false" 
+    style="width:100%; height:100%;">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:false" 
+      region="left" style="width: 20%;height:100%;">
+      <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" 
+        data-dojo-props="region:'center'"></div>
+      <div id="header" data-dojo-type="dijit/layout/ContentPane" 
+        data-dojo-props="region:'top'">
+        <div id="featureCount" style="margin-bottom:5px;">Click to select feature</div>
+        <div id="pager" style="display:none;"> 
+          <a href='javascript:void(0);' id ="previous" class='nav' style="text-decoration: none;">
+              &lt; Prev
+          </a> &nbsp; 
+          <a href='javascript:void(0);' id="next" class='nav'  style="text-decoration: none;">
+              Next &gt;
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+  </div>
+</body>
+
+</html> 

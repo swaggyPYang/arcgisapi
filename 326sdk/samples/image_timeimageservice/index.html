@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Image Service - Time</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html,body {
+      height:100%;
+      width:100%;
+      margin:0;
+      padding:0;
+      }
+
+      .shadow {
+      background-color:#EEE;
+      padding:6px;
+      }
+
+      .timeWindow {
+      border: 1px solid #aaa;
+      position:absolute;
+      right:35px;
+      top:5px;
+      z-index:998;
+      width:300px;
+      font-family:Tahoma;
+      color:#000;
+      text-align:center;
+      }
+
+      #title {
+      font-size:14pt;
+      font-weight:700;
+      }
+
+      #subTitle {
+      font-size:12pt;
+      }
+
+      #details {
+      font-size:10pt;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.dijit.TimeSlider");
+      dojo.require("esri.layers.ArcGISImageServiceLayer");
+      dojo.require("esri.layers.ImageServiceParameters");
+      dojo.require("esri.map");
+
+      var map;
+
+      function init() {
+        var initExtent = new esri.geometry.Extent({
+          "xmin": -16918000,
+          "ymin": 1551000,
+          "xmax": 5936000,
+          "ymax": 11217000,
+          "spatialReference": {
+            "wkid": 102100
+          }
+        });
+        map = new esri.Map("map", {
+          extent: initExtent
+        });
+        var params = new esri.layers.ImageServiceParameters();
+        var imageServiceLayer = new esri.layers.ArcGISImageServiceLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/MODIS/ImageServer",{imageServiceParameters: params});
+
+        map.addLayers([imageServiceLayer]);
+        dojo.connect(map, "onLayersAddResult", initSlider);
+      }
+
+      function initSlider(results) {
+        var timeSlider = new esri.dijit.TimeSlider({
+          style: "width:100%;"
+        }, dojo.byId("timeSliderDiv"));
+        map.setTimeSlider(timeSlider);
+        var timeExtent = new esri.TimeExtent();
+        timeSlider.setThumbCount(1);
+        timeExtent = results[0].layer.timeInfo.timeExtent;
+        timeSlider.createTimeStopsByTimeInterval(timeExtent, 1, 'esriTimeUnitsMonths');
+        timeSlider.setThumbMovingRate(2000);
+        timeSlider.singleThumbAsTimeInstant(true);
+        timeSlider.startup();
+        dojo.connect(timeSlider, "onTimeExtentChange", function(timeExtent) {
+          dojo.byId("details").innerHTML = dojo.string.substitute("${endTime}", timeExtent, function(val) {
+            return dojo.date.locale.format(val, {
+              selector: 'date',
+              datePattern: 'MMMM yyyy'
+            });
+          });
+        });
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="soria">
+    <div data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+
+      <div id="map" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'center'" 
+           style="overflow:hidden;position:relative;">
+           
+        <div class="timeWindow">
+          <div id="timeSliderWin" class="shadow">
+            <div id="title">
+              Surface of the World
+            </div>
+            <div id="subTitle">
+              Month by Month
+            </div>
+            <div id="details">
+              December 2003
+            </div>
+            <div id="timeSliderDiv" style="width:100%;height:100%;">
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+  </body>
+
+</html>
+

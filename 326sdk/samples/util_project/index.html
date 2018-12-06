@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Project a point</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      .esriPopup .contentPane span {
+        display: inline-block;
+        padding: 0 0 0.2em 0;
+        width: 6em;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map, gsvc, pt;
+
+      require([
+        "esri/map", "esri/graphic", "esri/symbols/SimpleMarkerSymbol",
+        "esri/tasks/GeometryService", "esri/tasks/ProjectParameters",
+        "esri/SpatialReference", "esri/InfoTemplate", "dojo/dom", "dojo/on",
+        "dojo/domReady!"
+      ], function(
+        Map, Graphic, SimpleMarkerSymbol,
+        GeometryService, ProjectParameters,
+        SpatialReference, InfoTemplate, dom, on
+      ) {
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-98.445, 46.147],
+          zoom: 3
+        });
+
+        gsvc = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+        map.on("click", projectToWebMercator);
+
+        function projectToWebMercator(evt) {
+          map.graphics.clear();
+          
+          var point = evt.mapPoint;
+          var symbol = new SimpleMarkerSymbol().setStyle("diamond");
+          var graphic = new Graphic(point, symbol);
+          var outSR = new SpatialReference(102100);
+          
+          map.graphics.add(graphic);
+
+          gsvc.project([ point ], outSR, function(projectedPoints) {
+            pt = projectedPoints[0];
+            graphic.setInfoTemplate(new InfoTemplate("Coordinates",
+              "<span>X:</span>" + pt.x.toFixed() + "<br>" + 
+              "<span>Y:</span>" + pt.y.toFixed() + "<br>" + 
+              "<input type='button' value='Convert back to LatLong' id='convert'>" +
+              "<div id='latlong'></div>"));
+            map.infoWindow.setTitle(graphic.getTitle());
+            map.infoWindow.setContent(graphic.getContent());
+            map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
+            on.once(dom.byId("convert"), "click", projectToLatLong);
+          });
+        }
+
+        function projectToLatLong() {
+          var outSR = new SpatialReference(4326);
+          var params = new ProjectParameters();
+          params.geometries = [pt.normalize()];
+          params.outSR = outSR;
+          
+          gsvc.project(params, function(projectedPoints) {
+            pt = projectedPoints[0];
+            dom.byId("latlong").innerHTML = "<span>Latitude: </span> " + 
+              pt.y.toFixed(3) + "<br><span>Longitude:</span>" + pt.x.toFixed(3);
+          });
+        }
+      });
+    </script>
+
+  </head>
+  <body class="claro">
+    <b>Click a location on the map to Project from LatLng -> Web Mercator:</b>
+    <div id="map" style="width:600px; height:400px; border:1px solid #000;"></div>
+  </body>
+</html>

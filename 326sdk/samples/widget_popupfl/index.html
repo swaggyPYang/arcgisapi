@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>  
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>San Francisco</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .esriScalebar {
+        padding: 20px 20px;
+      }
+
+      #map {
+        padding: 0;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/config",
+        "esri/map",
+        "esri/dijit/Popup",
+        "esri/dijit/PopupTemplate",
+        "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/tasks/GeometryService",
+        "dojo/dom-construct",
+        "dojo/parser",
+        "esri/Color",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "dojo/domReady!"
+      ],
+        function (
+          esriConfig, Map, Popup, PopupTemplate, FeatureLayer,
+          SimpleMarkerSymbol, GeometryService, domConstruct, parser, Color
+        ) {
+
+          parser.parse();
+
+          esriConfig.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+          var popupOptions = {
+            markerSymbol: new SimpleMarkerSymbol("circle", 32, null,
+              new Color([0, 0, 0, 0.25])),
+            marginLeft: "20",
+            marginTop: "20"
+          };
+          //create a popup to replace the map's info window
+          var popup = new Popup(popupOptions, domConstruct.create("div"));
+
+          map = new Map("map", {
+            basemap: "topo",
+            center: [-122.448, 37.788],
+            zoom: 17,
+            infoWindow: popup
+          });
+
+          var popupTemplate = new PopupTemplate({
+            title: "{address}",
+            fieldInfos: [
+              {
+                fieldName: "req_type",
+                visible: true,
+                label: "Type"
+              },
+              {
+                fieldName: "req_date",
+                visible: true,
+                label: "Date",
+                format: {
+                  dateFormat: 'shortDateShortTime'
+                }
+              }
+            ],
+            showAttachments: true
+          });
+
+          //create a feature layer based on the feature collection
+          var featureLayer = new FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/MapServer/0",
+            {
+              mode: FeatureLayer.MODE_SNAPSHOT,
+              infoTemplate: popupTemplate,
+              outFields: ["req_date", "address"]
+            });
+          featureLayer.setDefinitionExpression("address != ''");
+
+          map.addLayer(featureLayer);
+        });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"
+           style="border:1px solid #000;padding:0;">
+      </div>
+    </div>
+  </body>
+
+</html>

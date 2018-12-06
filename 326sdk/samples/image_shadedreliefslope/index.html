@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Image Service - Shaded Relief and Slope</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      .shadow { 
+        background-color:white; 
+        padding:6px;
+      } 
+      #floatingWindow {
+        border:1px solid #aaa;
+        position:absolute;
+        right:25px;bottom:50px;z-index:998;
+        width:220px;
+        color:#000000; 
+        font-family:"Tahoma"; color: black; 
+        text-align:left; 
+      } 
+      #title{ font-size:10pt; padding-left:5px; }
+      #details{font-size:8pt;padding:10px;}
+      .disabled{color:#808080;!important}
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dojo.parser");
+      dojo.require("dijit.form.RadioButton");
+      dojo.require("dijit.form.CheckBox");
+      dojo.require("dijit.form.TextBox");
+      dojo.require("dijit.form.Button");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.layers.ArcGISImageServiceLayer");
+      dojo.require("esri.layers.ImageServiceParameters");
+      dojo.require("esri.layers.RasterFunction");
+      dojo.require("esri.map");
+      
+      var imageServiceLayer;
+      var map;
+      var colorRamp = [[0,175,240,233],[3,175,240,222],[7,177,242,212],
+          [11,177,242,198],[15,176,245,183],[19,185,247,178],[23,200,247,178],
+          [27,216,250,177],[31,232,252,179],[35,248,252,179],[39,238,245,162],
+          [43,208,232,135],[47,172,217,111],[51,136,204,88],[55,97,189,66],
+          [59,58,176,48],[63,32,161,43],[67,18,148,50],[71,5,133,58],[75,30,130,62],
+          [79,62,138,59],[83,88,145,55],[87,112,153,50],[91,136,158,46],[95,162,166,41],
+          [99,186,171,34],[103,212,178,25],[107,237,181,14],[111,247,174,2],
+          [115,232,144,2],[119,219,118,2],[123,204,93,2],[127,191,71,2],[131,176,51,2],
+          [135,163,34,2],[139,148,21,1],[143,135,8,1],[147,120,5,1],[151,117,14,2],[155,117,22,5],
+          [159,115,26,6],[163,112,31,7],[167,112,36,8],[171,110,37,9],[175,107,41,11],
+          [179,107,45,12],[183,105,48,14],[187,115,61,28],[191,122,72,40],[155,117,22,5],
+          [159,115,26,6],[163,112,31,7],[167,112,36,8],[171,110,37,9],
+          [175,107,41,11],[179,107,45,12],[183,105,48,14],[187,115,61,28],[191,122,72,40],
+          [155,117,22,5],[159,115,26,6],[163,112,31,7],[167,112,36,8],[171,110,37,9],
+          [175,107,41,11],[179,107,45,12],[183,105,48,14],[187,115,61,28],[191,122,72,40],
+          [195,133,86,57],[199,140,99,73],[203,148,111,90],[207,153,125,109],
+          [213,163,148,139],[217,168,163,160],[223,179,179,179],[227,189,189,189],
+          [231,196,196,196],[235,207,204,207],[239,217,215,217],[243,224,222,224],
+          [247,235,232,235],[251,245,242,245],[255,255,252,255]];
+
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        
+        var initExtent = new esri.geometry.Extent({"xmin":-13224484.260283869,"ymin":4295127.538002357,"xmax":-13105721.93623988,"ymax":4362783.124240531,"spatialReference":{"wkid":102100}});
+        map = new esri.Map("map", {
+          extent: initExtent
+        });
+        //setup default parameters
+        var params = new esri.layers.ImageServiceParameters();
+        var rasterFunction = new esri.layers.RasterFunction();
+        rasterFunction.functionName = "ShadedRelief";
+        var functionArguments = {};
+        functionArguments.Azimuth= parseFloat(dojo.byId('azimuth').value); // 215.0;
+        functionArguments.Altitude = parseFloat(dojo.byId('altitude').value);//60.0;
+        functionArguments.ZFactor = parseFloat(dojo.byId('zfactor').value);//30.3;
+        functionArguments.Colormap = colorRamp;
+       
+        rasterFunction.functionArguments = functionArguments;
+       
+        rasterFunction.variableName = "Raster";
+        params.renderingRule =rasterFunction;
+        imageServiceLayer = new esri.layers.ArcGISImageServiceLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/CaliforniaDEM/ImageServer",{imageServiceParameters:params});
+        map.addLayers([imageServiceLayer]);
+        dojo.connect(map, 'onLoad', function(theMap) {
+          //resize the map when the browser resizes
+          dojo.connect(dijit.byId('map'), 'resize', map,map.resize);
+        });
+      }
+      function applyVals(){
+        var rasterFunction = new esri.layers.RasterFunction();        
+        var functionArguments = {};
+        
+        //apply the new values 
+        if( dojo.byId("valSR").checked){//shaded relief            
+            rasterFunction.variableName = "Raster";
+            functionArguments.Azimuth= parseFloat(dojo.byId('azimuth').value); 
+            functionArguments.Altitude = parseFloat(dojo.byId('altitude').value);
+          if(dojo.byId("colormap").checked){
+            rasterFunction.functionName = "ShadedRelief"; 
+            functionArguments.Colormap = colorRamp;
+          } else {
+            rasterFunction.functionName = "Hillshade";            
+            rasterFunction.variableName = "DEM";
+          }
+        } else {//slope
+          rasterFunction.functionName = "Slope";            
+          rasterFunction.variableName = "DEM";
+        }
+       
+        functionArguments.ZFactor = parseFloat(dojo.byId('zfactor').value);  
+        rasterFunction.functionArguments = functionArguments;
+        imageServiceLayer.setRenderingRule(rasterFunction);
+      }
+      function toggleVals(evt){
+        //enable/disable values depending on selected option
+        if(evt.value === "ShadedRelief"){
+          dijit.byId("colormap").attr("disabled",true);
+          dijit.byId("azimuth").attr("disabled",true);
+          dijit.byId("altitude").attr("disabled",true);
+          dojo.addClass("colormapLabel","disabled");
+          dojo.addClass("azimuthLabel","disabled");
+          dojo.addClass("altitudeLabel","disabled");
+        } else {
+          //slope
+          dijit.byId("colormap").attr("disabled",false); 
+          dijit.byId("azimuth").attr("disabled",false);
+          dijit.byId("altitude").attr("disabled",false);
+          dojo.removeClass("colormapLabel","disabled");
+          dojo.removeClass("azimuthLabel","disabled");
+          dojo.removeClass("altitudeLabel","disabled");
+        }
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="soria">
+    <div dojotype="dijit.layout.BorderContainer" design="headline" gutters="false"
+    style="width: 100%; height: 100%; margin: 0;">
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="overflow:hidden;position:relative;">
+        <div id="floatingWindow">
+          <div  class="shadow">
+            <div id="title">
+             Choose the shaded relief or slope raster function, then define input properties. 
+            </div>
+
+            <div id="details">
+            <input dojoType="dijit.form.RadioButton" id="valSR" name="group1" checked="checked" onchange='toggleVals(this);' value="ShadedRelief" type="radio"/>
+            <label for="valSR">Shaded Relief</label>&nbsp;&nbsp;
+            <input dojoType="dijit.form.RadioButton" id="valSlope" name="group1" value="Slope" onchange='toggleVals(this)' type="radio"/>
+            <label  for="valSlope">Slope</label>
+            <br /><br /> <label id="azimuthLabel" for="azimuth">Azimuth:</label>
+            <input type="text" style="width:5em;" value="215.0" dojoType="dijit.form.TextBox" id="azimuth">
+            <br /> <label id="altitudeLabel" for="altitude">Altitude:</label>
+            <input type="text" style="width:5em;"   value="60.0" dojoType="dijit.form.TextBox" id="altitude">
+            <br /> <label for="zfactor">ZFactor:</label>
+            <input type="text" style="width:5em;"  value="30.3" dojoType="dijit.form.TextBox" id="zfactor">
+            <br /><br />
+            <input id="colormap" name="colormap" dojotype="dijit.form.CheckBox"  type="checkbox"  checked="checked" />
+            <label id="colormapLabel" for="colormap">Use Colormap</label>
+            <center><button dojoType="dijit.form.Button" onclick="applyVals" type="button"><span style="padding:50px;">Apply</span></button></center>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

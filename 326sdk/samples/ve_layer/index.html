@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>VE Tile Layer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script>dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.virtualearth.VETiledLayer");
+      dojo.require("dijit.form.Button");
+
+      var veTileLayer;
+
+      function init() {
+        var map = new esri.Map("map");
+        //Creates the Virtual Earth layer to add to the map
+        //Example for adding a Bing Maps key
+        // bingMapsKey:  "1B2C3OlkbxWHYa1b2c3qkPrO_Ou3nRrGtSa_5Op-xvPNya1b2c3",
+        veTileLayer = new esri.virtualearth.VETiledLayer({
+          bingMapsKey: prompt("Please enter your bing maps key"),
+          mapStyle: esri.virtualearth.VETiledLayer.MAP_STYLE_AERIAL
+        });
+        map.addLayer(veTileLayer);
+      }
+      dojo.ready(init);
+    </script>
+
+  </head>
+  <body class="claro">
+    <div style="position:relative;">
+      <div id="map" style="width:1024px; height:512px; border:1px solid #000;">
+      <div style="position:absolute; left:650px; top:10px; z-Index:999;">
+        <button data-dojo-type="dijit.form.Button" onClick="veTileLayer.setMapStyle(esri.virtualearth.VETiledLayer.MAP_STYLE_AERIAL);">Aerial</button>
+        <button data-dojo-type="dijit.form.Button" onClick="veTileLayer.setMapStyle(esri.virtualearth.VETiledLayer.MAP_STYLE_AERIAL_WITH_LABELS)">Aerial with labels</button>
+        <button data-dojo-type="dijit.form.Button" onClick="veTileLayer.setMapStyle(esri.virtualearth.VETiledLayer.MAP_STYLE_ROAD)">Roads</button>
+      </div>
+      </div>
+    </div>
+  </body>
+</html>

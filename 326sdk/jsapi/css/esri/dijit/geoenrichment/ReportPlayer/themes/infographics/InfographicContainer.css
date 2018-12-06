@@ -1,0 +1,32 @@
+﻿
+/* Infographic Container */
+
+.esriGEReportPlayer_infographicContainer {
+}
+
+    /* Dynamic Infographic */
+
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv {
+        overflow: hidden;
+    }
+
+    /*
+    TODO: decide if we need to inherit the color this way
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv .WidgetBack,
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv .BaseWidget_Title,
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv .RelatedVariables_ColumnHeader,
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv .RelatedVariables_DifferenceColumn_Positive,
+    .esriGEReportPlayer_infographicContainer .dynamicInfographic_viewDiv .RelatedVariables_DifferenceColumn_Negative{
+        color:inherit !important;
+    }
+    */
+
+    /* Age Pyramid */
+
+    .esriGEReportPlayer_infographicContainer .AgePyramid_MinMax {
+        top: 0px;
+    }
+
+    .esriGEReportPlayer_infographicContainer .BaseWidget_Title {
+        font-weight: normal;
+    }

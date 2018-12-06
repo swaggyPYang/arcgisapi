@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Mobile Gallery</title>
+
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css"/>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css"/>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+      width: 100%;
+    }
+
+    .ui-content {
+      padding: 0 !important;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 0;
+    }
+
+  </style>
+
+  <script src="https://code.jquery.com/jquery-1.9.0.min.js"></script>
+  <script src="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+  <script src="https://js.arcgis.com/3.26compact/"></script>
+
+  <script>
+    dojo.require("esri.map");
+    dojo.require("esri.dijit.Gallery");
+    dojo.require("esri.dijit.BasemapGallery");
+
+    var map,
+        gallery,
+        basemapGallery;
+
+    function init() {
+      map = new esri.Map('map', {
+        basemap: 'topo',
+        center: [-71.121865, 42.370011],
+        zoom: 10
+      });
+
+      basemapGallery = new esri.dijit.BasemapGallery({
+        showArcGISBasemaps: true,
+        bingMapsKey: '/*Please enter your own Bing Maps key*/',
+        map: map
+      });
+
+      dojo.connect(basemapGallery, 'onLoad', function () {
+        items = $.map(basemapGallery.basemaps, function (basemap) {
+          return {
+            thumbnailUrl: basemap.thumbnailUrl,
+            id: basemap.id,
+            title: basemap.title
+          };
+        });
+
+        //display basemaps in the gallery
+        var params = {};
+        params.items = items;
+        params.thumbnailStyle = 'small';
+        gallery = new esri.dijit.Gallery(params, 'galleryDiv');
+        dojo.connect(gallery, 'onSelect', function(item) {
+          console.dir(item);
+          basemapGallery.select(item.id);
+          $(".rp").panel("close");
+        });
+        gallery.startup();
+      });
+
+      dojo.connect(basemapGallery, 'onError', function (msg) {
+        console.log(msg);
+      });
+
+      dojo.connect(map, 'onLoad', function (evt) {
+        $(document).ready(jQueryReady);
+      });
+    }
+
+    function jQueryReady() {
+
+    }
+
+    dojo.ready(init);
+  </script>
+</head>
+
+<body>
+<div data-role="page" id="page">
+  
+  <div data-theme="a" data-role="header" data-position="fixed">
+    <h3>Map Gallery</h3>
+    <a href="#right-panel" data-rel="panel" data-icon="bars" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-btn-right">Menu</a>
+  </div>
+
+  
+  <div data-role="content">
+    <div id="map"></div>
+  </div>
+
+  <div class="rp" data-role="panel" data-swipe-close="false" id="right-panel" data-theme="c" data-position="right">
+    <div id="galleryDiv"></div>
+  </div>
+
+</div>
+</body>
+</html>

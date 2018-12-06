@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Basemap with Thumbnail Picker</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/image/resources/image.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css"> 
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{padding:0;}
+      #thumbPickerDiv{
+        border:solid 1px #79663b;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("dijit.form.Button");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.dijit.BasemapGallery");
+      dojo.require("dojox.image.ThumbnailPicker");
+      dojo.require("dojo.data.ItemFileReadStore");
+      dojo.require("esri.layers.osm");
+
+      var map, basemapGallery;
+
+      function init() {
+        map = new esri.Map("map", {
+          center: [-60.293, -1.23],
+          zoom: 3
+        });
+  
+        createBasemapGallery();
+      }
+
+      function createBasemapGallery(){
+        basemapGallery = new esri.dijit.BasemapGallery({
+          showArcGISBasemaps: true,
+          map: map
+        });
+
+        dojo.connect(basemapGallery,"onLoad",function(){
+          //first get a list of the basemaps to set to a dojo store
+          var items= dojo.map(basemapGallery.basemaps,function(basemap){
+            return {thumbnailUrl:basemap.thumbnailUrl, id:basemap.id, title:basemap.title};
+          });
+        
+          var data = {
+            identifier:"id",
+            items:items
+           };
+          var itemRequest = {
+            query: {},
+            start:0,
+            count: 4
+          };
+          var itemNameMap = {
+           imageThumbAttr: "thumbnailUrl",
+           titleAttr : "title"
+          };
+          var store = new dojo.data.ItemFileReadStore({data:data});
+          
+          //Populate the dojo thumbnail picker with the basemaps 
+          var thumbPicker = dijit.byId('thumbPickerDiv');
+          thumbPicker.setDataStore(store,itemRequest,itemNameMap);
+          dojo.subscribe(thumbPicker.getClickTopicName(),function(info){
+            //when you click a thumbnail in the gallery - switch the basemap to the selected item.
+             basemapGallery.select(info.data.id);
+          });
+        });
+      }
+      dojo.ready(init);
+    </script>
+
+  </head>
+  <body class="claro">
+    <div dojotype="dijit.layout.BorderContainer" design="headline" gutters="false" style="width:100%;height:100%;margin:0;">
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="border:1px solid #000;">
+        <div style="position:absolute; right:75px; top:100px; z-Index:99;">
+           <div id="thumbPickerDiv" dojoType="dojox.image.ThumbnailPicker" size="400" isClickable="true" isHorizontal="false" ></div> 
+        </div>
+      </div> 
+   </div>
+  </body>
+</html>
+
+

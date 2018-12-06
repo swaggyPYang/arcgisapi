@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Graduated Symbols with Polygon Layer - Scale Dependent</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #infopane {
+        position: absolute;
+        width: 300px;
+        top: 0;
+        right: 0;
+        background-color: rgba(150,150,150,0.75);
+        padding: 10px;
+        border-radius: 0 0 0 10px;
+        font-family: Segoe UI;
+      }
+      .esriLegendServiceLabel, #info-title {
+        font-weight: 600;
+      }
+      .hidden {
+        display: none;
+      }
+      #toggle-button {
+        cursor: pointer;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/dijit/Legend", "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
+        "esri/Color", "esri/renderers/ClassBreaksRenderer", "esri/renderers/ScaleDependentRenderer", "esri/InfoTemplate", "dojo/_base/array", "dojo/dom", "dojo/query", "dojo/domReady!"
+      ], function(Map, FeatureLayer, Legend, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Color, ClassBreaksRenderer, ScaleDependentRenderer, InfoTemplate, array, dom, query) {
+        var map = new Map("map", {
+          basemap: "gray",
+          center: [-98.5795,39.828175],
+          zoom: 5
+        });
+        
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/USA_Counties/FeatureServer/0", {
+          outFields: ["*"],
+          infoTemplate: new InfoTemplate("${NAME}, ${STATE_NAME}", "Population in 1999: ${POP1999}")
+        });
+        
+        var createRenderer = function(enlarge){
+          var renderer = new ClassBreaksRenderer(null, "POP1999");
+          var outline = new SimpleLineSymbol().setWidth(0.5).setColor(new Color([43, 101, 236, 1]));
+          var color = new Color([43, 101, 236, 0.75]);
+          
+          var classBreaks = [{minValue: 0, maxValue: 20000, size: 2}, {minValue: 20000, maxValue: 50000, size: 4}, {minValue: 50000, maxValue: 100000, size: 6}, {minValue: 100000, maxValue: 1000000, size: 9}, {minValue: 1000000, maxValue: 10000000, size: 10}];
+          array.forEach(classBreaks, function(classBreak){
+            renderer.addBreak(classBreak.minValue, classBreak.maxValue, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, (classBreak.size * enlarge), outline, color));
+          });
+          return renderer;
+        };
+        
+        var rendererInfos = [];
+        for (var i = 4; i < 9; i++) {
+          rendererInfos.push({
+            renderer: createRenderer(Math.pow(2, (i - 5) * 0.7)),
+            minZoom: i,
+            maxZoom: i
+          });
+        }
+        
+        var scaleRenderer = new ScaleDependentRenderer({
+          rendererInfos: rendererInfos
+        });
+        scaleRenderer.backgroundFillSymbol = new SimpleFillSymbol().setColor(new Color([0, 0, 0, 0])).setOutline(new SimpleLineSymbol().setWidth(0));
+        layer.setRenderer(scaleRenderer);
+        map.addLayers([ layer ]);
+        
+        var legend = new Legend({
+          map: map,
+          layerInfos: [{
+            layer: layer,
+            title: "Legend"
+          }]
+        }, "legend");
+        
+        map.on("layers-add-result", function(layer){
+          legend.startup();
+        });
+        
+        dom.byId("toggle-button").onclick = function(){
+          query(".toggle-pane").toggleClass("hidden");
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="infopane">
+      <div id="toggle-button">[Toggle/expand information pane]</div>
+      <div class="toggle-pane">
+        <h1 id="info-title">Big Counties vs. Small Counties</h1>
+        <p>Graduated symbols provide an alternate way to symbolize a polygon layer. This is a suitable approach to visualize population-based data as it is not affected by the area of polygons.</p>
+        <p>The symbols on this map are scale-dependent. As you zoom in, the sizes of symbols are sized accordingly.</p>
+        <p>Population of county is displayed on map with the size of circle. This map shows the distribution of the "big counties" and "small counties" in the US.</p>
+        <div id="legend"></div>
+      </div>
+    </div>
+  </body>
+</html> 

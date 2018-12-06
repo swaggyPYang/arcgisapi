@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Map container split in three</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.layout.AccordionContainer");
+      dojo.require("esri.map");
+      
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "topo",
+          center: [-118.404, 34.054],
+          zoom: 11
+        });
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="nihilo">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline', gutters:false" style="width:100%; height:100%;">
+      <div id="header" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        This is the header section
+        <div id="subheader">with a subheader</div>
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'left'" id="leftPane">
+      <div data-dojo-type="dijit.layout.AccordionContainer">
+        <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'pane 1'">
+          Content for pane 1
+        </div>
+        <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'pane 2'">
+          <p>Content for pane 2</p>
+        </div>
+        <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'pane 3'">
+          <p>Content for pane 3</p>
+        </div>
+      </div>
+      </div>
+      <div id="map" class="shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'right'" id="rightPane">
+        This is the right section
+      </div>
+      <div id="footer" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+        this is the footer section
+      </div>
+    </div>
+  </body>
+</html>

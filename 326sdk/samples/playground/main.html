@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>playground</title>
+  <meta name="description" content="A code generator app for arcgis-js-api">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="bower_components/normalize.css/normalize.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="bower_components/codemirror/theme/monokai.css">
+  <link rel="stylesheet" href="resources/css/main.css">
+  <script src="bower_components/modernizr-min/modernizr.min.js"></script>
+</head>
+<body class="claro">
+
+<div class="wrapper">
+
+  <div class="header-container">
+    <p class="title"><a href="index.html"><img src="resources/img/code.svg"></a> <span id="pageTitle">playground</span></p>
+    <p class="sub-title" id="pageSubTitle">A code generator app for arcgis-js-api</p>
+  </div>
+
+  <div class="playground-container">
+
+    <div class="generator-block">
+
+      <div class="play-block">
+        <div class="play-block-menu">
+          <ul>
+            <li id="reset"><i class="fa fa-refresh"></i><span>reset</span></li>
+          </ul>
+        </div>
+        <div id="play-area"></div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-block-menu">
+          <ul id="codeBlockMenu">
+            <li id="copyButton"><i class="fa fa-files-o"></i><span>copy</span></li>
+            <li id="codeOption" class="active"><i class="fa fa-code"></i><span>code</span></li>
+            <li id="usageOption"><i class="fa fa-file-code-o"></i><span>usage</span></li>
+            <li id="jsonOption">{ }<span>json</span></li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <textarea id="code-area" name="code-area"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-block">
+      <div id="mapDiv">
+        <button id="clearGraphicsbtn">clear graphics</button>
+        <div class="useToolbar-container">
+          <input type="checkbox" id="useToolbar">
+          <label for="useToolbar">use toolbar</label>
+        </div>
+        <div class="basemap-container">
+          <label for="basemapSelector"> <span>basemap</span>
+            <span class="arrow">
+              <select name="basemap" id="basemapSelector">
+                <option value="streets">streets</option>
+                <option value="satellite">satellite</option>
+                <option value="hybrid">hybrid</option>
+                <option value="topo" selected>topo</option>
+                <option value="gray">gray</option>
+                <option value="dark-gray">dark-gray</option>
+                <option value="oceans">oceans</option>
+                <option value="national-geographic">national-geographic</option>
+                <option value="terrain">terrain</option>
+                <option value="osm">osm</option>
+              </select>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="msg-container">
+  <p id="msg">error!</p>
+</div>
+
+
+
+<script src="resources/js/vendor/escodegen.browser.min.js"></script>
+<script src="resources/js/vendor/estraverse.browser.min.js"></script>
+<script src="bower_components/codemirror/lib/codemirror.js"></script>
+<script src="bower_components/codemirror/mode/javascript/javascript.js"></script>
+<script src="bower_components/js-beautify/js/lib/beautify.js"></script>
+<script src="bower_components/zeroclipboard/dist/ZeroClipboard.min.js"></script>
+<script>
+  var dojoConfig = {
+    packages: [
+      {name: "esprima", location: location.pathname.replace(/\/[^/]+$/, '') + "/bower_components/esprima"}
+    ]
+  };
+</script>
+<script src="https://js.arcgis.com/3.26/"></script>
+<script src="resources/js/main.js"></script>
+
+
+</body>
+</html>

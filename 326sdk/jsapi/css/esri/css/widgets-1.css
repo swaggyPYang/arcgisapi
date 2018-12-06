@@ -1,0 +1,36 @@
+@import url("../toolbars/css/edit.css");
+@import url("../dijit/css/AttributeInspector.css");
+@import url("../dijit/css/BasemapGallery.css");
+@import url("../dijit/css/BasemapToggle.css");
+@import url("../dijit/css/Bookmarks.css");
+@import url("../dijit/css/Directions.css");
+@import url("../dijit/css/Gallery.css");
+@import url("../dijit/css/Geocoder.css");
+@import url("../dijit/css/Gauge.css");
+@import url("../dijit/css/HomeButton.css");
+@import url("../dijit/css/InfoWindow.css");
+@import url("../dijit/css/LayerSwipe.css");
+@import url("../dijit/css/Legend.css");
+@import url("../dijit/css/LocateButton.css");
+@import url("../dijit/css/Measurement.css");
+@import url("../dijit/css/OverviewMap.css");
+@import url("../dijit/css/PopupFont.css");
+@import url("../dijit/css/Popup.css");
+@import url("../dijit/css/PopupMobile.css");
+@import url("../dijit/css/MultidimensionalFilter.css");
+@import url("../dijit/css/ImageServiceMeasure.css");
+@import url("../dijit/css/Print.css");
+@import url("../dijit/css/Scalebar.css");
+@import url("../../dojox/form/resources/RangeSlider.css");
+@import url("../dijit/css/TimeSlider.css");
+@import url("../dijit/css/MultidimensionalSlider.css");
+@import url("../dijit/css/VectorFieldRenderer.css");
+@import url("../dijit/css/temporal.css");
+@import url("../dijit/css/RenderingRule.css");
+@import url("../dijit/css/MosaicRule.css");
+@import url("../dijit/FeatureAttachments/css/FeatureAttachments.css");
+/*
+  do not add any more imports
+  IE9 and below load the first 31 imports only – https://support.microsoft.com/en-us/kb/262161
+  this is only an issue when dealing with unoptimized CSS (development)
+*/

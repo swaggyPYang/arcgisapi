@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+<title>Query Statistics with SQL Expression</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<style>
+  html, body, #map {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #results {
+    position: absolute;
+    z-index: 10;
+    bottom: 45px;
+    right: 10px;
+    background-color: black;
+    opacity: 0.8;
+    color: cornsilk;
+    width: 300px;
+    padding: 5px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .stats {
+    color: darkorange;
+  }
+</style>
+<script src="https://js.arcgis.com/3.26/"></script>  
+<script>
+  require([
+    "esri/map", 
+    "esri/layers/FeatureLayer",
+    "esri/tasks/query",
+    "esri/tasks/StatisticDefinition",
+    "esri/geometry/geometryEngine",
+    "esri/symbols/SimpleMarkerSymbol",
+    "esri/symbols/SimpleLineSymbol",
+    "esri/symbols/SimpleFillSymbol",
+    "esri/graphic",
+    "esri/Color",
+    "dojo/dom",
+    "dojo/domReady!"
+  ], function(Map, FeatureLayer, Query, StatisticDefinition, geometryEngine,
+    SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Graphic, Color, dom) {
+    
+    var map = new Map("map", {
+      basemap: "streets-night-vector",
+      center: [-122.304568, 47.608492],
+      zoom: 13
+    });
+    
+    var url = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Puget_Sound_BG_Food/FeatureServer/0";
+    
+    /******************************************************************
+    *
+    * The fields used to query for statistics
+    * ALAND is land area in square meters
+    * TOTPOP_CY is total population in the block group (2015)
+    * HasData indicates if data is available in the feature
+    * 
+    *******************************************************************/
+    
+    var fields = [ "ALAND", "TOTPOP_CY", "HasData", "TOTHH" ];
+    
+    var blockGroupsLyr = new FeatureLayer(url, {
+      outFields: fields
+    });
+    
+    // Symbol used to represent point clicked on map
+    var pointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 10, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,255,0, 0.3]), 10), new Color([0,255,0,1]));
+    
+    // Symbol used to represent one-mile buffer around point
+    var buffSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, new SimpleLineSymbol(SimpleLineSymbol.STYLE_LONGDASHDOT, new Color([255,128,0,1]), 3), new Color([255,128,0,0.15]));
+    
+    // When the map is clicked, get the point at the clicked location and execute getPoint()
+    map.on("click", getPoint);
+    
+    /******************************************************************
+    *
+    * The sqlExpression is a standard SQL expression that will be used to
+    * query the service for statistics. Since the ALAND field represents the
+    * land area in square meters, we want to convert the units to square 
+    * miles. Therefore `(ALAND * 0.0000003861)` will return the area in square
+    * miles. Dividing the TOTPOP_CY by that expression will return the 
+    * population per square mile. 
+    * 
+    * This expression is then set on the onStatisticField property of each 
+    * statistic definition object. Since we don't have a field for population
+    * density in people per square mile, we can use this simple SQL expression
+    * in the place of a field and we'll get our desired result:
+    * 
+    * "TOTPOP_CY / (ALAND * 0.0000003861)"
+    * 
+    *******************************************************************/
+    
+    var sqlExpression = "TOTPOP_CY / (ALAND * 0.0000003861)";
+    
+    // Object used to request the smallest population density from the 
+    // block groups within one mile of the mouse click.
+    var minStatDef = new StatisticDefinition();
+    minStatDef.statisticType = "min";
+    minStatDef.onStatisticField = sqlExpression;
+    minStatDef.outStatisticFieldName = "minPopDensity";
+    
+    // Object used to request the largest population density from the 
+    // block groups within one mile of the mouse click.
+    var maxStatDef = new StatisticDefinition();
+    maxStatDef.statisticType = "max";
+    maxStatDef.onStatisticField = sqlExpression;
+    maxStatDef.outStatisticFieldName = "maxPopDensity";
+    
+    // Object used to request the average population density for 
+    // all block groups within one mile of the mouse click.
+    var avgStatDef = new StatisticDefinition();
+    avgStatDef.statisticType = "avg";
+    avgStatDef.onStatisticField = sqlExpression;
+    avgStatDef.outStatisticFieldName = "avgPopDensity";
+    
+    // Object used to request the number of  
+    // block groups within one mile of the mouse click.
+    var countStatDef = new StatisticDefinition();
+    countStatDef.statisticType = "count";
+    countStatDef.onStatisticField = sqlExpression;
+    countStatDef.outStatisticFieldName = "numBlockGroups";
+    
+    // Object used to request the standard deviation of the population density for 
+    // all block groups within one mile of the mouse click.
+    var stddevStatDef = new StatisticDefinition();
+    stddevStatDef.statisticType = "stddev";
+    stddevStatDef.onStatisticField = sqlExpression;
+    stddevStatDef.outStatisticFieldName = "StdDevPopDensity";
+    
+    // Set the base parameters for the query. All statistic definition objects
+    // are passed as an array into the outStatistics param
+    var queryParams = new Query();
+    queryParams.distance = 1;  // Return all block groups within one mile of the point
+    queryParams.units = "miles";
+    queryParams.outFields = fields;
+    queryParams.outStatistics = [ minStatDef, maxStatDef, avgStatDef, countStatDef, stddevStatDef ];
+    
+    // Executes on each map click
+    function getPoint(evt){
+      
+      // Set the location of the mouse click event to the query parameters
+      var point = evt.mapPoint;
+      queryParams.geometry = point;
+      
+      // Clear the graphics from any previous queries
+      map.graphics.clear();
+      
+      // Add a point graphic represting the location clicked on the map
+      var ptGraphic = new Graphic(point, pointSymbol);
+      map.graphics.add(ptGraphic);
+      
+      // Add a graphic representing a one-mile buffer around the clicked point
+      var buffer = geometryEngine.geodesicBuffer(point, 1, "miles");
+      var bufferGraphic = new Graphic(buffer, buffSymbol);
+      map.graphics.add(bufferGraphic);
+      
+      // Execute the statistics query against the feature service and call the getStats() callback
+      blockGroupsLyr.queryFeatures(queryParams, getStats, errback);
+    }
+    
+    // Executes on each query
+    function getStats(results){
+      // The return object of the query containing the statistics requested
+      var stats = results.features[0].attributes;
+      
+      // Print the statistic results to the DOM
+      dom.byId("countResult").innerHTML = Math.round(stats.numBlockGroups);
+      dom.byId("minResult").innerHTML = Math.round(stats.minPopDensity) + " people/sq mi";
+      dom.byId("maxResult").innerHTML = Math.round(stats.maxPopDensity) + " people/sq mi";
+      dom.byId("avgResult").innerHTML = Math.round(stats.avgPopDensity) + " people/sq mi";
+      dom.byId("stdDevResult").innerHTML = Math.round(stats.StdDevPopDensity) + " people/sq mi";
+    }
+    
+    function errback(err){
+      console.log("Couldn't retrieve summary statistics. ", err);
+    }
+  });
+</script>
+</head>
+
+<body>
+  <div id="map"></div>
+  <div id="results"><h3>Summary Statistics</h3>
+    Click on the map to view summary statistics of the 
+    population density for U.S. Census block groups within 
+    one mile of the clicked point.<br><br>
+    <div id="display">
+      <strong>Block groups: </strong><span class="stats" id="countResult"></span><br>
+      <strong>Min density: </strong><span class="stats" id="minResult"></span><br>
+      <strong>Max density: </strong><span class="stats" id="maxResult"></span><br>
+      <strong>Average density: </strong><span class="stats" id="avgResult"></span><br>
+      <strong>Standard deviation: </strong><span class="stats" id="stdDevResult"></span>
+    </div>  
+  </div>
+</body>
+</html>

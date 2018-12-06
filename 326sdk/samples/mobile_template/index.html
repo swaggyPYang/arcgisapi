@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Getting Started - Mobile</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+<link rel="stylesheet" href="css/main.css">
+
+<script>var dojoConfig = { mblAlwaysHideAddressBar: true };</script>
+<script src="https://js.arcgis.com/3.26compact/"></script>
+<script>
+  require([
+    "esri/map",
+    "dojox/mobile",
+    "dojox/mobile/parser",
+    "esri/sniff",
+    "dojox/mobile/deviceTheme",
+    "dojo/dom",
+    "dijit/registry",
+    "dojo/on",
+    "dojox/mobile/ToolBarButton",
+    "dojox/mobile/View",
+    "dojox/mobile/ContentPane"
+  ],
+
+    function (Map, mobile, parser, has, dTheme, dom, registry, on) {
+      parser.parse();
+      mobile.hideAddressBar();
+
+      var map = new esri.Map("map", {
+        basemap: "topo",
+        center: [-118.696, 34.111],
+        zoom: 7,
+        slider: false
+      });
+      map.on("load", mapLoadHandler);
+
+      var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
+      on(window, resizeEvt, resizeMap);
+
+      function mapLoadHandler(evt) {
+        resizeMap();
+        registry.byId('mapView').on('AfterTransitionIn', resizeMap);
+      }
+
+      function resizeMap() {
+        mobile.hideAddressBar();
+        adjustMapHeight();
+        map.resize();
+        map.reposition();
+      }
+
+      function adjustMapHeight() {
+        var availHeight = mobile.getScreenSize().h - registry.byId('header').domNode.clientHeight - 1;
+        if (has('iphone') || has('ipod')) {
+          availHeight += iphoneAdjustment();
+        }
+        dom.byId("map").style.height = availHeight + "px";
+      }
+
+      function iphoneAdjustment() {
+        var sz = mobile.getScreenSize();
+        if (sz.h > sz.w) { //portrait
+          //Need to add address bar height back to map
+          return screen.availHeight - window.innerHeight - 40;
+          /* 40 = height of bottom safari toolbar */
+        }
+        else { //landscape
+          //Need to react to full screen / bottom bar visible toggles
+          var _conn = on(window, 'resize', function () {
+            _conn.remove();
+            resizeMap();
+          });
+          return 0;
+        }
+      }
+    });
+</script>
+</head>
+
+<body>
+  <div id="mapView" data-dojo-type="dojox.mobile.View" data-dojo-props="selected: true">
+    <div id="header" data-dojo-type="dojox.mobile.Heading">
+      <div id="aboutButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: right;" moveTo="aboutView">
+        About
+      </div>
+    </div>
+    <div id="mapContainer" data-dojo-type="dojox.mobile.ContentPane">
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div id="aboutView" data-dojo-type="dojox.mobile.View">
+    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">About</h1>
+
+    <p style="padding: 5px;">This area can contain additional information about your application.</p>
+
+  </div>
+</body>
+</html>

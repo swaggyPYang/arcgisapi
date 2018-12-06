@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Attribute Inspector</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body {
+      height: 97%;
+      width: 98%;
+      margin: 1%;
+    }
+
+    #rightPane {
+      width: 250px;
+    }
+
+    .esriAttributeInspector .dijitTextBox {
+      width: 10em;
+    }
+
+    .esriAttributeInspector .atiLayerName {
+      display: none;
+    }
+
+    .esriAttributeInspector .atiLabel {
+      font-weight: bold;
+      color: #705B35;
+    }
+
+    .esriAttributeInspector .atiField {
+      background: #FFF6D9;
+    }
+
+    .esriAttributeInspector .atiButtons {
+      color: #705B35;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map, operationalLayer;
+
+    require([
+      "esri/map", "esri/layers/FeatureLayer", 
+      "esri/tasks/query", "esri/symbols/SimpleFillSymbol",
+      "esri/dijit/Legend", "esri/dijit/AttributeInspector",
+      "esri/config",
+      "dojo/dom", "dojo/parser", "esri/Color",
+      "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer",
+      "dojo/domReady!"
+    ], function(
+      Map, FeatureLayer, 
+      Query, SimpleFillSymbol,
+      Legend, AttributeInspector,
+      esriConfig, 
+      dom, parser, Color
+    ) {
+      parser.parse();
+      //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to
+      //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic
+      //for details on setting up a proxy page.
+      esriConfig.defaults.io.proxyUrl = "/proxy/";
+      
+      map = new Map("map", {
+        basemap:"topo",
+        center :[-118.407, 34.452],
+        zoom   :13
+      });
+
+      operationalLayer = new FeatureLayer("https://services5.arcgis.com/lVkj5PBOw7tRmIPU/arcgis/rest/services/Geology/FeatureServer/0", {
+        mode: FeatureLayer.MODE_ONDEMAND,
+        opacity: 0.6,
+        outFields: ["station_id", "lithology_", "metamorphi", "geomodific"]
+      });
+
+      var symbol = new SimpleFillSymbol().outline.setColor(new Color([0, 255, 255, 1])).setWidth(3);
+      operationalLayer.setSelectionSymbol(symbol);
+
+      map.on("layers-add-result", function (results) {
+        //add the legend
+        var legend = new Legend({
+          map: map,
+          layerInfos: [{ 
+            layer: operationalLayer, 
+            title: ""
+          }]
+        }, "legendDiv");
+        legend.startup();
+
+        var layerInfos = [{
+          featureLayer: operationalLayer,
+          showAttachments: false,
+          isEditable: true,
+          showDeleteButton: false,
+          fieldInfos: [
+            { fieldName: "station_id", tooltip: "The station id.", label: "Station:", isEditable: false },
+            { fieldName: "lithology_", tooltip: "The lithology type of the rock unit", label: "Lithology", isEditable: false },
+            { fieldName: "metamorphi", label: "Facies:", isEditable: false },
+            { fieldName: "geomodific", label: "Geomodifications", isEditable: true }
+          ]
+        }];
+
+        var attInspector = new AttributeInspector({
+          layerInfos: layerInfos
+        }, "attributesDiv");
+      });
+
+      var selectQuery = new Query();
+
+      operationalLayer.on("click", function(e){
+        dom.byId("details").innerHTML = "";
+        selectQuery.objectIds = [e.graphic.attributes.OBJECTID_1];
+        operationalLayer.selectFeatures(selectQuery);
+      });
+
+      map.addLayers([operationalLayer]);
+    });
+  </script>
+</head>
+<body class="claro">
+<div id="content"
+     data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width: 100%; height: 100%; margin: 0;">
+
+  <div id="rightPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'right'">
+
+    <div data-dojo-type="dijit/layout/AccordionContainer">
+      <div data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="title:'Details', selected:true">
+        <span id="details">Click a geology outcrop to view details.</span>
+
+        <div id="attributesDiv"></div>
+      </div>
+      <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
+           data-dojo-props="title:'Legend'">
+        <div id="legendDiv"></div>
+      </div>
+    </div>
+  </div>
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'"
+       style="overflow:hidden;">
+  </div>
+</div>
+</body>
+</html>

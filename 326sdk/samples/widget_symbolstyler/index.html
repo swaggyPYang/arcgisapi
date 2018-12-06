@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Symbol Styler Sample</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+</head>
+
+<body class="claro">
+  <style>
+    html, body, #map {
+      background-color: #ccc;
+      margin: 0;
+      height: 100%;
+    }
+    .options-panel {
+      font: 14px helvetica, sans-serif;
+      background-color: #fff;
+      position: absolute;
+      right: 292px;
+      top: 10px;
+      padding: 10px;
+      border: 1px solid #544F4F;
+      z-index: 10000;
+    }
+    .options-panel input[type=button] {
+      background-color: #048bf4;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 2px;
+      border: 1px solid #048bf4;
+      box-shadow: #666 1px 1px 1px 1px;
+      cursor: pointer;
+    }
+    .options-panel input[type=button]:active {
+      background-color: #0494ff;
+    }
+    #styler {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      border: 1px solid #544F4F;
+      box-shadow: 2px 2px 4px 1px #5D5858;
+    }
+    .esriSimpleSlider {
+      left: 30px;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+    var styler;
+    var sampleGraphic;
+    require([
+      "dojo/dom",
+      "dojo/on",
+      "esri/Color",
+      "esri/graphic",
+      "esri/map",
+      "esri/dijit/SymbolStyler",
+      "esri/geometry/Extent",
+      "esri/geometry/Polygon",
+      "esri/geometry/Polyline",
+      "esri/styles/basic",
+      "esri/styles/size",
+      "esri/styles/type",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "dojo/domReady!"
+    ],
+    function(
+      dom, on,
+      Color, Graphic, Map,
+      SymbolStyler,
+      Extent, Polygon, Polyline,
+      basic, size, type,
+      SimpleFillSymbol, SimpleLineSymbol, SimpleMarkerSymbol
+    ) {
+      map = new Map("map", {
+        basemap: "topo",
+        center: [-80.7,35.25],
+        zoom: 10
+      });
+      sampleGraphic = new Graphic();
+      on.once(map, "load", function() {
+        this.graphics.add(sampleGraphic);
+      });
+
+      //Create instance of SymbolStyler and pass in the domNode
+      styler = new SymbolStyler({}, "styler");
+      //Must call startup
+      styler.startup();
+
+      //listen for the dom events
+      on(dom.byId("symbolTypeSelect"), "change", editSelectedSymbol);
+      on(dom.byId("applySymbolButton"), "click", applySymbolToGraphic);
+      on(dom.byId("basemapSelect"), "change", changeBasemap);
+      editSymbol('simplemarker');
+
+
+      function editSelectedSymbol() {
+        editSymbol(this.value);
+      }
+
+      function applySymbolToGraphic() {
+
+        var geom;
+        var style = styler.getStyle();
+        var symbol = style.symbol;
+
+        if (symbol.type.indexOf("markersymbol") > -1) {
+          geom = map.extent.getCenter();
+        }
+
+        if (symbol.type.indexOf("fillsymbol") > -1) {
+          geom = Polygon.fromExtent(map.extent);
+        }
+
+        if (symbol.type.indexOf("linesymbol") > -1) {
+          geom = new Polyline({
+              paths: Polygon.fromExtent(map.extent).rings,
+              spatialReference: map.spatialReference
+            });
+        }
+
+        //storeColors is required
+        styler.storeColors();
+        sampleGraphic.setGeometry(geom);
+        sampleGraphic.setSymbol(symbol);
+        sampleGraphic.draw();
+
+      }
+
+      function changeBasemap() {
+        map.setBasemap(this.value);
+      }
+
+      function editSymbol(symbolType) {
+
+        var symbol = createSymbol(symbolType);
+        styler.edit(symbol, getStylerOptions(symbol));
+
+      }
+
+      function getStylerOptions(symbol) {
+
+        var basemap = dom.byId("basemapSelect").value;
+        var style = dom.byId("style").value;
+        var styleModule = style === "size" ? size :
+                          style === "type" ? type :
+                          basic;
+
+        return {
+          schemes: styleModule.getSchemes({
+            theme: "default",
+            basemap: basemap,
+            geometryType: getGeometryType(symbol)
+          })
+        }
+
+      }
+
+      function createSymbol(type) {
+        var SFS = SimpleFillSymbol,
+            SLS = SimpleLineSymbol,
+            SMS = SimpleMarkerSymbol;
+
+        if (type === "simplefill") {
+          return new SFS("solid", createSymbol("simpleline"), randomColor());
+        }
+
+        if (type === "simpleline") {
+          return new SLS("solid", randomColor(), randomNum(50));
+        }
+
+      return new SMS("circle", randomNum(200), createSymbol("simpleline"), randomColor());
+      }
+
+      function getGeometryType(symbol) {
+        var type = symbol.type;
+        return type === "picturefillsymbol" || type === "simplefillsymbol" ? "polygon" :
+               type === "cartographiclinesymbol" || type === "simplelinesymbol" ? "line" :
+               "point";
+      }
+
+      function randomColor() {
+        return new Color([
+          randomNum(255),
+          randomNum(255),
+          randomNum(255),
+          randomNum(1)
+        ]);
+      }
+
+      function randomNum(max) {
+        var num = Math.random() * max;
+        return max > 1 ? Math.ceil(num) : num;
+      }
+
+    });
+  </script>
+
+  <div id="map"></div>
+
+  <div id="editor">
+    <div id="styler"></div>
+  </div>
+
+  <div class="options-panel">
+    <h5>Symbol Type</h5>
+
+    <select id="symbolTypeSelect">
+      <option value="simplemarker" selected>Simple Marker</option>
+      <option value="simpleline">Simple Line</option>
+      <option value="simplefill">Simple Fill</option>
+    </select>
+
+    <h5>Basemap</h5>
+
+    <select id="basemapSelect">
+      <option value="topo" selected>Topo</option>
+      <option value="gray">Gray</option>
+      <option value="dark-gray">Dark Gray</option>
+      <option value="oceans">Oceans</option>
+      <option value="national-geographic">NatGeo</option>
+      <option value="streets">Streets</option>
+      <option value="satellite">Satellite</option>
+      <option value="hybrid">Hybrid</option>
+      <option value="terrain">Terrain</option>
+    </select>
+
+    <h5>Style</h5>
+
+    <select id="style">
+      <option value="basic" selected>Basic</option>
+      <option value="size">Size</option>
+      <option value="type">Type</option>
+    </select>
+
+    <br/>
+    <br/>
+
+    <input id="applySymbolButton" type="button" value="Apply symbol">
+  </div>
+</body>
+</html>

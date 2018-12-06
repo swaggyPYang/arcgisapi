@@ -1,0 +1,68 @@
+html, body { 
+  height: 100%; width: 100%;
+  margin: 0; padding: 0;
+} 
+body{
+  background-color:white; overflow:hidden; 
+  font-family: "Kimberley", sans-serif
+} 
+#header {
+ -moz-border-radius: 5px;
+  margin:2px;
+  padding-top: 4px;
+  padding-right: 15px;
+  background-color:#929761; 
+  color:#421b14; 
+  font-size:16pt; text-align:right;font-weight:bold;
+  border: solid 2px #79663b;
+  height:55px;
+}
+#subheader {
+  font-size:small;
+  color: #cfcfcf;
+  text-align:right;
+  padding-right:20px;
+}
+#footer {
+  margin:2px;
+  padding: 2px;
+  background-color:white; color:#2a3537;
+  border: solid 2px #79663b;
+  font-size:10pt; text-align:center;
+  height: 30px;
+}
+#rightPane{
+  margin:3px;
+  padding:10px;
+  background-color:white;
+  color:#421b14;
+  border: solid 2px #79663b;
+  width:20%;
+}
+#leftPane{
+  margin:3px;
+  padding:5px;
+  width:150px;
+  color:#3C1700;
+  background-color:white;
+  border: solid 2px #79663b;
+}
+#map {
+  margin:5px;
+  border:solid 4px #79663b;
+}
+.shadow{
+  -o-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  box-shadow: 8px 8px 16px #323834;
+  -webkit-box-shadow: 8px 8px 16px #323834;
+  -moz-box-shadow: 8px 8px 16px #323834;
+  -o-box-shadow: 8px 8px 16px #323834;
+}
+
+.nihilo .dijitAccordionText {
+  margin-left:4px;
+  margin-right:4px;
+  color:#5c8503;
+}

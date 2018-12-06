@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Marker Symbols</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojo/resources/dojo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 600px;
+        width: 600px;
+        margin: 0;
+        padding: 0;
+      }
+      #centerPane {
+        margin-bottom:6px;
+      }       
+      #topPane {
+        height: 70px;
+      }
+      #topPane p {
+        margin: 0.5em 0;
+      }
+      #bottomPane {
+        height: 200px;
+      }
+      #status{
+        position:absolute;
+        z-index:100;
+        top:10px;
+        left:20px;    
+        font-size:1.5em;
+        font-weigtht:bold;
+        display:none;
+      }
+      #info{
+        padding:4px;
+        width:95%;
+      }
+
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "dojo/parser",
+        "dojo/ready",
+        "dojo/dom", 
+        "dojo/dom-construct", 
+        "dojo/_base/array",
+        "dojo/_base/json",
+        "dijit/registry", 
+        "dojo/on",
+        "dojo/_base/connect",
+        "esri/dijit/editing/TemplatePicker", 
+        "esri/arcgis/Portal", 
+        "esri/domUtils",
+        "esri/config",
+        "esri/request",
+        "esri/symbols/jsonUtils",
+        "esri/symbols/Symbol",
+        "esri/lang",
+        "dojo/store/Memory", 
+        "dijit/form/ComboBox", 
+        "dijit/layout/BorderContainer", 
+        "dijit/layout/ContentPane"
+        ],function(
+          parser, 
+          ready, 
+          dom, 
+          domConstruct, 
+          array, 
+          dojoJson,
+          registry, 
+          on, 
+          connect,
+          TemplatePicker, 
+          arcgisPortal, 
+          domUtils,
+          config,
+          esriRequest,
+          jsonUtils,
+          Symbol,
+          esriLang,
+          Memory
+        ) {
+          var templatePicker, store;
+          ready(function() {
+            parser.parse(); 
+
+            var portalUrl = document.location.protocol + "//www.arcgis.com";
+            on(registry.byId("symbolList"), "change", updateSymbolDisplay);
+            var portal = new arcgisPortal.Portal( portalUrl );
+            config.defaults.io.proxyUrl = "/proxy/";
+            
+            on( portal, "load", function( p ) {
+              portal.queryGroups( portal.symbolSetsGroupQuery ).then(function( groups ) {
+                if (groups.results && groups.results.length){
+                  var group = groups.results[0];
+                  var params =  { 
+                    num: 20,
+                    q: "typekeywords: marker AND typekeywords: 'by value' AND !name: 'Business' AND !name: 'Animated'"
+                  };
+                  group.queryItems(params).then(function(items){ 
+                    var list = registry.byId('symbolList');
+                    // Do not use items that don't have a name.
+                    var sets = array.filter(items.results, function(n) {
+                      return n.name;
+                    });
+                    store = new Memory({ data: sets});
+                    list.set("store", store);
+                    list.set("value", "Basic");
+                  });
+                }
+              });
+            });        
+          });  
+          
+          function updateSymbolDisplay(value) {
+            domUtils.show(dom.byId("status"));
+            dom.byId("info").innerHTML = "";
+            if(templatePicker){
+              console.log('destroy');
+              templatePicker.destroy();
+              templatePicker = null;
+            }
+            //get the symbols for the selected category 
+            var results = store.query({name:value});
+            if(results && results.length){
+              var url = results[0].itemDataUrl;
+              var request = esriRequest({
+                url: url,
+                handleAs:"json"
+              });
+              request.then(function(result){
+                createTemplatePicker(result);
+              });
+              
+            }
+          }
+          function createTemplatePicker(result) {
+            var symbolItems = array.map(result,function(item){
+              return {
+                symbol: jsonUtils.fromJson(item),
+                description: item.name,
+                type: item.type
+              };
+            });
+
+            templatePicker = new TemplatePicker({
+              items:symbolItems,
+              rows:"auto",
+              columns:8
+            },domConstruct.create("div"));
+         
+            dom.byId("templatePickerDiv").appendChild(templatePicker.domNode);
+            domUtils.hide(dom.byId("status"));
+            templatePicker.startup();     
+
+            connect.connect(templatePicker, "onSelectionChange", updateSymbol);
+          }
+          function updateSymbol() {
+            var selected = templatePicker.getSelected();
+            var symbol = selected.item.symbol.toJson();
+            if(!dom.byId("base64Enabled").checked){
+              delete symbol["imageData"];
+            }
+
+            var template = "var symbol = new Symbol.${type}(${value});";
+            var symbolType = selected.item.type === "esriPMS" ? "PictureMarkerSymbol" : "SimpleMarkerSymbol";
+            var value = dojoJson.toJson(symbol);
+            dom.byId("info").innerHTML = esriLang.substitute({type:symbolType, value:dojoJson.toJson(symbol)},template);
+          }
+        });
+   </script>    
+  </head>
+
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width:100%;height:100%;margin:0;">
+      <div id="topPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+        <p>Select a marker symbol then copy the JSON to use in your application. </p>
+        <label for="symbolList" style="font-weight:bold;">Category:</label>
+        <select data-dojo-type="dijit/form/ComboBox" id="symbolList"></select>
+        <label for='base64Enabled'>Enable Base64 encoding </label>
+        <input type="checkbox" id="base64Enabled" checked>
+      </div>
+      <div id="centerPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+        <div id="templatePickerDiv">
+          <span id="status">Loading symbols ...</span>
+        </div>
+      </div>
+      <div id="bottomPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
+        <textarea id="info"></textarea>
+      </div>
+    </div>
+  </body>
+</html>
+ 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Map with a Dojo dGrid</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojo/resources/dojo.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dgrid/css/dgrid.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dgrid/css/skins/tundra.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body {
+      height: 100%;
+      width: 100%; 
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #container {
+      height: 100%;
+      visibility: hidden;
+    }
+    #bottomPane { height: 200px; }
+    #grid { height: 100%; }
+    .dgrid { border: none; }
+    .field-id { cursor: pointer; }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    // load dgrid, esri and dojo modules
+    // create the grid and the map
+    // then parse the dijit layout dijits
+    require([
+      "dojo/ready",
+      "dgrid/OnDemandGrid",
+      "dgrid/Selection",
+      "dojo/store/Memory",
+      "dojo/_base/array",
+      "dojo/dom-style",
+      "dijit/registry",
+      "esri/map",
+      "esri/layers/FeatureLayer",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/tasks/QueryTask",
+      "esri/tasks/query",
+      "dojo/_base/declare",
+      "dojo/number",
+      "dojo/on",
+      "dojo/parser",
+      "dijit/layout/BorderContainer",
+      "dijit/layout/ContentPane"
+      ], function(
+        ready,
+        Grid,
+        Selection,
+        Memory,
+        array,
+        domStyle,
+        registry,
+        Map,
+        FeatureLayer,
+        SimpleFillSymbol,
+        QueryTask,
+        Query,
+        declare,
+        dojoNum,
+        on,
+        parser
+      ) {
+        ready(function() {
+
+          parser.parse();
+
+          // create the dgrid
+          window.grid = new (declare([Grid, Selection]))({
+            // use Infinity so that all data is available in the grid
+            bufferRows: Infinity,
+            columns: {
+              "id": "ID",
+              "stateName": "State Name",
+              "median": { "label": "Median Net Worth", "formatter": dojoNum.format }
+            }
+          }, "grid");
+          // add a click listener on the ID column
+          grid.on(".field-id:click", selectState);
+
+          window.map = new Map("map", {
+            basemap: "gray",
+            center: [-101.426, 42.972],
+            zoom: 4
+          });
+
+          window.statesUrl = "https://demographics6.arcgis.com/arcgis/rest/services/USA_Demographics_and_Boundaries_2016/MapServer/25";
+          window.outFields = ["OBJECTID", "NAME", "MEDNW_CY"];
+
+          var fl = new FeatureLayer(window.statesUrl, {
+            id: "states",
+            mode: 1, // ONDEMAND, could also use FeatureLayer.MODE_ONDEMAND
+            outFields: window.outFields
+          });
+
+          fl.on("load", function() {
+            fl.maxScale = 0; // show the states layer at all scales
+            fl.setSelectionSymbol(new SimpleFillSymbol().setOutline(null).setColor("#fb9021"));
+          });
+
+          fl.on("click", selectGrid);
+
+          // change cursor to indicate features are click-able
+          fl.on("mouse-over", function() {
+            map.setMapCursor("pointer");
+          });
+          fl.on("mouse-out", function() {
+            map.setMapCursor("default");
+          });
+
+          map.addLayer(fl);
+
+          map.on("load", function( evt ){
+            // show the border container now that the dijits
+            // are rendered and the map has loaded
+            domStyle.set(registry.byId("container").domNode, "visibility", "visible");
+            populateGrid(Memory); // pass a reference to the MemoryStore constructor
+          });
+
+          function populateGrid(Memory) {
+            var qt = new QueryTask(window.statesUrl);
+            var query = new Query();
+            query.where = "1=1";
+            query.returnGeometry = false;
+            query.outFields = window.outFields;
+            qt.execute(query, function(results) {
+              var data = array.map(results.features, function(feature) {
+                return {
+                  // property names used here match those used when creating the dgrid
+                  "id": feature.attributes[window.outFields[0]],
+                  "stateName": feature.attributes[window.outFields[1]],
+                  "median": feature.attributes[window.outFields[2]]
+                };
+              });
+              var memStore = new Memory({ data: data });
+              window.grid.set("store", memStore);
+            });
+          }
+          // fires when a row in the dgrid is clicked
+          function selectState(e) {
+            // select the feature
+            var fl = map.getLayer("states");
+            var query = new Query();
+            query.objectIds = [parseInt(e.target.innerHTML, 10)];
+            fl.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(result) {
+              if ( result.length ) {
+                // re-center the map to the selected feature
+                window.map.centerAt(result[0].geometry.getExtent().getCenter());
+              } else {
+                console.log("Feature Layer query returned no features... ", result);
+              }
+            });
+          }
+
+          // fires when a feature on the map is clicked
+          function selectGrid(e) {
+            var id = e.graphic.attributes.OBJECTID;
+            // select the feature that was clicked
+            var query = new Query();
+            query.objectIds = [id];
+            var states = map.getLayer("states");
+            states.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+            // select the corresponding row in the grid
+            // and make sure it is in view
+            grid.clearSelection();
+            grid.select(id);
+            grid.row(id).element.scrollIntoView();
+          }
+        }
+      );
+    });
+  </script>
+</head>
+
+<body class="tundra">
+  <div id="container" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline', gutters: false">
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'"></div>
+    <div id="bottomPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'bottom'"> <div id="grid"></div>
+    </div>
+  </div>
+</body>
+</html>

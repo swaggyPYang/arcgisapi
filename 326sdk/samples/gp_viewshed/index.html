@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>GP Viewshed Task</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      #info {
+        bottom: 20px;
+        color: #444;
+        height: auto;
+        font-family: arial;
+        left: 20px;
+        margin: 5px;
+        padding: 10px;
+        position: absolute;
+        text-align: left;
+        width: 200px;
+        z-index: 40;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script>
+    require(["dojo/dom",
+              "dojo/_base/array",
+              "esri/Color",
+              
+              "esri/map",
+              "esri/graphic",
+              "esri/graphicsUtils",
+              "esri/tasks/Geoprocessor",
+              "esri/tasks/FeatureSet",
+              "esri/tasks/LinearUnit",
+              "esri/symbols/SimpleMarkerSymbol",
+              "esri/symbols/SimpleLineSymbol",
+              "esri/symbols/SimpleFillSymbol"
+              ],
+        function(dom, array, Color, Map, Graphic, graphicsUtils, Geoprocessor, FeatureSet, LinearUnit, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol){
+
+          var map, gp;
+
+          /*Initialize map, GP*/
+
+            map = new Map("mapDiv", {
+              basemap: "streets",
+              center: [-122.436, 37.73],
+              zoom: 12
+            });
+
+            gp = new Geoprocessor("https://sampleserver6.arcgisonline.com/ArcGIS/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed");
+            gp.setOutputSpatialReference({
+              wkid: 102100
+            });
+            map.on("click", computeViewShed);
+
+          function computeViewShed(evt) {
+            map.graphics.clear();
+            var pointSymbol = new SimpleMarkerSymbol();
+            pointSymbol.setSize(14);
+            pointSymbol.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255, 0, 0]), 1));
+            pointSymbol.setColor(new Color([0, 255, 0, 0.25]));
+
+            var graphic = new Graphic(evt.mapPoint, pointSymbol);
+            map.graphics.add(graphic);
+
+            var features = [];
+            features.push(graphic);
+            var featureSet = new FeatureSet();
+            featureSet.features = features;
+            var vsDistance = new LinearUnit();
+            vsDistance.distance = 5;
+            vsDistance.units = "esriMiles";
+            var params = {
+              "Input_Observation_Point": featureSet,
+              "Viewshed_Distance": vsDistance
+            };
+            gp.execute(params, drawViewshed);
+          }
+
+          function drawViewshed(results, messages) {
+            var polySymbol = new SimpleFillSymbol();
+            polySymbol.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0, 0, 0, 0.5]), 1));
+            polySymbol.setColor(new Color([255, 127, 0, 0.7]));
+            var features = results[0].value.features;
+            for (var f = 0, fl = features.length; f < fl; f++) {
+              var feature = features[f];
+              feature.setSymbol(polySymbol);
+              map.graphics.add(feature);
+            }
+            map.setExtent(graphicsUtils.graphicsExtent(map.graphics.graphics), true);
+          }
+    });
+    </script>
+
+  </head>
+  <body>
+    <div id="mapDiv"></div>
+    <div id="info" class="esriSimpleSlider">
+      Click on map to execute ViewShed GP Task.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Select features using result from geoprocessing task</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />  
+    <style>
+      html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+      #messages{
+        position:absolute;
+        top:10px;
+        right:20px;
+        padding: 6px;
+        background-color: #ccc;
+        border-radius: 4px;
+        border: solid 1px #333;
+        z-index:99;
+        max-width: 150px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.tasks.gp");
+
+      var map;
+      var census; 
+
+      function init() {
+
+
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+
+
+        map = new esri.Map("mapDiv", { 
+          basemap: "streets",
+          center: [-95.249, 38.954],
+          zoom: 14
+        });
+        
+        //add the census data in selection only mode. When the drive time polygon is generated we'll use that
+        //to select features within the drive time zone. 
+        var infoTemplate = new esri.InfoTemplate("Block: ${BLOCK}", "${*}");
+
+        var census = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/0",{
+          mode: esri.layers.FeatureLayer.MODE_SELECTION,
+          infoTemplate:infoTemplate,
+          outFields: ["POP2000","HOUSEHOLDS","HSE_UNITS", "TRACT", "BLOCK"]
+        });
+
+        //define a symbol for the selected features 
+        var symbol = new esri.symbol.SimpleMarkerSymbol();
+        symbol.style = esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE;
+        symbol.setSize(8);
+        symbol.setColor(new dojo.Color([255,255,0,0.5]));
+        census.setSelectionSymbol(symbol);
+
+        map.addLayer(census);
+
+
+        //GP Service Endpoint
+        var gp = new esri.tasks.Geoprocessor("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Network/ESRI_DriveTime_US/GPServer/CreateDriveTimePolygons");
+ 
+        
+        // When the map is clicked generate a drive time polygon of 2 minutes around the click location
+        dojo.connect(map, "onClick", function(evt) {
+
+ 
+          var graphic = new esri.Graphic(evt.mapPoint);
+
+          
+          var featureSet = new esri.tasks.FeatureSet();
+          featureSet.features = [graphic];
+          
+          var params = { "Input_Location":featureSet, "Drive_Times":2 };
+          gp.execute(params);
+          dojo.byId('messages').innerHTML = "<b>Executing GP Task...</b>";
+        });
+
+        //When the geoprocessing task is completed draw the drive time polygon on the map and 
+        //select features from the census layer. 
+        dojo.connect(gp, "onExecuteComplete", function(results,messages) {
+
+          map.graphics.clear();
+          var feature = results[0].value.features[0];
+          var symbol = new esri.symbol.SimpleFillSymbol(
+            esri.symbol.SimpleFillSymbol.STYLE_NULL,
+            new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+            new dojo.Color([0,0,0]), 2),new dojo.Color([255,255,0,0.25])
+          );         
+          feature.setSymbol(symbol);
+          map.graphics.add(feature);
+          
+          var query = new esri.tasks.Query();
+          query.geometry = feature.geometry;
+          
+          dojo.byId('messages').innerHTML = "<b>Selecting Features...</b>";
+          census.selectFeatures(query, esri.layers.FeatureLayer.SELECTION_NEW, function(results){
+              var totalPopulation = sumPopulation(results);
+              var r = "";
+              r = "<b>The total Census Block population within the drive time polygon is <i>" + totalPopulation + "</i>.</b>";
+              dojo.byId('messages').innerHTML = r;
+              });
+
+        });
+
+      }
+
+      function sumPopulation(features) {
+        var popTotal = 0;
+        for (var x = 0; x < features.length; x++) {
+          popTotal = popTotal + features[x].attributes['POP2000'];
+        }
+        return popTotal;
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="claro">
+    <span id="messages">Click the map to execute a 2 minute drive time and then use that result geometry as input into a query.</span>
+    <div id="mapDiv"></div>
+  </body>
+</html>

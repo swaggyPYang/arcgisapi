@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>WCS Layer with Pixel Filter</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #topic {
+      font-weight: 600;
+      font-size: 130%;
+    }
+
+    #status {
+      background-color: #000000;
+      color: #FFFFFF;
+      border: solid 1px #FFFFFF;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      padding: 3px;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      z-index: 99;
+    }
+
+    .shadow {
+      -moz-border-radius: 6px;
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+      background-color: #FFFFFF;
+      padding: 8px;
+    }
+
+    #footer {
+      height: 90px;
+      width: 300px;
+      margin: 0 auto;
+      padding: 15px;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 30;
+    }
+  </style>
+   <script src="https://js.arcgis.com/3.26"></script>
+  <script>
+    require([
+      "dijit/registry",
+      "dojo/dom",
+      "dojo/mouse",
+      "dojo/on",
+      "dojo/parser",
+      "dijit/form/ComboBox",
+      "esri/config",
+      "esri/domUtils",
+      "esri/geometry/Circle",
+      "esri/geometry/webMercatorUtils",
+      "esri/graphic",
+      "esri/layers/WCSLayer",
+      "esri/map",
+      "esri/symbols/SimpleFillSymbol",
+      "dojo/domReady!"
+    ], function(registry, dom, mouse, on, parser, ComboBox, esriConfig, domUtils, Circle, WebMercatorUtils, Graphic, WCSLayer, Map, SimpleFillSymbol) {
+      parser.parse();
+      var wcsUrl = "https://sampleserver6.arcgisonline.com/arcgis/services/ScientificData/MODIS_Landcover/ImageServer/WCSServer";
+
+      var symbol = new SimpleFillSymbol().setColor(null).outline.setColor("blue");
+
+      var map = new Map("map", {
+        basemap: "dark-gray",
+        center: [-60, 36],
+        zoom: 4
+      });
+
+      //enable request of sea surface temperature image service via CORS
+      var corsEnabledServers = esriConfig.defaults.io.corsEnabledServers;
+      corsEnabledServers.push("sampleserver6.arcgisonline.com");
+      //WCS GetCoverage uses the onlineResource url (in capabilities response) instead of wcsUrl.
+      // This server explicitly specifies port 80 (for http requests)
+      // and 443 (for https requests) in the online resource, so we need to push it in too.
+      corsEnabledServers.push("sampleserver6.arcgisonline.com:443");
+
+      /******************************************************************************************************
+       * This WCS service serves discrete land cover data, which can be better rendered by colorizing them
+       * Unlike image service, WCS model does not have raster attribute table resource
+       *******************************************************************************************************/
+      var colorMap = [
+        [0, 0, 255], [0, 100, 70], [0, 92, 22], [0, 143, 26], [0, 160, 70], [55, 143, 0],
+        [117, 128, 0], [117, 128, 0], [94, 83, 0], [94, 83, 0], [74, 222, 0], [104, 104, 104],
+        [255, 255, 155], [255, 85, 0], [135, 158, 0], [255, 255, 255], [230, 152, 0]
+      ];
+      var landTypes = [
+        "Water", "Evergreen Needleleaf forest", "Evergreen Broadleaf forest", "Deciduous Needleleaf forest",
+        "Deciduous Broadleaf forest", "Mixed forest", "Closed shrublands", "Open shrublands", "Woody savannas",
+        "Savannas", "Grasslands", "Permanent wetlands", "Croplands", "Urban and built-up",
+        "Cropland/Natural vegetation mosaic", "Snow and ice", "Barren or sparsely vegetated"
+      ];
+
+      //Define the raster layer and add to map
+      var wcsLayer = new WCSLayer(wcsUrl, {
+        version: "1.0.0",
+        pixelFilter: colorizer
+      });
+
+      map.addLayer(wcsLayer);
+      map.on("mouse-move", onMapMove);
+      map.on("mouse-down", function (){
+        map.infoWindow.hide();
+      });
+
+      wcsLayer.on("update-start", function (){
+        domUtils.show(dom.byId("status"));
+      });
+      wcsLayer.on("update-end", function (){
+        domUtils.hide(dom.byId("status"));
+      });
+
+      on(dom.byId("footer"), mouse.enter, function (evt){
+        if (map) {
+          map.infoWindow.hide();
+        }
+      });
+
+      //show pixel code, type
+      function onMapMove(evt){
+        if (!map || !wcsLayer || !wcsLayer.originalPixelData) {
+          return;
+        }
+
+        map.graphics.clear();
+        map.infoWindow.hide();
+        map.infoWindow.resize(200, 150);
+
+        var template = "<b>Land Cover</b><hr><b> Code: ${Code}</b></br><b>Type: ${ClassName}</b></br><b>Long: ${X}W</b></br><b>Lat: ${Y}N</b>";
+        var resolution = wcsLayer.getCurrentResolution();
+        var pixelBlock = wcsLayer.originalPixelData.pixelBlock;
+        var width = pixelBlock.width;
+        var pixels = pixelBlock.pixels[0];
+        var offsetX = Math.round((map.extent.xmin - wcsLayer.originalPixelData.extent.xmin) / resolution.x);
+        var offsetY = Math.round((map.extent.ymax - wcsLayer.originalPixelData.extent.ymax) / resolution.y);
+        var reqX = evt.layerX - offsetX;
+        var reqY = evt.layerY - offsetY;
+        var pixelIndex = Math.floor(reqY * width + reqX);
+        var latLongPoint = WebMercatorUtils.webMercatorToGeographic(evt.mapPoint);
+        if (pixelBlock.mask === null || pixelBlock.mask[pixelIndex]) {
+          var o = {
+            Code: pixels[pixelIndex],
+            ClassName: landTypes[pixels[pixelIndex]],
+            X: latLongPoint.x,
+            Y: latLongPoint.y
+          };
+          if (highlightedValue === -1 || o.Code === highlightedValue) {
+            map.infoWindow.setContent(template.replace("${Code}", o.Code).replace("${ClassName}", o.ClassName)
+              .replace("${X}", o.X.toFixed(6)).replace("${Y}", o.Y.toFixed(6)));
+            map.infoWindow.show(evt.screenPoint,
+              map.getInfoWindowAnchor(evt.screenPoint));
+          }
+        }
+
+        var circle = new Circle({
+          center: evt.mapPoint,
+          radius: 1
+        });
+
+        var graphic = new Graphic(circle, symbol);
+        map.graphics.add(graphic);
+      }
+
+      var highlightedValue = -1;
+      on(registry.byId("landTypeCombo"),'change', function(val) {
+        highlightedValue = landTypes.findIndex(function (x){
+          return x === val;
+        });
+        wcsLayer.redraw();
+      });
+
+      // The pixel filter
+      function colorizer(pixelData){
+        if (!pixelData || !pixelData.pixelBlock) {
+          return;
+        }
+        var pixelBlock = pixelData.pixelBlock;
+        var pixels = pixelBlock.pixels;
+        var mask = pixelBlock.mask;
+        var numPixels = pixelBlock.width * pixelBlock.height;
+        if (!pixels) {
+          return;
+        }
+        var p1 = pixels[0];
+        var pr = new Uint8Array(p1.length); //set up array for red values
+        var pg = new Uint8Array(p1.length); //set up array for green values
+        var pb = new Uint8Array(p1.length); //set up array for blue values
+        var color, i;
+        if (!mask && highlightedValue === -1) {
+          for (i = 0; i < numPixels; i++) {
+            color = colorMap[p1[i]];
+            pr[i] = color[0];  //red
+            pg[i] = color[1];  //green
+            pb[i] = color[2];  //blue
+          }
+        }
+        else {
+          if (mask) {
+            for (i = 0; i < numPixels; i++) {
+              if (mask[i]) {
+                if (p1[i] === highlightedValue) {
+                  color = colorMap[p1[i]];
+                  pr[i] = color[0];  //red
+                  pg[i] = color[1];  //green
+                  pb[i] = color[2];  //blue
+                }
+                else {
+                  mask[i] = 0;
+                }
+              }
+            }
+          }
+          else {
+            mask = new Uint8Array(p1.length);
+            for (i = 0; i < numPixels; i++) {
+              //apply color based on temperature value of each pixel
+              if (p1[i] === highlightedValue) {
+                color = colorMap[p1[i]];
+                pr[i] = color[0];  //red
+                pg[i] = color[1];  //green
+                pb[i] = color[2];  //blue
+                mask[i] = 1;
+              }
+              else {
+                mask[i] = 0;
+              }
+            }
+            pixelData.pixelBlock.mask = mask;//attach the mask
+          }
+        }
+        pixelData.pixelBlock.pixels = [pr, pg, pb];  //assign rgb values to each pixel
+        pixelData.pixelBlock.statistics = null;
+        pixelData.pixelBlock.pixelType = "U8";
+      }
+    });
+  </script>
+</head>
+<body class="claro">
+  <div id="map">
+    <div id="status">
+      Loading...
+    </div>
+    <div id="footer" class="shadow">
+      <span id='topic'>Global Land Cover Data</span><br><br>
+      <div>
+        Show Land Type:
+        <select data-dojo-type="dijit/form/ComboBox" id="landTypeCombo">
+          <option selected>All</option>
+          <option>Water</option>
+          <option>Evergreen Needleleaf forest</option>
+          <option>Evergreen Broadleaf forest</option>
+          <option>Deciduous Needleleaf forest</option>
+          <option>Deciduous Broadleaf forest</option>
+          <option>Mixed forest</option>
+          <option>Closed shrublands</option>
+          <option>Open shrublands</option>
+          <option>Woody savannas</option>
+          <option>Savannas</option>
+          <option>Grasslands</option>
+          <option>Permanent wetlands</option>
+          <option>Croplands</option>
+          <option>Urban and built-up</option>
+          <option>Cropland/Natural vegetation mosaic</option>
+          <option>Snow and ice</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

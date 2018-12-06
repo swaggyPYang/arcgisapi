@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Dot Density Renderer - Multiple Variables</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #map {
+        background-color: #000
+      }
+      #infopane {
+        position: absolute;
+        width: 300px;
+        top: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.75);
+        padding: 10px;
+        border-radius: 0 0 0 10px;
+        font-family: Segoe UI;
+        color: #aaa;
+      }
+      .esriLegendServiceLabel, #info-title {
+        font-weight: 600;
+      }
+      .hidden {
+        display: none;
+      }
+      #toggle-button {
+        cursor: pointer;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/geometry/Extent", "esri/layers/FeatureLayer", "esri/InfoTemplate", "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/renderers/SimpleRenderer", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/renderers/DotDensityRenderer", "esri/renderers/ScaleDependentRenderer",
+        "esri/Color", "dojo/query", "dojo/dom", "esri/dijit/Legend", "dojo/domReady!"
+      ], function(Map, Extent, FeatureLayer, InfoTemplate, ArcGISTiledMapServiceLayer, SimpleRenderer, SimpleFillSymbol, SimpleLineSymbol, DotDensityRenderer, ScaleDependentRenderer, Color, query, dom, Legend) {
+        map = new Map("map", {
+          center: [-122.12, 37.60],
+          zoom: 10,
+          maxZoom: 12,
+          minZoom: 9
+        });
+        
+        var basemap = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer", {
+          opacity: 0.15
+        });
+        map.addLayer(basemap);
+
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/BayAreaWorkingClasses/FeatureServer/0", {
+          outFields: ["CC","SC","WC","FFF"]
+        });
+        
+        var createRenderer = function(dotValue) {
+          return new DotDensityRenderer({
+            fields: [{
+              name: "CC",
+              color: new Color([21, 137, 255])
+            }, {
+              name: "SC",
+              color: new Color([200, 111, 0])
+            }, {
+              name: "WC",
+              color: new Color([0, 255, 0])
+            }, {
+              name: "FFF",
+              color: new Color([255, 0, 0])
+            }],
+            dotValue: dotValue,
+            dotSize: 2,
+            outline: new SimpleLineSymbol("solid", new Color([50, 50, 50, 1]), 0.5),
+            legendOptions: {
+              valueUnit: "people",
+              backgroundColor: new Color([32, 32, 32])
+            }
+          });
+        };
+        
+        var rendererInfos = [
+          {
+            renderer: createRenderer(400),
+            maxZoom: 9,
+            minZoom: 9
+          }, {
+            renderer: createRenderer(100),
+            maxZoom: 10,
+            minZoom: 10
+          }, {
+            renderer: createRenderer(25),
+            maxZoom: 11,
+            minZoom: 11
+          }, {
+            renderer: createRenderer(6),
+            maxZoom: 12,
+            minZoom: 12
+          }
+        ];
+        
+        var scaleDependentRenderer = new ScaleDependentRenderer({
+          rendererInfos: rendererInfos
+        });
+        layer.setRenderer(scaleDependentRenderer);
+        map.addLayer(layer);
+        
+        var legend = new Legend({
+          map: map,
+          layerInfos: [{ layer: layer }]
+        }, "legend");
+        legend.startup();
+        
+        dom.byId("toggle-button").onclick = function(){
+          query(".toggle-pane").toggleClass("hidden");
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="infopane">
+      <div id="toggle-button">[Toggle/expand information pane]</div>
+      <div class="toggle-pane">
+        <h1 id="info-title">Working Classes in Bay Area</h1>
+        <p>DotDensityRenderer provides a way to display multiple attributes for polygon features. A quantitative attribute is represented by dots randomly placed within a polygon.</p>
+        <p>The symbols on this map are scale-dependent. As you zoom in, the sizes of symbols are enlarged accordingly.</p>
+        <p>Four major working classes are rendered with four distinct colors. One can easily identity clusters by the relative richness of specific a color on the map.</p>
+        <div id="legend"></div>
+      </div>
+    </div>
+  </body>
+</html> 

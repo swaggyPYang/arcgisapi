@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>OpenStreetMap</title> 
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #esri-map-container {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "esri/map",
+        "esri/layers/OpenStreetMapLayer",
+        "dojo/domReady!"
+      ], function (Map, OpenStreetMapLayer){
+
+        var map, openStreetMapLayer;
+
+        map = new Map("esri-map-container", {
+          center: [-89.924, 30.036],
+          zoom: 12
+        });
+        openStreetMapLayer = new OpenStreetMapLayer();
+        map.addLayer(openStreetMapLayer);
+      });
+    </script>
+  </head> 
+  
+  <body>
+    <div id="esri-map-container"></div>
+  </body> 
+</html>

@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Reviewer Results WriteResults Sample</title>    
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+<style>
+	.reviewerForm {
+	width: 530px;
+	font-size: .7em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.submitButton {
+	float: right;
+	padding: 5px;
+	width: 150px;
+	font-size: 1.1em;
+	border: 2px solid #CCC;
+	margin: 0px 0px 10px 0px;
+}	
+.reviewerForm input, .reviewerForm textarea{
+	padding: 5px;
+	width: 371px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+label {
+	float: left;
+	text-align: right;
+	margin-right: 15px;
+	width: 130px;
+	padding-top: 5px;
+}
+#message.success {
+	color: #048313;
+}
+#message.error {
+	color: #C41111;
+}
+</style>
+  <script>
+  var myMap, drawToolbar, reviewerResultsTask, reviewerLayer;
+  var drsSoeUrl = "https://datareviewer.arcgisonline.com/arcgis/rest/services/Samples/reviewerWriteResults/MapServer/exts/DataReviewerServer";	 
+  require(
+  [
+     "dojo/parser", 
+     "dojo/dom", 
+     "dojo/on", 
+     "dojo/_base/array", 
+     "dojo/data/ItemFileReadStore", 
+     "dojox/grid/DataGrid", 
+     "esri/map",
+     "esri/toolbars/draw",
+     "esri/layers/ArcGISTiledMapServiceLayer", 
+     "esri/layers/ArcGISDynamicMapServiceLayer",
+     "esri/geometry/Extent",
+     "esri/symbols/SimpleMarkerSymbol",
+     "esri/symbols/SimpleLineSymbol",
+     "esri/symbols/SimpleFillSymbol",
+     "esri/graphic",
+     "esri/tasks/datareviewer/ReviewerResultsTask", 
+     "esri/tasks/datareviewer/GetResultsQueryParameters", 
+     "esri/tasks/datareviewer/ReviewerAttributes",        
+     "dojo/domReady!"
+  ], 
+  function( parser, dom, on, array, ItemFileReadStore, DataGrid, Map, Draw, ArcGISTiledMapServiceLayer, 
+    ArcGISDynamicMapServiceLayer, Extent, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Graphic,
+    ReviewerResultsTask, GetResultsQueryParameters, ReviewerAttributes) {
+    
+    // specify proxy for request with URL lengths > 2k characters
+    esriConfig.defaults.io.proxyUrl = "/proxy/";
+    // configure button click event
+    on(dom.byId("submitButton"), "click", submitReviewerResult);
+
+    // initialize map
+    myMap = new Map("myMap", {
+        basemap:"gray",
+        showAttribution:false,
+        center: [-50.109, 30.945],
+        zoom: 2
+    });
+     // initialize reviewer results layer and reviewerResultsTask
+    on(myMap,"load",configureMap);
+
+    // initialize draw toolbar
+    function createToolbar(){
+        drawToolbar = new Draw(myMap);
+        drawToolbar.onDrawEnd = function(geometry) {
+            myMap.graphics.clear();
+            // select symbol type
+            var type = geometry.type;
+            if(type === "point" || type === "multipoint") {
+               symbol = new SimpleMarkerSymbol();
+            } else if(type === "line" || type === "polyline") {
+               symbol = new SimpleLineSymbol();
+            } else {
+               symbol = new SimpleFillSymbol();
+            }
+            // create the graphic object and added to the map
+            myMap.graphics.add(new Graphic(geometry, symbol));
+        };
+    }
+     //
+     // define application functions
+     //
+     function configureMap() {
+        // in case we re-run this function, clear previous instances
+        if(reviewerResultsTask)
+           reviewerResultsTask = undefined;
+        if(reviewerLayer) {
+           myMap.removeLayer(reviewerLayer);
+           reviewerLayer = undefined;
+        }
+        
+        // create the reviewerResultsTask
+        reviewerResultsTask = new ReviewerResultsTask(drsSoeUrl);
+        // connect handlers to events
+        reviewerResultsTask.onWriteResultComplete = writeCompleteHandler;
+        reviewerResultsTask.onError = errorHandler;
+
+        // create reviewer map server layer and add it to the map
+        var mapServerUrl = drsSoeUrl.split("/exts/")[0];
+        reviewerLayer = new ArcGISDynamicMapServiceLayer(mapServerUrl);
+        myMap.addLayer(reviewerLayer);
+        myMap.graphics.clear();
+        createToolbar();
+     }
+
+     function submitReviewerResult() {
+        showMessage("");
+        if(drawToolbar._geometryType)
+           drawToolbar.deactivate();
+
+        var geometry = null;
+        if(myMap.graphics && myMap.graphics.graphics && myMap.graphics.graphics.length > 0) {
+           geometry = myMap.graphics.graphics[0].geometry;
+        } else {
+           alert("Please draw a geometry in the map.");
+           return;
+        }
+
+        // check the form (notes is optional)
+        if(!dom.byId("inputSession").value ||
+        isNaN(dom.byId("inputSession").value) || 
+        !dom.byId("inputSeverity").value || 
+        isNaN(dom.byId("inputSeverity").value) || 
+        !dom.byId("inputReviewStatus").value || 
+        !dom.byId("inputReviewTechnician").value ||
+        !dom.byId("inputResourceName").value) 
+        {
+           alert("Please fill out the form.");
+           return;
+        }
+
+        // retrieve form data and populate ReviewerAttributes object
+        var reviewerAttributes = new ReviewerAttributes();
+        reviewerAttributes.reviewStatus = dom.byId("inputReviewStatus").value;
+        reviewerAttributes.reviewTechnician = dom.byId("inputReviewTechnician").value;
+        reviewerAttributes.severity = dom.byId("inputSeverity").value;
+        reviewerAttributes.sessionId = parseInt(dom.byId("inputSession").value);
+        reviewerAttributes.resourceName = dom.byId("inputResourceName").value;
+        reviewerAttributes.notes = dom.byId("inputNotes").value || "";
+        // execute writeResult passing the attributes and geometry.
+        // the task object will call the appropriate events once
+        // the operation completes, successfully or not
+        reviewerResultsTask.writeResult(reviewerAttributes, geometry);
+
+        // show temporary message. it will be updated with success or error message
+        showMessage("processing...");
+     }
+
+     function writeCompleteHandler(result) {
+        showMessage("New result successfully written.<br/>Pan or zoom to refresh the map.", "success");
+        clearForm();
+     }
+
+     function errorHandler(error) {
+        showMessage("Error writing result: " + error.message, "error");
+     }
+
+     function showMessage(text, className) {
+        var messageDiv = dom.byId("message");
+        messageDiv.innerHTML = "";
+        messageDiv.className = className || "";
+        messageDiv.innerHTML = text;
+     }
+
+     function clearForm() {
+        dom.byId("inputReviewStatus").value = "";
+        dom.byId("inputReviewTechnician").value = "";
+        dom.byId("inputSeverity").value = "";
+        dom.byId("inputSession").value = "";
+        dom.byId("inputResourceName").value = "";
+        dom.byId("inputNotes").value = "";
+        myMap.graphics.clear();
+        if(drawToolbar._geometryType)
+           drawToolbar.deactivate();
+     }
+
+  });
+</script>
+</head>
+<body class="claro">
+    <h2 align="center">Write Reviewer Results Sample</h2>
+      <div style="width:100%; overflow-x: auto;" >
+         <div id="myMap" style="width:600px; height:400px; border:1px solid #000000; float:left; margin-bottom: 20px" ></div>
+         <div style="padding: 0px 20px 0px 20px; float:left;">
+            <div class="reviewerForm" >
+               <h1>New Reviewer Result</h1>
+               <label for="drawType">Geometry type:</label>
+               <div id="drawType" style="padding-bottom: 10px">
+                  <button style="width: 75px; height: 25px" onclick="drawToolbar.activate(esri.toolbars.Draw.POINT);" title="draw geometry on the map">
+                     Point
+                  </button>
+                  <button style="width: 75px; height: 25px" onclick="drawToolbar.activate(esri.toolbars.Draw.POLYLINE);" title="draw geometry on the map">
+                     Polyline
+                  </button>
+                  <button style="width: 75px; height: 25px" onclick="drawToolbar.activate(esri.toolbars.Draw.POLYGON);" title="draw geometry on the map">
+                     Polygon
+                  </button>
+               </div>
+               <label for="inputSession">Session ID:</label>
+               <input type="number" id="inputSession" value="1" placeholder="the ID of an existing Reviewer session" />
+               <label for="inputSeverity">Severity:</label>
+               <input type="number" min="1" max="5"  id="inputSeverity" placeholder="from 1-High to 5-Low" />
+               <label for="inputResourceName">Layer Name:</label>
+               <input type="text" id="inputResourceName" placeholder="layer name, e.g. Streets, Roads, Lakes..."/>
+               <label for="inputReviewStatus">Review Status:</label>
+               <input type="text" id="inputReviewStatus" placeholder="e.g. missing feature" />
+               <label for="inputReviewTechnician">Reviewed By:</label>
+               <input type="text" id="inputReviewTechnician" placeholder="type your name here..."/>
+               <label for="inputNotes">Notes:</label>
+               <textarea rows="3" id="inputNotes" ></textarea>               
+		    	
+
+               <button id="submitButton" class="submitButton">
+                  Create result
+               </button>
+               <div id="message"></div>
+        </div>
+        </div>
+    </div>
+ </body>
+</html>

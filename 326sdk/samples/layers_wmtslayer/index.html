@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Add WMTS Layer</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+  html,
+  body,
+  #map {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #citationInfo {
+    position: absolute;
+    font-weight: bold;
+    font-size: 12pt;
+    left: 10px;
+    bottom: 10px;
+    z-Index: 999;
+  }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "esri/map", "esri/layers/WMTSLayer", "esri/layers/WMTSLayerInfo",
+      "esri/config",
+      "dojo/domReady!"
+    ], function(
+      Map, WMTSLayer, WMTSLayerInfo,
+      esriConfig
+    ) {
+      esriConfig.defaults.io.proxyUrl = "/proxy/";
+      var map = new Map("map", {
+        center: [86.9, 28],//27.988056, 86.925
+        zoom: 3
+      });
+
+      var layerInfo = new WMTSLayerInfo({
+        identifier: "SRTM_Color_Index",
+        tileMatrixSet: "31.25m",
+        format: "png"
+      });
+      var options = {
+        layerInfo: layerInfo
+      };
+      var wmtsLayer = new WMTSLayer("https://gibs.earthdata.nasa.gov/wmts/epsg4326/best", options);
+      map.addLayer(wmtsLayer);
+    });
+  </script>
+</head>
+
+<body>
+  <div id="map">
+    <div id="citationInfo">
+      <a target='_top' href='https://earthdata.nasa.gov'>Earthdata</a> by
+      <a target='_top' href='https://www.nasa.gov'>NASA</a>
+    </div>
+  </div>
+</body>
+</html>

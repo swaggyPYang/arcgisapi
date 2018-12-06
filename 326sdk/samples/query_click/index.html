@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>QueryTask with geometry, results as an InfoWindow onClick</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+
+      var map;
+
+      function init() {
+        map = new esri.Map("mapDiv",{
+          basemap: "streets",
+          center: [-80.94, 33.646],
+          zoom: 8
+        });
+        dojo.connect(map, "onLoad", initFunctionality);
+      }
+
+      function initFunctionality(map) {
+        //build query task
+        var queryTask = new esri.tasks.QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/3");
+
+        //build query filter
+        var query = new esri.tasks.Query();
+        query.returnGeometry = true;
+        query.outFields = ["NAME", "POP2000", "POP2007", "POP00_SQMI", "POP07_SQMI"];
+        query.where = "STATE_NAME = 'South Carolina'";
+        query.outSpatialReference = {"wkid":102100};
+
+        var infoTemplate = new esri.InfoTemplate();
+        infoTemplate.setTitle("${NAME}");
+        infoTemplate.setContent( "<b>2000 Population: </b>${POP2000}<br/>"
+                             + "<b>2000 Population per Sq. Mi.: </b>${POP00_SQMI}<br/>"
+                             + "<b>2007 Population: </b>${POP2007}<br/>"
+                             + "<b>2007 Population per Sq. Mi.: </b>${POP07_SQMI}");
+
+        map.infoWindow.resize(245,105);
+
+        //Can listen for onComplete event to process results or can use the callback option in the queryTask.execute method.
+        dojo.connect(queryTask, "onComplete", function(featureSet) {
+          map.graphics.clear();
+          
+          var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255,255,255,0.35]), 1),new dojo.Color([125,125,125,0.35]));
+          
+          //QueryTask returns a featureSet.  Loop through features in the featureSet and add them to the map.
+          dojo.forEach(featureSet.features,function(feature){
+            var graphic = feature;
+            graphic.setSymbol(symbol);
+            graphic.setInfoTemplate(infoTemplate);
+            
+            map.graphics.add(graphic);
+          });
+        });
+        queryTask.execute(query);
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    Single click a county in South Carolina to get more information.
+    <div id="mapDiv" style="width:900px; height:600px; border:1px solid #000;"></div>
+  </body>
+</html>

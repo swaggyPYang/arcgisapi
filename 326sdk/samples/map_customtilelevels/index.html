@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Custom TileInfo</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+     html, body, #map{
+      height: 100%;
+      margin: 0;
+      padding: 0;
+     }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map", "dojo/dom", "dojo/domReady!"
+      ], function(
+        Map, dom
+      ) {
+        // Extract several levels from the  Imagery_World
+        // map service.  Once the map has been created the level ids will be reset.     
+        var lods = [{
+          "level": 11,
+          "resolution": 76.4370282850732,
+          "scale": 288895.277144
+        }, {
+          "level": 12,
+          "resolution": 38.2185141425366,
+          "scale": 144447.638572
+        }, {
+          "level": 13,
+          "resolution": 19.1092570712683,
+          "scale": 72223.819286
+        }, {
+          "level": 14,
+          "resolution": 9.55462853563415,
+          "scale": 36111.909643
+        }, {
+          "level": 15,
+          "resolution": 4.77731426794937,
+          "scale": 18055.954822
+        }, {
+          "level": 16,
+          "resolution": 2.38865713397468,
+          "scale": 9027.977411
+        }, {
+          "level": 17,
+          "resolution": 1.19432856685505,
+          "scale": 4513.988705
+        }];
+        
+        map = new Map("map", {
+          basemap: "hybrid",
+          center: [-115.812, 33.866],
+          lods: lods
+        });
+        map.on("extent-change", function(evt) {
+          dom.byId("scale").innerHTML = "LOD Level: <i>" + evt.lod.level + 
+            "</i> Resolution: <i>" + evt.lod.resolution.toFixed(3) + 
+            "</i> Scale: <i>" + evt.lod.scale.toFixed(3) + "</i>";
+        });
+      });
+    </script>
+  </head>
+  
+  <body>
+    <div id="map">
+      <span id="scale" style="position:absolute; left:10px; bottom:10px; z-index:100; color:white">
+      </span>
+    </div>
+  </body>
+
+</html>

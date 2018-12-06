@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Customize Map Navigation Animation</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>     
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require(["esri/map", "esri/config", "dojo/domReady!"], function(Map, esriConfig) {
+        //configure map animation to be faster
+        esriConfig.defaults.map.panDuration = 1; // time in milliseconds, default panDuration: 350
+        esriConfig.defaults.map.panRate = 1; // default panRate: 25
+        esriConfig.defaults.map.zoomDuration = 100; // default zoomDuration: 500
+        esriConfig.defaults.map.zoomRate = 1; // default zoomRate: 25
+
+        map = new Map("map", {
+          basemap: "satellite",
+          center: [-93.5, 36.972],
+          zoom: 5
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

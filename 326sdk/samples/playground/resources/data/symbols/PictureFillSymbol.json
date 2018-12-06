@@ -1,0 +1,137 @@
+{
+  "name": "PictureFillSymbol",
+  "type": "class",
+  "baseClass": "FillSymbol",
+  "baseLocation": "symbols/FillSymbol.json",
+  "variable": "fill",
+  "description": "Fill symbols are used to draw polygon features on the graphics layer. PictureFillSymbol uses an image in a repeating pattern. In addition, the symbol can have an optional outline, which is defined by a line symbol. ",
+  "summary": "draw polygons",
+  "path": "esri/symbols/PictureFillSymbol",
+  "toolbar": true,
+  "constructorArgs": ["url","outline","width","height"],
+  "removeProperties": ["color"],
+  "removeMethods": ["setColor"],
+  "properties": [
+    {
+      "name": "url",
+      "type": "String",
+      "required": true,
+      "method": "setUrl",
+      "summary": "URL of the image"
+    },
+    {
+      "name": "width",
+      "type": "Number",
+      "default": 16,
+      "method": "setWidth",
+      "summary": "Width of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "height",
+      "type": "Number",
+      "default": 16,
+      "method": "setHeight",
+      "summary": "Height of the image in pixels",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the y-axis in pixels"
+    },
+    {
+      "name": "xscale",
+      "type": "Number",
+      "default": 1,
+      "method": "setXScale",
+      "summary": "Scale factor in x direction"
+    },
+    {
+      "name": "yscale",
+      "type": "Number",
+      "default": 1,
+      "method": "setYScale",
+      "summary": "Scale factor in y direction"
+    }
+  ],
+  "methods": [
+    {
+      "name": "setHeight",
+      "parameters": [
+        {
+          "name": "height",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the height of the symbol"
+    },
+    {
+      "name": "setOffset",
+      "parameters": [
+        {
+          "name": "xoffset",
+          "type": "property"
+        },
+        {
+          "name": "yoffset",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the symbol offset"
+    },
+    {
+      "name": "setUrl",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the URL to the location of the symbol"
+    },
+    {
+      "name": "setWidth",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the width of the symbol"
+    },
+    {
+      "name": "setXScale",
+      "parameters": [
+        {
+          "name": "xscale",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the scale factor in x direction of the symbol"
+    },
+    {
+      "name": "setYScale",
+      "parameters": [
+        {
+          "name": "yscale",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the scale factor in y direction of the symbol"
+    }
+  ]
+}

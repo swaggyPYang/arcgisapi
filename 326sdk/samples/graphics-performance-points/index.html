@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Point Graphics Performance - JSAPI 3.26</title>
+  
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  
+  <style>
+    html,
+    body,
+    #map {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #outputMessages {
+      position: absolute;
+      z-index: 70;
+      top: 0px;
+      right: 0;
+      bottom: 0;
+      box-sizing: border-box;
+      padding: 20px;
+      height: 100%;
+      width: 350px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 14px;
+      line-height: 30px;
+      overflow: auto
+    }
+    h2, h3 { 
+      color:  #aaa;
+      border-bottom: 1px solid #aaa;
+    }
+      
+  </style>
+  
+  <script src="https://js.arcgis.com/3.26/"></script>
+  
+  <script>
+    var map, graphicsLayer;
+    
+    require([
+      "dojo/on",
+      "esri/layers/FeatureLayer",
+      "esri/layers/GraphicsLayer",
+      "dojo/dom",
+
+      "esri/graphic",
+      "esri/SpatialReference",
+      "esri/geometry/Point",
+      "esri/InfoTemplate",
+      "esri/map",
+      
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/symbols/PictureMarkerSymbol",
+      "esri/symbols/TextSymbol",
+      "esri/Color",
+      "esri/symbols/Font",
+      "esri/urlUtils",
+      "esri/sniff",
+      
+      "dojo/has",
+      "dojo/_base/array",
+      "dojo/domReady!"
+    ],
+    function(on, FeatureLayer, GraphicsLayer, dom, 
+      Graphic, SpatialReference, Point, InfoTemplate, Map, 
+      SimpleLineSymbol, SimpleMarkerSymbol, PictureMarkerSymbol, TextSymbol, Color, Font,
+      urlUtils, sniff, has, array) {
+
+      map = new Map("map", {
+        basemap: "gray",
+        center: [139.69, 35.69],
+        zoom: 6,
+        nav: true // add panButtons for non-mouse dependent pan testing
+      });
+
+      var sms = new SimpleMarkerSymbol();
+      var sls = new SimpleLineSymbol("solid", new Color([0, 0, 255, 0.5]), 3);
+      var sms2 = new SimpleMarkerSymbol('diamond', 10, sls, new Color([72, 61, 139, 0.5]));
+      var pms = new PictureMarkerSymbol('https://esri.box.com/shared/static/lcqwphi8eu5mjak0u4muaq7pkkpa9ooh.gif', 16, 16); //green pacman gif
+      var ts = new TextSymbol("Hi!")
+        .setColor(new Color([200,0,0]))
+        .setAlign(Font.ALIGN_START) // undocumented
+        // .setAngle(45) // rare case?
+        .setFont(
+          new Font("12pt").
+          setWeight(Font.WEIGHT_NORMAL)
+        );
+      var smsSvg =  new SimpleMarkerSymbol();
+      smsSvg.setColor(new Color([76, 0, 115, 0.55]));
+      smsSvg.setPath("M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z");
+      
+      var panStart = map.on("pan-start", panHandler);
+      var panStartTime;
+      var zoomStart = map.on("zoom-start", zoomHandler);
+      var zoomStartTime;
+      var currentAction;
+      var updateStart = map.on("update-start", updateStartHandler);
+      var updateStartTime;
+      var updateEnd = map.on("update-end", updateEndHandler);
+
+      function panHandler(evt){
+        console.log("pan started");
+        panStartTime = performance.now();
+        currentAction = 'pan';
+      }
+
+      function zoomHandler(evt){
+        console.log("zoom started");
+        zoomStartTime = performance.now();
+        currentAction = "zoom";
+      }
+
+      function updateStartHandler(evt){
+        if (currentAction === 'none'){
+          console.log("extra update started");
+          updateStartTime = performance.now();
+          currentAction = "update";
+        }
+      }
+
+      function updateEndHandler(evt){
+        if (currentAction === 'pan') {
+          calcElapsedTime(panStartTime, performance.now(), "Panned and updated", "infoPan");
+        } else if (currentAction === 'zoom') {
+          calcElapsedTime(zoomStartTime, performance.now(), "Zoomed and updated", "infoZoom");
+        } else if (currentAction === 'update') {
+          // map resize or something else
+          calcElapsedTime(updateStartTime, performance.now(), "Updated", "infoOther");
+        } else if (currentAction === 'none') {
+          // unexpected but just in case
+          console.debug("No known action started this update...");
+        } else {
+          console.debug("Should only happen on startup (%s)", currentAction);
+        }
+        currentAction = 'none';
+      }
+
+      function calcElapsedTime(start, end, label, domid) {
+        var diff = end - start;
+        if (diff < 10) {
+          diff = Number(diff.toFixed(1));
+        } else {
+          diff = Number(diff.toFixed(0));
+        }
+        console.log(label + ": " + diff + " milliseconds.");
+        document.getElementById(domid).style.visibility = "visible";
+        document.getElementById(domid).innerHTML = diff + " ms.";
+      }
+      
+      window.addLayer = function() {
+        graphicsLayer = new GraphicsLayer();
+        map.addLayer(graphicsLayer);
+      };
+
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      
+      window.addGraphics = function() {
+        if (graphicsLayer) {
+          var markerSymbol = sms;
+          
+          var sel = dom.byId("rendererSelect");
+          if (sel) {
+            switch (sel.options[sel.selectedIndex].value) {
+              case "sms":
+                markerSymbol = sms;
+                break;
+              case "sms2":
+                markerSymbol = sms2;
+                break;
+              case "svg":
+                markerSymbol = smsSvg;
+                break;
+              case "pms":
+                markerSymbol = pms;
+                break;
+              case "ts":
+                markerSymbol = ts;
+                break;
+            }              
+          }
+                    
+          var startTime = performance.now();
+
+          var features = [];
+          var extent = map.extent;
+
+          var graphicsCount = dom.byId("distance").value;
+          for (i = 0; i < graphicsCount; i++) {
+            var x = getRandomInt(extent.xmin, extent.xmax);
+            var y = getRandomInt(extent.ymin, extent.ymax);
+            
+            var graphic = new Graphic(
+              new Point(x, y, new SpatialReference({
+                wkid: map.spatialReference.wkid
+              })), 
+              markerSymbol
+            );
+            graphic.setAttributes({
+              ObjectID: 1
+            });
+            graphicsLayer.add(graphic);
+          }
+          calcElapsedTime(startTime, performance.now(), "Added " + graphicsCount + " graphics", "infoAddGraphics");
+          var totalGraphicsCount = graphicsLayer.graphics.length;
+
+          document.getElementById('infoGraphicsCount').style.visibility = "visible";
+          document.getElementById('infoGraphicsCount').innerHTML = graphicsLayer.graphics.length;          
+        } 
+      };
+
+      window.clearGraphics = function() {
+        if (graphicsLayer) {
+          var totalGraphicsCount = graphicsLayer.graphics.length;
+          var startTime = performance.now();
+          graphicsLayer.clear();
+          calcElapsedTime(startTime, performance.now(), "Removed all " + totalGraphicsCount + " graphics", "infoClearGraphics");
+          document.getElementById('infoGraphicsCount').style.visibility = "hidden";          
+        }
+      };
+
+      // start by adding a layer
+      addLayer();
+
+      // report browser on console
+      array.forEach(["chrome", "ff", "ie", "mozilla", "opera", "safari"], function(n){
+        if (has(n) !== undefined) {
+          var mac = has('mac')? "(Mac OSX)" : ".";
+          console.log("browser: %s version %s %s", n, has(n), mac);  
+        }
+      });
+      
+    });
+  </script>
+</head>
+
+<body>
+  <div id="map">
+    <div id="outputMessages">
+      <h2>Point Graphic Performance Playground</h2>
+      <button type="button" onclick="addGraphics();">Add Graphics</button> 
+      <span id="infoAddGraphics"></span>
+      <br>
+      <button type="button" onclick="clearGraphics();">Clear Graphics</button> 
+      <span id="infoClearGraphics"></span>
+      <br>
+      Number of graphics:<input type="text" id="distance" size="5" value="2000" />
+      <br>
+      <label>Select symbol</label>
+      <select id="rendererSelect">
+          <option value="sms">SimpleMarkerSymbol [default]</option>
+          <option value="sms2">SimpleMarkerSymbol (diamond)</option>
+          <option value="pms">PictureMarkerSymbol (PacMan)</option>
+          <option value="ts">TextSymbol (Hi!)</option>
+          <option value="svg">SVG [SimpleMarkerSymbol] </option>
+      </select>
+      <hr>
+      Total number of graphics: <span id="infoGraphicsCount" style="visibility:hidden"></span>
+      <br>
+      Last pan: <span id="infoPan" style="visibility:hidden"></span>
+      <br>
+      Last zoom: <span id="infoZoom" style="visibility:hidden"></span>
+      <br>
+      Other updates: <span id="infoOther" style="visibility:hidden"></span>
+      <br>
+      <i>All time measurements are in milliseconds</i>
+    </div>
+  </div>
+
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+  
+</body>
+</html>

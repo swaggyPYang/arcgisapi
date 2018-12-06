@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Multiple Attribute Inspectors</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html,body {
+        height:100%;
+        width:100%;
+        background-color:#FFF;
+        font-family:Kimberley, sans-serif;
+        margin:0;
+        padding:0;
+      }
+
+      #header {
+        padding-top:4px;
+        padding-right:15px;
+        background-color:#570026;
+        color:#CCC59E;
+        font-size:16pt;
+        text-align:right;
+        font-weight:700;
+        height:55px;
+        margin:2px;
+      }
+
+      #subheader {
+        font-size:small;
+        color:#E8D9AC;
+        text-align:right;
+        padding-right:20px;
+      }
+
+      #leftPane {
+        width:300px;
+        color:#3C1700;
+        background-color:#FFF;
+      }
+
+      #map {
+        margin:5px;
+        padding:0px;
+      }
+      .templatePicker {
+        border: none !important;
+        height: 98% !important;
+      }
+      
+      .roundedCorners{
+        border:solid 3px #705B35;
+        border-radius:6px;
+      }
+      .shadow {
+        -webkit-box-shadow: 0 8px 6px -6px #999;
+        -moz-box-shadow: 0 8px 6px -6px #999;
+        box-shadow: 0 8px 6px -6px #999;
+      }
+
+      .esriAttributeInspector {
+        height:100px;
+      }
+
+      .esriAttributeInspector .atiLayerName {
+        display:none;
+      }
+      .saveButton {
+        padding-left:45px;
+        margin:0px;width:16px; height:16px;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.toolbars.draw");
+      dojo.require("esri.toolbars.edit");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.dijit.editing.TemplatePicker");
+      dojo.require("esri.dijit.AttributeInspector");
+
+      var map;
+
+      function init() {
+        //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to
+        //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic
+        //for details on setting up a proxy page.
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+
+        esri.config.defaults.io.alwaysUseProxy = false;
+        
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-83.243, 42.584],
+          zoom: 15
+        });
+
+        dojo.connect(map, "onLayersAddResult", initEditing);
+
+        var pointLayer = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Military/FeatureServer/6", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+        var lineLayer = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Military/FeatureServer/8", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+        var polygonLayer = new esri.layers.FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Military/FeatureServer/9", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+
+        map.addLayers([pointLayer,lineLayer,polygonLayer]);
+      }
+
+      function initEditing(results) {
+        var map = this;
+        var layers = dojo.map(results, function(result) {
+          return result.layer;
+        });
+
+        //display read-only info window when user clicks on feature 
+        var query = new esri.tasks.Query();
+    
+        dojo.forEach(layers, function(layer) {
+          dojo.connect(layer, "onClick", function(evt) {
+            if (map.infoWindow.isShowing) {
+              map.infoWindow.hide();
+            }
+
+            var layerInfos = [{
+              'featureLayer': layer,
+              'isEditable': false,
+              'showDeleteButton':false
+            }];
+
+            var attInspector = new esri.dijit.AttributeInspector({
+              layerInfos: layerInfos
+            }, dojo.create("div"));
+        
+          
+            query.objectIds = [evt.graphic.attributes.objectid];
+            layer.selectFeatures(query, esri.layers.FeatureLayer.SELECTION_NEW, function(features) {
+              map.infoWindow.setTitle("");
+              map.infoWindow.setContent(attInspector.domNode);
+              map.infoWindow.resize(310, 165);
+              map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
+            });
+          });
+        });
+      
+        var templatePicker = new esri.dijit.editing.TemplatePicker({
+          featureLayers: layers,
+          rows: 'auto',
+          columns: 'auto',
+          grouping: true
+        }, "templatePickerDiv");
+
+        templatePicker.startup();
+
+        var drawToolbar = new esri.toolbars.Draw(map);
+
+        var selectedTemplate;
+
+        dojo.connect(templatePicker, "onSelectionChange", function() {
+          selectedTemplate = templatePicker.getSelected();
+
+          if (selectedTemplate) {
+            switch (selectedTemplate.featureLayer.geometryType) {
+            case "esriGeometryPoint":
+              drawToolbar.activate(esri.toolbars.Draw.POINT);
+              break;
+            case "esriGeometryPolyline":
+              selectedTemplate.template.drawingTool === 'esriFeatureEditToolFreehand' ? drawToolbar.activate(esri.toolbars.Draw.FREEHAND_POLYLINE) : drawToolbar.activate(esri.toolbars.Draw.POLYLINE);
+              break;
+            case "esriGeometryPolygon":
+              selectedTemplate.template.drawingTool === 'esriFeatureEditToolFreehand' ? drawToolbar.activate(esri.toolbars.Draw.FREEHAND_POLYGON) : drawToolbar.activate(esri.toolbars.Draw.POLYGON);
+              break;
+            }
+          }
+        });
+
+        dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
+          //display the editable info window for newly created features
+        
+          if (map.infoWindow.isShowing) {
+            map.infoWindow.hide();
+          }
+
+          drawToolbar.deactivate();
+
+          var fieldAttributes = layerFieldToAttributes(selectedTemplate.featureLayer.fields);
+          var newAttributes = dojo.mixin(fieldAttributes, selectedTemplate.template.prototype.attributes);
+          var newGraphic = new esri.Graphic(geometry, null, newAttributes);
+
+          var layerInfos = [{
+            'featureLayer': selectedTemplate.featureLayer,
+            'isEditable': true
+          }];
+
+          var attInspector = new esri.dijit.AttributeInspector({
+            layerInfos: layerInfos
+          }, dojo.create("div"));
+
+          selectedTemplate.featureLayer.applyEdits([newGraphic], null, null, function() {
+            var screenPoint = map.toScreen(getInfoWindowPositionPoint(newGraphic));
+            
+            map.infoWindow.setContent(attInspector.domNode);
+            map.infoWindow.resize(325, 185);
+            map.infoWindow.show(screenPoint, map.getInfoWindowAnchor(screenPoint));
+
+            templatePicker.clearSelection();
+          });
+
+          dojo.connect(attInspector, "onAttributeChange", function(feature, fieldName, newFieldValue) {
+            feature.attributes[fieldName] = newFieldValue;
+            feature.getLayer().applyEdits(null, [feature], null);
+          });
+
+          dojo.connect(attInspector, "onDelete", function(feature) {
+            feature.getLayer().applyEdits(null, null, [feature]);
+            map.infoWindow.hide();
+          });
+        });
+      }
+
+      function getInfoWindowPositionPoint(feature) {
+        var point;
+        switch (feature.getLayer().geometryType) {
+        case "esriGeometryPoint":
+          point = feature.geometry;
+          break;
+        case "esriGeometryPolyline":
+          var pathLength = feature.geometry.paths[0].length;
+          point = feature.geometry.getPoint(0, Math.ceil(pathLength / 2));
+          break;
+        case "esriGeometryPolygon":
+          point = feature.geometry.getExtent().getCenter();
+          break;
+        }
+        return point;
+      }
+
+      function layerFieldToAttributes(fields) {
+        var attributes = {};
+        dojo.forEach(fields, function(field) {
+          attributes[field.name] = null;
+        });
+        return attributes;
+      }
+
+      //show map on load 
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:false"
+     style="width:100%; height:100%;">
+      <div id="header" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        Feature Editing
+        <div id="subheader">
+          Bloomfield, Michigan
+        </div>
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'left'" class="roundedCorners" id="leftPane">
+        <div id="templatePickerDiv"></div>
+      </div>
+      <div id="map" class="shadow roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      </div>
+    </div>
+  </body>
+
+</html>

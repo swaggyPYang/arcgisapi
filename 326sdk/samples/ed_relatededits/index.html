@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Incident Reporter</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>   
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0; 
+        padding: 0;
+      }
+      body {
+        background-color:#fff;
+        overflow:hidden;      
+      }
+      #header{
+        border:solid 2px #AAc4c4;
+        background:#fff;
+        color:#749749;
+        border-radius: 4px;
+        font-size:14px;
+        padding-left:20px;
+        font-weight:700;
+      }
+      #map{
+        padding:1px;
+        border:solid 2px #AAc4c4;
+        border-radius: 4px;
+      }
+      #leftPane{
+        width: 120px;
+        border: solid 2px #AAc4c4;
+        border-radius: 4px;
+      }
+      .templatePicker {
+        border: none;
+      }
+      .dj_ie .infowindow .window .top .right .user .content { position: relative; }
+      .dj_ie .simpleInfoWindow .content {position: relative;}
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var widget;
+      var selected;
+      var map;
+      var voteOnIncident;
+      
+      require([
+        "esri/map", 
+        "esri/toolbars/edit",
+        "esri/graphic",
+        "esri/tasks/RelationshipQuery",
+
+        "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/layers/FeatureLayer",
+
+        "esri/symbols/SimpleMarkerSymbol",
+
+        "esri/dijit/editing/Editor",
+        "esri/dijit/editing/TemplatePicker",
+
+        "esri/config",
+        "esri/request",
+
+        "dojo/_base/array", 
+        "esri/Color",
+        "dojo/parser", 
+        "dojo/dom",
+
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+        "dojo/domReady!"
+      ], function(
+        Map, Edit, Graphic, RelationshipQuery,
+        ArcGISTiledMapServiceLayer, FeatureLayer,
+        SimpleMarkerSymbol,
+        Editor, TemplatePicker,
+        esriConfig, esriRequest,
+        arrayUtils, Color, parser, dom
+      ) {
+        parser.parse();  
+
+        // refer to "Using the Proxy Page" for more information:  https://developers.arcgis.com/javascript/3/jshelp/ags_proxy.html
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+     
+        var map = new Map("map", {
+          basemap: "streets",
+          center: [-122.405, 37.787],
+          zoom: 17
+        });
+
+        map.on("layers-add-result", initEditing);
+        
+        var incidentLayer = new FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ["*"],
+          id: "incidentLayer"
+        });
+
+        incidentLayer.setSelectionSymbol(
+          new SimpleMarkerSymbol().setColor(new Color("red"))
+        );
+        map.addLayers([incidentLayer]);
+
+        //working around an arcgis server feature service bug.  Requests to queryRelatedRecords operation fail with feature service 10.
+        //Detect if request conatins the queryRelatedRecords operation and then change the source url for that request to the corresponding mapservice
+        esriRequest.setRequestPreCallback(function(ioArgs) {
+          if (ioArgs.url.indexOf("queryRelatedRecords") !== -1) {
+            ioArgs.url = ioArgs.url.replace("FeatureServer", "MapServer");
+          }
+          return ioArgs;
+        });
+
+        function initEditing() {
+          map.infoWindow.resize(250,210);
+          var incidentLayer = map.getLayer("incidentLayer");
+          generateTemplatePicker(incidentLayer);
+          map.on("click", function(evt) {
+            if (selected) {
+              var currentDate = new Date();
+              var incidentAttributes = {
+                req_type: selected.template.name,
+                req_date:(currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear(),
+                address: "",
+                district: "",
+                status: 1
+              };
+              var incidentGraphic = new Graphic(evt.mapPoint, selected.symbol, incidentAttributes);
+              incidentLayer.applyEdits([incidentGraphic],null,null);
+            }
+          });
+
+          var title, content, graphicAttributes;
+          var relatedQuery = new RelationshipQuery();
+          relatedQuery.outFields = ["agree_with_incident"];
+          relatedQuery.relationshipId = 0;
+
+          incidentLayer.on("click", function(evt) {
+            graphicAttributes = evt.graphic.attributes;
+            title = graphicAttributes.req_type;
+            content = "<b>Date Reported: </b>" + graphicAttributes.req_date
+                    + "<br><b>Address: </b>" + graphicAttributes.address
+                    + "<br><b>District: </b>" + graphicAttributes.district;
+
+            relatedQuery.objectIds = [graphicAttributes.objectid];
+            incidentLayer.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
+              var fset = relatedRecords[graphicAttributes.objectid];
+              var count = (fset) ? fset.features.length : 0;
+              
+              content = content + "<br><hr><br><i><span id='numPeople'>" + count +
+                    "</span> people think this is important.</i>";
+              content = content + "<br><br><img style='cursor:pointer' src='images/thumbsup.jpeg'  onclick='voteOnIncident(" + graphicAttributes.objectid + ");'>";
+              map.infoWindow.setTitle(title);
+              map.infoWindow.setContent(content);
+              map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
+            });
+          });
+        }
+
+        voteOnIncident = function(objectId) {
+          var voteRecord = {
+            attributes: {
+              sf_311_serviceoid: objectId,
+              datetime: new Date().getTime(),
+              agree_with_incident: 1
+            }
+          };
+          var incidentVoteTable = new FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/1");
+          incidentVoteTable.applyEdits([voteRecord], null, null, 
+            function(addResults) {
+              var numPeople = dom.byId("numPeople").innerHTML;
+              dom.byId("numPeople").innerHTML = parseInt(numPeople, 10) + 1;
+            }, function(err){
+              alert(err);
+            }
+          );
+        };
+
+        function generateTemplatePicker(layer) {
+          console.log("layer", layer);
+          widget = new TemplatePicker({
+            featureLayers: [ layer ],
+            rows: layer.types.length,
+            columns: 1,
+            grouping: false,
+            style: "width:98%;"
+          }, "templatePickerDiv");
+
+          widget.startup();
+
+          widget.on("selection-change", function() {
+            selected = widget.getSelected();
+            console.log("selected", selected);
+          });
+        }
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:true, design:'headline'" style="width:100%;height:100%;">
+      <div data-dojo-type="dijit/layout/ContentPane"  id="header" data-dojo-props="region:'top'">Report a new incident or raise the importance of an existing issue. </div>
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+      <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'">
+        <div id="templatePickerDiv"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Map and Layer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        background-color: #cec;
+        font: 14px Segoe UI;
+        width: 200px;
+        text-align: center;
+        border-radius: 0 0 0 10px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+    var map;
+      require([
+        "esri/map", "esri/geometry/Extent", "esri/layers/FeatureLayer", "esri/InfoTemplate", "esri/symbols/SimpleFillSymbol",
+        "esri/renderers/SimpleRenderer", "esri/symbols/SimpleMarkerSymbol", "esri/renderers/ScaleDependentRenderer",
+        "esri/Color", "dojo/domReady!"
+      ], function(Map, Extent, FeatureLayer, InfoTemplate, SimpleFillSymbol, SimpleRenderer, SimpleMarkerSymbol, ScaleDependentRenderer, Color) {
+        map = new Map("map", {
+          extent: new Extent({"xmin":-2647775,"ymin":-1438140,"xmax":3525725,"ymax":1595556,"spatialReference":{"wkid":102003}}),
+          maxScale: 5000000,
+          minScale: 20000000
+        });
+        
+        var statesUrl = "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/3";
+        var refLayer2 = new FeatureLayer(statesUrl);
+        refLayer2.on("load", function() {
+          refLayer2.renderer.symbol.outline.setWidth(3);
+          refLayer2.renderer.symbol.outline.setColor(new Color("#787878"));
+          refLayer2.renderer.symbol.setColor(new Color("#FFFFFF"));
+        });
+        map.addLayer(refLayer2);
+        
+        var refLayer = new FeatureLayer(statesUrl);
+        refLayer.on("load", function(){
+          refLayer.renderer.symbol.outline.setWidth(0.5);
+          refLayer.renderer.symbol.outline.setColor(new Color("#B5ACAE"));
+          refLayer.renderer.symbol.setColor(new Color("#FFFFFF"));
+        });
+        map.addLayer(refLayer);
+        
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/USA_County_Crops_2007/FeatureServer/0", {
+          outFields: ["STATE", "COUNTY", "M086_07", "AREA"],
+          infoTemplate: new InfoTemplate("${COUNTY}, ${STATE}", "<div style='font: 18px Segoe UI'>The percentage of the area of the county that represents farmland is <b>${M086_07}%</b>.</div>")
+        });
+        layer.setDefinitionExpression("AREA>0.01 and M086_07>0");
+        
+        var markerSym = new SimpleMarkerSymbol();
+        markerSym.setColor(new Color("#78B378"));
+        markerSym.setOutline(markerSym.outline.setColor(new Color([133,197,133,0.75])));
+        var renderer1 = new SimpleRenderer(markerSym);   
+        var sizeInfo = {
+          field:"M086_07",
+          minSize:1,
+          maxSize:10,
+          minDataValue:0,
+          maxDataValue:100
+        };
+        renderer1.setSizeInfo(sizeInfo);
+
+        //for the second renderer increase the dot sizes and set a backgroundFillSymbol
+        var renderer2 = new SimpleRenderer(markerSym);
+        var sizeInfo2 = {
+          field:"M086_07",
+          minSize:5,
+          maxSize:15,
+          minDataValue:0,
+          maxDataValue:100
+        };        
+        renderer2.setSizeInfo(sizeInfo2);
+        var fillSym = new SimpleFillSymbol().setColor(null);
+        fillSym.setColor(new Color("#FFFFFF"));
+        fillSym.setOutline(fillSym.outline.setColor(new Color([133,197,133,0.25])));
+        renderer2.backgroundFillSymbol = fillSym;
+        
+        var params = {rendererInfos: [{
+          "renderer": renderer1,
+          "minScale": 50000000,
+          "maxScale": 10000000
+        }, {
+          "renderer": renderer2,
+          "minScale": 10000000,
+          "maxScale": 5000000
+        }]};
+
+        var scaleDependentRenderer = new ScaleDependentRenderer(params);
+        layer.setRenderer(scaleDependentRenderer);
+        map.addLayer(layer);
+        
+      });
+    </script>
+  </head>
+  <body bgcolor="#F7EDE0">
+   <div id="map"></div>
+    <div id="info"><div style="font-size: 36px;">Percentage of county area used for farming.</div></div>
+  </body>
+</html> 

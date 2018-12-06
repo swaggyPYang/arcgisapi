@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ArcGIS API for JavaScript Sandbox</title>
+  <link rel="stylesheet" href="https://fast.fonts.com/cssapi/4a60d16b-c9e4-404d-89d3-809adb97d65c.css">
+  <link rel="stylesheet" href="//js.arcgis.com/3.26/esri/css/esri.css">
+  <link rel="stylesheet" href="../styles/tailcoat.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+</head>
+<body>
+  <div id="wrapper">
+    <header id="header">
+      <div class="sub-nav-purple clearfix">
+        <h3 class="sandbox-header left full-title"><a href="https://developers.arcgis.com/javascript/3/">ArcGIS API for JavaScript</a> Sandbox</h3>
+        <h3 class="sandbox-header left short-title"><a href="https://developers.arcgis.com/javascript/3/">Sandbox</a></h3>
+        <div class="sandbox-toolbar right">
+          <div class="right tablet-hide">
+            <button class="btn btn-clear btn-small icon-home js-btn-description">Description</button>
+            <button class="btn btn-clear btn-small icon-storage js-btn-save-file" disabled="disabled">Download</button>
+            <button class="btn btn-clear btn-small icon-share js-btn-jsshare" disabled="disabled">Share</button>
+            <button class="btn btn-small icon-refresh js-btn-update-sandbox" disabled="disabled">Refresh</button>
+          </div>
+          <div class="right tablet-show">
+            <button class="btn btn-clear btn-small icon-home js-btn-description"></button>
+            <button class="btn btn-clear btn-small icon-storage js-btn-save-file" disabled="disabled"></button>
+            <button class="btn btn-clear btn-small icon-share js-btn-jsshare" disabled="disabled"></button>
+            <button class="btn btn-small icon-refresh js-btn-update-sandbox" disabled="disabled"></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="code">
+      <div id="editor"></div>
+      <div id="handle"></div>
+    </div>
+
+    <div id="output">
+      <div class="loader">
+        <span class="side side-left"><span class="fill"></span></span>
+        <span class="side side-right"><span class="fill"></span></span>
+        <p class="loading-word">Loading...</p>
+      </div>
+
+    </div>
+      <footer>
+        <small class="left sandbox-keyboard-shortcuts-container"><a class="btn-sandbox-keyboard-shortcuts js-btn-sandbox-keyboard-shortcuts">Keyboard shortcuts</a></small>
+        <small id="footer-legal"><a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a></small>
+      </footer>
+  </div>
+
+  <div class="sandbox-keyboard-shortcuts-modal js-sandbox-keyboard-shortcuts-modal">
+
+     <div class="container sandbox-modal-content js-sandbox-keyboard-shortcuts-modal-content">
+       <span class="icon icon-close right sandbox-keyboard-shortcuts-modal-close js-sandbox-keyboard-shortcuts-modal-close"></span>
+       <h3>Keyboard shortcuts</h3>
+       <hr class="leader-0 trailer-1">
+       <div class="column-24">
+         <div class="column-11">
+           <table class="table-plain keyboard-mappings">
+             <thead>
+               <tr><th></th><th>Sandbox</th></tr>
+             </thead>
+             <tbody>
+               <tr>
+                 <td>
+                   <kbd>?</kbd>
+                 </td>
+                 <td>Bring up this help dialog</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>esc</kbd>
+                 </td>
+                 <td>Dismiss this help dialog</td>
+               </tr>
+
+               <tr>
+                 <td>
+                   <kbd>g</kbd>
+                   <kbd>s</kbd>
+                 </td>
+                 <td>Go to Sample Code</td>
+               </tr>
+
+               <tr>
+                 <td>
+                   <kbd>c</kbd>
+                 </td>
+                 <td>Focus code</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>d</kbd>
+                 </td>
+                 <td>Download code</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>s</kbd>
+                 </td>
+                 <td>Share in online code editor</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ enter</span>
+                     <span class="platform-other">ctrl enter</span>
+                   </kbd>
+                 </td>
+                 <td>Refresh output</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>t</kbd>
+                   <kbd>h</kbd>
+                 </td>
+                 <td>Toggle HTML</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>t</kbd>
+                   <kbd>o</kbd>
+                 </td>
+                 <td>Toggle output</td>
+               </tr>
+             </tbody>
+           </table>
+         </div>
+         <div class="column-13">
+           <table class="table-plain keyboard-mappings">
+             <thead>
+               <tr><th></th><th>Code panel</th></tr>
+             </thead>
+             <tbody>
+               <tr>
+                <td>
+                  <kbd>
+                    <span class="platform-mac">shift esc</span>
+                    <span class="platform-other">shift esc</span>
+                  </kbd>
+                </td>
+                <td>Focus Sandbox</td>
+              </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ enter</span>
+                     <span class="platform-other">ctrl enter</span>
+                   </kbd>
+                 </td>
+                 <td>Refresh output</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">option ⌘ g</span>
+                     <span class="platform-other">ctrl alt g</span>
+                   </kbd>
+                 </td>
+                 <td>Go to line</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ /</span>
+                     <span class="platform-other">ctrl /</span>
+                   </kbd>
+                 </td>
+                 <td>Line comment</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">option ⌘ l</span>
+                     <span class="platform-other">ctrl alt l</span>
+                   </kbd>
+                 </td>
+                 <td>Auto indent code</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ k</span>
+                     <span class="platform-other">ctrl k</span>
+                   </kbd>
+                 </td>
+                 <td>Toggle <a href="https://en.wikipedia.org/wiki/Vim_(text_editor)">vim</a>, <kbd>:w</kbd> Refresh Output</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ shift &gt;</span>
+                     <span class="platform-other">ctrl shift &gt;</span>
+                   </kbd>
+                 </td>
+                 <td>Increase font size</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ shift &lt;</span>
+                     <span class="platform-other">ctrl shift &lt;</span>
+                   </kbd>
+                 </td>
+                 <td>Decrease font size</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">⌘ 0</span>
+                     <span class="platform-other">ctrl 0</span>
+                   </kbd>
+                 </td>
+                 <td>Reset font size</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">ctrl 1</span>
+                     <span class="platform-other">ctrl 1</span>
+                   </kbd>
+                 </td>
+                 <td>Toggle HTML</td>
+               </tr>
+               <tr>
+                 <td>
+                   <kbd>
+                     <span class="platform-mac">ctrl 2</span>
+                     <span class="platform-other">ctrl 2</span>
+                   </kbd>
+                 </td>
+                 <td>Toggle Output</td>
+               </tr>
+             </tbody>
+           </table>
+           <p>
+             <span class="font-size--3">
+               Code panel <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts">default shortcuts</a>
+             </span>
+           </p>
+         </div>
+       </div>
+     </div>
+   </div>
+
+  <script>
+    var urlData = document.location;
+    var dojoConfig = {
+      packages: [
+        {
+          name: "sandbox-libs",
+          location: urlData.protocol + "//" + urlData.hostname + urlData.pathname.replace("sandbox.html", "js")
+        },
+        {
+          "name": "libs",
+          "location": document.location.pathname.replace(/\/[^/]+$/, "/") + "../scripts/libs"
+        }
+      ]
+    };
+    document.documentElement.setAttribute("data-browser", navigator.userAgent);
+    document.documentElement.setAttribute("data-platform", navigator.platform);
+  </script>
+  <script src="//js.arcgis.com/3.26/"></script>
+  <script src="js/ace/ace.js"></script>
+  <script src="js/ace/keybinding-vim.js"></script>
+  <script src="js/FileSaver.js"></script>
+  <script src="js/BlobBuilder.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+

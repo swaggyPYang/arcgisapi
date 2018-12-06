@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="content-language" content="en">
+  <meta name="product" content="js-api-arcgis">
+  <meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE">
+  <meta name="sub_category" content="JavaScript API">
+  <meta name="search-collection" content="help">
+  <meta name="search-category" content="help-api,help-api-guide">
+  <meta name="version" content="3.x">
+  <meta name="content_type" content="Help Topic"> 
+  <meta name="last-modified" content="2018-09-21"> 
+
+  <link rel="stylesheet" href="../styles/screen.css">
+  <link rel="stylesheet" href="../styles/jsdoc.css">
+  <link rel="stylesheet" href="../styles/hljs-github.css">
+  <link rel="stylesheet" href="../styles/homepage.css">
+  <link rel="stylesheet" href="../styles/grid.css">
+  <link rel="stylesheet" href="../styles/tree.css">
+  <link rel="stylesheet" href="../prettify/prettify.css">
+  <link rel="stylesheet" href="../styles/tailcoat-search.css">
+  <link rel="stylesheet" href="//fast.fonts.com/cssapi/23855eec-5fdf-4594-9898-0113a04bfef0.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+
+  <style>
+    html {
+      overflow-y: auto;
+    }
+    pre {
+      font-size: 1.1em;
+      line-height: normal;
+      margin: 0;
+    }
+    #header nav li a {
+      font-size: .875em;
+    }
+    #esri-logo {
+      margin-left: 0;
+    }
+    h1.light {
+      color: #fff;
+    }
+    .navigation-bar {
+      background-image: url("../graphics/tailcoat/navigation-bar-background.jpg");
+    }
+  </style>
+  <title>What's new in Version 3.11 | Guide | ArcGIS API for JavaScript 3.26</title>
+  
+  
+</head>
+
+<body>
+<header class="header">
+  <div class="container">
+    <nav class="site-nav trailer-half">
+        Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="navigation-bar ">
+    <div class="container">
+      <header>
+        <h1 class="light"><a href="..">ArcGIS API for JavaScript <sup>3.26</sup></a></h1>
+      </header>
+       <nav class="navigation-bar-nav">
+        <ul>
+            <li class=""><a href="../">Home</a></li>
+            <li class="current"><a href=".">Guide</a></li>
+            <li class=""><a href="../jsapi/">API Reference</a></li>
+            <li class=""><a href="../jssamples/">Sample Code</a></li>
+            <li class=""><a class="icon-share icon-link-external" href="https://community.esri.com/community/developers/web-developers/arcgis-api-for-javascript">Community</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+ 
+
+<div class="container_12">
+  <div class="grid_3 contentWrapper">
+    <div id="toggleToc">
+      <img src="../graphics/tochide.gif" alt=""> Hide Table of Contents
+    </div>
+    <div id="apiToc"><div class="treeDiv" id="tree" style="top: 35px; left: 0px;">
+  <div id="treeRoot">
+    <div class="treeNode">
+      <a class="treeUnselected" href="." onclick="clickAnchor(this)">Overview</a>
+    </div>
+    <div class="treeNode">
+      <a class="treeUnselected" href="whats_new.html" onclick="clickAnchor(this)">What's New in Version 3.26</a>
+    </div>
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Tutorials</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firstmap_amd.html" onclick="clickAnchor(this)">Build your first application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_agstemplate_amd.html" onclick="clickAnchor(this)">Use an ArcGIS.com webmap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_dev.html" onclick="clickAnchor(this)">Mobile-specific application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions.html" onclick="clickAnchor(this)">Directions widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_search.html" onclick="clickAnchor(this)">Search widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_label_layer.html" onclick="clickAnchor(this)">Labeling features client-side</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_javascript_classes.html" onclick="clickAnchor(this)">Write a class</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_custom_dijit.html" onclick="clickAnchor(this)">Create a re-usable widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_sharing_maps_secure_layers.html" onclick="clickAnchor(this)">Share maps with secure layers</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">About the API</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_gettingstarted.html" onclick="clickAnchor(this)">Get Started</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_accessapi.html" onclick="clickAnchor(this)">Get the API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="localization.html" onclick="clickAnchor(this)">Localization</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="css.html" onclick="clickAnchor(this)">Required CSS</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="supported_browsers.html" onclick="clickAnchor(this)">Supported Browsers</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="community.html" onclick="clickAnchor(this)">Community</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Dojo
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo.html" onclick="clickAnchor(this)">Work with Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoversion.html" onclick="clickAnchor(this)">Get Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojodijits.html" onclick="clickAnchor(this)">Dijits</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo_amd.html" onclick="clickAnchor(this)">Dojo and AMD</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoLayouts.html" onclick="clickAnchor(this)">Dojo Layouts</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojohelp.html" onclick="clickAnchor(this)">Additional resources</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="why_dojo.html" onclick="clickAnchor(this)">Why Dojo?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        Work with the API
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_defaults.html" onclick="clickAnchor(this)">Default API configurations</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bundle.html" onclick="clickAnchor(this)">Default API strings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_esri_request.html" onclick="clickAnchor(this)">Retrieve data from a web server</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_navigation.html" onclick="clickAnchor(this)">Map navigation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_events.html" onclick="clickAnchor(this)">Events</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_extents.html" onclick="clickAnchor(this)">Set Extents</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_editing.html" onclick="clickAnchor(this)">Editing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="arcade.html" onclick="clickAnchor(this)">Arcade</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_temporal.html" onclick="clickAnchor(this)">Time aware data</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firsttask.html" onclick="clickAnchor(this)">Adding a task</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_querytask.html" onclick="clickAnchor(this)">Using QueryTask</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_custom_layers.html" onclick="clickAnchor(this)">Creating custom layer types</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_webmap.html" onclick="clickAnchor(this)">Web maps</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_analysiswidgets.html" onclick="clickAnchor(this)">Working with Analysis Widgets</a>
+        </div>
+        <div class="treeNode">
+        <a class="treeUnselected" href="intro_search_widget.html" onclick="clickAnchor(this)">Working with the Search Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions_widget.html" onclick="clickAnchor(this)">Working with the Directions Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_geoenrichment.html" onclick="clickAnchor(this)">Working with GeoEnrichment Widgets</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_datareviewer.html" onclick="clickAnchor(this)">Working with DataReviewer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_locationproviders.html" onclick="clickAnchor(this)">Location Providers (beta)</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Graphics and feature layers</span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_graphics.html" onclick="clickAnchor(this)">Graphics overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_feature_layers.html" onclick="clickAnchor(this)">Feature layer overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_renderers.html" onclick="clickAnchor(this)">Symbols and renderers</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_bettermaps.html" onclick="clickAnchor(this)">Data Visualization</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_styling_svg.html" onclick="clickAnchor(this)">Styling features with CSS</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Popups and Info Windows
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_infowindow.html" onclick="clickAnchor(this)">Info windows and graphics</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_formatinfowindow.html" onclick="clickAnchor(this)">Format info window content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customize.html" onclick="clickAnchor(this)">Customize info windows</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_agspopup.html" onclick="clickAnchor(this)">Popup overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_popuptemplate.html" onclick="clickAnchor(this)">Format popup content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customizepopup.html" onclick="clickAnchor(this)">Customize popup</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Geoprocessor
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_overview.html" onclick="clickAnchor(this)">Geoprocessing overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_creating.html" onclick="clickAnchor(this)">Creating the geoprocessor</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_parameters.html" onclick="clickAnchor(this)">Geoprocessor parameters</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_running.html" onclick="clickAnchor(this)">Geoprocessing results</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Operations Dashboard
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="operations-dashboard-extensibility-overview.html" onclick="clickAnchor(this)">Overview</a>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Get started
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-setup-dev-env.html" onclick="clickAnchor(this)">Set up a development environment</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-samples.html" onclick="clickAnchor(this)">Samples</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Create extensions
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-overview.html" onclick="clickAnchor(this)">Overview of widgets, map tools and feature actions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-widget.html" onclick="clickAnchor(this)">Create a widget</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-maptool.html" onclick="clickAnchor(this)">Create a map tool</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-configurable.html" onclick="clickAnchor(this)">Create a configurable extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-manifest.html" onclick="clickAnchor(this)">Manifest</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Test and debug
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-test-debug.html" onclick="clickAnchor(this)">Test and debug in Operations Dashboard</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-troubleshooting.html" onclick="clickAnchor(this)">Troubleshooting</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Deploy
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-overview.html" onclick="clickAnchor(this)">Overview of deploying extensions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-setup-web-server.html" onclick="clickAnchor(this)">Set up a web server</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-register-ext.html" onclick="clickAnchor(this)">Register an extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-update-ext.html" onclick="clickAnchor(this)">Update an extension</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Mobile</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_viewport.html" onclick="clickAnchor(this)">Viewport Settings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_hardware.html" onclick="clickAnchor(this)">Device Detection and Browser Sniffing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_orientation.html" onclick="clickAnchor(this)">Device Orientation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_geolocation.html" onclick="clickAnchor(this)">Geolocation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_frameworks.html" onclick="clickAnchor(this)">Frameworks</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_phonegap.html" onclick="clickAnchor(this)">Using PhoneGap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_references.html" onclick="clickAnchor(this)">References</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        ArcGIS Server Services
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_overview.html" onclick="clickAnchor(this)">Overview</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_rest.html" onclick="clickAnchor(this)">Services directory and the REST API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_secureservices.html" onclick="clickAnchor(this)">Working with secure resources</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_proxy.html" onclick="clickAnchor(this)">Using the proxy page</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        References
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_web_optimizer.html" onclick="clickAnchor(this)">Using the Web Optimizer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bower_custom_builds.html" onclick="clickAnchor(this)">Using Bower for Custom Builds</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="limits_for_graphics.html" onclick="clickAnchor(this)">Determine limits for map graphics</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="best_practices_feature_layers.html" onclick="clickAnchor(this)">Feature layer best practices</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_guidelines.html" onclick="clickAnchor(this)">Coding guidelines</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ref_coordsystems.html" onclick="clickAnchor(this)">Coordinate system IDs</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="licensing.html" onclick="clickAnchor(this)">Licensing & Attribution</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_faq.html" onclick="clickAnchor(this)">Frequently asked questions</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        What's New archive
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_30.html" onclick="clickAnchor(this)">Migrating to 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_20.html" onclick="clickAnchor(this)">Migrating to 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v325.html" onclick="clickAnchor(this)">What's New in Version 3.25</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v324.html" onclick="clickAnchor(this)">What's New in Version 3.24</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v323.html" onclick="clickAnchor(this)">What's New in Version 3.23</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v322.html" onclick="clickAnchor(this)">What's New in Version 3.22</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v321.html" onclick="clickAnchor(this)">What's New in Version 3.21</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v320.html" onclick="clickAnchor(this)">What's New in Version 3.20</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v319.html" onclick="clickAnchor(this)">What's New in Version 3.19</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v318.html" onclick="clickAnchor(this)">What's New in Version 3.18</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v317.html" onclick="clickAnchor(this)">What's New in Version 3.17</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v316.html" onclick="clickAnchor(this)">What's New in Version 3.16</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v315.html" onclick="clickAnchor(this)">What's New in Version 3.15</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v314.html" onclick="clickAnchor(this)">What's New in Version 3.14</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v313.html" onclick="clickAnchor(this)">What's New in Version 3.13</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v312.html" onclick="clickAnchor(this)">What's New in Version 3.12</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v311.html" onclick="clickAnchor(this)">What's New in Version 3.11</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v310.html" onclick="clickAnchor(this)">What's New in Version 3.10</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v39.html" onclick="clickAnchor(this)">What's New in Version 3.9</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v38.html" onclick="clickAnchor(this)">What's New in Version 3.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v37.html" onclick="clickAnchor(this)">What's New in Version 3.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v36.html" onclick="clickAnchor(this)">What's New in Version 3.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v35.html" onclick="clickAnchor(this)">What's New in Version 3.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v34.html" onclick="clickAnchor(this)">What's New in Version 3.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v33.html" onclick="clickAnchor(this)">What's New in Version 3.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v32.html" onclick="clickAnchor(this)">What's New in Version 3.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v31.html" onclick="clickAnchor(this)">What's New in Version 3.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v30.html" onclick="clickAnchor(this)">What's New in Version 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v28.html" onclick="clickAnchor(this)">What's New in Version 2.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v27.html" onclick="clickAnchor(this)">What's New in Version 2.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v26.html" onclick="clickAnchor(this)">What's New in Version 2.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v25.html" onclick="clickAnchor(this)">What's New in Version 2.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v24.html" onclick="clickAnchor(this)">What's New in Version 2.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v23.html" onclick="clickAnchor(this)">What's New in Version 2.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v22.html" onclick="clickAnchor(this)">What's New in Version 2.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v21.html" onclick="clickAnchor(this)">What's New in Version 2.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v20.html" onclick="clickAnchor(this)">What's New in Version 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v16.html" onclick="clickAnchor(this)">What's New in Version 1.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v15.html" onclick="clickAnchor(this)">What's New in Version 1.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v14.html" onclick="clickAnchor(this)">What's New in Version 1.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v13.html" onclick="clickAnchor(this)">What's New in Version 1.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v12.html" onclick="clickAnchor(this)">What's New in Version 1.2</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+</div> 
+  </div>
+  <div class="grid_9 contentWrapper">
+    <div id="topicPane" class="js-scroll-to-top"><div id="pageBanner">What's new in Version 3.11</div>
+<div id="nstext">
+
+<h4 class="dtH4">Shorter reference URLs</h4>
+
+<p><i>This is important if you're upgrading from earlier versions!</i>
+<br/>To update your code for version 3.11 references, replace the following URLs accordingly:
+<code>/3.10/js/dojo/</code> should now read <code>/3.11/</code> (note the dropped "/js/dojo") and <code>/3.10/js/esri/</code> should now read <code>/3.11/esri/</code> (note the dropped "/js") .
+<p>An example of this is shown below</p>
+<div class="detailSample">
+<pre class="prettyprint">
+&lt;link rel="stylesheet" href="https://js.arcgis.com/3.11/dijit/themes/claro/claro.css"&gt;
+&lt;link rel="stylesheet" href="https://js.arcgis.com/3.11/esri/css/esri.css"&gt;</pre></div>
+
+<h4 class="dtH4">SDK improvements</h4>
+
+<ul>
+    <li>New updated SDK homepage.</li>
+    <li>More sandbox supported samples.</li>
+    <li>Tutorials are now listed under <strong>Guide</strong> tab.</li>
+    <li>More deep links inside of documentation support better navigation.</li>
+</ul>
+
+<h4 class="dtH4">New attribute driven data visualization using <code>opacityInfo</code></h4>
+
+<p>
+    Developers will now have additional ways to improve their data visualization techniques when displaying information in
+    their maps when using <a href="../jsapi/renderer-amd.html#opacityinfo"><code>opacityInfo</code></a> with
+    <a href="../jsapi/renderer-amd.html"><code>Renderers</code></a>.
+   <br/>
+    <a href="../jssamples/renderer_opacityinfo.html"><img src="./images/whats_new/3.11/datavisualization-opacityinfo.png" alt=""/></a>
+</p>
+<div class="detailSample">
+<pre class="prettyprint">
+renderer.setOpacityInfo({
+  field: "M086_07",
+  stops: [
+    { value: 10, opacity: 0   },  // -1 stddev,     transparent
+    { value: 39, opacity: 0.5 },  // average value, 50% transparent
+    { value: 68, opacity: 1   }   // +1 stddev,     completely opaque
+  ]
+});
+</pre>
+</div>
+    <br/>
+    For more information, check out the blog series on data visualization techniques as well as the samples listed under the
+    <a href="../jssamples/renderer_class_breaks_proportional_rotation.html"><code>Renderers</code></a> section in the API help.
+    <ul>
+        <li><a href="https://blogs.esri.com/esri/arcgis/2014/09/05/data-visualization-with-arcgis-api-for-javascript/">Data Visualization with ArcGIS API for JavaScript</a></li>
+        <li><a href="https://blogs.esri.com/esri/arcgis/2014/09/11/data-visualization-with-arcgis-api-for-javascript-show-data-by-unique-value/">Data Visualization with ArcGIS API for JavaScript: Show Data by Unique Value</a></li>
+        <li><a href="https://blogs.esri.com/esri/arcgis/2014/09/24/data-visualization-with-arcgis-api-for-javascript-enhancement-options/">Data Visualization with ArcGIS API for JavaScript: Enhancement Options</a></li>
+    </ul>
+
+<h4 class="dtH4">New <code>HeatmapRenderer</code> for <code>FeatureLayer</code> (beta)</h4>
+
+<p>
+    <code>FeatureLayer</code> has a new renderer at this release. The <a href="../jsapi/heatmaprenderer-amd.html"><code>HeatmapRenderer</code></a>
+    creates a surface using a standard <a href="https://en.wikipedia.org/wiki/Gaussian_blur">Gaussian blur</a> algorithm
+    used in data visualization for illustrating areas of concentration within datasets.
+    The HeatmapRenderer will only work in modern browsers (not IE9 and below).
+    <br/>
+</p>
+<a href="../jssamples/renderer_heatmap.html"><img src="./images/whats_new/3.11/renderer-heatmap.png" alt=""/></a>
+<a href="../jssamples/renderer_heatmap_weighted.html"><img src="./images/whats_new/3.11/renderer-heatmap-weighted.png" alt=""/></a>
+
+<h4 class="dtH4">Discovering demographic data and GeoEnrichment variables with DataBrowser</h4>
+
+<p>
+    Developers building applications enriched with
+    <a href="https://developers.arcgis.com/en/features/geo-enrichment/">Geoenrichment</a> data, can now
+    leverage the <a href="../jsapi/databrowser-amd.html"><code>DataBrowser</code></a>
+    widget. This widget simplifies the process of discovering Geoenrichment variables for enhancing data in applications
+    or
+    gathering variables for generating reports.
+    <br/>
+    <img src="./images/whats_new/3.11/geoenrichment-databrowser.png" alt=""/>
+</p>
+
+<h4 class="dtH4">Improvements when using web maps</h4>
+
+<p>
+    At this release a new property <a href="../jsapi/esri.arcgis.utils-amd.html#createmap-options-editable">editable</a>
+    in options on method <code>createMap</code> was introduced. When supporting non-editing workflows,
+    this will override layers that would have otherwise been editable and allow the <code>FeatureLayers</code>
+    in a web map to load using generalized geometry instead of loading detailed geometries for editing purposes.
+</p>
+<p>
+    Developers consuming web maps will be able to leverage performance enhancements at this release
+    due to internal optimizations which intelligently load modules based upon a web map configuration
+    when using the module <code>esri/arcgis/utils</code>, and the <a href="../jsapi/esri.arcgis.utils-amd.html#createmap">createMap</a> method when hydrating
+    web maps.
+</p>
+
+<h4 class="dtH4">Faster application loading</h4>
+
+<p>
+    Many performance enhancements were introduced into the standard and compact builds at this release. These changes
+    will allow users of the compact and standard build to leverage the most frequently used modules resulting in overall
+    performance when loading the compact and standard versions of the JavaScript API.
+</p>
+<p>
+    For best performance with web map, please re-save any existing web maps. To do this, simply open the web map in the Viewer, then click "Save".
+    This will update them to the latest version which will benefit the loading of your applications.
+</p>
+
+<h4 class="dtH4">Web Optimizer changes and enhancements</h4>
+
+<ul>
+    <li>More optimizations to minimize download size when "Only include built layer files and resources" is checked.</li>
+    <li>New advanced option to select locales for custom builds.</li>
+    <li>Users now receive links to builds in email notifications.</li>
+    <li>Additional help topics of <a href="./inside_web_optimizer.html#use">Using a custom build</a>
+        and <a href="./inside_web_optimizer.html#build_report">Accessing the build report</a>.</li>
+</ul>
+
+<h4 class="dtH4">Measurement widget enhancements</h4>
+
+<p>
+    New developer events and methods to support interacting with geometries during the life cycle of the <code>Measurement</code>
+    widget, accessing the current tool, and current units. Fixed issues for developers when using the
+    <code>Measurement</code>
+    widget in applications and services containing coordinate systems other than WGS84 and Web Mercator.
+</p>
+
+<h4 class="dtH4">Driving direction enhancements</h4>
+<p>
+    The directions print window includes an overview map of the route as long as you either use
+    the ArcGIS Online Route service or specify a
+    <a href="../jsapi/directions-amd.html#directions1-printtaskurl"><code>printTaskUrl</code></a>.
+</p>
+
+<h4 class="dtH4">Labelling improvements</h4>
+
+<p>
+    The <code>Map</code> class has a new constructor option <a href="../jsapi/map-amd.html#map1-showlabels">showLabels</a>
+    to indicate whether to automatically display labels. If true, any feature layer added to the map will automatically
+    be labelled based on the feature layer's labelingInfo and the layer's own showLabels status.
+</p>
+<p>
+    The <code>LabelLayer</code> has been improved with to work with domain values,
+    better support for field names containing non-ASCII characters,
+    better label placements,
+    support label placements using "always-horizontal" style,
+    and to work better with time-aware data.
+</p>
+
+<!--<h4 class="dtH4"><code>KMLLayer</code> improvements</h4>
+
+<p>
+    Performance improvements and better handling of some KML features, for example
+    KML placemarks with hotspots now display in the correct location.</li>
+</p> -->
+
+<h4 class="dtH4">Developer enhancements for dealing with projecting features</h4>
+
+<p>
+    New methods for developers to easily (a) check if client-side projection is possible
+    (<a href="../jsapi/esri.geometry.webmercatorutils-amd.html#canproject">canProject</a>)
+    and (b) <a href="../jsapi/esri.geometry.webmercatorutils-amd.html#project">project</a> geometries
+    (without using geometry service).
+</p>
+<div class="detailSample">
+<pre class="prettyprint">
+var pt = Point(0, 0), // a geographic point.
+    result;
+if (webMercatorUtils.canProject(pt, map)) {
+    // Returns true if the 'source' can be projected to 'target' by the project() function, or if source and target is the same spatialReference.
+    result = webMercatorUtils.project(pt, map);
+}
+else{
+    // cannot project client-side, use GeometryService
+}
+</pre>
+</div>
+
+<h4 class="dtH4">Enhancements to <code>InfoTemplate</code> custom functions</h4>
+
+<p>
+    Developers now have the ability to use custom format functions within <code>InfoTemplate</code> to use options like the built-in format functions.
+    This can be useful when you are reusing a formatting function with different options.
+    <br/>
+    <img src="./images/whats_new/3.11/infotemplate-custom-formatting.png" alt=""/>
+</p>
+<div class="detailSample">
+    
+<pre class="prettyprint">
+CustomFormat = function (value, key, data, options){
+  if(options.currency === "CAD"){
+    return dojoCurrency.format(value * 1.1260, options);
+  }
+  else if(options.currency === "EUR"){
+    return dojoCurrency.format(value * 1.25140, options);
+  }
+  else{
+    return dojoCurrency.format(value, options);
+  }
+}
+
+infoTemplate.setTitle("${NAME}, ${STATE_NAME}");
+infoTemplate.setContent("&lt;b>Total (EUR): &lt;/b>${AVG_SALE97:CustomFormat( currency: 'EUR', places: '2')}&lt;br/>" +
+  "&lt;b>Total (CAD): &lt;/b>${AVG_SALE97:CustomFormat( currency: 'CAD', places: '2')}&lt;br/> " +
+  "&lt;b>Total (USD): &lt;/b>${AVG_SALE97:CustomFormat( currency: 'USD', places: '2')}&lt;br/>");
+</pre>
+        
+</div>
+
+<h4 class="dtH4">API enhancements</h4>
+<ul>
+    <li>New class <a href="../jsapi/heatmaprenderer-amd.html"><code>HeatmapRenderer</code></a> (beta).</li>
+    <li>New class <a href="../jsapi/databrowser-amd.html"><code>DataBrowser</code></a>.</li>
+    <li>New method <a href="../jsapi/polygon-amd.html#fromextent">fromExtent</a> on <code>Polygon</code> class.</li>
+    <li>New property <a href="../jsapi/locatebutton-amd.html#clearontrackingstop">clearOnTrackingStop</a>
+        on <code>LocateButton</code> class.</li>
+    <li>New constructor option <a href="../jsapi/featurelayer-amd.html#featurelayer1-definitionexpression">definitionExpression</a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New properties <a href="../jsapi/featurelayer-amd.html#supportsattachmentsbyuploadid">supportsAttachmentsByUploadId</a> and
+        <a href="../jsapi/featurelayer-amd.html#supportscalculate">supportsCalculate</a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New constructor option <a href="../jsapi/featurelayer-amd.html#featurelayer1-showlabels">showLabels</a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New property <a href="../jsapi/featurelayer-amd.html#showlabels">showLabels</a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New method <a href="../jsapi/featurelayer-amd.html#setshowlabels">setShowLabels</a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New event <a href="../jsapi/featurelayer-amd.html#event-show-labels-change"><code>show-labels-change</code></a>
+        on <code>FeatureLayer</code> class.</li>
+    <li>New constructor option <a href="../jsapi/map-amd.html#map1-showlabels">showLabels</a>
+        on <code>Map</code> class.</li>
+    <li>New property <a href="../jsapi/renderer-amd.html#opacityinfo">opacityInfo</a> on <code>Renderer</code> class.</li>
+    <li>New methods <a href="../jsapi/renderer-amd.html#setopacityinfo">setOpacityInfo</a> and
+        <a href="../jsapi/renderer-amd.html#getopacityinfo">getOpacityInfo</a> on <code>Renderer</code> class.</li>
+    <li>New methods <a href="../jsapi/measurement-amd.html#gettool">getTool</a> and
+        <a href="../jsapi/measurement-amd.html#getunit">getUnit</a> on <code>Measurement</code> class.</li>
+    <li>New events <a href="../jsapi/measurement-amd.html#event-measure-start"><code>measure-start</code></a> and
+        <a href="../jsapi/measurement-amd.html#event-measure"><code>measure</code></a> on <code>Measurement</code> class.</li>
+    <li>Updated event <a href="../jsapi/measurement-amd.html#event-measure-end"><code>measure-end</code></a> on
+        <code>Measurement</code>.</li>
+    <li>New events <a href="../jsapi/measurement-amd.html#event-tool-change"><code>tool-change</code></a> and
+        <a href="../jsapi/measurement-amd.html#event-unit-change"><code>unit-change</code></a>
+        on <code>Measurement</code> class.</li>
+    <li>New constructor option <a href="../jsapi/geocoder-amd.html#geocoder1-highlightlocation">highlightLocation</a>
+        on <code>Geocoder</code> class.</li>
+    <li>New constructor options <a href="../jsapi/geocoder-amd.html#geocoder1-symbol">symbol</a>,
+        <a href="../jsapi/geocoder-amd.html#geocoder1-graphicslayer">graphicsLayer</a> and
+        <a href="../jsapi/geocoder-amd.html#geocoder1-geocoders">geocoders</a> on <code>Geocoder</code> class.</li>
+    <li>New property <a href="../jsapi/geocoder-amd.html#highlightlocation">highlightLocation</a>,
+        <a href="../jsapi/geocoder-amd.html#symbol">symbol</a> and
+        <a href="../jsapi/geocoder-amd.html#graphicslayer">graphicsLayer</a> on <code>Geocoder</code> class.</li>
+    <li>New method <a href="../jsapi/locator-amd.html#suggestlocations">suggestLocations</a> on
+        <code>Locator</code> class.</li>
+    <li>New event <a href="../jsapi/locator-amd.html#event-suggest-locations-complete">suggest-locations-complete</a>
+        on <code>Locator</code> class.</li>
+    <li>New properties
+        <a href="../jsapi/locator-amd.html#categories">categories</a> and
+        <a href="../jsapi/locator-amd.html#countrycode">countryCode</a>
+        on <code>Locator</code> class.
+        The countryCode property only applies to
+        the <a href="https://developers.arcgis.com/en/features/geocoding/">Esri global geocoder</a>. [ENH-000081715]</li>
+    <li>New property <a href="../jsapi/printtemplate-amd.html#outscale">outScale</a>
+        on <code>PrintTemplate</code> class to support printing at a specific scale.</li>
+    <li>New property <a href="../jsapi/query-amd.html#returndistinctvalues">returnDistinctValues</a>
+        on <code>Query</code> class. [NIM091580]</li>
+    <li>New constructor options
+        <a href="../jsapi/streamlayer-amd.html#streamlayer1-maximumtrackpoints">maximumTrackPoint</a> and
+        <a href="../jsapi/streamlayer-amd.html#streamlayer1-geometrydefinition">geometryDefinition</a>
+        on <code>StreamLayer</code> class.</li>
+    <li>Updated methods <a href="../jsapi/streamlayer-amd.html#setdefinitionexpression">setDefinitionExpression</a> and
+        <a href="../jsapi/streamlayer-amd.html#getdefinitionexpression">getDefinitionExpression</a>
+        on <code>StreamLayer</code> class.</li>
+    <li>New methods <a href="../jsapi/streamlayer-amd.html#setmaximumtrackpoints">setMaximumTrackPoints</a> ,
+        <a href="../jsapi/streamlayer-amd.html#getgeometrydefinition">getGeometryDefinition</a> and
+        <a href="../jsapi/streamlayer-amd.html#setgeometrydefinition">setGeometryDefinition</a>
+        on <code>StreamLayer</code> class.</li>
+    <li>New events <a href="../jsapi/streamlayer-amd.html#event-filter-change">filter-change</a>,
+        <a href="../jsapi/streamlayer-amd.html#event-attempt-reconnect">attempt-reconnect</a> and
+        <a href="../jsapi/streamlayer-amd.html#event-connection-error">connection-error</a>
+        on <code>StreamLayer</code> class.</li>
+    <li>New constructor options
+        <a href="../jsapi/directions-amd.html#directions1-geometrytaskurl">geometryTaskUrl</a> and
+        <a href="../jsapi/directions-amd.html#directions1-printtaskurl">printTaskUrl</a>
+        on <code>Directions</code> class.</li>
+    <li>New property <a href="../jsapi/esri.arcgis.utils-amd.html#createmap-options-editable">editable</a> in
+        options on method <code>createMap</code></li>
+    <li>New methods
+        <a href="../jsapi/esri.geometry.webmercatorutils-amd.html#canproject">canProject</a> and
+        <a href="../jsapi/esri.geometry.webmercatorutils-amd.html#project">project</a>
+        on <code>webMercatorUtils</code> class.</li>
+    <li>All events include a target property.</li>
+</ul>
+
+<h4 class="dtH4">Bug fixes</h4>
+<ul>
+    <li>NIM100031: Users now have a consistent user experience for Popups containing multiple features read-only and edit.
+        <br/>
+        <img src="./images/whats_new/3.11/editing-overlapping-features.png" alt="" />
+    </li>
+    <li>BUG-000080930: Popup next/previous buttons should switch for Right-To-Left.</li>
+    <li>NIM100127: Fixed issue where inline style for font size was applied using Internet Explorer.</li>
+    <li>NIM103917: The InfoTemplate
+        <code>zoomTo</code>function now works with a single point in a multipoint feature class.
+    </li>
+    <li>NIM103178: Fixed an issue where printing ArcGISDynamicMapServiceLayers with layer definitions on sub layers
+        printed all of these layers were printed regardless of whether their visibility was set to false.
+    </li>
+    <li>NIM101737: The Draw toolbar extent geometry now displays in exported web map.</li>
+    <li>NIM103247: Fixed issue where the zoom rectangle would not display properly when using Internet Explorer.</li>
+    <li>NIM103715: Fixed an issue where Esri demographic layers show a long running script message when opening a popup
+        using IE8.
+    </li>
+    <li>NIM102529: Esri logo in samples now opens the respective URL in Internet Explorer.</li>
+    <li>NIM095050: Scale visibility of KML layer is now honored.</li>
+    <li>NIM104028: Fixed an issue where a labeled feature displayed the coded domain value and not the description.</li>
+    <li>NIM104292: Fixed an issue where the the measurement widget measure-end event fired before the polygon finished.</li>
+    <li>NIM103917: InfoTemplate zoomTo now supports single points when using a multi-point featureclass datasource.</li>
+    <li>NIM103868: KML layer placemarks with hotspots now display in the correct location.</li>
+    <li>NIM103312: Can now print a map containing a graphic having attributes and a Text Symbol as its symbol.</li>
+    <li>NIM100031: Now able to work with overlapping records when editing a feature service.</li>
+    <li>NIM104099: PrintTask now prints a map containing a WMTS layer without a specified resourceInfo parameter.</li>
+    <li>NIM103199: Added the ability to ignore missing legend styles for WMS layers in the Legend widget.</li>
+    <li>GeoNet-106484: UndoManager now supports On Style events. See also <a href="https://community.esri.com/thread/106484">GeoNet discussion</a>.</li>
+    <li>GeoNet-423902: Class name was added for the messages div in the Legend widget to make it easier to apply css.</li>
+    <li>Directions widget: Get Directions button didn't work on some native Android browsers.</li>
+</ul>
+
+<h4 class="dtH4">Additional Resources on GitHub</h4>
+
+<p>
+    Be certain to check out any updates to the <a href="https://github.com/Esri/jsapi-resources">repository
+    on GitHub</a> with
+    <a href="https://github.com/Esri/jsapi-resources/tree/master/3.x/typescript">TypeScript</a>
+    definitions for the JS API as well as the
+    <a href="https://github.com/Esri/jsapi-resources/tree/master/jshint">jshint options file</a>
+    used by the JS API team.
+</p>
+
+<h4 class="dtH4">Dojo</h4>
+
+<p>
+    Version 3.11 of the ArcGIS API for JavaScript was upgraded to use <a
+        href="http://dojotoolkit.org/reference-guide/releasenotes/1.10.html">Dojo</a>
+    <a href="https://github.com/dojo/dojo/tree/1.10">1.10.0</a>.
+    <a href="http://dgrid.io">dgrid</a> was upgraded to version 0.3.15.
+    <a href="https://github.com/kriszyp/put-selector/tree/v0.3.5">put-selector version 0.3.5</a> and
+    <a href="https://github.com/kriszyp/xstyle/tree/v0.1.3">xstyle version 0.1.3</a> are also
+    included.
+</p>
+
+</div>
+ <div id="wh_footer" class="footnote">
+  <!--<a href="mailto:js_feedback@esri.com?subject=Feedback%20on%203.26%20Guide:%20jshelp/new_v311.html">Report an error on this page</a>.
+  <br>-->
+  <a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a>
+</div>
+</div> 
+  </div>
+</div> 
+
+
+<script src="../scripts/tree.js"></script>
+
+<script src="../prettify/prettify.js"></script>
+<script>
+  var dojoConfig = {
+    async: true,
+    packages: [{
+      "name": "js",
+      "location": location.pathname.replace(/\/[^/]+$/, "/") + "../scripts"
+    }]
+  };
+</script>
+<script src="../scripts/libs/tailcoat.js"></script>
+
+<script src="../scripts/libs/dojo-esri/dojo/dojo.js" data-dojo-config="async: true,locale: 'en-us'"></script>
+<script src="../scripts/esri-main-concepts.js"></script>
+<script src="../scripts/esri-keyboard-navigation.js"></script>
+<script>
+  require(["dojo/topic", "js/libs/mousetrap"], function(topic, Mousetrap) {
+    Mousetrap.bind([
+      // ${API_BINDINGS}
+      // ${SAMPLE_CODE_BINDINGS}
+      // Focus search
+      "/",
+      // Blur search
+      "esc",
+      // Go to Home
+      "g h",
+      // Go to Guide
+      "g g",
+      // Go to API Reference
+      "g a",
+      // Go to Sample Code
+      "g s",
+      // Show help
+      "?",
+      // Scroll to top of the page
+      "g t",
+      // Scroll to bottom of the page
+      "g b"
+    ], function (mousetrapEvent, keyboardCombination){
+      topic.publish("keyboard:mousetrap", {
+        event: mousetrapEvent,
+        combination: keyboardCombination,
+        navigation: {}
+      });
+
+    });
+  });
+</script>
+<a class="modal-show keyboard-shortcuts-hidden hide js-keyboard-shortcuts" data-modal="keyboard-shortcuts-modal" href="#">Show Modal</a>
+<div class="modal-overlay">
+  <div class="modal keyboard-shortcuts-modal js-keyboard-shortcuts-modal" data-modal="keyboard-shortcuts-modal">
+    <a class="modal-dismiss js-modal-dismiss icon-close right" href="#"></a>
+    <h3 class="keyboard-shortcuts-modal-title">Keyboard shortcuts</h3>
+    <hr class="leader-0 trailer-1">
+    
+    <div class="row">
+      
+      <div class="column-12 js-keyboard-mappings-first-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Site wide shortcuts</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>Bring up this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>esc</kbd></td>
+              <td>Dismiss this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>h</kbd></td>
+              <td>Go to Home</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>g</kbd></td>
+              <td>Go to Guide</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>a</kbd></td>
+              <td>Go to API Reference</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>s</kbd></td>
+              <td>Go to Sample Code</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>t</kbd></td>
+              <td>Scroll to top of page</td>
+            </tr>
+            <tr>
+              <td><kbd>spacebar</kbd></td>
+              <td>Scroll page down</td>
+            </tr>
+            <tr>
+              <td><kbd>shift spacebar</kbd></td>
+              <td>Scroll page up</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>b</kbd></td>
+              <td>Scroll to bottom of page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="column-12 js-keyboard-mappings-second-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Guide</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>Focus search</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>T.init();</script>
+
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+
+ 
+
+
+
+</body>
+</html>

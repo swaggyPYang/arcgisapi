@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Map with WMTS resourceinfo</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+
+  <script>
+    require([
+      "esri/map", 
+      "esri/layers/WMTSLayer", 
+      "esri/layers/WMTSLayerInfo",
+      "esri/geometry/Extent", 
+      "esri/layers/TileInfo", 
+      "esri/SpatialReference",
+      "dojo/parser",
+      "dijit/layout/BorderContainer", 
+      "dijit/layout/ContentPane", 
+      "dojo/domReady!"
+    ], function(
+        Map, WMTSLayer, WMTSLayerInfo,
+        Extent, TileInfo, SpatialReference,
+        parser
+      ) {
+      parser.parse();
+
+      var map = new Map("map", {
+        center: [86.9, 28],
+        zoom: 3
+      });
+
+      var tileInfo = new TileInfo({
+        "dpi": 96,
+        "format": "format/png",
+        "compressionQuality": 0,
+        "spatialReference": new SpatialReference({
+          "wkid": 4326
+        }),
+        "rows": 512,
+        "cols": 512,
+        "origin": {
+          "x": -180,
+          "y": 90
+        },
+        "lods": [{
+          "level": "0",
+          "scale": 236663484.36365247,
+          "resolution": 0.5624999999999999
+          }, {
+          "level": "1",
+          "scale": 118331742.18182631,
+          "resolution": 0.28125000000000017
+          }, {
+          "level": "2",
+          "scale": 59165871.090913124,
+          "resolution": 0.140625
+          }, {
+          "level": "3",
+          "scale": 29582935.545456562,
+          "resolution": 0.0703125
+          }, {
+          "level": "4",
+          "scale": 14791467.772728289,
+          "resolution": 0.03515625000000002
+          }, {
+          "level": "5",
+          "scale": 395733.8863641415,
+          "resolution": 0.017578125000000003
+          }, {
+          "level": "6",
+          "scale": 3697866.94318207,
+          "resolution": 0.008789062499999998
+          }, {
+          "level": "7",
+          "scale": 1848933.471591035,
+          "resolution": 0.004394531249999999
+          }, {
+          "level": "8",
+          "scale": 924466.7357955176,
+          "resolution": 0.002197265625
+          }, {
+          "level": "9",
+          "scale": 462233.3678977588,
+          "resolution": 0.0010986328125
+          }, {
+          "level": "10",
+          "scale": 231116.6839488794,
+          "resolution": 0.00054931640625
+          }, {
+          "level": "11",
+          "scale": 115558.3419744397,
+          "resolution": 0.000274658203125
+          }]
+      });
+      var tileExtent = new Extent(-180, -90, 180, 90, new SpatialReference({
+        wkid: 4326
+      }));
+
+      var layerInfo = new WMTSLayerInfo({
+        tileInfo: tileInfo,
+        fullExtent: tileExtent,
+        initialExtent: tileExtent,
+        identifier: "SRTM_Color_Index",
+        tileMatrixSet: "31.25m",
+        format: "png",
+        style: "default"
+      });
+
+      var resourceInfo = {
+        version: "1.0.0",
+        layerInfos: [layerInfo],
+        copyright: "earthdata"
+      };
+
+      var options = {
+        serviceMode: "KVP",
+        resourceInfo: resourceInfo,
+        layerInfo: layerInfo
+      };
+
+      wmtsLayer = new WMTSLayer("https://gibs.earthdata.nasa.gov/wmts/epsg4326/best", options);
+      map.addLayer(wmtsLayer);
+    });
+  </script>
+</head>
+
+<body>
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:false" style="width: 100%; height: 100%; margin: 0;">
+
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+      <div id="citationInfo">
+        <a href="https://earthdata.nasa.gov">Earthdata</a>
+        served by
+        <a href="https://www.nasa.gov">NASA</a>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

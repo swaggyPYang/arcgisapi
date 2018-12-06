@@ -1,0 +1,159 @@
+
+/*
+    The esriGEDisabledContent style is applied to the content disabling node.
+    This node is placed after a container content nodes and overlays the content using a negative margin-top.
+    The content height and top margin are calculated with DomUtil.enableContent method or absolutely stretched with DomUtil.enableContentAbsolute method.
+ */
+.esriGEDisabledContent {
+    background-color: white;
+    opacity: 0.6;
+    cursor: default;
+}
+
+    .esriGEDisabledContent.esriGEDisabledContentTransparent {
+        opacity: 0.01;
+    }
+
+.esriGEHidden {
+    display: none !important;
+}
+
+.esriGENonSelectable {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    cursor: default;
+}
+
+.esriGEAbsoluteStretched {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.esriGEClickable {
+    cursor: pointer;
+}
+
+/* Link */
+
+.esriGELink {
+    cursor: pointer !important;
+    color: #0079C1;
+}
+
+    .esriGELink:hover {
+        text-decoration: underline;
+    }
+
+/* Layout */
+
+.esriGERowHigh {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.esriGERow15 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.esriGERow20 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* space before */
+
+.esriGESpaceBeforeBig {
+    margin-left: 10px;
+}
+
+.dj_rtl .esriGESpaceBeforeBig {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.esriGESpaceBefore20 {
+    margin-left: 20px;
+}
+
+.dj_rtl .esriGESpaceBefore20 {
+    margin-right: 20px;
+    margin-left: auto;
+}
+
+.esriGESpaceBefore30 {
+    margin-left: 30px;
+}
+
+.dj_rtl .esriGESpaceBefore30 {
+    margin-right: 30px;
+    margin-left: auto;
+}
+
+/* space after */
+
+.esriGESpaceAfterBig {
+    margin-right: 10px;
+}
+
+.dj_rtl .esriGESpaceAfterBig {
+    margin-left: 10px;
+    margin-right: auto;
+}
+
+.esriGESpaceAfter20 {
+    margin-right: 20px;
+}
+
+.dj_rtl .esriGESpaceAfter20 {
+    margin-left: 20px;
+    margin-right: auto;
+}
+
+.esriGESpaceAfter30 {
+    margin-right: 30px;
+}
+
+.dj_rtl .esriGESpaceAfter30 {
+    margin-left: 30px;
+    margin-right: auto;
+}
+
+/* TrimWithEllipses */
+
+.TrimWithEllipses {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Popup */
+
+.esriGENoOverflowPopup {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Offscreen */
+
+.esriGEOffscreen {
+    position: absolute !important;
+    z-index: -1000 !important;
+    opacity: 0.01;
+    left: 0px;
+    top: 0px;
+}
+
+.esriGEBehindScreen {
+    position: absolute !important;
+    z-index: -1000 !important;
+    left: 0px;
+    top: 0px;
+}

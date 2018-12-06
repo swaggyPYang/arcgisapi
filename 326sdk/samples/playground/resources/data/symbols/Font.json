@@ -1,0 +1,158 @@
+{
+  "name": "Font",
+  "type": "class",
+  "variable": "font",
+  "description": "Font used for text symbols added to the graphics layer.",
+  "summary": "for text symbols",
+  "path": "esri/symbols/Font",
+  "toolbar": true,
+  "constructorArgs": ["size","style","variant","weight","family"],
+  "properties": [
+    {
+      "name": "size",
+      "type": "Number",
+      "default": 13.33,
+      "method": "setSize",
+      "summary": "Font size",
+      "attributes": {
+        "min": 0
+      }
+    },
+    {
+      "name": "style",
+      "type": "String",
+      "default": "STYLE_NORMAL",
+      "method": "setStyle",
+      "summary": "Text style",
+      "options": {
+        "type": "constants",
+        "className": "Font",
+        "values": [
+          "STYLE_ITALIC",
+          "STYLE_NORMAL",
+          "STYLE_OBLIQUE"
+        ]
+      }
+    },
+    {
+      "name": "variant",
+      "type": "String",
+      "default": "VARIANT_NORMAL",
+      "constructorArg": true,
+      "method": "setVariant",
+      "summary": "Text variant",
+      "options": {
+        "type": "constants",
+        "className": "Font",
+        "values": [
+          "VARIANT_NORMAL",
+          "VARIANT_SMALLCAPS"
+        ]
+      }
+    },
+    {
+      "name": "weight",
+      "type": "String",
+      "default": "WEIGHT_NORMAL",
+      "constructorArg": true,
+      "method": "setWeight",
+      "summary": "Text weight",
+      "options": {
+        "type": "constants",
+        "className": "Font",
+        "values": [
+          "WEIGHT_BOLD",
+          "WEIGHT_BOLDER",
+          "WEIGHT_LIGHTER",
+          "WEIGHT_NORMAL"
+        ]
+      }
+    },
+    {
+      "name": "family",
+      "type": "String",
+      "default": "Serif",
+      "constructorArg": true,
+      "method": "setFamily",
+      "summary": "Font family"
+    },
+    {
+      "name": "decoration",
+      "type": "String",
+      "default": "none",
+      "constructorArg": false,
+      "method": "setDecoration",
+      "summary": "Text decoration",
+      "options": {
+        "type": "String",
+        "values": [
+          "underline",
+          "line-through",
+          "none"
+        ]
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "setDecoration",
+      "parameters": [
+        {
+          "name": "decoration",
+          "type": "property"
+        }
+      ],
+      "summary": "Updates the font with the given decoration"
+    },
+    {
+      "name": "setFamily",
+      "parameters": [
+        {
+          "name": "family",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the font family"
+    },
+    {
+      "name": "setSize",
+      "parameters": [
+        {
+          "name": "size",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the font size"
+    },
+    {
+      "name": "setStyle",
+      "parameters": [
+        {
+          "name": "style",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the font style"
+    },
+    {
+      "name": "setVariant",
+      "parameters": [
+        {
+          "name": "variant",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the font variant"
+    },
+    {
+      "name": "setWeight",
+      "parameters": [
+        {
+          "name": "weight",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the font weight"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "name": "MarkerSymbol",
+  "type": "baseClass",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "symbol",
+  "description": "Marker symbols are used to draw points and multipoints on the graphics layer.",
+  "summary": "used to draw points and multipoints on the graphics layer",
+  "path": "esri/symbols/MarkerSymbol",
+  "toolbar": true,
+  "properties": [
+    {
+      "name": "angle",
+      "type": "Number",
+      "default": 0,
+      "attributes": {
+        "min": -360,
+        "max": 360,
+        "step": 1
+      },
+      "method": "setAngle",
+      "summary": "The angle of the marker"
+    },
+    {
+      "name": "size",
+      "type": "Number",
+      "default": 16,
+      "attributes": {
+        "min": 0
+      },
+      "method": "setSize",
+      "summary": "Size of the marker in pixels"
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the y-axis in pixels"
+    }
+  ],
+  "methods": [
+    {
+      "name": "setAngle",
+      "parameters": [
+        {
+          "name": "angle",
+          "type": "property"
+        }
+      ],
+      "summary": "Rotates the symbol clockwise around its center by the specified angle"
+    },
+    {
+      "name": "setSize",
+      "parameters": [
+        {
+          "name": "size",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the size of a marker in pixels"
+    },
+    {
+      "name": "setOffset",
+      "parameters": [
+        {
+          "name": "xoffset",
+          "type": "property"
+        },
+        {
+          "name": "yoffset",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the x and y offset of a marker in screen units"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Navigation toolbar</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      @import "https://js.arcgis.com/3.26/dijit/themes/claro/claro.css";
+
+      .zoominIcon {
+        background-image: url(images/nav_zoomin.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .zoomoutIcon {
+        background-image: url(images/nav_zoomout.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .zoomfullextIcon {
+        background-image: url(images/nav_fullextent.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .zoomprevIcon {
+        background-image: url(images/nav_previous.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .zoomnextIcon {
+        background-image: url(images/nav_next.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .panIcon {
+        background-image: url(images/nav_pan.png);
+        width: 16px;
+        height: 16px;
+      }
+
+      .deactivateIcon {
+        background-image: url(images/nav_decline.png);
+        width: 16px;
+        height: 16px;
+      }
+    </style>
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map",
+        "esri/toolbars/navigation",
+        "dojo/on",
+        "dojo/parser",
+        "dijit/registry",
+        "dijit/Toolbar",
+        "dijit/form/Button",
+        "dojo/domReady!"
+      ],
+        function (Map, Navigation, on, parser, registry) {
+
+          parser.parse();
+
+          var navToolbar;
+
+          map = new Map("map", {
+            basemap: "satellite",
+            center: [-56.953, 57.472],
+            zoom: 3
+          });
+
+          navToolbar = new Navigation(map);
+          on(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
+
+          registry.byId("zoomin").on("click", function () {
+            navToolbar.activate(Navigation.ZOOM_IN);
+          });
+
+          registry.byId("zoomout").on("click", function () {
+            navToolbar.activate(Navigation.ZOOM_OUT);
+          });
+
+          registry.byId("zoomfullext").on("click", function () {
+            navToolbar.zoomToFullExtent();
+          });
+
+          registry.byId("zoomprev").on("click", function () {
+            navToolbar.zoomToPrevExtent();
+          });
+
+          registry.byId("zoomnext").on("click", function () {
+            navToolbar.zoomToNextExtent();
+          });
+
+          registry.byId("pan").on("click", function () {
+            navToolbar.activate(Navigation.PAN);
+          });
+
+          registry.byId("deactivate").on("click", function () {
+            navToolbar.deactivate();
+          });
+
+          function extentHistoryChangeHandler () {
+            registry.byId("zoomprev").disabled = navToolbar.isFirstExtent();
+            registry.byId("zoomnext").disabled = navToolbar.isLastExtent();
+          }
+        });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="navToolbar" data-dojo-type="dijit/Toolbar">
+      <div data-dojo-type="dijit/form/Button" id="zoomin"  data-dojo-props="iconClass:'zoominIcon'">Zoom In</div>
+      <div data-dojo-type="dijit/form/Button" id="zoomout" data-dojo-props="iconClass:'zoomoutIcon'">Zoom Out</div>
+      <div data-dojo-type="dijit/form/Button" id="zoomfullext" data-dojo-props="iconClass:'zoomfullextIcon'">Full Extent</div>
+      <div data-dojo-type="dijit/form/Button" id="zoomprev" data-dojo-props="iconClass:'zoomprevIcon'">Prev Extent</div>
+      <div data-dojo-type="dijit/form/Button" id="zoomnext" data-dojo-props="iconClass:'zoomnextIcon'">Next Extent</div>
+      <div data-dojo-type="dijit/form/Button" id="pan" data-dojo-props="iconClass:'panIcon'">Pan</div>
+      <div data-dojo-type="dijit/form/Button" id="deactivate" data-dojo-props="iconClass:'deactivateIcon'">Deactivate</div>
+    </div>
+
+    <div id="map" style="width:100%; height:512px;"></div>
+  </body>
+</html>

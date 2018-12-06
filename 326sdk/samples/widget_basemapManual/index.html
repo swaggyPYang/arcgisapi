@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Display Multiple ArcGIS Online Services</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body {
+      height: 97%;
+      width: 98%;
+      margin: 1%;
+    }
+
+    #map {
+      border: solid 1px #B5BCC7;
+      padding: 0;
+    }
+
+    #paneHeader {
+      background: url(images/header.png) repeat-x;
+      color: white;
+      border-bottom: solid 1px #B5BCC7;
+      text-align: center;
+      height: 30px;
+      margin: 0;
+      overflow: hidden;
+      font-size: 16px;
+      padding: 8px 5px;
+    }
+
+    #rightPane {
+      width: 150px;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script>var dojoConfig = {parseOnLoad:true};</script>
+  <script src="https://js.arcgis.com/3.26/"></script>
+
+  <script>
+    dojo.require("esri.map");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.layout.BorderContainer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("esri.dijit.BasemapGallery");
+    dojo.require("esri.arcgis.utils");
+
+    var map;
+
+    function init() {
+      map = new esri.Map("map");
+      createBasemapGallery();
+    }
+
+    function createBasemapGallery() {
+      //manually create basemaps to add to basemap gallery
+      var basemaps = [];
+      var waterTemplateLayer = new esri.dijit.BasemapLayer({
+        url:"https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/WaterTemplate/LocalGovernmentInfrastructureBasemap/MapServer"
+      });
+      var waterBasemap = new esri.dijit.Basemap({
+        layers      :[waterTemplateLayer],
+        title       :"Water Template",
+        thumbnailUrl:"images/waterThumb.png"
+      });
+      basemaps.push(waterBasemap);
+      var publicSafetyLayer = new esri.dijit.BasemapLayer({
+        url:"https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyBasemap/MapServer"
+      });
+      var publicSafetyBasemap = new esri.dijit.Basemap({
+        layers      :[publicSafetyLayer],
+        title       :"Public Safety",
+        thumbnailUrl:"images/safetyThumb.png"
+      });
+      basemaps.push(publicSafetyBasemap);
+
+      var basemapGallery = new esri.dijit.BasemapGallery({
+        showArcGISBasemaps: false,
+        basemaps: basemaps,
+        map: map
+      }, "basemapGallery");
+      basemapGallery.startup();
+
+      dojo.connect(basemapGallery, "onError", function (error) {
+        console.log(error);
+      });
+    }
+
+    dojo.ready(init);
+  </script>
+
+</head>
+<body class="claro">
+<div data-dojo-type="dijit.layout.BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width:100%;height:100%;">
+
+  <div id="map"
+       data-dojo-type="dijit.layout.ContentPane"
+       data-dojo-props="region:'center'">
+  </div>
+
+  <div data-dojo-type="dijit.layout.ContentPane"
+       data-dojo-props="region:'right'" id="rightPane">
+
+    <div data-dojo-type="dijit.layout.BorderContainer"
+         data-dojo-props="design:'headline', gutters:false"
+         style="width:100%;height:100%;">
+      <div id="paneHeader"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'top'">
+        <span>Select Basemap</span>
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="basemapGallery"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

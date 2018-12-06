@@ -1,0 +1,143 @@
+@import url("RFxArgSlider.css");
+@import url("RFxBandMatrix.css");
+@import url("RFxNamedRasterEditor.css");
+@import url("RFxRasterArrayEditor.css");
+@import url("RFxWeightedSumTableEditor.css");
+
+.esriRFxArgsEditor .dijitTextBox {
+  width: 100%;
+  box-sizing: border-box;
+}
+.esriRFxArgsEditor .dijitSelect {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  box-sizing: border-box;
+}
+
+.esriRFxArgsEditor .dijitTitlePaneTitle {
+  background: none;
+  border: none;
+  font-weight: 700;
+}
+
+.esriRFxArgsEditor .dijitTitlePaneContentOuter {
+  border: none;
+}
+
+.esriRFxArgsEditor *:focus{
+  outline: none;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__table--auto {
+  width: 100%;
+  table-layout: auto;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__tr>td {
+  padding-bottom: .5em;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__tr>td {
+  width: 50%;
+  overflow: hidden;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__tr--arg-name>td{
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 0.2em;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__tr--arg-widget>td{
+  width: 100%;
+  padding-bottom: 0.5em;
+}
+
+.esriRFxArgsEditor__label--fx-desc {
+  white-space: pre-line;
+  width: 200px;
+  overflow-x: auto;
+}
+
+.esriRFxArgsEditor .esriRFxArgsEditor__icon--warning {
+  width: 15px;
+  height: 15px;
+  /* float: right; */
+  background-image: url(../images/warning.png);
+  background-size: 13px;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.esriRFxArgsEditor .dijitInputField {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.esriRFxArgsEditor .esriBandMatrixDeleteIcon,
+.esriRFxArgsEditor table>tr:not(:last-child) .esriRFxNamedRaster__td--delete:hover{
+  background-image: url("../../images/trash.png");
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: transparent;
+  cursor: pointer;
+}
+
+/*dgrid styling*/
+
+.esriRFxArgsEditor .dgrid-content .dgrid-cell {
+  height: 24px;
+}
+
+.esriRFxArgsEditor .dgrid {
+  height: auto;
+}
+
+.esriRFxArgsEditor .dgrid .dgrid-scroller {
+  position: relative;
+  overflow-y: hidden;
+}
+
+.esriRFxArgsEditor .dgrid-header {
+  width: 100%;
+}
+
+/* make remap grid scrollable */
+.esriRFxArgsEditor .dgrid.esriRemapgrid .dgrid-scroller {
+  position: absolute;
+  overflow-y: scroll;
+}
+
+/* to resolve header disappearing when more rows are added to remap grid */
+.esriRFxArgsEditor .esriRemapgrid .dgrid-header {
+  width: inherit;
+}
+
+.esriRFxArgsEditor td.dgrid-cell.field-idNum {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.esriRFxArgsEditor .dijitComboBox input.dijitArrowButtonInner {
+  height: 100%!important;
+  vertical-align: middle;
+  background-position: -65px -27px;
+}
+
+.esriRFxArgsEditor .dijitComboBox input.dijitInputInner {
+  height: 22px;
+}
+
+.esriRFxArgsEditor .dijitComboBox {
+  height: 27px !important;
+}

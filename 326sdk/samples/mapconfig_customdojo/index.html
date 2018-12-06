@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Custom Dojo Namespace</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" ></script>
+    
+    <link rel="stylesheet" href="https://serverapi.arcgisonline.com/jsapi/arcgis/2.8/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    
+    <script>
+     var djConfig = {
+        scopeMap: [
+          [ "dojo", "esriDojo" ],
+          [ "dijit", "esriDijit" ],
+          [ "dojox", "esriDojox" ]
+        ]
+      };
+    </script>
+    <script src="https://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.8"></script>
+
+    <script>
+      // Dojo library from the Google Hosted Libraries is built in such a way that
+      // it depends on the dojoConfig global object when loading modules. 
+      // But we override it later when loading the JSAPI.
+      // Reset it here so that modules from the Google Hosted Libraries are loaded
+      // properly. 
+      // For example: after the page loads, try loading the following
+      // module:
+      // dojo.require("dijit.layout.ContentPane");
+      // and observe firebug net tab. You should see bunch of modules
+      // loaded from the Google Hosted Libraries. Without the reset below, the first module
+      // loaded will be from the Google Hosted Libraries and its dependencies loaded from 
+      // the dojo instance embedded within JSAPI.
+      djConfig = dojo.config;
+      esriDojo.require("esri.map");
+      dojo.require("dijit.layout.ContentPane");
+
+      function init() {        
+       var extent = new esri.geometry.Extent(-122.93,47.02,-122.86,47.07, new esri.SpatialReference({wkid:4326}));
+        var map = new esri.Map("map", {extent:esri.geometry.geographicToWebMercator(extent)});
+        var tiledMapServiceLayer = new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer");
+        map.addLayer(tiledMapServiceLayer);
+        
+        esriDojo.connect(map,"onLoad",function(map){
+          var esriVersion = "<b>ArcGIS API for JavaScript version:</b>" + esri.version;
+          var esriDojoVersion = "<b>ArcGIS API for JavaScript Dojo version:</b>" + esriDojo.version;
+          esriDojo.byId('esriInfo').innerHTML= esriVersion + "<br />" + esriDojoVersion;
+        });
+      }
+      function initDojo(){
+        dojo.byId('dojoInfo').innerHTML="<b>The Google Hosted Libraries Dojo Version:</b>" + dojo.version;
+      }
+      dojo.addOnLoad(initDojo);
+      esriDojo.addOnLoad(init);
+    </script>
+
+  </head>
+
+  <body class="claro">
+  The following libraries are loaded in this application:<br />
+    <div id="map" style="margin:2px 2px 2px 2px; border:solid thin #999967;width:500px;height:500px;"> </div>
+    <span id="esriInfo"></span><br />
+    <span id="dojoInfo"></span>
+    </div>
+  </body>
+</html>

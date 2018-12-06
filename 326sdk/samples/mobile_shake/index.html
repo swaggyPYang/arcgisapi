@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Gesture Shake</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+
+    require([
+      "dojo/dom",
+      "dojo/on",
+      "dojo/parser",
+      "dojo/ready",
+      "esri/map",
+      "esri/layers/ImageParameters",
+      "esri/layers/ArcGISDynamicMapServiceLayer"
+    ], function (dom, on, parser, ready, Map, ImageParameters, ArcGISDynamicMapServiceLayer) {
+      var map, dynamicMapServiceLayer, lyrOpacityFlag;
+
+      ready(function () {
+        init();
+      });
+
+      function init() {
+        //onorientationchange doesn't always fire in a timely manner in Android so check for both orientationchange and resize
+        var supportsOrientationChange = "onorientationchange" in window,
+            orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+
+        window.addEventListener(orientationEvent, function () {
+          orientationChanged();
+        }, false);
+
+        lyrOpacityFlag = false;
+        map = new Map("map", {
+          basemap:"satellite",
+          center :[-97.031, 37.638],
+          zoom   :4,
+          slider :false
+        });
+
+        var imageParameters = new ImageParameters();
+        imageParameters.format = "PNG24";
+        // Takes a URL to a non cached map service.
+        dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer", {
+          "opacity"        :1.0,
+          "imageParameters":imageParameters
+        });
+        map.addLayer(dynamicMapServiceLayer);
+
+        // remove the dynamic map
+        removeDynMapListener();
+      }
+
+      // Handle portrait and landscape mode orientation changes
+      function orientationChanged() {
+        if (map) {
+          map.reposition();
+          map.resize();
+        }
+      }
+
+      function removeDynMapListener() {
+        // The DeviceMotionEvent provides the acceleration and rotation data of the device
+        //
+        // Determine if the DeviceMotionEvent is supported using feature detection.
+        if (window.DeviceMotionEvent) {
+          var threshhold = 20;
+
+          // Position variables
+          var xPreTotalAcc, yPreTotalAcc, zPreTotalAcc = 0;
+          var xPostTotalAcc, yPostTotalAcc, zPostTotalAcc = 0;
+
+          // The device motion event returns data about the rotation and acceleration information
+          // of the device. The event returns two properties: acceleration and accelerationIncldingGravity
+          on(window, "devicemotion", function (e) {
+            xPreTotalAcc = e.acceleration.x;
+            yPreTotalAcc = e.acceleration.y;
+            zPreTotalAcc = e.acceleration.z;
+          }, false);
+
+          // The setInterval() method calls a function or evaluates an expression at specified intervals (in milliseconds).
+          setInterval(function () {
+            var change = Math.abs(xPreTotalAcc - xPostTotalAcc + yPreTotalAcc - yPostTotalAcc + zPreTotalAcc - zPostTotalAcc);
+            if (change > threshhold) {
+              // reset the application's to its default state
+              resetApp();
+            }
+            // Update new position
+            xPostTotalAcc = xPreTotalAcc;
+            yPostTotalAcc = yPreTotalAcc;
+            zPostTotalAcc = zPreTotalAcc;
+          }, 150);
+        } else {
+          alert("DeviceMotion is currently not supported on this hardware.");
+        }
+      }
+
+      function resetApp() {
+        map.removeAllLayers();
+        map.destroy();
+        init();
+        clearInterval();
+      }
+
+    });
+  </script>
+</head>
+
+<body class="claro">
+<div id="map"></div>
+</body>
+
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Get Current Location</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/mobile/themes/iphone/iphone.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    </style>
+    
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script>
+      dojo.require("dojox.mobile");
+      dojo.require("dojox.mobile.Button");
+      dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+      dojo.require("esri.map");
+      dojo.require("esri.IdentityManager");
+      dojo.require("esri.arcgis.utils");
+
+      var map;
+
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        var urlObject = esri.urlToObject(document.location.href);
+        var webmap = "59357ba9bd06409a99c0eb89f9089a40";
+        var bingMapsKey = "Enter your Bing Maps Key";
+        if (urlObject.query) {
+          webmap = urlObject.query.webmap;
+          bingMapsKey = urlObject.query.bingMapsKey;
+        }
+
+        var mapDeferred = esri.arcgis.utils.createMap(webmap, "map", {
+          mapOptions: {
+            slider: true
+          },
+          bingMapsKey: bingMapsKey,
+          geometryServiceURL: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
+        });
+        mapDeferred.then(function(response) {
+          map = response.map;
+          resizeMap();
+        }, function(error) {
+          console.log("Map creation failed: ", dojo.toJson(error));
+        });
+      }
+
+      function orientationChanged() {
+        resizeMap();
+      }
+
+      function resizeMap() {
+        if (map) {
+          var mapCont = dojo.byId('map');
+          console.log(screen.height + " height");
+          mapCont.style.height = screen.height + "px";
+
+          map.reposition();
+          map.resize();
+        }
+      }
+
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
+        }
+      }
+
+      function locationError(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Location not provided");
+            break;
+
+          case error.POSITION_UNAVAILABLE:
+            alert("Current location not available");
+            break;
+
+          case error.TIMEOUT:
+            alert("Timeout");
+            break;
+
+          default:
+            alert("unknown error");
+            break;
+        }
+      }
+
+      function zoomToLocation(location) {
+        map.graphics.clear();
+        var pt = esri.geometry.geographicToWebMercator(new esri.geometry.Point(location.coords.longitude, location.coords.latitude));
+
+        var symbol = new esri.symbol.PictureMarkerSymbol('images/greendot.png', 30, 30);
+        var graphic = new esri.Graphic(pt, symbol);
+        map.graphics.add(graphic);
+
+        map.centerAt(pt);
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body onorientationchange="orientationChanged();" >
+    <div id="settings" data-dojo-type="dojox.mobile.View" data-dojo-props="selected:'true'" style="width:100%;height:100%;">
+      <h1 data-dojo-type="dojox.mobile.Heading">Geolocation</h1>
+      <button id="btn1" data-dojo-type="dojox.mobile.Button" data-dojo-props="onClick:function(){getLocation();}" style="position:absolute;right:5px;top:48px;z-index:99;">Get Location</button>
+        <div id="map" style="width:100%; height:100%;">
+        </div>
+    </div>
+  </body>
+</html>

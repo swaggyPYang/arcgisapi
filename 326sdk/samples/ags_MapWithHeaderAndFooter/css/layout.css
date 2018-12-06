@@ -1,0 +1,67 @@
+  html,body {
+      height:100%;
+      width:100%;
+      margin:0;
+      padding:0;
+      }
+
+      body {
+      background-color:#FFF;
+      overflow:hidden;
+      font-family:"Trebuchet MS";
+      }
+
+      #header {
+      border:solid 2px #7EABCD;
+      padding-top:5px;
+      padding-left:10px;
+      background-color:#FFF;
+      color:#CD853F;
+      font-size:18pt;
+      text-align:left;
+      font-weight:700;
+      height:65px;
+      }
+
+      .roundedCorners {
+      -moz-border-radius:4px;
+      }
+
+      .shadow {
+      -o-border-radius:10px;
+      -moz-border-radius:10px;
+      -webkit-border-radius:10px;
+      border-radius:10px;
+      box-shadow:4px 4px 8px #adadad;
+      -webkit-box-shadow:4px 4px 8px #adadad;
+      -moz-box-shadow:4px 4px 8px #adadad;
+      -o-box-shadow:4px 4px 8px #adadad;
+      }
+
+      #subtitle {
+      font-size:small;
+      padding-left:40px;
+      color:#CD853F;
+      }
+
+      #rightPane {
+      background-color:#FFF;
+      color:#CD853F;
+      border:solid 2px #6495ED;
+      margin:5px;
+      }
+
+      #map {
+      background-color:#FFF;
+      border:solid 2px #6495ED;
+      margin:5px;
+      }
+
+      #footer {
+      border:solid 1px #7EABCD;
+      background-color:#FFF;
+      color:#CD853F;
+      font-size:10pt;
+      text-align:center;
+      height:40px;
+      }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Updating the legend to display visible layers</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body {
+      height: 97%;
+      width: 98%;
+      margin: 1%;
+    }
+
+    #rightPane {
+      width: 20%;
+    }
+
+    #legendPane {
+      border: solid #97DCF2 1px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+
+    require([
+      "esri/map",
+      "esri/arcgis/utils",
+      "esri/dijit/Legend",
+      "esri/layers/ArcGISDynamicMapServiceLayer",
+      "dojo/dom",
+      "dojo/dom-construct",
+      "dojo/parser",
+      "dojo/_base/array",
+      "dijit/form/CheckBox",
+      "dijit/layout/AccordionContainer",
+      "dijit/layout/BorderContainer",
+      "dijit/layout/ContentPane",
+      "dojo/domReady!"
+    ],
+      function (
+        Map, utils, Legend, ArcGISDynamicMapServiceLayer, dom, domConstruct,
+        parser, arrayUtils, CheckBox
+      ) {
+
+        parser.parse();
+
+        var legendLayers = [];
+
+        map = new Map("map", {
+          basemap: "topo",
+          center: [-117.45, 34.338],
+          zoom: 10
+        });
+
+        var quakeLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/EarthquakesFromLastSevenDays/MapServer", {
+          id: 'quakes'
+        });
+
+        legendLayers.push({ layer: quakeLayer, title: 'Earthquakes' });
+
+        var fireLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Fire/Sheep/MapServer", {
+            id: 'fire'
+        });
+
+        map.on('layers-add-result', function () {
+          var legend = new Legend({
+            map: map,
+            layerInfos: legendLayers
+          }, "legendDiv");
+          legend.startup();
+        });
+        legendLayers.push({ layer: fireLayer, title: "Fire" });
+        map.addLayers([ fireLayer, quakeLayer ]);
+
+        map.on('layers-add-result', function () {
+          //add check boxes
+          arrayUtils.forEach(legendLayers, function (layer) {
+            var layerName = layer.title;
+            var checkBox = new CheckBox({
+              name: "checkBox" + layer.layer.id,
+              value: layer.layer.id,
+              checked: layer.layer.visible
+            });
+            checkBox.on("change", function () {
+              var targetLayer = map.getLayer(this.value);
+              targetLayer.setVisibility(!targetLayer.visible);
+              this.checked = targetLayer.visible;
+            });
+
+            //add the check box and label to the toc
+            domConstruct.place(checkBox.domNode, dom.byId("toggle"), "after");
+            var checkLabel = domConstruct.create('label', {
+                'for': checkBox.name,
+                innerHTML: layerName
+              }, checkBox.domNode, "after");
+            domConstruct.place("<br />", checkLabel, "after");
+          });
+        });
+      });
+  </script>
+</head>
+
+<body class="claro">
+<div id="content" data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:true"
+     style="width: 100%; height: 100%; margin: 0;">
+
+  <div id="rightPane"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'right'">
+
+    <div data-dojo-type="dijit/layout/AccordionContainer">
+      <div data-dojo-type="dijit/layout/ContentPane" id="legendPane"
+           data-dojo-props="title:'Legend', selected:true">
+
+        <div id="legendDiv"></div>
+
+      </div>
+
+      <div data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="title:'Natural Disasters'">
+
+        <span style="padding:10px 0;">Click to toggle the visibility of the various natural disasters</span>
+
+        <div id="toggle" style="padding: 2px 2px;"></div>
+
+      </div>
+    </div>
+  </div>
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'"
+       style="overflow:hidden;">
+  </div>
+</div>
+
+</body>
+</html>
+

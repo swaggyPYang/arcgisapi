@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Gauge widget</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{ margin: 0; padding: 0; }
+      #dashboardPane {
+        background: #bbb;
+      }
+      #dashboard {
+        color: #fff;
+        font-family: arial;
+        height: 200px;
+        margin: 0 auto;
+        overflow: hidden;
+        padding: 5px;
+        text-align: center;
+        width: 870px;
+      }
+      #dashboardWidgets {
+        background: #fff;
+        color: #888;
+        margin: 0 auto;
+        text-align: left;
+        -webkit-box-shadow: 0 8px 6px -6px #999;
+        -moz-box-shadow: 0 8px 6px -6px #999;
+        box-shadow: 0 8px 6px -6px #999;
+      }
+
+      .ds { background: #000; overflow: hidden; position: absolute; bottom: 0px; z-index: 2; }
+      #ds-h div { width: 100%; }
+      #ds .o1 { filter: alpha(opacity=10); opacity: .1; }
+      #ds .o2 { filter: alpha(opacity=8); opacity: .08; }
+      #ds .o3 { filter: alpha(opacity=6); opacity: .06; }
+      #ds .o4 { filter: alpha(opacity=4); opacity: .04; }
+      #ds .o5 { filter: alpha(opacity=2); opacity: .02; }
+      #ds .h1 { height: 1px; }
+      #ds .h2 { height: 2px; }
+      #ds .h3 { height: 3px; }
+      #ds .h4 { height: 4px; }
+      #ds .h5 { height: 5px; }
+
+      .gaugeContainer {
+        display: inline-block !important;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var app = {};
+      require([
+        "esri/arcgis/utils",
+        "esri/dijit/Gauge",
+        "esri/graphic",
+        "esri/layers/GraphicsLayer",
+
+        "esri/symbols/SimpleLineSymbol",
+        "esri/symbols/SimpleFillSymbol",
+
+        "dojo/_base/array",
+        "esri/Color",
+        "dojo/dom",
+        "dojo/dom-construct",
+        "dojo/dom-style",
+
+        "dojo/parser", "dijit/registry",
+
+        "dojo/domReady!"
+      ], function(
+        arcgisUtils, Gauge, Graphic, GraphicsLayer,
+        SimpleLineSymbol, SimpleFillSymbol,
+
+        arrayUtils, Color, dom, domConstruct, domStyle,
+        parser, registry
+      ) {
+        parser.parse();
+
+        var agol_map = new arcgisUtils.createMap("2c8a6fe72ae44a5f8e6d1ddd02fe11db", "map");
+        agol_map.then(
+          function(response) {
+            // Keep a reference to the map
+            app.map = response.map;
+            createWidgets(response);
+            domStyle.set(registry.byId("container").domNode, "visibility", "visible");
+          },
+          function (err) {
+            console.log("err from arcgis.com: ", err);
+          }
+        );
+
+        function createWidgets(resp) {
+          // look for gauges in the webmap
+          var itemData = resp.itemInfo.itemData;
+          if ( ! itemData.hasOwnProperty("widgets") ||
+               ! itemData.widgets.hasOwnProperty("gadgets") ||
+               itemData.widgets.gadgets.length === 0 ) {
+            return;
+          }
+
+          app.gauges = arrayUtils.filter(itemData.widgets.gadgets, function(g) {
+            return g.type == "gauge";
+          });
+          // also add a reference to the layer to the gadget JSON
+          arrayUtils.forEach(app.gauges, function(g) {
+            g.fromWebmap = true;
+            // g.layer = app.map.getLayer(g.layerId);
+          });
+          console.log("app.gauges: ", app.gauges);
+
+          // create the gauges
+          app._gauges = [];
+          arrayUtils.forEach(app.gauges, function(g, idx) {
+            var gaugeDiv = domConstruct.create("div", null, dom.byId("dashboardWidgets"));
+            var gaugeId = "gauge_" + idx;
+            g._id = gaugeId;
+            // console.log("gauge def: ", g);
+            app._gauges.push(g);
+            app[gaugeId] = new Gauge(g, gaugeDiv);
+            app[gaugeId].startup();
+          });
+
+          // highlight features on mouse over
+          app.hGraphics = new GraphicsLayer({ "id": "highlights" });
+          app.map.addLayer(app.hGraphics);
+
+          var hOutline = new SimpleLineSymbol()
+            .setColor(app.gauges[0].color).setWidth(3);
+          app.highlight = new SimpleFillSymbol()
+            .setColor(new Color([0, 0, 0, 0]))
+            .setOutline(hOutline);
+
+          var gaugeLayer = app.map.getLayer(app.map.graphicsLayerIds[0]);
+          // console.log("gaugeLayer: ", gaugeLayer, app.gauges[0].layerId);
+          gaugeLayer.on("mouse-over", function(e) {
+            app.hGraphics.clear();
+            app.hGraphics.add(
+              new Graphic(
+                e.graphic.geometry,
+                app.highlight
+              )
+            );
+            // update the gauges
+            arrayUtils.forEach(app._gauges, function(gauge) {
+              app[gauge._id].set("feature", e);
+            });
+          });
+        }
+      });
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div id="container"
+         data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0; visibility: hidden;">
+      <div id="map"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'">
+
+        
+        <div id="ds">
+          <div id="ds-h">
+            <div class="ds h1 o1"></div>
+            <div class="ds h2 o2"></div>
+            <div class="ds h3 o3"></div>
+            <div class="ds h4 o4"></div>
+            <div class="ds h5 o5"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="dashboardPane"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'bottom'">
+
+        <div id="dashboard">
+          <div id="dashboardWidgets"></div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
+

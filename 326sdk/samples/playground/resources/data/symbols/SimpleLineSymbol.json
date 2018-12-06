@@ -1,0 +1,51 @@
+{
+  "name": "SimpleLineSymbol",
+  "type": "class",
+  "baseClass": "LineSymbol",
+  "baseLocation": "symbols/LineSymbol.json",
+  "variable": "line",
+  "description": "Line symbols are used to draw linear features on the graphics layer. SimpleLineSymbol is either a solid line or a predefined pattern of dashes and dots.",
+  "summary": "draw polylines and outline of points and polygons",
+  "path": "esri/symbols/SimpleLineSymbol",
+  "toolbar": true,
+  "constructorArgs": ["style","color","width"],
+  "properties": [
+    {
+      "name": "style",
+      "type": "String",
+      "default": "STYLE_SOLID",
+      "method": "setStyle",
+      "summary": "The line style",
+      "options": {
+        "type": "constants",
+        "className": "SimpleLineSymbol",
+        "values": [
+          "STYLE_DASH",
+          "STYLE_DASHDOT",
+          "STYLE_DASHDOTDOT",
+          "STYLE_DOT",
+          "STYLE_LONGDASH",
+          "STYLE_LONGDASHDOT",
+          "STYLE_NULL",
+          "STYLE_SHORTDASH",
+          "STYLE_SHORTDASHDOT",
+          "STYLE_SHORTDASHDOTDOT",
+          "STYLE_SHORTDOT",
+          "STYLE_SOLID"
+        ]
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "setStyle",
+      "parameters": [
+        {
+          "name": "style",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the line symbol style"
+    }
+  ]
+}

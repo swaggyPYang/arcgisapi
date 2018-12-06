@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Esri Map and jQuery</title>
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/redmond/jquery.ui.all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <link rel="stylesheet" href="skins/tango/skin.css" />
+    <style>
+      html,body {
+        height:100%;
+        width:100%;
+        overflow:hidden;
+      }
+      #container{
+        margin: 0 0;
+        width: 98%;
+        height:90%;
+        background: #fff;
+      }
+
+      #header{
+        font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+        border:1px solid #0c2c52;
+        padding: 10px;
+        background:#f0f6f9;
+        filter:alpha(opacity=50);  
+        -moz-opacity: 0.50; 
+        -khtml-opacity: 0.50; 
+        opacity: 0.50; 
+      }
+      #subheader{
+        padding-left:25px;
+        font-size:medium;
+        color:#200f08 ;
+      }
+
+      #header h1 { 
+        margin: 0;
+        color: #0c2c52;
+        text-shadow:1px 1px 1px rgba(0, 48, 49, 0.9);
+        text-align: left;
+        }
+
+      #content-container{
+        float: left;
+        width: 100%;
+        height:100%;
+      }
+
+      #content{
+        clear: left;
+        float: left;
+        width: 80%;
+        height:90%;
+        padding: 10px 0;
+        display: inline;
+      }
+      
+      #aside{
+        float: right;
+        width: 16%;
+        padding:10px 0;
+        margin: 0 1% 0 0;
+        display: inline;
+      }
+      #aside p {
+        margin: 0;
+        font-size:medium;
+        color:#200f08 ;
+      }
+      
+      #map{
+        width:100%;
+        height:100%;
+        border:1px solid #0c2c52;
+      }
+      .roundedCorners{
+        -moz-border-radius: 10px;
+         border-radius: 10px;
+      }
+      .jcarousel-item:hover{
+        border: 2px solid #808080;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    
+
+    
+    <script src="http://www.google.com/jsapi?key=qDCtRVNLgUhnJVaabm69uDjeZg&amp;autoload=%7B%27modules%27%3A%5B%7B%27name%27%3A%27jquery%27%2C%27version%27%3A%271.4.2%27%7D%2C%7B%27name%27%3A%27jqueryui%27%2C%27version%27%3A%271.8.2%27%7D%5D%7D">
+    </script>
+    
+    <script src="jquery.jcarousel.min.js"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.BasemapGallery");
+
+      dojo.ready(init);
+
+      var map, basemapGallery, items;
+
+      function init() {
+        map = new esri.Map("map", {
+          center: [2.352, 48.87],
+          zoom: 12
+        });
+        
+        basemapGallery = new esri.dijit.BasemapGallery({
+          showArcGISBasemaps: true,
+          map: map
+        });
+
+        $(document).ready(jQueryReady);
+      }
+
+      function jQueryReady() {
+        dojo.connect(basemapGallery, "onLoad", function() {
+          items = $.map(basemapGallery.basemaps, function(basemap) {
+            return {
+              url: basemap.thumbnailUrl,
+              id: basemap.id,
+              title: basemap.title
+            };
+          });
+          dojo.connect(basemapGallery,"onSelectionChange",function(){
+            var basemap = basemapGallery.getSelected();
+            $('#basemapDetails').html(basemap.title); 
+          });
+          //create carousel
+          $('#basemapCarousel').jcarousel({
+            size: items.length,
+            vertical: true,
+            itemLoadCallback: function(carousel, state) {
+              $.each(items, function(index, item) {
+                carousel.add(index, getItemHTML(item));
+              });
+            }
+          });
+        });
+        $(window).resize(function() {
+          if (map) {
+            map.reposition();
+            map.resize();
+          }
+        });
+      }
+
+      function selectBasemap(id) {
+        basemapGallery.select(id); 
+      }
+
+      function getItemHTML(item) {
+        return $('<img/>').click(function() {
+          selectBasemap(item.id);
+        }).attr({
+          src: item.url,
+          title: item.title,
+          width: "75",
+          height: "75"
+        });
+      }
+    </script>
+  </head>
+<body >
+<div id="container">
+  <div id="header" class="roundedCorners">
+    <h1>Basemap Gallery</h1>
+    <div id="subheader">
+      displayed using the <a target="_blank" href="http://sorgalla.com/projects/jcarousel/">jCarousel</a> plug-in
+    </div>
+  </div>
+  <div id="content-container">
+    <div id="content" >
+      <div id="map" ></div>
+    </div>
+    <div id="aside">
+      <ul id="basemapCarousel" class="jcarousel-skin-tango"></ul><br/>
+      <p><b>Current basemap:</b><br/><span id="basemapDetails"></span></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

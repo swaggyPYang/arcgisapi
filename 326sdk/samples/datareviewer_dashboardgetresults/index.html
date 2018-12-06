@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Dashboard Get Results Sample</title>    
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/claroGrid.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+<style>
+ .reviewerGrid {
+   font-size: 0.75em;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.reviewerForm {
+	width: 530px;
+	font-size: .7em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.submitButton {
+	float: right;
+	padding: 5px;
+	width: 150px;
+	font-size: 1.1em;
+	border: 2px solid #CCC;
+	margin: 0px 0px 10px 0px;
+}	
+label {
+	float: left;
+	text-align: right;
+	margin-right: 15px;
+	width: 130px;
+	padding-top: 5px;
+}
+select{
+	padding: 5px;
+	width: 385px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+}
+.message {
+	float: right;
+	padding: 5px;
+	width: 280px;
+}
+
+.errorMessage{
+	float: right;
+	padding: 5px;
+	width: 280px;
+	color: #C41111;
+}
+</style>
+  <script>
+  //This should point to the Data Reviewer soe
+  var drsSoeUrl = "https://datareviewer.arcgisonline.com/arcgis/rest/services/Samples/reviewerDashboard/MapServer/exts/DataReviewerServer";
+  var dashboardTask;
+  require([
+     "dojo/parser",
+     "dojo/on",
+     "dojo/dom",
+     "dijit/registry",
+     "dojo/_base/array",
+     "esri/tasks/datareviewer/DashboardTask",
+     "dojox/charting/widget/Chart",
+     "dojox/charting/plot2d/Pie",
+     "dojox/charting/themes/Claro",
+     "dojox/grid/DataGrid",
+     "dojo/data/ItemFileReadStore",
+     "dojo/domReady!"
+  ], 
+  function(parser, on, dom, registry, array, DashboardTask, Chart, Pie, Distinctive, DataGrid, ItemFileReadStore) {
+     parser.parse();
+    // specify proxy for request with URL lengths > 2k characters
+    esriConfig.defaults.io.proxyUrl = "/proxy/";
+    
+    // create a new DashboardTask with the DRS SOE URL
+    dashboardTask = new DashboardTask(drsSoeUrl);
+    
+    //Retrieve Dashboard FieldNames and populate combo box
+    dashboardTask.getDashboardFieldNames();
+    dashboardTask.on("get-dashboard-field-names-complete",function(fieldNames){
+        array.forEach(fieldNames.fieldNames, function(fieldName, i) {
+            dom.byId("dashboardFieldNamesCombo")[i] = new Option( fieldName, fieldName); 
+        });
+    });
+    // handle getResults button click event
+    on(dom.byId("getResultsButton"), "click", function(evt) { getDashboardResults(); });
+    function getDashboardResults() {
+        //Identify the Dashboard field that user has selected        
+        var selectedField = dom.byId("dashboardFieldNamesCombo").value;
+        
+        // retrieve the results by user selected field. 
+        dashboardTask.getDashboardResults(selectedField);
+        
+        dashboardTask.on("get-dashboard-results-complete",function(response){             
+           // make content visible
+           dom.byId("mainContent").style.visibility = "visible";
+
+           // now process the response, this is necessary because the
+           // dojo chart expects an array of key-value pairs in the
+           // format of [{text:<label>,y:<value>}]
+           var mappedArray = [];
+           array.forEach(response.dashboardResult.fieldValues, function(item, i) {
+              mappedArray.push({
+                 text : item,
+                 y : response.dashboardResult.getCount(item)
+              });
+           });
+
+           // update the chart
+           var chart = registry.byId("dashboardChart").chart;
+           chart.removeSeries("reviewer");
+           chart.addSeries("reviewer", mappedArray);
+           chart.render();
+           
+           //set datagrid layout
+           var gridLayout=[[
+               {field: 'text', name: selectedField, width:'250px'},
+               {field: 'y', name: 'COUNT', width:'100px'}
+           ]];
+
+           //creating store for datagrid
+           var store = new ItemFileReadStore({
+              data : {
+                 items : mappedArray
+              }
+           });
+           // update the datagrid
+           var grid = registry.byId("dashBoardResultsGrid");
+           grid.setStructure(gridLayout);
+           grid.setStore(store);
+
+        });
+        dashboardTask.on("error", function(error) {
+           var grid = registry.byId("dashBoardResultsGrid");        	 
+           grid.setStore(null);
+           showMessage("dashboardMessages", "Error occurred  " + error.error.message, "errorMessage");
+        });
+     }
+     //error handling
+     function showMessage(divName, text, className) {
+        var messageDiv = dom.byId(divName);
+        messageDiv.innerHTML = "";
+        messageDiv.className = className || "";
+        messageDiv.innerHTML = text;
+     }
+  });
+  </script>
+</head>
+<body class="claro">
+ <h2 align="center">Dashboard Get Results Sample</h2>
+    <div style="width:100%; overflow-x: auto;" >
+        <div style="padding: 0px 20px 0px 0px; float:left;">
+            <div class="reviewerForm" >
+                <label for="dashboardFieldNamesCombo">Dashboard results by:</label>
+                <select id="dashboardFieldNamesCombo"></select>
+                <button id="getResultsButton" title="GetResults" class="submitButton">Get Dashboard Results</button>	
+                <div id="dashboardMessages" class="message"></div>
+            </div>
+             
+        </div>
+    </div>
+    <div id="mainContent" style="width:100%;visibility: hidden" >
+     
+     <div id="dashboardChart" title="Distribution of Reviewer results" style="width: 500px; height: 400px; float:left;"
+     data-dojo-type="dojox/charting/widget/Chart" data-dojo-props="theme:dojox.charting.themes.Claro">
+        <div class="plot" name="default" type="Pie" radius="120" fontColor="#000" labelStyle="default" labelOffset="-30"></div>
+     </div>
+     
+     <div style="padding: 0px 20px 0px 20px; float:left;">
+        <table id="dashBoardResultsGrid" columnReordering="false"
+        data-dojo-type="dojox/grid/DataGrid"  autoHeight="true" autoWidth="true" class="reviewerGrid">
+        </table>
+     </div>
+  </div>
+</body>
+</html>

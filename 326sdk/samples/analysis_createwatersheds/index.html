@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>createWaterSheds</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css" />
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+<style>
+  html, body, #border-container
+  {
+    height: 100%;
+    margin: 0;
+  }
+  /* Don't display the analysis widget's close icon*/
+  .esriAnalysis .esriAnalysisCloseIcon
+  {
+    display: none;
+  }
+</style>
+<script src="https://js.arcgis.com/3.26/"></script>
+<script>
+    require([
+        "dojo/ready",
+        "dojo/parser",
+        "esri/urlUtils",
+        "esri/map",
+        "esri/layers/FeatureLayer",
+        "esri/dijit/analysis/CreateWatersheds",
+        "esri/InfoTemplate",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane"
+    ], function (
+        ready,
+        parser,
+        urlUtils,
+        Map,
+        FeatureLayer,
+        CreateWatersheds,
+        InfoTemplate
+    ) {
+        ready(function () {
+            parser.parse();
+
+            urlUtils.addProxyRule({
+                urlPrefix: "elevation.arcgis.com",
+                proxyUrl: "/sproxy/"
+            });
+
+            var map = new Map("map", {
+                basemap: "topo",
+                center: [-117.202097,34.067219],
+                zoom: 12
+            });
+
+            var featureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/origins/FeatureServer/0");
+            map.addLayers([featureLayer]);
+
+            var analysisTool;
+            map.on("layers-add-result", function () {
+
+                analysisTool = new CreateWatersheds({
+                    inputLayers: [ featureLayer ],
+                    searchUnits: "Feet",
+                    portalUrl: "https://www.arcgis.com",
+                    map: map,
+                    returnFeatureCollection: true
+                }, "toolPane");
+                analysisTool.startup();
+                analysisTool.on("job-result", function (result) {
+                    analysisTool.set("disableRunAnalysis", false);
+                    var resultLayer = new FeatureLayer(result.value.url || result.value, {
+                        outFields: ['*'],
+                        infoTemplate: new InfoTemplate()
+                    });
+                    map.addLayer(resultLayer);
+                });
+            });
+        });
+    });
+</script>
+</head>
+<body class="claro">
+  <div id="border-container" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline',gutters:false">
+    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'" style="padding: 0;"></div>
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;">
+      <div id="toolPane"></div>
+    </div>
+  </div>
+</body>
+</html>

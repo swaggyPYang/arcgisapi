@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Query statistics</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{ margin: 0; padding: 0; }
+      #feedback {
+        position: absolute;
+        height: 330px;
+        font-family: arial;
+        margin: 5px;
+        padding: 5px;
+        z-index: 40;
+        background: #fff;
+        color: #444;
+        width: 300px;
+        right: 30px;
+        bottom: 30px;
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      #county { 
+        padding: 5px 0 0 0;
+        font-weight: 700;
+      }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dojox.widget.AnalogGauge");
+      dojo.require("dojox.widget.gauge.AnalogArcIndicator");
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+      dojo.require("esri.layers.FeatureLayer");
+
+      var app = {};
+      app.abbrLookup = { "Maine": "ME", "Vermont": "VT", "New Hampshire": "NH", "Connecticut": "CT", "Massachusetts": "MA", "Rhode Island": "RI" };
+      function init() {
+        app.map = new esri.Map("map", {
+          basemap: "oceans",
+          center: [-70.324, 44.256],
+          zoom: 7 
+        });
+
+        var countiesUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2";
+        var stateList = "'Maine', 'New Hampshire', 'Vermont', 'Connecticut', 'Massachusetts', 'Rhode Island'";
+        var newEnglandDef = dojo.string.substitute("STATE_NAME IN (${0})", [stateList]);
+        var outFields = ["POP2007", "STATE_NAME", "NAME"];
+        var outline = new esri.symbol.SimpleLineSymbol()
+              .setColor(dojo.colorFromHex("#fff"));
+        app.sym = new esri.symbol.SimpleFillSymbol()
+              .setColor(new dojo.Color([52, 67, 83, 0.4]))
+              .setOutline(outline);
+        var renderer = new esri.renderer.SimpleRenderer(app.sym);
+
+        var hColor = dojo.colorFromHex("#ff3");
+        var hOutline = new esri.symbol.SimpleLineSymbol()
+              .setColor(hColor).setWidth(4);
+        app.highlight = new esri.symbol.SimpleFillSymbol()
+              .setColor(new dojo.Color([0, 0, 0, 0]))
+              .setOutline(hOutline);
+        
+        // use new 10.1 query statistic definition to find 
+        // the value for the most populous county in New England
+        var popQueryTask = new esri.tasks.QueryTask(countiesUrl);
+        var popQuery = new esri.tasks.Query();
+        var statDef = new esri.tasks.StatisticDefinition();
+        statDef.statisticType = "max";
+        statDef.onStatisticField = "POP2007";
+        statDef.outStatisticFieldName = "maxPop";
+        
+        popQuery.returnGeometry = false;
+        popQuery.where = newEnglandDef;
+        popQuery.outFields = outFields;
+        popQuery.outStatistics = [ statDef ];
+        popQueryTask.execute(popQuery, handlePopQuery);
+
+        // create a feature layer for counties in New England 
+        app.neCounties = new esri.layers.FeatureLayer(countiesUrl, {
+          "id": "NewEngland",
+          "mode": esri.layers.FeatureLayer.MODE_ONDEMAND,
+          "outFields": outFields
+        });
+        // set a definition expression so only counties in New England are shown
+        app.neCounties.setDefinitionExpression(newEnglandDef);
+        app.neCounties.setRenderer(renderer);
+
+        dojo.connect(app.neCounties, "onMouseOver", showInfo);
+
+        app.map.addLayer(app.neCounties);
+
+        // create the gauge
+        createGauge(dojo.byId("gauge"), 0);
+      }
+
+      function showInfo(evt) {
+        app.map.graphics.clear();
+        app.map.graphics.add(
+          new esri.Graphic(
+            evt.graphic.geometry, 
+            app.highlight
+          )
+        );
+        updateGauge(evt.graphic);
+      }
+
+      function createGauge(gdiv, startValue) {
+        var indicator = new dojox.widget.gauge.AnalogArcIndicator({
+          interactionMode: "gauge",
+          noChange: false,
+          value: startValue,
+          width: 20,
+          offset: 65,
+          color: "#ff3",
+          title: "value",
+          hideValue: true,
+          duration: 100 // default is 1000
+        });
+
+        app.gauge = new dojox.widget.AnalogGauge({
+          background: [200, 200, 200, 0.0],
+          width: parseInt(gdiv.style.width, 10),
+          height: parseInt(gdiv.style.height, 10),
+          cx: parseInt(gdiv.style.width, 10) / 2,
+          cy: parseInt(gdiv.style.height, 10) * 0.75,
+          style: "position: absolute;",
+          radius: parseInt(gdiv.style.width, 10) / 2,
+          useTooltip: false,
+          ranges: [{ low: 0, high: 100, color: "rgba(255,0,0,0)" }],
+          majorTicks: { offset: 90, interval: 25, length: 3, color: 'black' },
+          indicators: [ indicator ]
+
+        }, dojo.create("div", null, gdiv));
+        app.gauge.startup();
+
+        // add percent label
+        app.percentDiv = dojo.create("div",{
+          "innerHTML": "0%",
+          "style": {
+            "position": "absolute",
+            "bottom": app.gauge.height - app.gauge.cy + "px",
+            "left": "-1000px",
+            "font-family": "verdana",
+            "font-size": "24px",
+            "color":"#000"
+          }
+        });
+        dojo.place(app.percentDiv, app.gauge.domNode);
+        // put the percent label in the middle of the gauge
+        var contentBox = dojo.contentBox(app.percentDiv);
+        dojo.style(app.percentDiv, "left", app.gauge.cx + "px");
+        dojo.style(app.percentDiv, "marginLeft", (-contentBox.w/2) + "px");
+        if( app.gauge.cx ) {
+          dojo.style(app.percentDiv, "marginBottom", (-contentBox.h/2) + "px");
+        }
+      }
+
+      function updateGauge(g) {
+        dojo.byId("county").innerHTML = "Highlighted: " + g.attributes.NAME + 
+          " County, " + app.abbrLookup[g.attributes.STATE_NAME] + "<br />" + 
+          "Population(2007): " + dojo.number.format(g.attributes.POP2007);
+        var perc = parseInt((g.attributes.POP2007 / app.maxPop) * 100, 10);
+        app.percentDiv.innerHTML = perc + "%";
+        app.gauge.indicators[0].update(perc);
+      }
+
+      function handlePopQuery(result) {
+        console.log('pop query...', result);
+        app.maxPop = result.features[0].attributes.maxPop;
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div data-dojo-type="dijit.layout.BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="map"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="feedback">
+          <h3>County Info</h3>
+          <div id="info">
+            Mouse over to see how a particular county's population compares to the most populous county in New England (Middlesex, MA).
+          </div>
+          <div id="county">...county name here...</div>
+          <div id="gauge" style="position:absolute; width: 290px; height: 230px;"></div>
+          
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

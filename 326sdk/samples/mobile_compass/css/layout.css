@@ -1,0 +1,134 @@
+  html, body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 1;
+      }
+      @-webkit-keyframes pulse {
+        0% {
+          opacity: 1.0;
+        }
+        45% {
+          opacity: 0.20;
+        }
+        100% {
+          opacity: 1.0;
+        }
+      }
+      @-moz-keyframes pulse {
+        0% {
+          opacity: 1.0;
+        }
+        45% {
+          opacity: 0.20;
+        }
+        100% {
+          opacity: 1.0;
+        }
+      }
+      #map_graphics_layer {
+        -webkit-animation-duration: 3s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-name: pulse;
+        -moz-animation-duration: 3s;
+        -moz-animation-iteration-count: infinite;
+        -moz-animation-name: pulse;
+      }
+      /* compass */
+      @media(orientation: landscape) {
+        #compass {
+          margin-top: 20px;
+          margin-left: 20px;
+          opacity: 0.85;
+          filter: alpha(opacity=85);
+          position: absolute;
+          z-index: 2;
+        }
+      }
+      @media(orientation: portrait) {
+        #compass {
+          margin-top: 20px;
+          margin-left: 20px;
+          opacity: 0.85;
+          filter: alpha(opacity=85);
+          position: absolute;
+          z-index: 2;
+        }
+      }
+      /* background compassHousing */
+      #compassHousing {
+        background-image: -webkit-radial-gradient(30% 30%, #FFFF00, #D1C790);
+        /* compass face inner shadow */
+        box-shadow: 0 0 10px #444 inset;
+        position: relative;
+        top: 0px;
+        left: 0px;
+        /* width height radius */
+        border-radius: 25px;
+        width: 50px;
+        height: 50px;
+        -webkit-transition: all 0.1s ease-in-out;
+        background: #F2F2F2;
+      }
+      .compassLabel, .compassJewel {
+        position: absolute;
+        left: 20px;
+        width: 10px;
+        text-align: center;
+        top: 5px;
+        -webkit-transform-origin: 5px 20px;
+      }
+      /* N E S W labels */
+      .compassLabel {
+        top: 5px;
+        /* The -webkit-transform-origin property establishes the origin
+				 * for transforms applied to an element with respect to its
+				 * border box.
+				 */
+        -webkit-transform-origin: 5px 20px;
+      }
+      .compassLabel.main {
+        font-weight: bold;
+        font-size: x-small;
+      }
+      /* compass accuracy indicator */
+      .compassJewel {
+        left: 22px;
+        top: 14px;
+        -webkit-transform-origin: 3px 10px;
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+      }
+      .compassJewel.main {
+        border-bottom: 10px solid #666;
+      }
+      #compassCanvas {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        width: 60px;
+        height: 60px;
+        background-color: #666;
+        opacity: 0.5;
+        filter: alpha(opacity=50);
+        border-radius: 15px;
+        z-index: 2;
+      }
+      #jewel {
+        width: 11px;
+        height: 11px;
+        top: 40px;
+        left: 40px;
+        border-radius: 50%;
+        background-color: #0000FF;
+        position: absolute;
+        z-index: 3;
+      }

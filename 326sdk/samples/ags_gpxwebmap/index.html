@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Map with gpx data</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.arcgis.utils");
+      dojo.require("esri.dijit.Scalebar");
+      
+      var map;
+
+      function init() {
+        var mapDeferred = esri.arcgis.utils.createMap("e6ec10f4afd8437d839a02d246a7922c", "map");
+        mapDeferred.then(function(response) {
+          dojo.byId("title").innerHTML = response.itemInfo.item.title;
+          map = response.map;
+          
+          //add the legend
+          var layers = response.itemInfo.itemData.operationalLayers;   
+          if (map.loaded) {
+            initMap(layers);
+          } else {
+            dojo.connect(map,"onLoad",function(){
+              initMap(layers);
+            });
+          }
+        }, function(error) {
+          console.log("Map creation failed: ", dojo.toJson(error));
+        });
+      }
+      
+      function initMap(layers){
+        //add a scalebar
+        var scalebar = new esri.dijit.Scalebar({
+          map: map,
+          scalebarUnit: 'english'
+        });
+      }
+
+      //show map on load
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline'" style="width:100%; height:100%;">
+      <div id="header" class="shadow roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        <div id="title"></div>
+      </div>
+      <div id="map" class="roundedCorners shadow" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'"></div>
+    </div>
+  </body>
+</html>

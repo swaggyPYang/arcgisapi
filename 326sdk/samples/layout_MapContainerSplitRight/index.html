@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Map container split right</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/Grid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/soriaGrid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.toolbars.draw");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.tasks.query");
+      dojo.require("dojox.grid.DataGrid");
+      dojo.require("dojo.data.ItemFileReadStore");
+      
+      var map, toolbar, featureLayer;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-115.511, 32.779],
+          zoom: 8
+        });
+        
+        dojo.connect(map, "onLoad", function(map) {
+          //initialize the toolbar
+          toolBar = new esri.toolbars.Draw(map);
+          dojo.connect(toolBar, "onDrawEnd",onDrawEnd);          
+        });
+        
+        var featureLayerUrl = "https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/EarthquakesFromLastSevenDays/MapServer/0";
+        featureLayer = new esri.layers.FeatureLayer(featureLayerUrl,{
+          mode:esri.layers.FeatureLayer.MODE_ONDEMAND,
+          outFields:["region","magnitude","depth","objectid"]
+        });
+        featureLayer.setSelectionSymbol(new esri.symbol.SimpleMarkerSymbol().setSize(8).setColor(new dojo.Color([160,214,238])));
+        map.addLayer(featureLayer);
+      }
+      function onDrawEnd(extent){
+        toolBar.deactivate();
+        //select features within the draw extent
+        var query = new esri.tasks.Query();
+        query.geometry = extent;
+        featureLayer.selectFeatures(query,esri.layers.FeatureLayer.SELECTION_NEW,function(features,selectionMethod){
+          //add selected features to the grid
+          var items = dojo.map(features,function(feature){
+            return feature.attributes;
+          });
+          var data = {identifier:"objectid", items:items};
+          var store = new dojo.data.ItemFileReadStore({data:data});
+          grid.setStore(store);
+        });
+      }
+      dojo.ready(init);
+    </script>
+  </head> 
+  <body class="soria">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-type="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane"  class="roundedCorners" 
+           data-dojo-props="region:'top'">
+        This is the header section
+      </div>
+
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" class="roundedCorners" 
+           data-dojo-props="region:'center'">
+      </div>
+
+      <div data-dojo-type="dijit.layout.ContentPane" id="rightPane" class="roundedCorners" 
+           data-dojo-props="region:'right', splitter:true">
+
+        <button data-dojo-type="dijit.form.Button"  onClick="toolBar.activate(esri.toolbars.Draw.EXTENT);">Select</button>
+        <button data-dojo-type="dijit.form.Button"  onClick="toolBar.deactivate();featureLayer.clearSelection();">Clear</button>
+        <table data-dojo-type="dojox.grid.DataGrid" jsid="grid" id="grid" style="width:100%;height:100%;" selectionMode="none"> 
+         <thead> 
+            <tr> 
+              <th field="depth">Depth</th> 
+              <th field="magnitude" width="100%">Magnitude</th> 
+            </tr> 
+          </thead> 
+        </table>
+      </div>
+
+      <div id="footer" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'bottom'">
+        This is the footer section
+      </div> 
+    </div>
+  </body>
+</html>

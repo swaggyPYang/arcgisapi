@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>FeatureLayer using HeatmapRenderer</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #map {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+    require([
+        "esri/InfoTemplate",
+        "esri/layers/FeatureLayer",
+        "esri/map",
+        "esri/renderers/HeatmapRenderer",
+        "dojo/domReady!"
+      ],
+      function (InfoTemplate, FeatureLayer, Map, HeatmapRenderer){
+
+        // --------------------------------------------------------------------
+        // Formatting functions for attribute values in the InfoWindow
+        // Data is not what you expect, turn your dirty data into
+        // readable stuff in the infowindow
+        // --------------------------------------------------------------------
+        formatFatalities = function (value, key, data){
+          var result = value > 1 ? value + " people " : value + " person ";
+          return result;
+        }
+        formatGender = function (value, key, data){
+          var lookup = {1: "male", 2: "female", 8: "unknown", 9: "unknown"};
+          return lookup[value];
+        }
+        formatConditions = function (value, key, data){
+          var lookup = {0: "No Additional Atmospheric Conditions", 1: "Clear", 2: "Rain", 3: "Sleet, Hail (Freezing Rain or Drizzle)", 4: "Snow", 5: "Fog, Smog, Smoke", 6: "Severe Crosswinds", 7: "Blowing Sand, Soil, Dirt", 8: "Other", 10: "Cloudy", 11: "Blowing Snow", 98: "Not Reported", 99: "Unknown"};
+          if (value !== 1) {
+            return "Road conditions: " + lookup[value] + "<br>";
+          }
+        }
+        formatWorkZone = function (value, key, data){
+          var lookup = {0: "None", 1: "Construction", 2: "Maintenance", 3: "Utility", 4: "Work Zone, Type Unknown"};
+          if (value !== 0) {
+            return "Work Zone: " + lookup[value] + "<br>";
+          }
+        }
+        formatAlcoholTestResults = function (value, key, data){
+          // --------------------------------------------------------------------
+          // The field is a string and we only want values of 8 - 94 since the
+          // California legal limit is 0.08% BAC. If value is between 8 and 94
+          // then we will report that they were over the legal limit.
+          // --------------------------------------------------------------------
+          var isMatch = value.match(/\b(?!9[5-9])[0-9][0-9]\b|\b[8-9]{1}\b/m);
+          if (isMatch) {
+            return "Driver was over the legal limit for alcohol";
+          }
+        }
+
+        map = new Map("map", {
+          basemap: "gray",
+          center: [-119.11, 36.65],
+          zoom: 7,
+          minZoom: 7,
+          maxZoom: 9
+        });
+        var infoContentDesc = "<p>${numfatal:formatFatalities} died when a ${age} year old ${sex:formatGender} was involved in a fatal speeding accident.</p>";
+        var infoContentDetails = "${atmcond:formatConditions}${conszone:formatWorkZone}${alcres:formatAlcoholTestResults}";
+        var infoContent = infoContentDesc + infoContentDetails;
+        var infoTemplate = new InfoTemplate("Accident details", infoContent);
+
+        var serviceURL = "//services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/2012_CA_NHTSA/FeatureServer/0";
+        var heatmapFeatureLayerOptions = {
+          mode: FeatureLayer.MODE_SNAPSHOT,
+          infoTemplate: infoTemplate,
+          outFields: [
+            "atmcond",
+            "numfatal",
+            "conszone",
+            "age",
+            "alcres",
+            "sex"
+          ]
+        };
+        var heatmapFeatureLayer = new FeatureLayer(serviceURL, heatmapFeatureLayerOptions);
+        var heatmapRenderer = new HeatmapRenderer();
+        heatmapFeatureLayer.setRenderer(heatmapRenderer);
+        map.addLayer(heatmapFeatureLayer);
+      });
+  </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

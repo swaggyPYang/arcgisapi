@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Explicitly Create Map Service Layer List</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+
+    <script>
+      var map;
+
+      require([
+        "esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/layers/ImageParameters",
+        "dojo/dom",
+        "dojo/on",
+        "dojo/query",
+        "dojo/domReady!"
+      ],
+        function (Map, ArcGISDynamicMapServiceLayer, ImageParameters, dom, on, query) {
+          var layer, visibleLayerIds = [];
+
+          map = new Map("map");
+
+          //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+          var imageParameters = new ImageParameters();
+          imageParameters.layerIds = [2];
+          imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
+          //can also be: LAYER_OPTION_EXCLUDE, LAYER_OPTION_HIDE, LAYER_OPTION_INCLUDE
+
+          layer = new ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer",
+            {"imageParameters": imageParameters});
+          map.addLayer(layer);
+
+          on(dom.byId("layer0CheckBox"), "change", updateLayerVisibility);
+          on(dom.byId("layer1CheckBox"), "change", updateLayerVisibility);
+
+          function updateLayerVisibility () {
+            var inputs = query(".list_item");
+            var inputCount = inputs.length;
+            //in this application layer 2 is always on.
+            visibleLayerIds = [2];
+
+            for (var i = 0; i < inputCount; i++) {
+              if (inputs[i].checked) {
+                visibleLayerIds.push(inputs[i].value);
+              }
+            }
+
+            if (visibleLayerIds.length === 0) {
+              visibleLayerIds.push(-1);
+            }
+
+            layer.setVisibleLayers(visibleLayerIds);
+          }
+        });
+    </script>
+  </head>
+
+  <body>
+  This sample loads an ArcGISDynamicMapServiceLayer and presents check boxes for only the layers that should be toggled on and off by users.  <br />
+    <br />
+        Layer List : <span id="layer_list"><input type='checkbox' class='list_item' id='layer0CheckBox' value=0 />Cities&nbsp;&nbsp;
+          <input type='checkbox' class='list_item' id='layer1CheckBox' value=1 />Rivers&nbsp;&nbsp;
+        </span><br />
+        <br />
+    <div id="map" class="claro" style="width:600px; height:400px; border:1px solid #000;"></div>
+  </body>
+
+</html>

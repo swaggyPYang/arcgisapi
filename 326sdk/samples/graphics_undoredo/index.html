@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Shapes and Symbols</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0; 
+        padding: 0;
+        overflow: hidden;
+      }
+      div p {
+        margin: 12px 0 0 0;
+      }
+      #leftPane {
+        font-family: sans-serif;
+        font-size: 1.1em;
+        width: 300px;
+      }
+      #map {
+        height: 100%;
+        padding:0;
+      }
+      .undoButtons{
+        margin: 0 auto;
+        padding-top: 0.5em;
+      }
+      .undoIcon { background-image:url(images/undo.png); width:16px; height:16px; }
+      .redoIcon { background-image:url(images/redo.png); width:16px; height:16px;}
+      .undoGrayIcon { background-image:url(images/undo_gray.png); width:16px; height:16px; }
+      .redoGrayIcon { background-image:url(images/redo_gray.png); width:16px; height:16px; }
+    </style>
+
+    <script>var dojoConfig = {
+        packages: [{
+          "name": "myModules",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "myModules"
+        }]
+      };
+    </script>   
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      var tb;
+      var undoManager;
+      
+      require([
+        "esri/map", "esri/undoManager", "esri/toolbars/draw",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/symbols/SimpleFillSymbol", "esri/graphic",
+        "myModules/customoperation",
+        "dojo/_base/connect", "esri/Color", "dojo/parser", "dijit/registry",
+
+        "dijit/form/Button", "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+        "dojo/domReady!"
+      ], function(
+        Map, UndoManager, Draw,
+        SimpleMarkerSymbol, SimpleLineSymbol, 
+        SimpleFillSymbol, Graphic,
+        CustomOperation,
+        connect, Color, parser, registry
+      ) {
+        parser.parse();
+
+        //specify the number of undo operations allowed using the maxOperations parameter
+        undoManager = new UndoManager();
+
+        // hook up undo/redo buttons
+        registry.byId("undo").on("click", function() {
+          undoManager.undo();
+        });
+        registry.byId("redo").on("click", function() {
+          undoManager.redo();
+        });
+
+        connect.connect(undoManager,"onChange",function(){
+          //enable or disable buttons depending on current state of application
+          if (undoManager.canUndo) {
+            registry.byId("undo").set("disabled", false);
+            registry.byId("undo").set("iconClass","undoIcon");
+          } else {
+            registry.byId("undo").set("disabled", true);
+            registry.byId("undo").set("iconClass","undoGrayIcon");
+          }
+
+          if (undoManager.canRedo) {
+            registry.byId("redo").set("disabled", false);
+            registry.byId("redo").set("iconClass","redoIcon");
+          } else {
+            registry.byId("redo").set("disabled", true);
+            registry.byId("redo").set("iconClass","redoGrayIcon");
+          }
+        });
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-73.993, 40.718],
+          zoom: 14
+        });
+        map.on("load", initToolbar);
+
+        function initToolbar(evt) {
+          tb = new Draw(evt.map);
+          tb.on("draw-end", addGraphic);          
+          
+          // activate drawing tools on button click
+          registry.byId("point").on("click", function() {
+            tb.activate(this.id);
+          });
+          registry.byId("freehandpolyline").on("click", function() {
+            tb.activate(this.id);
+          });
+          registry.byId("freehandpolygon").on("click", function() {
+            tb.activate(this.id);
+          });
+        }
+
+        function addGraphic(evt) {   
+          //create a random color for the symbols
+          var r = Math.floor(Math.random() * 255);
+          var g = Math.floor(Math.random() * 255);
+          var b = Math.floor(Math.random() * 255);
+
+          var type = evt.geometry.type;
+          var symbol; 
+          
+          if (type === "point" || type === "multipoint") {
+            symbol = new SimpleMarkerSymbol(
+              SimpleMarkerSymbol.STYLE_CIRCLE, 
+              20, new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID, 
+                new Color([r, g, b, 0.5]), 
+                10
+              ), 
+              new Color([r, g, b, 0.9]));
+          } else if (type === "line" || type === "polyline") {
+            symbol = new SimpleLineSymbol(
+              SimpleLineSymbol.STYLE_SOLID,
+              new Color([r,g,b,0.85]), 
+              6
+            );
+          } else {
+            symbol = new SimpleFillSymbol(
+              SimpleFillSymbol.STYLE_SOLID,
+              new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_SOLID,
+                new Color([r,g,b,0.9]), 
+                4
+              ),new Color([r,g,b,0.5]));
+          }
+           
+          var graphic = new Graphic(evt.geometry, symbol);
+          var operation = new CustomOperation.Add({
+            graphicsLayer: map.graphics,
+            addedGraphic: graphic
+          });
+
+          undoManager.add(operation);
+          map.graphics.add(graphic);
+        }
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" 
+         data-dojo-props="gutters:true, design:'sidebar'" 
+         style="width:100%;height:100%;">
+
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" 
+           data-dojo-props="region:'center'"></div>
+
+      <div id="leftPane" data-dojo-type="dijit/layout/ContentPane" 
+           data-dojo-props="region:'left'">
+
+      <div>
+        <p>
+          This sample creates a custom operation to undo/redo graphics. The custom operation inherits from esri/OperationBase. <a target="_blank" href="./myModules/customoperation.js">View the code for the custom operation</a>.
+        </p> 
+        <p>
+          Add a graphic to the map then use the undo/redo buttons to cycle through the operation stack.
+        </p>
+      </div>
+        
+        <button id="point" data-dojo-type="dijit/form/Button">
+          Point
+        </button>
+        <button id="freehandpolyline" data-dojo-type="dijit/form/Button">
+          Polyline
+        </button>
+        <button id="freehandpolygon" data-dojo-type="dijit/form/Button">
+          Polygon
+        </button>
+
+        <div class="undoButtons">
+          <button id="undo" data-dojo-type="dijit/form/Button"
+                  data-dojo-props="disabled: true, iconClass: 'undoGrayIcon'">
+            Undo
+          </button>
+          <button id="redo" data-dojo-type="dijit/form/Button"
+                  data-dojo-props="disabled: true, iconClass: 'redoGrayIcon'">
+            Redo
+          </button>
+          <br>
+        </div>
+      </div>
+
+   </div>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+/* --------------------------------------------------------------------
+ * main styles
+ * ----------------------------------------------------------------- */
+html, body, #esri-map-container {
+  height: 100%;
+  margin: 0;
+  color: #5c5c5c;
+}
+
+/* --------------------------------------------------------------------
+ * Navigation
+ * ----------------------------------------------------------------- */
+.esriSimpleSlider {
+  /* #fafafa */
+  top: 162px;
+  left: 301px;
+  background-color: #fafafa;
+  box-shadow: 0 0 10px 0 #222222;
+  color: #5c5c5c;
+  border-color: #5c5c5c;
+}
+
+/* --------------------------------------------------------------------
+ * esri/dijit/BasemapGallery
+ * ----------------------------------------------------------------- */
+.esriBasemapGallery {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 1206px;
+  height: 120px;
+  max-height: 120px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  background: #fafafa;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0 #222222;
+  padding: 5px;
+  border: 1px solid #5c5c5c;
+}
+
+.esriBasemapGallery div {
+  white-space: nowrap;
+}
+
+.esriBasemapGallerySelectedNode .esriBasemapGalleryThumbnail {
+  border-color: #5c5c5c;
+  border-width: 4px;
+}
+
+.esriBasemapGalleryLabelContainer {
+  font-family: "Avenir LT W01 85 Heavy", Arial, Helvetica, sans-serif;
+  font-size: 0.75em;
+}
+
+.esriBasemapGalleryNode {
+  float: none;
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------
+ * Div and title for esri/dijit/ColorInfoSlider
+ * ----------------------------------------------------------------- */
+#esri-colorinfoslider-container {
+  position: absolute;
+  top: 162px;
+  left: 10px;
+  border-radius: 10px;
+  background-color: #fafafa;
+  border: 1px solid #5c5c5c;
+  box-shadow: 0 0 10px 0 #222222;
+  font-family: "Avenir LT W01 85 Heavy", Arial, Helvetica, sans-serif;
+  padding: 10px;
+  max-width: 250px;
+}
+
+#title {
+  font-weight: 600;
+  text-align: center;
+  font-family: "Avenir LT W01 85 Heavy", Arial, Helvetica, sans-serif;
+}
+
+/* --------------------------------------------------------------------
+ * esri/dijit/Popup
+ * ----------------------------------------------------------------- */
+.esriPopup {
+  box-shadow: 0 0 10px 0 #222222;
+}
+
+.esriPopup .title {
+  background-color: #5c5c5c;
+  color: #fafafa;
+}
+
+.esriPopup .contentPane {
+  color: #5c5c5c;
+}
+
+.esriPopup .sizer {
+  max-width: 420px;
+  width: 260px;
+}
+
+.esriPopup .sizer.content table {
+  max-width: 400px;
+  width: 240px;
+}
+
+.esriPopup .movie-summary {
+  font-weight: 700;
+  font-size: 1.125em;
+  border-bottom: none;
+}
+
+.esriPopup .movie-desc {
+  line-height: 250%;
+}
+
+.esriPopup .attr-name {
+  max-width: 410px;
+  width: 400px;
+  line-height: 1.125em;
+}
+
+.esriPopup .attr-value {
+  text-align: right;
+}
+
+.esriPopup table {
+  border-collapse: collapse;
+}
+
+.esriPopup td {
+  border-bottom: 1px solid #5c5c5c;
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Popups with related records</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body {
+      height:  100%;
+      width:   100%;
+      margin:  0;
+      padding: 0;
+    }
+
+    #map {
+      width:   100%;
+      height:  100%;
+      margin:  0;
+      padding: 0;
+    }
+
+    .claro .dijitTooltipContainer {
+      background-image: none;
+      border:           1px solid #444444;
+      background-color: #444444;
+      color:            #FFFFFF;
+    }
+
+    .claro .dijitTooltipConnector {
+      background-image: none;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+
+    require([
+      "dojo/dom-construct",
+      "dojo/parser",
+      "dojox/charting/themes/GreySkies",
+      "esri/Color",
+      "esri/config",
+
+      "esri/dijit/Popup",
+      "esri/dijit/PopupTemplate",
+      "esri/layers/FeatureLayer",
+      "esri/map",
+
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/tasks/GeometryService",
+      "dojo/domReady!"
+    ], function(
+      domConstruct, parser, GreySkies, Color, esriConfig, 
+      Popup, PopupTemplate, FeatureLayer, Map,
+      SimpleFillSymbol, SimpleLineSymbol, GeometryService
+    ) {
+      parser.parse();
+
+      esriConfig.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+      var sls = new SimpleLineSymbol("solid", new Color("#444444"), 3);
+      var sfs = new SimpleFillSymbol("solid", sls, new Color([68, 68, 68, 0.25]));
+
+      var popupOptions = {
+        fillSymbol: sfs,
+        marginLeft: "20",
+        marginTop: "20"
+      };
+      //create a popup to replace the map's info window
+      var popup = new Popup(popupOptions, domConstruct.create("div"));
+
+      map = new Map("map", {
+        basemap: "topo",
+        center: [-118.4, 34.08],
+        zoom: 14,
+        infoWindow: popup
+      });
+
+      var popupTemplate = new PopupTemplate({
+        "title": "Beverly Hills Trees By Block",
+        "fieldInfos": [{
+          "fieldName": "Point_Count",
+          "label": "Count of Points",
+          "format": {
+            "places": 0,
+            "digitSeparator": true
+          }
+        }, {
+          "fieldName": "relationships/0/Point_Count_COMMON",
+          "label": "Sum of species tree count",
+          "format": {
+            "places": 0,
+            "digitSeparator": true
+          },
+          "statisticType": "sum"
+        }, {
+          "fieldName": "relationships/0/COMMON",
+          "label": "Common Name"
+        }, {
+          "fieldName": "BLOCKCE10",
+          "label": "Block"
+        }],
+        "description": "There are {Point_Count} trees within census block {BLOCKCE10}",
+        "showAttachments": false,
+        "mediaInfos": [{
+          "title": "Count By Type",
+          "type": "columnchart",
+          "caption": "",
+          "value": {
+            "theme": "GreySkies",
+            "fields": ["relationships/0/Point_Count_COMMON"],
+            "normalizeField": null,
+            "tooltipField": "relationships/0/COMMON"
+          }
+        }]
+      });
+
+      var featureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/Beverly%20Hills%20Trees%20By%20Block/FeatureServer/0", {
+        mode: FeatureLayer.MODE_SNAPSHOT,
+        infoTemplate: popupTemplate,
+        outFields: ["*"]
+      });
+
+      map.addLayer(featureLayer);
+    });
+  </script>
+</head>
+<body class="claro">
+<div id="map">
+</div>
+</body>
+</html>
+

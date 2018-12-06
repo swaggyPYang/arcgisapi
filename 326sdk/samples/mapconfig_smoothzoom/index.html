@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Customize Map Zoom Animation</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+
+      var map;
+
+      function init() {
+        //configure map zoom animation to be slower
+        esri.config.defaults.map.zoomDuration = 100; //time in milliseconds; default is 500
+        esri.config.defaults.map.zoomRate = 10; //refresh rate of zoom animation; default is 25
+
+        map = new esri.Map("map", { 
+          center: [-52.031, 15.284],
+          zoom: 2,
+          sliderStyle: "large" 
+        });
+        map.addLayer(new esri.layers.ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"));
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+    Configure map zoom duration
+    <div id="map" style="width:1024px; height:512px; border:1px solid #000;"></div>
+  </body>
+</html>

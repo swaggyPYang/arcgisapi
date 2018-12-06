@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Select Batch Job</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+<style>
+.reviewerForm {
+	width: 530px;
+	font-size: .7em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.submitButton {
+	float: right;
+	padding: 5px;
+	width: 150px;
+	font-size: 1.1em;
+	border: 2px solid #CCC;
+	margin: 0px 0px 10px 0px;
+}	
+h1
+{
+	width:100%; 
+	background: #f1f1f1; 
+	padding:10px;
+	font-size:1.1em; 
+	margin: 0 0 15px 0;
+}
+.reviewerForm select{
+	padding: 5px;
+	width: 385px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+}
+
+.message {
+	float: right;
+	padding: 5px;
+	width: 280px;
+}
+
+.errorMessage{
+	float: right;
+	padding: 5px;
+	width: 280px;
+	color: #C41111;
+}
+.descriptionText {
+    height: 200px;
+    width: 525px;
+    border: 2px solid #CCC;
+    margin: 0px 0px 10px 0px;
+}
+</style>
+  <script>
+ require(["dojo/dom",
+     "dojo/on",
+     "dojo/_base/array",
+     "dijit/form/Select",
+     "esri/request",
+     "dojo/domReady!"], 
+  function(dom,on,array,Select,esriRequest){
+    //identify proxy page to use
+    esri.config.defaults.io.proxyUrl = "/proxy/";
+    var batchJobItems;
+    on(dom.byId("btnSelectJob"), "click", populateFileItemId);
+    on(dom.byId("selectBatchJob"), "change", displayBatchJobDescription);
+ 
+    var esriRequestDeferred=esriRequest({
+            url:"https://datareviewer.arcgisonline.com/batchjobs/FileItemIds.json",
+            handleAs:"json"
+    });
+    esriRequestDeferred.then(requestSucceeded,requestFailed)
+    
+    function requestSucceeded(response){
+        batchJobItems=response;
+        array.forEach(response, function(items, i) {
+            if (i==0)
+                dom.byId("selectBatchJob")[i] = new Option( 'Select Batch Job',  '');  
+            dom.byId("selectBatchJob")[i+1] = new Option( items.item.itemName,  items.item.itemID);  
+        });
+    }
+    function requestFailed(error){
+         showMessage("SelectJobMessages", "Error getting jobs " + error.message, "errorMessage");
+    }
+    function populateFileItemId(){
+        if (dom.byId("selectBatchJob").value=='')
+        {
+            alert('Please select a batch job');
+            return;
+        }
+        var parentWindow = window.opener.document.getElementById('inputFileItemId').value=dom.byId("selectBatchJob").value;
+        window.close();
+    }
+    function displayBatchJobDescription(event){
+        array.forEach(batchJobItems,function(items){
+            if (event.target.value==items.item.itemID)
+                dom.byId("batchJobDetaildiv").innerHTML=items.item.description
+        });
+    }
+    function showMessage(divName, text, className) {
+        var messageDiv = dom.byId(divName);
+        messageDiv.innerHTML = "";
+        messageDiv.className = className || "";
+        messageDiv.innerHTML = text;
+    }
+});	 
+ </script>
+</head>
+<body >
+  <div style="width: 100%;  overflow-x: auto;">
+     <div style="padding: 0px 20px 0px 20px; float:left; margin-bottom: 20px">
+        <div id="" class="reviewerForm" >
+            <h1>Select Batch Job</h1>
+            <select id="selectBatchJob" style="width: 527px"></select>
+            <div id="batchJobDetaildiv" class="descriptionText">	</div>
+            <button id="btnSelectJob" class="submitButton">Select Batch Job</button>
+            <div id="SelectJobMessages" class="message"></div>
+        </div>
+    </div>
+  </div>
+</body>
+</html>

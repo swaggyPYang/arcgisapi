@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>ArcGIS API for JavaScript | Place Finding</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height:100%;
+        width:100%;
+        margin:0;
+        padding:0;
+      }
+      #search {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 20px;
+        left: 74px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.Geocoder");
+
+      var map, geocoder;
+
+      dojo.ready(function() {
+        // create the map
+        map = new esri.Map("map",{
+          basemap: "topo",
+          center: [ -100, 37 ], // long, lat
+          zoom: 5
+        });
+
+        // add a graphics layer for geocoding results
+        map.addLayer(new esri.layers.GraphicsLayer({
+          id: "results"
+        }));
+
+        // create the geocoder
+        geocoder = new esri.dijit.Geocoder({
+          autoNavigate: false, // do not zoom to best result
+          maxLocations: 20, // increase number of results returned
+          map: map,
+          arcgisGeocoder: {
+            url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+            name: "Esri World Geocoder",
+            placeholder: "Find a place",
+            sourceCountry: "USA" // limit search to the United States
+          }
+        }, "search");
+        geocoder.startup();
+        geocoder.focus();
+
+        var symbol = new esri.symbol.PictureMarkerSymbol({
+          "angle":0,
+          "xoffset":0,
+          "yoffset":10,
+          "type":"esriPMS",
+          "url":"https://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png",
+          "contentType":"image/png",
+          "width":24,
+          "height":24
+        });
+        var template = new esri.InfoTemplate("${name}", "${*}");
+
+        dojo.connect(geocoder, "onFindResults", function(response) {
+          console.log("find results: ", response);
+          var l = map.getLayer("results");
+          l.clear();
+          map.infoWindow.hide();
+          dojo.forEach(response.results, function(r) {
+            r.feature.attributes.name = r.name;
+            r.feature.setSymbol(symbol);
+            r.feature.setInfoTemplate(template);
+            l.add(r.feature);
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="search"></div>
+    <div id="map"></div>
+  </body>
+</html>

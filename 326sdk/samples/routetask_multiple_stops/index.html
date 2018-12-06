@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Multiple Routes</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "esri/urlUtils",
+        "esri/config",
+        "esri/map",
+        "esri/graphic",            
+        "esri/tasks/RouteTask",            
+        "esri/tasks/RouteParameters",
+
+        "esri/tasks/FeatureSet",            
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",          
+
+        "esri/Color",
+        "dojo/_base/array",
+        "dojo/on",
+        "dojo/dom",
+        "dijit/registry",
+
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "dijit/form/HorizontalSlider",
+        "dijit/form/HorizontalRuleLabels"
+      ], function (
+        urlUtils, esriConfig, Map, Graphic, RouteTask, RouteParameters,
+        FeatureSet, SimpleMarkerSymbol, SimpleLineSymbol,           
+        Color, array, on, dom, registry
+      ) {
+        var map, routeTask, routeParams, routes = [];
+        var stopSymbol, barrierSymbol, routeSymbols;
+        var mapOnClick_addStops_connect, mapOnClick_addBarriers_connect;
+
+        urlUtils.addProxyRule({
+          urlPrefix: "route.arcgis.com",  
+          proxyUrl: "/sproxy/"
+        });
+        
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-122.416, 37.802],
+          zoom: 15
+        });
+
+        routeTask = new RouteTask("https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World");
+        routeParams = new RouteParameters();
+        routeParams.stops = new FeatureSet();
+        routeParams.barriers = new FeatureSet();
+        routeParams.outSpatialReference = {"wkid":102100};
+        
+        routeTask.on("solve-complete", showRoute);
+        routeTask.on("error", errorHandler);
+                
+        stopSymbol = new SimpleMarkerSymbol().setStyle(SimpleMarkerSymbol.STYLE_CROSS).setSize(15);
+        stopSymbol.outline.setWidth(3);
+
+        barrierSymbol = new SimpleMarkerSymbol().setStyle(SimpleMarkerSymbol.STYLE_X).setSize(10);
+        barrierSymbol.outline.setWidth(3).setColor(new Color([255,0,0]));
+
+        routeSymbols = {
+          "Route 1": new SimpleLineSymbol().setColor(new Color([0,0,255,0.5])).setWidth(5),
+          "Route 2": new SimpleLineSymbol().setColor(new Color([0,255,0,0.5])).setWidth(5),
+          "Route 3": new SimpleLineSymbol().setColor(new Color([255,0,255,0.5])).setWidth(5)
+        };
+                        
+        //button click event listeners can't be added directly in HTML when the code is wrapped in an AMD callback
+        on(dom.byId("addStopsBtn"), "click", addStops);
+        on(dom.byId("clearStopsBtn"), "click", clearStops);
+        on(dom.byId("addBarriersBtn"), "click", addBarriers);
+        on(dom.byId("clearBarriersBtn"), "click", clearBarriers);
+        on(dom.byId("solveRoutesBtn"), "click", solveRoute);
+        on(dom.byId("clearRoutesBtn"), "click", clearRoutes);        
+      
+        //Begins listening for click events to add stops
+        function addStops() {
+          removeEventHandlers();
+          mapOnClick_addStops_connect = map.on("click", addStop);
+        }
+
+        //Clears all stops
+        function clearStops() {
+          removeEventHandlers();
+          for (var i=routeParams.stops.features.length-1; i>=0; i--) {
+            map.graphics.remove(routeParams.stops.features.splice(i, 1)[0]);
+          }
+        }
+
+        //Adds a stop. The stop is associated with the route currently displayed in the dropdown
+        function addStop(evt) {
+          routeParams.stops.features.push(
+            map.graphics.add(
+              new esri.Graphic(
+                evt.mapPoint,
+                stopSymbol,
+                { RouteName:dom.byId("routeName").value }
+              )
+            )
+          );
+        }
+
+        //Begins listening for click events to add barriers
+        function addBarriers() {
+          removeEventHandlers();
+          mapOnClick_addBarriers_connect = on(map, "click", addBarrier);
+        }
+
+        //Clears all barriers
+        function clearBarriers() {
+          removeEventHandlers();
+          for (var i=routeParams.barriers.features.length-1; i>=0; i--) {
+            map.graphics.remove(routeParams.barriers.features.splice(i, 1)[0]);
+          }
+        }
+
+        //Adds a barrier
+        function addBarrier(evt) {
+          routeParams.barriers.features.push(
+            map.graphics.add(
+              new esri.Graphic(
+                evt.mapPoint,
+                barrierSymbol
+              )
+            )
+          );
+        }
+
+        //Stops listening for click events to add barriers and stops (if they've already been wired)
+        function removeEventHandlers() {        
+          if (mapOnClick_addStops_connect) {
+            mapOnClick_addStops_connect.remove();
+          }
+          if (mapOnClick_addBarriers_connect) {
+            mapOnClick_addBarriers_connect.remove();
+          }
+        }
+
+        //Solves the routes. Any errors will trigger the errorHandler function.
+        function solveRoute() {
+          removeEventHandlers();
+          routeTask.solve(routeParams);
+        }
+
+        //Clears all routes
+        function clearRoutes() {
+          for (var i=routes.length-1; i>=0; i--) {
+            map.graphics.remove(routes.splice(i, 1)[0]);
+          }
+          routes = [];
+        }
+
+        //Draws the resulting routes on the map
+        function showRoute(evt) {
+          clearRoutes();
+
+          array.forEach(evt.result.routeResults, function(routeResult, i) {
+            routes.push(
+              map.graphics.add(
+                routeResult.route.setSymbol(routeSymbols[routeResult.routeName])
+              )
+            );
+          });
+
+          var msgs = ["Server messages:"];
+          array.forEach(evt.result.messages, function(message) {
+            msgs.push(message.type + " : " + message.description);
+          });
+          if (msgs.length > 1) {
+            alert(msgs.join("\n - "));
+          }
+        }
+
+        //Reports any errors that occurred during the solve
+        function errorHandler(err) {
+          alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
+        }
+      });
+    </script>
+
+  </head>
+  <body class="claro">
+
+    Select route name: <select id="routeName">
+      <option value="Route 1">Route 1</option>
+      <option value="Route 2">Route 2</option>
+      <option value="Route 3">Route 3</option>
+    </select> to 
+        <button id="addStopsBtn">Add Stops</button>
+        <button id="clearStopsBtn">Clear Stops</button>
+        <button id="addBarriersBtn">Add Barriers</button>
+        <button id="clearBarriersBtn">Clear Barriers</button>
+        <button id="solveRoutesBtn">Solve Routes</button>
+        <button id="clearRoutesBtn">Clear Routes</button>
+    <br /><br />
+    <div id="map" style="width:600px; height:400px; border:1px solid #000;"></div>
+     <ol>
+      <li>Select a route name from the drop down.</li>
+      <li>Click 'Add stops', then click on map to add stops to route.</li>
+
+      <li>Click the 'Add Barriers', then click on map to add barriers.</li>
+      <li>Optionally, repeat the above steps to add more routes.</li>
+      <li>Click the 'Solve Routes' to solve.</li>
+    </ul>
+    <p>Any server error messages will be displayed in an alert box.</p>
+  </body>
+</html>

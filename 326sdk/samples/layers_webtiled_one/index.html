@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Web tiled</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      }
+      body{
+        background-color: #fff; overflow:hidden;
+        font-family: sans-serif;
+      }
+      #header {
+        padding: 4px 15px 4px 0;
+        background-color: #F2F2EC;
+        color: #575757;
+        font-size: 16pt;
+        text-align: right;
+        font-weight: bold;
+        height:55px;
+      }
+      #subheader {
+        color: #575757;
+        font-size: small;
+        padding: 5px 0 0 0;
+        text-align: right;
+      }
+      #subheader a { color: #575757; }
+
+      .ds { background: #000; overflow: hidden; position: absolute; z-index: 2; }
+      #ds-h div { width: 100%; }
+      #ds .o1 { filter: alpha(opacity=10); opacity: .1; }
+      #ds .o2 { filter: alpha(opacity=8); opacity: .08; }
+      #ds .o3 { filter: alpha(opacity=6); opacity: .06; }
+      #ds .o4 { filter: alpha(opacity=4); opacity: .04; }
+      #ds .o5 { filter: alpha(opacity=2); opacity: .02; }
+      #ds .h1 { height: 1px; }
+      #ds .h2 { height: 2px; }
+      #ds .h3 { height: 3px; }
+      #ds .h4 { height: 4px; }
+      #ds .h5 { height: 5px; }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/WebTiledLayer", "dojo/parser",
+        
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, WebTiledLayer, parser
+      ) {
+        parser.parse();
+
+        map = new Map("map", {
+          center: [-89.985, 29.822],
+          zoom: 8
+        });
+
+        var cycleMap = new WebTiledLayer("https://${subDomain}.tile.thunderforest.com/cycle/${level}/${col}/${row}.png", {
+          "copyright": 'Maps &copy; <a href="http://www.thunderforest.com">Thunderforest</a>, Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+          "id": "OpenCycleMap",
+          "subDomains": ["a", "b", "c"]
+        });
+        map.addLayer(cycleMap);
+      });
+    </script>
+  </head>
+  <body class="nihilo">
+    <div id="mainWindow"
+         data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="header"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'top'">
+        OpenCycleMap
+        <div id="subheader">Display <a href="http://www.thunderforest.com/maps/opencyclemap/" target="_blank">OpenCycleMap</a> using the WebTiledLayer class</div>
+      </div>
+      <div id="map" class="shadow"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'">
+
+        
+        <div id="ds">
+          <div id="ds-h">
+            <div class="ds h1 o1"></div>
+            <div class="ds h2 o2"></div>
+            <div class="ds h3 o3"></div>
+            <div class="ds h4 o4"></div>
+            <div class="ds h5 o5"></div>
+          </div>
+        </div> 
+
+      </div>
+    </div>
+  </body>
+</html>

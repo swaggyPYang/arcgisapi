@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Symbols",
+    "list": [
+      {
+        "name": "SimpleMarkerSymbol",
+        "location": "symbols/SimpleMarkerSymbol.json"
+      },
+      {
+        "name": "PictureMarkerSymbol",
+        "location": "symbols/PictureMarkerSymbol.json"
+      },
+      {
+        "name": "TextSymbol",
+        "location": "symbols/TextSymbol.json"
+      },
+      {
+        "name": "SimpleLineSymbol",
+        "location": "symbols/SimpleLineSymbol.json"
+      },
+      {
+        "name": "CartographicLineSymbol",
+        "location": "symbols/CartographicLineSymbol.json"
+      },
+      {
+        "name": "SimpleFillSymbol",
+        "location": "symbols/SimpleFillSymbol.json"
+      },
+
+      {
+        "name": "PictureFillSymbol",
+        "location": "symbols/PictureFillSymbol.json"
+      }
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "name": "LineSymbol",
+  "type": "baseClass",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "symbol",
+  "description": "Line symbols are used to draw linear features on the graphics layer.",
+  "summary": "used to draw linear features on the graphics layer",
+  "path": "esri/symbols/LineSymbol",
+  "toolbar": true,
+  "properties": [
+    {
+      "name": "width",
+      "type": "Number",
+      "default": 1.33,
+      "attributes": {
+        "min": 0,
+        "step": 0.25
+      },
+      "method": "setWidth",
+      "summary": "Width of line symbol in pixels"
+    }
+  ],
+  "methods": [
+    {
+      "name": "setWidth",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the line symbol width"
+    }
+  ]
+}

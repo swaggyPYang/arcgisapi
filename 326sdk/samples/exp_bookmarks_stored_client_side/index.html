@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Bookmark Widget - Storing Bookmarks Client Side</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { 
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      } 
+      body{
+        background-color: #fff; overflow:hidden; 
+        font-family: sans-serif;
+      } 
+      #header {
+        padding-top: 4px;
+        padding-right: 32px;
+        background-color: #243C5F; 
+        color: #fff; 
+        font-size:16pt; text-align:right;font-weight:bold;
+        height:55px;
+      }
+      #subheader {
+        font-size:small;
+        color: #ffde6a;
+        text-align:right;
+        padding: 5px 0 0 0;
+      }
+      #bookmarks-pane{
+        width: 240px !important;
+        top: 30px;
+        right: 30px;
+        position: absolute; 
+        z-index: 40;
+      }
+      .esriAddBookmark {
+        cursor: pointer;
+        text-align: center;
+      }
+      .esriBookmarkRemoveImage {
+        background: url('images/remove_bookmark.gif') no-repeat;
+      }
+      .esriBookmarks {
+        border: 1px solid #243C5F;
+      }
+      .esriBookmarkHighlight {
+        background-color: #ffedaf;
+      }
+      #bookmarks-pane_pane {
+        text-align: center;
+      }
+
+      .ds { background: #000; overflow: hidden; position: absolute; z-index: 2; }
+      #ds-h div { width: 100%; }
+      #ds .o1 { filter: alpha(opacity=10); opacity: .1; }
+      #ds .o2 { filter: alpha(opacity=8); opacity: .08; }
+      #ds .o3 { filter: alpha(opacity=6); opacity: .06; }
+      #ds .o4 { filter: alpha(opacity=4); opacity: .04; }
+      #ds .o5 { filter: alpha(opacity=2); opacity: .02; }
+      #ds .h1 { height: 1px; }
+      #ds .h2 { height: 2px; }
+      #ds .h3 { height: 3px; }
+      #ds .h4 { height: 4px; }
+      #ds .h5 { height: 5px; }
+    </style>
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dojo.cookie");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("dijit.TitlePane");
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.Bookmarks");
+      
+      var map, 
+          bookmark, 
+          storageName = 'esrijsapi_mapmarks',
+          useLocalStorage = supports_local_storage();
+      function init() {
+        // Listen to button click and delete cookie
+        dojo.connect(dojo.byId('clear-storage'), 'onclick', clearBookmarks);
+        
+        map = new esri.Map("map", {
+          basemap: "gray",
+          center: [-100.869, 39.756],
+          zoom: 4
+        });
+
+        // Create the bookmark widget
+        // specify "editable" as true to enable editing
+        bookmark = new esri.dijit.Bookmarks({
+          map: map, 
+          bookmarks: [],
+          editable: true
+        }, dojo.byId('bookmarks'));
+
+        // Save new bookmarks in local storage, fall back to a cookie
+        // If a cookie is used, it expires after a week
+        dojo.connect(bookmark, 'onEdit', refreshBookmarks);
+        dojo.connect(bookmark, 'onRemove', refreshBookmarks);
+
+        // Look for stored bookmarks
+        var bmJSON;
+        if ( useLocalStorage ) {
+          bmJSON = window.localStorage.getItem(storageName);
+        } else {
+          bmJSON = dojo.cookie(storageName);
+        }
+        // Load bookmarks 
+        // Fall back to a single bookmark if no cookie
+        if ( bmJSON && bmJSON != 'null' && bmJSON.length > 4) {
+          console.log('cookie: ', bmJSON, bmJSON.length);
+          var bmarks = dojo.fromJson(bmJSON);
+          dojo.forEach(bmarks, function(b) {
+            bookmark.addBookmark(b);
+          });
+        } else {
+          console.log('no stored bookmarks...');
+          var bookmarkPA = {
+            "extent": {
+              "spatialReference": {
+                "wkid":102100
+              },
+              "xmin":-8669334,
+              "ymin":4982379,
+              "xmax":-8664724,
+              "ymax":4984864
+            },
+            "name": "Central Pennsylvania"
+          };
+          // bookmark.addBookmark(bookmarkCA);
+          bookmark.addBookmark(bookmarkPA);
+        }
+      }
+      function refreshBookmarks() {
+        if ( useLocalStorage ) {
+          window.localStorage.setItem(storageName, dojo.toJson(bookmark.toJson()));
+        } else {
+          var exp = 7; // number of days to persist the cookie
+          dojo.cookie(storageName, dojo.toJson(bookmark.toJson()), { 
+            expires: exp
+          });
+        }
+      }
+      function clearBookmarks() {
+        var conf = confirm('Click OK to remove your map bookmarks.');
+        if ( conf ) {
+          if ( useLocalStorage ) {
+            // Remove from local storage
+            window.localStorage.removeItem(storageName);
+          } else {
+            // Remove cookie
+            dojo.cookie(storageName, null, { expires: -1 });
+          }
+          // Remove all user defined bookmarks
+          // First get all bookmark names
+          var bmNames = dojo.map(bookmark.bookmarks, function(bm) {
+            if ( bm.name != 'Central Pennsylvania' ) {
+              return bm.name;
+            }
+          });
+          // Run removeBookmark
+          dojo.forEach(bmNames, function(bName) {
+            bookmark.removeBookmark(bName);
+          });
+          alert('Bookmarks Removed.');
+        }
+      }
+      // source for supports_local_storage function:
+      // http://diveintohtml5.org/detect.html
+      function supports_local_storage() {
+        try {
+          return 'localStorage' in window && window['localStorage'] !== null;
+        } catch( e ){
+          return false;
+        }
+      }
+      //show map on load 
+      dojo.ready(init);
+    </script>
+  </head>
+  <body class="nihilo">
+    <div id="mainWindow" 
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'top'">
+        Bookmark Widget
+        <div id="subheader">Storing Bookmarks Client Side</div>
+      </div>
+      <div id="map" class="shadow" 
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="bookmarks-pane" 
+             data-dojo-type="dijit.TitlePane" 
+             data-dojo-props="title:'Bookmarks'">
+            
+            <div id="bookmarks"></div>
+            <button id="clear-storage">Remove Map Bookmarks</button>
+        </div>
+        
+
+        <div id="ds"> 
+          <div id="ds-h">
+            <div class="ds h1 o1"></div>
+            <div class="ds h2 o2"></div>
+            <div class="ds h3 o3"></div>
+            <div class="ds h4 o4"></div>
+            <div class="ds h5 o5"></div>
+          </div>
+        </div> 
+            
+      </div>
+    </div>
+  </body>
+</html>
+

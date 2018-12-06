@@ -1,0 +1,46 @@
+/* button CSS */
+.btn {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  background: #b9b9b9 -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#cccccc),color-stop(100%,#a6a6a6));
+  background: #b9b9b9 -webkit-linear-gradient(#cccccc,#a6a6a6);
+  background: #b9b9b9 -moz-linear-gradient(#cccccc,#a6a6a6);
+  background: #b9b9b9 -o-linear-gradient(#cccccc,#a6a6a6);
+  background: #b9b9b9 linear-gradient(#cccccc,#a6a6a6);
+  line-height: 1.71429em;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.35),inset 0 1px 0 0 rgba(255,255,255,0.2);
+  -moz-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.35),inset 0 1px 0 0 rgba(255,255,255,0.2);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.35),inset 0 1px 0 0 rgba(255,255,255,0.2);
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: .25em 1.5em;
+  border-width: 1px;
+  color: white;
+  display: inline-block;
+  /*text-transform: uppercase;*/
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  /*text-shadow: 0 -1px 0 rgba(0,0,0,0.25);*/
+  letter-spacing: 1px;
+  position: relative;
+}
+.btn:hover,
+.btn.selected,
+button:hover,
+button.selected {
+  background: #a6a6a6;
+  color: white;
+}
+.btn.orange, button.orange { background: #e98d32 }
+.btn.orange:hover, .btn.orange.selected, button.orange:hover, button.orange.selected { background: #e16b17 }
+.btn.blue, button.blue { background: #5daddd }
+.btn.blue:hover, .btn.blue.selected, button.secondary:hover, button.secondary.selected, button.blue:hover, button.blue.selected { background: #4997d2 }
+.btn.green, button.green { background: #6aa23f }
+.btn.green:hover, .btn.green.selected, button.green:hover, button.green.selected { background: #4b8d2c }

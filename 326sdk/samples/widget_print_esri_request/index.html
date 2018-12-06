@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Print templates with esri.request</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; padding: 0 0 5px 0; text-align: center; }
+      .shadow {
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      #map{ margin: 0; padding: 0; }
+      #feedback {
+        background: #fff;
+        color: #000;
+        position: absolute;
+        font-family: arial;
+        height: auto;
+        right: 20px;
+        margin: 5px;
+        padding: 10px;
+        top: 20px;
+        width: 300px;
+        z-index: 40;
+      }
+      #feedback a {
+        border-bottom: 1px solid #888;
+        color: #444;
+        text-decoration: none;
+      }
+      #feedback a:hover, #feedback a:active, #feedback a:visited {
+        border: none;
+        color: #444;
+        text-decoration: none;
+      }
+      #note { font-size: 80%; font-weight: 700; padding: 0 0 10px 0; }
+      #info { padding: 10px 0 0 0; }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var app = {};
+      require([
+        "esri/map", "esri/layers/FeatureLayer", 
+        "esri/dijit/Print", "esri/tasks/PrintTemplate", 
+        "esri/request", "esri/config",
+        "dojo/_base/array", "dojo/dom", "dojo/parser",
+
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, 
+        Print, PrintTemplate, 
+        esriRequest, esriConfig,
+        arrayUtils, dom, parser
+      ) {
+        parser.parse();
+
+        app.printUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+        
+        app.map = new esri.Map("map", {
+          basemap: "hybrid",
+          center: [-117.447, 33.906],
+          zoom: 17,
+          slider: false
+        });
+
+        // add graphics for pools with permits
+        var permitUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/PoolPermits/MapServer/1";
+        var poolFeatureLayer = new FeatureLayer(permitUrl, {
+          "mode": FeatureLayer.MODE_SNAPSHOT
+        });
+        app.map.addLayer(poolFeatureLayer);
+
+        // get print templates from the export web map task
+        var printInfo = esriRequest({
+          "url": app.printUrl,
+          "content": { "f": "json" }
+        });
+        printInfo.then(handlePrintInfo, handleError);
+
+        function handlePrintInfo(resp) {
+          var layoutTemplate, templateNames, mapOnlyIndex, templates;
+
+          layoutTemplate = arrayUtils.filter(resp.parameters, function(param, idx) {
+            return param.name === "Layout_Template";
+          });
+          
+          if ( layoutTemplate.length === 0 ) {
+            console.log("print service parameters name for templates must be \"Layout_Template\"");
+            return;
+          }
+          templateNames = layoutTemplate[0].choiceList;
+
+          // remove the MAP_ONLY template then add it to the end of the list of templates 
+          mapOnlyIndex = arrayUtils.indexOf(templateNames, "MAP_ONLY");
+          if ( mapOnlyIndex > -1 ) {
+            var mapOnly = templateNames.splice(mapOnlyIndex, mapOnlyIndex + 1)[0];
+            templateNames.push(mapOnly);
+          }
+          
+          // create a print template for each choice
+          templates = arrayUtils.map(templateNames, function(ch) {
+            var plate = new PrintTemplate();
+            plate.layout = plate.label = ch;
+            plate.format = "PDF";
+            plate.layoutOptions = { 
+              "authorText": "Made by:  Esri's JS API Team",
+              "copyrightText": "<copyright info here>",
+              "legendLayers": [], 
+              "titleText": "Pool Permits", 
+              "scalebarUnit": "Miles" 
+            };
+            return plate;
+          });
+
+          // create the print dijit
+          app.printer = new Print({
+            "map": app.map,
+            "templates": templates,
+            url: app.printUrl
+          }, dom.byId("print_button"));
+          app.printer.startup();
+        }
+
+        function handleError(err) {
+          console.log("Something broke: ", err);
+        }
+      });
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="map"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'">
+        <div id="feedback" class="shadow">
+          <h3>
+            Print Templates Created from Info Returned by the Print Service using 
+            <a href="https://developers.arcgis.com/javascript/3/jsapi/esri.request-amd.html">esri.request</a>
+          </h3>
+          <div id="info">
+            <div id="note">
+              Note:  This sample uses an ArcGIS Server export web map task.
+            </div>            
+            
+            <div id="print_button"></div>
+            <div id="info">
+              <a href="https://developers.arcgis.com/javascript/3/jsapi/printtemplate.html">Print templates</a> are generated
+              from the Export Web Map Task's <a href="https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task">Layout_Template parameter</a>. This info is retrieved from the service 
+              using <a href="https://developers.arcgis.com/javascript/3/jsapi/esri.request-amd.html">esri.request</a>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

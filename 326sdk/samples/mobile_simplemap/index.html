@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Simple Map</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <!--<script>
+      dojoConfig = {
+        paths: {
+          'esri': '/jsapi/src/js/esri',
+          'dojo': '/jsapi/src/js/dojo/dojo'
+        }
+      }
+    </script>
+    <script src="/jsapi/src/js/dojo/dojo/dojo.js"></script>-->
+    <script>
+  require(["esri/map", "dojox/mobile", "dojox/mobile/parser", "esri/sniff", "esri/dijit/PopupMobile",
+    "esri/layers/WebTiledLayer", "esri/symbols/SimpleMarkerSymbol", "esri/graphic", "esri/InfoTemplate",
+    "dojox/mobile/deviceTheme", "dojo/on", "dojo/dom", "dojo/dom-style",
+    "dojox/mobile/View", "dojo/domReady!"
+  ],
+
+  function(Map, mobile, parser, has, MobilePopup, WebTiledLayer, SimpleMarkerSymbol, Graphic, InfoTemplate, dTheme, on, dom, domStyle) {
+    parser.parse();
+    mobile.hideAddressBar();
+
+    var map = new Map("map", {
+      center: [-98, 30],
+      zoom: 6,
+      basemap: 'topo',
+      infoWindow: new MobilePopup(null, dom.byId('popup'))
+    });
+    if(map.loaded){
+      mapLoadHandler({"map":map});  
+    } else {
+      map.on("load", mapLoadHandler);
+    }
+
+    var resizeEvt = (window.onorientationchange !== undefined && !has("android")) ? "orientationchange" : "resize";
+    on(window, resizeEvt, resizeMap);
+
+    function resizeMap() {
+      mobile.hideAddressBar();
+      domStyle.set("map", "height", has('iphone') ? screen.availHeight : window.innerHeight + "px");
+      map.resize();
+    }
+
+    function mapLoadHandler() {
+      resizeMap();
+      var symbol = new SimpleMarkerSymbol().setStyle(SimpleMarkerSymbol.STYLE_X).setSize(12);
+      symbol.outline.setWidth(4).setColor("blue");
+
+      var template = new InfoTemplate("Clicked Point", "Latitude: ${y} <br/> Longitude: ${x}" +
+        "<p> <h3>More Content</h3> Aliquip noster pariatur, esse ita admodum de fore. Ea fugiat consequat nostrud. Aut anim nulla labore laborum in esse quibusdam et deserunt ea quis proident quo graviterque ea ut mandaremus coniunctione. Quo culpa e eram. Aliquip sunt multos ea quid. Cillum ullamco consequat. Ex irure cillum ita proident, ad ut amet esse quis, hic ex imitarentur ea excepteur e nostrud.</p> <p>Fugiat expetendis voluptate, de ad malis commodo ex minim ubi iudicem est e irure ubi fore, senserit nam quid, eu te adipisicing, tamen quibusdam eu elit dolor, sed malis nisi duis aliquip. Et ipsum non legam ab ea quid varias an voluptate, aliquip nisi tempor, non offendit te deserunt in ex a tamen illum veniam ut iudicem voluptatibus eu laboris, et aut distinguantur, singulis aute ab litteris praesentibus. Tempor sint ex consequat voluptatibus, nam irure excepteur. Quibusdam summis irure fabulas quae. Dolor nescius an cohaerescant, hic se sunt vidisse ita arbitror imitarentur si voluptate iis minim laboris voluptatibus. Deserunt amet probant expetendis, excepteur tractavissent ea cernantur, do si culpa singulis ita minim fabulas ea minim fore. Magna ne se noster incididunt, a duis quamquam.</p>");
+
+      map.on("click", function(evt) {
+        map.graphics.clear();
+        var graphic = new Graphic(evt.mapPoint, symbol, evt.mapPoint, template);
+        map.graphics.add(graphic);
+
+        map.infoWindow.setFeatures([graphic]);
+        //Sets the small popup title with arrow link to full screen content.
+        map.infoWindow.setTitle("<b><i>Mobile Popup</i></b><br>Click for full screen info");
+        //Content on mobile popup is always set directly from feature and infoTemplate
+        map.infoWindow.show(evt.mapPoint);
+      });
+
+      map.infoWindow.on("hide", function() {
+        map.graphics.clear();
+      });
+    }
+  });
+    </script>
+  </head>
+
+  <body>
+     <div dojo-data-type="dojox.mobile.View"> 
+      <div id="map"></div>
+      
+     </div>
+    <div id="popup"></div>
+  </body>
+</html>

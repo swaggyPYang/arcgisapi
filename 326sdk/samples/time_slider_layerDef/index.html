@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Arroyo Field Production by Time</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      #map { 
+        display: inline-block; 
+      }
+      #oilLegendDiv {
+        display: inline-block;
+        height: 600px; 
+        overflow: auto;
+        padding: 0;
+        width: 120px;
+      }
+      .templatePicker {
+        border: 1px solid #000;
+        border-radius: 0;
+        -o-border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+      }
+    </style>
+
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.layers.FeatureLayer");
+      dojo.require("esri.dijit.TimeSlider");
+      dojo.require("esri.dijit.editing.TemplatePicker");
+      dojo.require("dojox.lang.functional");
+      dojo.require("dojox.lang.functional.fold");
+      dojo.require("dojox.lang.functional.curry");
+
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-101.788, 37.513],
+          zoom: 13
+        });
+        dojo.connect(map, "onLayersAddResult", initSlider);
+
+        var fieldLayer = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/KSPetro/MapServer/1", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT
+        });
+        fieldLayer.setDefinitionExpression("FIELD_NAME = 'ARROYO'");
+        map.addLayer(fieldLayer);
+
+        var timeLayers = [];
+        var arroyoFieldOil = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/StantonCountyKSLeases/MapServer/0", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+        arroyoFieldOil.setDefinitionExpression("FIELD = 'ARROYO'");
+        timeLayers.push(arroyoFieldOil);
+        var arroyoFieldGas = new esri.layers.FeatureLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/StantonCountyKSLeases/MapServer/1", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+        arroyoFieldGas.setDefinitionExpression("FIELD = 'ARROYO'");
+        timeLayers.push(arroyoFieldGas);
+
+        //add all the layers to the map then initialize the slider
+        map.addLayers(timeLayers);
+      }
+
+      function initSlider(results) {
+        var map = this;
+        var timeLayers = dojo.map(results, function(result) {
+          return result.layer;
+        });
+        //build a legend
+        var symbols = [];
+        dojo.forEach(results, function(result) {
+          dojo.forEach(result.layer.renderer.infos, function(info) {
+            symbols.push({
+              label: info.minValue + " - " + info.maxValue,
+              symbol: info.symbol
+            });
+          });
+        });
+
+        var legend = new esri.dijit.editing.TemplatePicker({
+          items: symbols,
+          rows: "auto",
+          columns: 1
+        }, "oilLegendDiv");
+        legend.startup();
+
+        var timeExtent = new esri.TimeExtent();
+        timeExtent.startTime = new Date("1/1/1989 UTC");
+        map.setTimeExtent(timeExtent);
+
+        var timeSlider = new esri.dijit.TimeSlider({
+          style: "width: 800px;"
+        }, dojo.byId("timeSliderDiv"));
+        map.setTimeSlider(timeSlider);
+        timeSlider.setThumbCount(1);
+        
+        var layerTimeExtent = results[0].layer.timeInfo.timeExtent;
+        layerTimeExtent.startTime = timeExtent.startTime;
+        timeSlider.createTimeStopsByTimeInterval(layerTimeExtent, 1, 'esriTimeUnitsYears');
+        timeSlider.setThumbMovingRate(2000);
+        timeSlider.singleThumbAsTimeInstant(true);
+        timeSlider.setLoop(true);
+        timeSlider.startup();
+        
+        //add ticks just at beginning and end
+        var labels = ['1989','2009'];
+        timeSlider.setLabels(labels);
+
+        var timeQuery = new esri.tasks.Query();
+        dojo.connect(timeSlider, "onTimeExtentChange", function(timeExtent) {
+          timeQuery.timeExtent = timeExtent;
+          var yearlyLayerProduction = '';
+          
+          dojo.forEach(timeLayers, function(layer) {
+            var mappedField = layer.renderer.attributeField;
+            layer.queryFeatures(timeQuery, function(featureSet) {
+              var values = dojo.map(featureSet.features, function(feature) {
+                return feature.attributes[mappedField];
+              });
+              var stats = computeStats(values);
+              var units = (layer.name === "Stanton County Oil Leases") ? "bbls" : "Mcf";
+              yearlyLayerProduction = yearlyLayerProduction + layer.name + " produced " + stats.sum + " " + units + " with " + stats.length + " wells.  ";
+            });
+          });
+
+          var startVal = timeExtent.startTime.getFullYear();
+          console.log(startVal);
+          dojo.byId("daterange").innerHTML = "<i>" + startVal + "<\/i> " + yearlyLayerProduction;
+        });
+      }
+
+      function computeStats(values) {
+        var stats = {};
+        var df = dojox.lang.functional;
+        stats.length = values.length;
+        stats.sum = df.reduce(values, df.lambda("+"));
+        stats.avg = stats.sum / stats.length;
+        if (stats.length > 1) {
+          var sumSquresF = df.partial(df.lambda("ss,x,avg->ss+Math.pow(x-avg,2)"), df.arg, df.arg, stats.avg);
+          stats.sumSquares = df.reduce(values, sumSquresF);
+          stats.stdDev = Math.sqrt(stats.sumSquares / stats.length);
+        } else {
+          stats.sumSquares = 0;
+          stats.stdDev = 0;
+        }
+        return stats;
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div>
+      Arroyo Field Production in
+      <span id="daterange">
+        1989
+      </span>
+    </div>
+    <div id="map" style="width:800px; height:600px; border:1px solid #000;"></div>
+    <div id="oilLegendDiv"></div>
+    <div id="timeSliderDiv"></div>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <head>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <style>
+      html, body { 
+        height: 100%; width: 100%; margin: 0; padding: 0; 
+      } 
+      body{
+        background-color:white; overflow:hidden; font-family: "Trebuchet MS"; 
+      }
+      #header {
+        border:solid 2px cornflowerblue;
+        padding:10px;
+        color:peru;
+        margin: 5px;
+      }
+      .roundedCorners{
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #adadad;
+      }
+      #optional {
+        border:solid 2px peru;
+        padding:5px;
+        border-radius: 10px;
+      }
+      #mainheader {
+        font-size:24pt;
+        font-weight:bold;
+      }
+      #subheader {
+        font-size:10pt;
+        padding-left:20px;
+      }
+      #mainContent {
+        background-color:white;
+        padding:5px;
+        border:solid 2px cornflowerblue;
+        margin:5px;
+      }
+      #convertButton {
+        font-size:24pt;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script>
+    dojo.require("esri.tasks.geometry");
+    dojo.require("dijit.form.TextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.Select");
+    dojo.require("dijit.layout.BorderContainer");
+    dojo.require("dijit.layout.ContentPane");
+
+    function init() {
+      var inLat = new dijit.form.TextBox({
+        name: "inLat",
+        value: 34.0571709
+      }, "inLat");
+      var inLon = new dijit.form.TextBox({
+        name: "inLon",
+        value: -117.1942978
+      }, "inLon");
+      var outLat = new dijit.form.TextBox({
+        name: "outLat"
+      }, "outLat");
+      var outLon = new dijit.form.TextBox({
+        name: "outLon"
+      }, "outLon");
+      var inCoord = new dijit.form.Select({
+        name: "inCoord"
+      }, "inCoord");
+      var outCoord = new dijit.form.Select({
+        name: "outCoord"
+      }, "outCoord");
+      var datumTrans = new dijit.form.Select({
+        name: "datumTrans"
+      }, "datumTrans");
+      dojo.byId("inLon").focus();
+      dojo.byId("inSRurl").innerHTML = '<a href="https://developers.arcgis.com/javascript/3/jshelp/gcs.html#4326" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      dojo.byId("outSRurl").innerHTML = '<a href="https://developers.arcgis.com/javascript/3/jshelp/pcs.html#102003" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      dojo.byId("datumUrl").innerHTML = '<a href="https://help.arcgis.com/en/webapi/javascript/arcgis/help/jshelp/dattrans.htm" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      
+      dojo.connect(inCoord, "onChange", function (evt) {
+        var wkid = inCoord.value;
+        switch(wkid){
+          case '4326':
+            defaultcoord = {
+              x: -117.1942978,
+              y: 34.0571709
+            };
+            SRtype = 'gcs';
+            break;
+          case '102003':
+            defaultcoord = {
+              x: -1925903.69093458,
+              y: -169768.199646838
+            };
+            SRtype = 'pcs';
+            break;
+          case '102004':
+            defaultcoord = {
+              x: -1935691.86423629,
+              y: -319448.149565756
+            };
+            SRtype = 'pcs';
+            break;
+          case '102005':
+            defaultcoord = {
+              x: -1935894.73030811,
+              y: -322554.491143597
+            };
+            SRtype = 'pcs';
+            break;
+        }
+        dojo.byId("inLat").value = defaultcoord.y;
+        dojo.byId("inLon").value = defaultcoord.x;
+        dojo.byId("inLon").focus();
+        dojo.byId("inSRurl").innerHTML = '<a href="https://developers.arcgis.com/javascript/3/jshelp/' + SRtype + '.html#' + wkid + '" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      });
+      
+      dojo.connect(outCoord, "onChange", function (evt) {
+        var wkid = outCoord.value;
+        if (wkid == '4326') {
+          SRtype = 'gcs';
+        } else if (wkid == '102003' || wkid == '102004' || wkid == '102005') {
+          SRtype = 'pcs';
+        }
+        dojo.byId("outSRurl").innerHTML = '<a href="https://developers.arcgis.com/javascript/3/jshelp/' + SRtype + '.html#' + wkid + '" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      });
+      
+      dojo.connect(datumTrans, "onChange", function (evt) {
+        var wkid = datumTrans.value;
+        if (wkid == 'Default') {
+          transID = '';
+        } else {
+          transID = wkid;
+        }
+        dojo.byId("datumUrl").innerHTML = '<a href="https://help.arcgis.com/en/webapi/javascript/arcgis/help/jshelp/dattrans.htm#' + wkid + '" style="color: #000000; text-decoration: underline; font-size: 10pt;" target="_blank">(Spatial Reference Details)</a>';
+      });
+
+      var button = new dijit.form.Button({
+        label: "Convert",
+        onClick: function() {
+          var inlat = dojo.byId("inLat").value;
+          var inlon = dojo.byId("inLon").value;
+          var incoord = parseInt(dijit.byId("inCoord").value, 10);
+          var outcoord = parseInt(dijit.byId("outCoord").value, 10);
+          var datumtrans = dijit.byId("datumTrans").value;
+          if (isNaN(inlat) || isNaN(inlon)) {
+            alert("Please enter valid numbers");
+          } else {
+            var inSR = new esri.SpatialReference({
+              wkid: incoord
+            });
+            var outSR = new esri.SpatialReference({
+              wkid: outcoord
+            });
+            var geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+            var inputpoint = new esri.geometry.Point(inlon, inlat, inSR);
+            var PrjParams = new esri.tasks.ProjectParameters();
+            PrjParams.geometries = [inputpoint];
+            PrjParams.outSR = outSR;
+            if (datumtrans != 'Default') {
+              PrjParams.transformation = {
+                wkid: parseInt(datumtrans, 10)
+              };
+            }
+            geometryService.project(PrjParams, function (outputpoint) {
+              console.log('Conversion completed. Input SR: ' + incoord + '. Output SR: ' + outcoord + '. Datum Transformation: ' + datumtrans + '.');
+              dojo.byId("outLat").value = outputpoint[0].y;
+              dojo.byId("outLon").value = outputpoint[0].x;
+            });
+          }
+        }
+      },"convertButton");
+    }
+    dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="header" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+      <div id="mainheader">Coordinate Conversion with Optional Datum Transformation</div>
+      <div id="subheader">Select input and output spatial references and enter coordinates. Use
+        "-" to indicate west (for X) and south (for Y). Datum transformation is optional.</div>
+    </div>
+    <div id="mainContent" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" data-dojo-pros="region:'center'">
+      <table>
+        <tr>
+          <td style="padding:5px;">
+            <div style="font-size: 16pt; font-weight:bold;">
+              Input Spatial Reference
+            </div>
+            <div>
+              <select id="inCoord">
+                <option value="4326" selected="selected">Longtitude and Latitude</option>
+                <option value="102003">USA Contiguous Albers Equal Area Conic</option>
+                <option value="102004">USA Contiguous Lambert Conformal Conic</option>
+                <option value="102005">USA Contiguous Equidistant Conic</option>
+              </select>
+            </div>
+            <div id="inSRurl"></div>
+            <div>
+              <span>X: </span><input tabindex="1" type="text" id="inLon" />
+            </div>
+            <div>
+              <span>Y: </span><input tabindex="2" type="text" id="inLat" />
+            </div>
+          </td>
+          <td style="padding:5px;">
+            <div><center><div tabindex="3" id="convertButton" type="button" /></center></div>
+            <div id="optional" dojotype="dijit.layout.ContentPane">
+              <div style="font-size: 16pt; font-weight:bold;">Datum Transformation (Optional)</div>
+              <div>
+                <select id="datumTrans">
+                  <option value="default" selected="selected">Default</option>
+                  <option value="1188">1188: NAD_1983_To_WGS_1984_1</option>
+                  <option value="1251">1251: NAD_1983_To_WGS_1984_2</option>
+                  <option value="1252">1252: NAD_1983_To_WGS_1984_3</option>
+                  <option value="1308">1308: NAD_1983_To_WGS_1984_4</option>
+                  <option value="1515">1515: NAD_1983_To_WGS_1984_5</option>
+                  <option value="1696">1696: NAD_1983_To_WGS_1984_6</option>
+                  <option value="1697">1697: NAD_1983_To_WGS_1984_7</option>
+                  <option value="1702">1702: NAD_1983_To_WGS_1984_8</option>
+                  <option value="8088">8088: NAD_1983_To_WGS_1984_1</option>
+                  <option value="8154">8154: NAD_1983_To_WGS_1984_2</option>
+                  <option value="8155">8155: NAD_1983_To_WGS_1984_3</option>
+                  <option value="8232">8232: NAD_1983_To_WGS_1984_4</option>
+                  <option value="8494">8494: NAD_1983_To_WGS_1984_5</option>
+                  <option value="108190">108190: WGS_1984_(ITRF00)_To_NAD_1983</option>
+                </select>
+              </div>
+              <div id="datumUrl"></div>
+            </div>
+          </td>
+          <td style="padding:5px;">
+            <div style="font-size: 16pt; font-weight:bold;">
+              Output Spatial Reference
+            </div>
+            <div>
+              <select id="outCoord">
+                <option value="4326">Longtitude and Latitude</option>
+                <option value="102003" selected="selected">USA Contiguous Albers Equal Area Conic</option>
+                <option value="102004">USA Contiguous Lambert Conformal Conic</option>
+                <option value="102005">USA Contiguous Equidistant Conic</option>
+              </select>
+            </div>
+            <div id="outSRurl"></div>
+            <div>
+              <span>X: </span><input type="text" id="outLon" />
+            </div>
+            <div>
+              <span>Y: </span><input type="text" id="outLat" />
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

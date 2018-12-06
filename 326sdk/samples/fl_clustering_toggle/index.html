@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Toggle FeatureLayer clustering</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+
+<style>
+  html, body, #viewDiv {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #infoDiv{
+    top: 0px;
+    right: 0px;
+    position: absolute;
+    z-index: 2;
+    opacity: 0.9;
+    background-color: whitesmoke;
+    padding: 8px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+  }
+</style>
+
+
+<script>
+  require([
+    "esri/map",
+    "esri/layers/FeatureLayer",
+    "esri/dijit/PopupTemplate",
+    "esri/dijit/Legend",
+    "dojo/domReady!"
+  ], function(Map, FeatureLayer, PopupTemplate, Legend
+  ) {
+
+    var map = new Map("viewDiv", {
+      basemap: "gray-vector",
+      center: [ -117.9145, 33.9773 ],
+      zoom: 9
+    });
+
+    // Enable clustering on the layer and add it to the map
+
+    var serviceUrl = "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/socal_precincts_points_2008/FeatureServer/0";
+    var layer = new FeatureLayer(serviceUrl, {
+      outFields: [ "P2008_D", "P2008_R", "D_Percent", "R_Percent", "Majority" ],
+      infoTemplate: new PopupTemplate({
+        title: "Winner: {Majority}",
+        description: "{P2008_D} votes for Obama ({D_Percent}%)"
+          + "<br>{P2008_R} votes for McCain ({R_Percent}%)"
+      })
+    });
+    map.addLayer(layer);
+
+    map.on("load", function(evt){
+      toggleFeatureReduction(true);
+
+      var legend = new Legend({
+        map: map,
+        layerInfos: [{
+          layer: layer,
+          title: "Voting precincts (2008)"
+        }]
+      }, "legendDiv");
+      legend.startup();
+
+      var clusteringCheckbox = document.getElementById("use-clustering");
+      // toggles clustering on and off in sync with the checkbox
+      clusteringCheckbox.addEventListener("click", function(event){
+        var checked = event.target.checked;
+        toggleFeatureReduction(checked);
+      });
+    });
+
+    // Sets feature reduction on the layer if not previously done so.
+    // If indicated, then feature reduction is disabled. The initial
+    // feature reduction settings are enabled if indicated.
+    function toggleFeatureReduction(yes){
+      if(yes){
+        if(!layer.getFeatureReduction()){
+          layer.setFeatureReduction({
+            type: "cluster"
+          });
+        } else {
+          layer.enableFeatureReduction();
+        }
+      } else {
+        layer.disableFeatureReduction();
+      }
+    }
+
+  });
+
+</script>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="infoDiv">
+    <input type="checkbox" id="use-clustering" checked> Use clustering?<br><br>
+    <div id="legendDiv"></div>
+  </div>
+</body>
+
+</html>

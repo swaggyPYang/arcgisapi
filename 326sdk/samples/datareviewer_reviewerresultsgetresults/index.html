@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Reviewer Results Sample</title>    
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dojox/grid/resources/claroGrid.css">
+<script src="https://js.arcgis.com/3.26/"></script>
+<style>
+.reviewerForm {
+	width: 530px;
+	font-size: .7em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.reviewerForm input, .reviewerForm textarea{
+	padding: 5px;
+	width: 371px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.submitButton {
+	float: right;
+	padding: 5px;
+	width: 150px;
+	font-size: 1.1em;
+	border: 2px solid #CCC;
+	margin: 0px 0px 10px 0px;
+}
+.reviewerMultiSelect{
+	height:205px;
+	vertical-align: top;
+	font-size: 1.0em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.reviewerForm select{
+	padding: 5px;
+	width: 385px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+}
+.reviewerForm label {
+	float: left;
+	text-align: right;
+	margin-right: 15px;
+	width: 130px;
+	padding-top: 5px;
+}
+.reviewerGrid {
+   font-size: 0.75em;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+</style>
+<script>  
+//This should point to the Data Reviewer soe
+var drsSoeUrl = "https://datareviewer.arcgisonline.com/arcgis/rest/services/Samples/reviewerDashboard/MapServer/exts/DataReviewerServer";
+//array of return fields
+var returnFields = [];
+//Records per page
+var recordsPerPage;
+require(
+[
+ "dojo/parser",
+ "dojo/dom",
+ "dojo/on",
+ "dojo/_base/array",
+ "dojo/data/ItemFileReadStore",
+ "dojox/grid/DataGrid", 
+ "dijit/form/MultiSelect",
+ "esri/tasks/datareviewer/ReviewerResultsTask",
+ "esri/tasks/datareviewer/GetResultsQueryParameters",
+ "dijit/registry",
+ "dojo/domReady!"
+], function(parser, dom, on, array, ItemFileReadStore, 
+ DataGrid, MultiSelect, ReviewerResultsTask,
+ GetResultsQueryParameters,registry) {
+    parser.parse();
+    // specify proxy for request with URL lengths > 2k characters
+    esriConfig.defaults.io.proxyUrl = "/proxy/";
+    // create ReviewerResultsTask instance 
+    var reviewerResultsTask = new ReviewerResultsTask(drsSoeUrl);
+    //get list of return field names
+    var fieldNames =  reviewerResultsTask.getResultsFieldNames();
+
+    //Populate field names to be returned by Get Results operation
+    array.forEach(fieldNames, function(field, i) {
+        dom.byId("fieldNamesCombo")[i] = new Option(field, i);
+    });
+    //Click event of previousButton button
+    on(dom.byId("previousButton"), "click", loadPreviousPage);
+    //Click event of nextButton button
+    on(dom.byId("nextButton"), "click", loadNextPage);
+    //Click even of getResultsButton button
+    on(dom.byId("getResultsButton"), "click", populateDataGrid);
+
+    function populateDataGrid() {
+        // Get the number of records per page
+        recordsPerPage = parseInt(dom.byId("RecordsPerPage").value);
+        //Get Selected fields from the list box
+        var selectItem = registry.byId('fieldNamesCombo').getSelected();
+        if(isNaN(recordsPerPage) || recordsPerPage < 1){
+           alert("Please fill out records per page.");
+           return;
+        }
+        if(recordsPerPage > 1000){
+          alert("Records per page can not be greater than 1000.");
+          return;
+        }
+        if(selectItem.length < 1){
+            alert("Please select return fields.");
+            return;
+        }
+        //Generate grid layout and returnFields based on fields selected in the list box
+        var layout = [];
+        returnFields = [];
+        array.forEach(selectItem, function(option) {
+            var selectedIndex =  option.value;
+            layout.push({field:fieldNames[selectedIndex], name:fieldNames[selectedIndex]});	
+            returnFields.push(fieldNames[selectedIndex]);
+        });
+        //set default page number for the grid
+        dom.byId('lblPageNumber').innerHTML = 1;
+        //show the grid with a loading message and populate it
+        loadDataInGrid("", layout);
+    }
+    function loadDataInGrid(moveType, layout) {
+        showGrid(true, 'loading');
+        var queryParameters=GetQueryParameters(moveType);
+        // call getResults to retrieve the results stored in the reviewer workspace.
+        var deferred = reviewerResultsTask.getResults(queryParameters);            
+        // we're using dojo deferred 'then' function to set callback and errback functions
+        deferred.then(function(response) {
+            // map attributes from features to items array to populate dataGrid
+            var items = array.map(response.featureSet.features, function(feature) {
+            return feature.attributes;
+            });
+            // create a dojo ReadStore
+            var store = new ItemFileReadStore({
+              data : {
+                 items : items
+              }
+            });
+            // set the store in the DataGrid, this will populate the datagrid with the reviewer results
+            reviewerResultsGrid.setStore(store);
+            reviewerResultsGrid.setStructure(layout);
+            //update current page number label
+            if(moveType == "previous" && (parseInt(dom.byId('lblPageNumber').innerHTML) > 1)){
+                dom.byId('lblPageNumber').innerHTML =  parseInt(dom.byId('lblPageNumber').innerHTML) - 1;
+            }
+            else if(moveType == "next") {
+                dom.byId('lblPageNumber').innerHTML =  parseInt(dom.byId('lblPageNumber').innerHTML) + 1;
+            }
+        }, function(err) {
+           if(moveType == "next" && (err.message.indexOf("No results returned for specified query:") === 0)){
+                showGrid(true);
+                alert("You are already at the last page.");	
+           }
+           else{
+                showGrid(false);
+                reviewerResultsGrid.setStore(null);
+                alert("Error retrieving reviewer results: " + err.message);
+           }
+           return;
+        });
+    }
+    function GetQueryParameters(moveType){
+        var queryParameters = new GetResultsQueryParameters();
+        queryParameters.pageSize = recordsPerPage;
+        if(moveType == "previous" && (parseInt(dom.byId('lblPageNumber').innerHTML) > 1)){
+            queryParameters.pageNumber = parseInt(dom.byId('lblPageNumber').innerHTML) - 2;
+        }
+        else if(moveType == "next"){
+            queryParameters.pageNumber = parseInt(dom.byId('lblPageNumber').innerHTML);
+        }
+        else{
+            queryParameters.pageNumber = 0;
+        }
+        queryParameters.returnFields = returnFields;
+        return queryParameters;
+    }
+    //load next page
+    function loadNextPage() {
+        loadDataInGrid("next","");	   		   		
+    }	
+    //load previous page
+    function loadPreviousPage(){
+        if(parseInt(dom.byId('lblPageNumber').innerHTML) == 1) {
+            alert("You are already at the first page.");
+            return;
+        }
+        else{
+            loadDataInGrid("previous", "");	
+        }
+    }
+    //handle grid visibility
+    function showGrid(show,message) {
+        reviewerResultsGrid.showMessage(message || "");
+        dom.byId('gridDiv').style.visibility = show ? "visible" : "hidden";
+    }    
+});
+</script>
+</head>
+<body class="claro">
+    <h2 align="center">Get Reviewer Results with Paging Sample</h2>
+    <div style="width:100%; overflow-x: auto;" >
+        <div style="padding: 0px 20px 0px 20px; float:left;">
+            <div class="reviewerForm" >
+                <label for="RecordsPerPage">Records per page:</label>
+                <input type="number" id="RecordsPerPage" placeholder="valid values are from 1 to 1000"/>
+                <label for="fieldNamesCombo">Return fields:</label>
+                 <select class ="reviewerMultiSelect" id="fieldNamesCombo" data-dojo-type="dijit/form/MultiSelect"></select>
+                
+                <label for="getResultsButton"></label>
+                <button id="getResultsButton" class="submitButton">Get Results</button>
+            </div>
+         </div>
+    </div>
+    <div id = "gridDiv" style="width: 100%; overflow-x: auto;visibility: hidden" class="reviewerGrid">
+        <button id="previousButton"> &lt; </button>
+        <label id = "lblPageNumber" >1</label>
+        <button id="nextButton"> &gt; </button>	
+        <table data-dojo-id="reviewerResultsGrid" data-dojo-type="dojox/grid/DataGrid" autoheight="true" autowidth="true"></table>	 
+    </div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Web map using url parameters</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css"/>
+
+     <script>var dojoConfig = {parseOnLoad: true};</script>
+     <script src="https://js.arcgis.com/3.26/"></script>
+     <script>
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("esri.map");
+        dojo.require("esri.IdentityManager");
+        dojo.require("esri.dijit.Scalebar");
+        dojo.require("esri.arcgis.utils");
+        
+        var map, urlObject;
+        var configOptions;
+       
+        function init() {
+          //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications. 
+          esri.config.defaults.geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+      
+          //specify any default settings for your map 
+          //for example a bing maps key or a default web map id
+          configOptions = {
+            webmap:"dbd1c6d52f4e447f8c01d14a691a70fe",
+            title:"",
+            subtitle:"",
+            //www.arcgis.com sharing url is used. modify this if yours is different
+            sharingurl:"https://www.arcgis.com/sharing/rest/content/items"
+          };
+          
+          esri.arcgis.utils.arcgisUrl = configOptions.sharingurl;
+          esri.config.defaults.io.proxyUrl = "/proxy/";
+          
+          //get the web map id from the url 
+          urlObject = esri.urlToObject(document.location.href);
+          urlObject.query = urlObject.query || {};
+          if(urlObject.query && urlObject.query.webmap){
+             configOptions.webmap = urlObject.query.webmap;
+          }
+          
+          //create the map using the web map id specified using configOptions or via the url parameter
+          var mapDeferred = esri.arcgis.utils.createMap(configOptions.webmap, "map");
+
+          mapDeferred.then(function (response) {
+            //map title and subtitle
+            dojo.byId("title").innerHTML = configOptions.title ||response.itemInfo.item.title;
+            dojo.byId("subtitle").innerHTML = configOptions.subtitle || response.itemInfo.item.snippet || "";
+            map = response.map;
+
+            if (map.loaded) {
+              initUI();
+            } else {
+              dojo.connect(map, "onLoad", initUI);
+            }
+                   
+          }, function(error){
+            console.log('Create Map Failed: ' , dojo.toJson(error));
+          });
+        }
+        
+        function initUI(){   
+          //add scalebar or other components like a legend, overview map etc
+          var scalebar = new esri.dijit.Scalebar({
+            map: map,
+            scalebarUnit:"english" 
+          });         
+        }
+
+        //show map on load 
+        dojo.ready(init);
+      </script>
+    </head>
+
+    <body class="tundra">
+      <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer"  data-dojo-props="design:'headline',gutters:false" style="width:100%; height:100%;">
+      
+        
+        <div id="header" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+          <div id="title"></div>
+          <div id="subtitle"></div>
+        </div>
+
+        
+        <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'"></div>
+
+      </div>
+    </body>
+
+</html>

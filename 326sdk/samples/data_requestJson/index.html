@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JSON Content</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    body{
+      font-family: "Arial Unicode MS, Arial, sans-serif";
+    }
+    #content {
+      width: 800px; height: 350px; padding: 5px; overflow: auto;
+      border: solid 2px #AAAAAA; background-color: #FFFFFF;
+      -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; border-radius: 5px;
+      -moz-box-shadow: 0 0 0.5em black; -webkit-box-shadow: 0 0 0.5em black; -o-box-shadow: 0 0 0.5em black; box-shadow: 0 0 0.5em black;
+    }
+    .failure { color: red; }
+    #status { font-size: 12px; }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+        "dojo/dom",
+        "dojo/on",
+        "dojo/dom-class",
+        "dojo/_base/json",
+        "esri/config",
+        "esri/request",
+        "dojo/domReady!"
+      ],
+      function(
+        dom,
+        on,
+        domClass,
+        dojoJson,
+        esriConfig,
+        esriRequest
+      ) {
+
+        // Use CORS
+        esriConfig.defaults.io.corsEnabledServers.push("earthquake.usgs.gov"); // supports CORS
+
+        // Use proxy if the server doesn't support CORS
+        // esriConfig.defaults.io.proxyUrl = "/proxy/";  
+        
+        dom.byId("url").value = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson";
+
+        dom.byId("content").value = "";
+
+        //handle the Go button's click event
+        on(dom.byId("submitRequest"), "click", getContent);
+
+        function getContent(){
+
+          var contentDiv = dom.byId("content");
+          contentDiv.value = "";
+          domClass.remove(contentDiv, "failure");
+          dom.byId("status").innerHTML = "Downloading...";
+
+          var requestHandle = esriRequest({
+            "url": dom.byId("url").value
+          });
+          requestHandle.then(requestSucceeded, requestFailed);
+        }
+
+        function requestSucceeded(response, io){
+          dom.byId("status").innerHTML = "";
+          dojoJson.toJsonIndentStr = "  ";
+          dom.byId("content").value = dojoJson.toJson(response, true);
+        }
+        function requestFailed(error, io){
+
+          domClass.add(dom.byId("content"), "failure");
+          dom.byId("status").innerHTML = "";
+
+          dojoJson.toJsonIndentStr = " ";
+          dom.byId("content").value = dojoJson.toJson(error, true);
+
+        }
+    });
+  </script>
+</head>
+<body>
+  <p>Download content available in <b>JSON</b> format using esriRequest. </p>
+  <p>
+    <input type="text" disabled="true" id="url" size="100"/>
+    <input id="submitRequest" type="button" value="GO" />
+    <span id="status"></span>
+  </p>
+  <h2>Content</h2>
+  <textarea id="content"></textarea>
+</body>
+</html>

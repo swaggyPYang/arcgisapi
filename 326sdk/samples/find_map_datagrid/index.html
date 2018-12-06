@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Display Find Task results in Dojo DataGrid</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dgrid/css/dgrid.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+        html, body { 
+        height: 100%; 
+        width: 100%; 
+        margin: 0; 
+        padding: 0; 
+      }
+
+      .claro .dijitContentPane {
+        font-family: "Lucida Grande","Segoe UI","Arial",sans-serif;
+        font-weight: normal;
+        font-size: small;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+       "esri/map",
+        "esri/tasks/FindTask",
+        "esri/tasks/FindParameters",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/Color",
+
+        "dgrid/Grid",
+        "dgrid/Selection",
+        'dojo/_base/declare',
+        "dojo/on",
+        "dojo/dom",
+        "dijit/registry",
+        "dojo/_base/array",
+        "dijit/form/Button",
+        "dojo/parser",
+
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "dojo/domReady!"
+      ], function(
+        Map, FindTask, FindParameters, SimpleLineSymbol, SimpleFillSymbol, Color, 
+        Grid, Selection, declare, on, dom, registry, arrayUtils, Button, parser
+      ) {
+        var findTask, findParams;
+        var map, center, zoom;
+        var grid;
+
+        parser.parse();
+
+        registry.byId("search").on("click", doFind);
+
+        center = [-83.266, 42.568];
+        zoom = 11;
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: center,
+          zoom: zoom
+        });
+
+        //Create Find Task using the URL of the map service to search
+        findTask = new FindTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/TaxParcelQuery/MapServer/");
+
+        // Create a new constructor by mixing in the components
+        // Allow row selection for the grid
+        var myGrid = declare([Grid, Selection]);
+
+        //columns for the grid 
+        var columns = [
+          {'field': 'PARCELID', 'label': "Parcel ID"},
+          {'field': 'OWNERNME1', 'label': 'Owner 1'},
+          {'field': 'OWNERNME2', 'label': 'Owner 2'},
+          {'field': 'RESYRBLT', 'label': 'Year Built'},
+          {'field': 'SITEADDRESS', 'label': 'Street Address', width:"30%"} 
+        ];
+
+        // Create an instance of Grid 
+        grid = new myGrid({
+          columns: columns, 
+          selectionMode: 'single',
+        }, 'grid');
+
+        grid.on("dgrid-select", onRowClickHandler);
+
+        map.on("load", function () {
+          //Create the find parameters
+          findParams = new FindParameters();
+          findParams.returnGeometry = true;
+          findParams.layerIds = [0];
+          findParams.searchFields = ["OWNERNME1", "OWNERNME2"];
+          findParams.outSpatialReference = map.spatialReference;
+          console.log("find sr: ", findParams.outSpatialReference);
+        });
+
+        function doFind() {
+          //Set the search text to the value in the box
+          var ownerNameBox = dom.byId("ownerName");
+          findParams.searchText = dom.byId("ownerName").value;
+          findTask.execute(findParams, showResults);
+        }
+
+        function showResults(results) {
+          //This function works with an array of FindResult that the task returns
+          map.graphics.clear();
+          var symbol = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([98, 194, 204]), 2),
+            new Color([98, 194, 204, 0.5])
+          );
+
+          //create array of attributes
+          var items = arrayUtils.map(results, function (result) {
+            var graphic = result.feature;
+            graphic.setSymbol(symbol);
+            map.graphics.add(graphic);
+            return result.feature.attributes;
+          });
+
+          //display the results in the grid
+          grid.refresh();
+          grid.renderArray(items);
+
+          //Zoom back to the initial map extent
+          map.centerAndZoom(center, zoom);
+        }
+
+        //Zoom to the parcel when the user clicks a row
+        function onRowClickHandler(evt) {
+          var clickedTaxLotId = event.rows[0].data.PARCELID;
+          var selectedTaxLot = arrayUtils.filter(map.graphics.graphics, function (graphic) {
+            return ((graphic.attributes) && graphic.attributes.PARCELID === clickedTaxLotId);
+          });
+          if ( selectedTaxLot.length ) {
+            map.setExtent(selectedTaxLot[0].geometry.getExtent(), true);
+          }
+        }
+      });
+    </script>
+  </head>
+ <body class="claro">
+ <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'"  style="width:100%;height:100%;margin:0;">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:40px;">
+      Owner name: <input type="text" id="ownerName" size="60" value="Katz" />
+          <button id="search" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button" >Search
+          </button>
+    </div>
+    <div id="map" data-dojo-props="region:'center'" data-dojo-type="dijit/layout/ContentPane"></div>
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:280px;">
+      <div id="grid" style="height:98%" ></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="mobile-web-app-capable" content="yes">
+<title>Soil Survey</title>
+
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+
+<style>
+  html, body, #ui-map-page, #ui-map-content, #ui-map {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .ternary-diagram-container {
+    padding: 0;
+  }
+  .ternary-diagram-container img {
+    margin: 0 auto;
+    display: block;
+
+  }
+
+  .esriLegendService {
+    margin: 0 auto;
+    width: 12.5em;
+  }
+
+  .ui-ternary-button {
+    position: absolute;
+    bottom: 8.09375em;
+    right: 0.3125em;
+    width: 1.875em;
+    height: 1.875em;
+    padding: 0.125em;
+    z-index: 3;
+    background-color: #FFFFFF;
+    border: solid #57585A 0.0625em;
+    border-radius: 5px;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3C%21--%20Generator%3A%20Adobe%20Illustrator%2019.1.0%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%206.00%20Build%200%29%20%20--%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2014%2014%22%20enable-background%3D%22new%200%200%2014%2014%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cg%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%229.4519%2C4.30786%208.18823%2C2.2464%206.97345%2C4.31006%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.63611%2C9.96875%205.72601%2C11.51495%208.21478%2C11.49963%207.23492%2C9.96826%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.97345%2C4.31006%208.18823%2C2.2464%206.9765%2C0.26971%205.57605%2C2.58875%206.67761%2C4.31036%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%228.64624%2C7.38708%2010.2514%2C9.89575%2011.53772%2C7.71051%2011.33795%2C7.3847%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%227.23492%2C9.96826%208.21478%2C11.49963%209.31122%2C11.49286%2010.21027%2C9.96558%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%223.64093%2C9.97144%203.61279%2C10.01917%204.5744%2C11.52203%205.72601%2C11.51495%206.63611%2C9.96875%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%223.58234%2C9.9715%201.11627%2C9.97369%200.16486%2C11.54913%202.72144%2C11.53339%203.61279%2C10.01917%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%2210.21027%2C9.96558%209.31122%2C11.49286%2011.26556%2C11.48083%2010.29602%2C9.96552%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%223.64093%2C9.97144%205.1604%2C7.39014%202.67511%2C7.39233%202.31433%2C7.98981%203.58234%2C9.9715%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%222.31433%2C7.98981%201.11627%2C9.97369%203.58234%2C9.9715%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%225.36401%2C7.04419%204.08887%2C5.05133%202.67511%2C7.39233%205.1604%2C7.39014%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%222.72144%2C11.53339%204.5744%2C11.52203%203.61279%2C10.01917%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.8316%2C4.55103%206.67761%2C4.31036%204.53522%2C4.31226%204.08887%2C5.05133%205.36401%2C7.04419%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%228.64624%2C7.38708%208.39081%2C6.98792%208.15564%2C7.38751%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%225.57605%2C2.58875%204.53522%2C4.31226%206.67761%2C4.31036%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.8316%2C4.55103%208.39081%2C6.98792%209.71539%2C4.73773%209.4519%2C4.30786%206.97345%2C4.31006%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%225.36401%2C7.04419%205.1604%2C7.39014%205.58514%2C7.38977%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%225.58514%2C7.38977%205.1604%2C7.39014%203.64093%2C9.97144%206.63611%2C9.96875%206.92322%2C9.48108%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%228.15564%2C7.38751%208.39081%2C6.98792%206.8316%2C4.55103%205.36401%2C7.04419%205.58514%2C7.38977%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.63611%2C9.96875%207.23492%2C9.96826%206.92322%2C9.48108%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%2210.2514%2C9.89575%2010.29602%2C9.96552%2012.91864%2C9.9632%2011.53772%2C7.71051%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%223.61279%2C10.01917%203.64093%2C9.97144%203.58234%2C9.9715%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.67761%2C4.31036%206.8316%2C4.55103%206.97345%2C4.31006%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%226.92322%2C9.48108%208.15564%2C7.38751%205.58514%2C7.38977%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%2210.29602%2C9.96552%2010.2514%2C9.89575%2010.21027%2C9.96558%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%2211.33795%2C7.3847%209.71539%2C4.73773%208.39081%2C6.98792%208.64624%2C7.38708%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%228.15564%2C7.38751%206.92322%2C9.48108%207.23492%2C9.96826%2010.21027%2C9.96558%2010.2514%2C9.89575%20%0A%09%098.64624%2C7.38708%20%09%22%2F%3E%0A%09%3Cpolygon%20fill%3D%22%2357585A%22%20points%3D%2211.26556%2C11.48083%2013.83923%2C11.46503%2012.91864%2C9.9632%2010.29602%2C9.96552%20%09%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.61279%22%20y1%3D%2210.01917%22%20x2%3D%222.72144%22%20y2%3D%2211.53339%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.8316%22%20y1%3D%224.55103%22%20x2%3D%226.97345%22%20y2%3D%224.31006%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.18823%22%20y1%3D%222.2464%22%20x2%3D%226.97345%22%20y2%3D%224.31006%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.36401%22%20y1%3D%227.04419%22%20x2%3D%225.1604%22%20y2%3D%227.39014%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.8316%22%20y1%3D%224.55103%22%20x2%3D%225.36401%22%20y2%3D%227.04419%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.1604%22%20y1%3D%227.39014%22%20x2%3D%223.64093%22%20y2%3D%229.97144%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.61279%22%20y1%3D%2210.01917%22%20x2%3D%223.64093%22%20y2%3D%229.97144%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.72601%22%20y1%3D%2211.51495%22%20x2%3D%226.63611%22%20y2%3D%229.96875%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.92322%22%20y1%3D%229.48108%22%20x2%3D%228.15564%22%20y2%3D%227.38751%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.39081%22%20y1%3D%226.98792%22%20x2%3D%228.15564%22%20y2%3D%227.38751%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.63611%22%20y1%3D%229.96875%22%20x2%3D%226.92322%22%20y2%3D%229.48108%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%229.71539%22%20y1%3D%224.73773%22%20x2%3D%228.39081%22%20y2%3D%226.98792%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2211.53772%22%20y1%3D%227.71051%22%20x2%3D%2210.2514%22%20y2%3D%229.89575%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2210.2514%22%20y1%3D%229.89575%22%20x2%3D%2210.21027%22%20y2%3D%229.96558%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%229.31122%22%20y1%3D%2211.49286%22%20x2%3D%2210.21027%22%20y2%3D%229.96558%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%221.11627%22%20y1%3D%229.97369%22%20x2%3D%223.58234%22%20y2%3D%229.9715%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2210.21027%22%20y1%3D%229.96558%22%20x2%3D%2210.29602%22%20y2%3D%229.96552%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.64093%22%20y1%3D%229.97144%22%20x2%3D%226.63611%22%20y2%3D%229.96875%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2212.91864%22%20y1%3D%229.9632%22%20x2%3D%2210.29602%22%20y2%3D%229.96552%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.63611%22%20y1%3D%229.96875%22%20x2%3D%227.23492%22%20y2%3D%229.96826%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%227.23492%22%20y1%3D%229.96826%22%20x2%3D%2210.21027%22%20y2%3D%229.96558%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.58234%22%20y1%3D%229.9715%22%20x2%3D%223.64093%22%20y2%3D%229.97144%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.15564%22%20y1%3D%227.38751%22%20x2%3D%228.64624%22%20y2%3D%227.38708%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.64624%22%20y1%3D%227.38708%22%20x2%3D%2211.33795%22%20y2%3D%227.3847%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.15564%22%20y1%3D%227.38751%22%20x2%3D%225.58514%22%20y2%3D%227.38977%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.1604%22%20y1%3D%227.39014%22%20x2%3D%225.58514%22%20y2%3D%227.38977%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%222.67511%22%20y1%3D%227.39233%22%20x2%3D%225.1604%22%20y2%3D%227.39014%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%224.53522%22%20y1%3D%224.31226%22%20x2%3D%226.67761%22%20y2%3D%224.31036%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.97345%22%20y1%3D%224.31006%22%20x2%3D%226.67761%22%20y2%3D%224.31036%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%229.4519%22%20y1%3D%224.30786%22%20x2%3D%226.97345%22%20y2%3D%224.31006%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2210.29602%22%20y1%3D%229.96552%22%20x2%3D%2210.2514%22%20y2%3D%229.89575%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2211.2865%22%20y1%3D%2211.51355%22%20x2%3D%2211.26556%22%20y2%3D%2211.48083%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.39081%22%20y1%3D%226.98792%22%20x2%3D%226.8316%22%20y2%3D%224.55103%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.57605%22%20y1%3D%222.58875%22%20x2%3D%226.67761%22%20y2%3D%224.31036%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2210.2514%22%20y1%3D%229.89575%22%20x2%3D%228.64624%22%20y2%3D%227.38708%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%228.39081%22%20y1%3D%226.98792%22%20x2%3D%228.64624%22%20y2%3D%227.38708%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%226.67761%22%20y1%3D%224.31036%22%20x2%3D%226.8316%22%20y2%3D%224.55103%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%2211.26556%22%20y1%3D%2211.48083%22%20x2%3D%2210.29602%22%20y2%3D%229.96552%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%227.23492%22%20y1%3D%229.96826%22%20x2%3D%226.92322%22%20y2%3D%229.48108%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%227.23492%22%20y1%3D%229.96826%22%20x2%3D%228.21478%22%20y2%3D%2211.49963%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%224.08887%22%20y1%3D%225.05133%22%20x2%3D%225.36401%22%20y2%3D%227.04419%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.36401%22%20y1%3D%227.04419%22%20x2%3D%225.58514%22%20y2%3D%227.38977%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%225.58514%22%20y1%3D%227.38977%22%20x2%3D%226.92322%22%20y2%3D%229.48108%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.61279%22%20y1%3D%2210.01917%22%20x2%3D%224.5744%22%20y2%3D%2211.52203%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%222.31433%22%20y1%3D%227.98981%22%20x2%3D%223.58234%22%20y2%3D%229.9715%22%2F%3E%0A%09%0A%09%09%3Cline%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%220.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20x1%3D%223.58234%22%20y1%3D%229.9715%22%20x2%3D%223.61279%22%20y2%3D%2210.01917%22%2F%3E%0A%3C%2Fg%3E%0A%3Cpolyline%20display%3D%22none%22%20fill%3D%22%2357585A%22%20points%3D%223.16488%2C15.54914%209.97647%2C4.26974%2016.83926%2C15.465%20%22%2F%3E%0A%3C%2Fsvg%3E%0A");
+    background-size: 1.375em;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .ui-legend-button {
+    position: absolute;
+    bottom: 11.21875em;
+    right: 0.3125em;
+    width: 1.875em;
+    height: 1.875em;
+    padding: 0.125em;
+    z-index: 3;
+    background-color: #FFFFFF;
+    border: solid #57585A 0.0625em;
+    border-radius: 5px;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0A%3C%21--%20Generator%3A%20Adobe%20Illustrator%2019.1.0%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%206.00%20Build%200%29%20%20--%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20viewBox%3D%220%200%2014%2014%22%20enable-background%3D%22new%200%200%2014%2014%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cpath%20fill%3D%22%2357585A%22%20d%3D%22M12.23576%2C6.4059l1.32674%2C1.00489l-7.52992%2C3.39497L0.53125%2C6.63893l1.32674-0.5982l4.17459%2C3.16194%0A%09L12.23576%2C6.4059z%20M8.06119%2C0.375L0.53125%2C3.76999l5.50131%2C4.16684l7.52994-3.39499L8.06119%2C0.375z%20M6.03258%2C11.89691%0A%09L1.85799%2C8.73497l-1.32674%2C0.5982L6.03258%2C13.5l7.52992-3.39497l-1.32674-1.00489L6.03258%2C11.89691z%22%2F%3E%0A%3C%2Fsvg%3E%0A");
+    background-size: 1.375em;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* zoom slider */
+  .esriSimpleSlider div {
+    width: 1.125em;
+    height: 1.125em;
+    font-size: 1.875em;
+    line-height: 0.9375em;
+  }
+
+  .esriSimpleSliderVertical.esriSimpleSliderBR {
+    right: 0.3125em;
+    bottom: 2.875em;
+  }
+
+  @media screen and (min-width: 768px) {
+    .esriSimpleSliderVertical.esriSimpleSliderBR {
+      bottom: 2.875em;
+    }
+  }
+
+  .info-window-mobile-button {
+    display: none;
+    font-size: inherit;
+    padding: 0.7em 0.7em;
+    border-width: 0.125em;
+  }
+  @media screen and (max-width: 768px) {
+    .esriPopup .titleButton.maximize {
+      display: none;
+    }
+    .esriPopup .titleButton.close {
+      display: none;
+    }
+    .info-window-mobile-button {
+      display: block;
+    }
+  }
+</style>
+
+
+</head>
+
+<body>
+<div data-role="page" id="ui-map-page">
+  
+  <div data-role="content" id="ui-map-content" class="ui-content">
+    <div id="ui-map"></div>
+    <a href="#ui-ternary-diagram-page" class="ui-ternary-button"></a>
+    <a href="#ui-legend-page" class="ui-legend-button"></a>
+  </div>
+</div>
+
+
+<div data-role="page" id="ui-ternary-diagram-page">
+  <div data-role="header">
+    <h2>Soil Texture</h2>
+  </div>
+  
+  <div class="ui-content">
+    <div data-role="content" class="ternary-diagram-container">
+       <img src="images/soilTriangle.jpg" />
+    </div>
+    <a href="#ui-map-page" data-role="button" class="ui-btn">Close</a>
+  </div>
+</div>
+
+
+<div data-role="page" id="ui-legend-page">
+  <div data-role="header">
+    <h2>Legend</h2>
+  </div>
+  
+  <div class="ui-content">
+    <div id="legendDiv" class="legend-container"></div>
+    <a href="#ui-map-page" data-role="button" class="ui-btn">Close</a>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://js.arcgis.com/3.26compact/"></script>
+
+<script>
+  var map;
+
+  function infoWindowMobileHandler(event){
+    map.infoWindow.hide();
+  }
+
+  $.mobile.pagecontainer({defaults: true});
+  $.mobile.pagecontainer({
+    create: function (event, ui){
+      console.log("create:", event.type);
+      initializeEsriJS();
+    }
+  });
+
+  function initializeEsriJS(){
+    require([
+        "dojo/on",
+        "dojo/parser",
+        "esri/Color",
+        "esri/dijit/Legend",
+        "esri/geometry/Point",
+        "esri/geometry/webMercatorUtils",
+        "esri/graphic",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/layers/FeatureLayer",
+        "esri/layers/ImageParameters",
+        "esri/map",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/tasks/query"
+      ],
+      function (on, parser, Color, Legend, Point, webMercatorUtils, Graphic, ArcGISDynamicMapServiceLayer, FeatureLayer,
+        ImageParameters, Map,
+        PictureMarkerSymbol, SimpleFillSymbol, Query){
+        parser.parse();
+
+        // create the map
+        map = new Map("ui-map", {
+          center: [-100.21318, 37.032053],
+          sliderPosition: "bottom-right",
+          zoom: 7,
+          basemap: "gray"
+        });
+        on(map, "load", mapLoadHandler);
+
+        var imageParameters = new ImageParameters();
+        imageParameters.layerIds = [0];
+        imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
+        var soilDynamicLayer = new ArcGISDynamicMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Specialty/Soil_Survey_Map/MapServer",
+          {"opacity": 0.5, imageParameters: imageParameters});
+        map.addLayer(soilDynamicLayer);
+
+
+        var soilSurvey = new FeatureLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Specialty/Soil_Survey_Map/MapServer/0",
+          {
+            mode: FeatureLayer.MODE_SELECTION,
+            outFields: ["*"]
+          });
+
+        soilSurvey.setSelectionSymbol(new SimpleFillSymbol().setColor(new Color([254, 216, 93, 0.6])));
+        map.addLayer(soilSurvey);
+
+        map.on("click", function (event){
+          var query = new Query();
+          query.geometry = event.mapPoint;
+
+          soilSurvey.selectFeatures(query, FeatureLayer.SELECTION_NEW, function (features){
+            var graphic = features[0];
+            var attributes = graphic.attributes;
+            var content = graphic.attributes.muname + "<br><b>Order</b>: " + graphic.attributes.DomOrd
+              + "<br><b>SubOrder</b>: " + graphic.attributes.DomSubOrd + "<br><b>Description</b>: "
+              + graphic.attributes.farmlndcl + "<br><b>Drainage</b>: " + graphic.attributes.DrainageCl
+              + "<br><a href='#' onclick=\"infoWindowMobileHandler(event)\" class='info-window-mobile-button ui-btn'>Close</a> ";
+            map.infoWindow.setTitle("Soil Details");
+            map.infoWindow.setContent(content);
+            map.infoWindow.show(event.mapPoint);
+          });
+        });
+
+        var legend = new Legend({
+          map: map,
+          respectCurrentMapScale: false,
+          layerInfos: [
+            {
+              layer: soilSurvey, title: "Dominant Soil Order"
+            }
+          ]
+        }, "legendDiv");
+        legend.startup();
+
+        function mapLoadHandler(event){
+          if (navigator.geolocation) {
+            // if you want to track as the user moves setup navigator.geolocation.watchPostion
+            navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
+          }
+        }
+
+        function locationError(error){
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              console.log("Location not provided");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              console.log("Current location not available");
+              break;
+            case error.TIMEOUT:
+              console.log("Timeout");
+              break;
+            default:
+              console.log("unknown error");
+              break;
+          }
+        }
+
+        function zoomToLocation(position){
+          var mapPoint = webMercatorUtils.geographicToWebMercator(new Point(position.coords.longitude,
+            position.coords.latitude));
+          map.centerAndZoom(mapPoint, 13);
+          var symbol = new PictureMarkerSymbol("images/bluedot.png", 40, 40);
+          map.graphics.add(new Graphic(mapPoint, symbol));
+        }
+      });
+  }
+  </script>
+</body>
+</html>

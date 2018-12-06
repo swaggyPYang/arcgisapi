@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+   <title>Measure Distances</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    dojo.require("esri.map");
+    dojo.require("esri.tasks.geometry");
+    dojo.require("esri.toolbars.draw");
+    dojo.require("dojo.number");
+
+    var map, geometryService;
+
+    function init() {
+      //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
+      //If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
+      esri.config.defaults.io.proxyUrl = "/proxy/";
+      esri.config.defaults.io.alwaysUseProxy = false;
+
+      map = new esri.Map("map", {
+        basemap: "streets",
+        center: [-77.500, 42.500],
+        zoom: 7
+      });
+      dojo.connect(map, "onLoad", initFunctionality);
+      geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+      dojo.connect(geometryService, "onLengthsComplete", outputDistance);
+    }
+
+    function initFunctionality(map) {
+      var tb = new esri.toolbars.Draw(map);
+      var lengthParams = new esri.tasks.LengthsParameters();
+      //on draw end add graphic, project it, and get new length
+      dojo.connect(tb, "onDrawEnd", function(geometry) {
+        map.graphics.clear();
+  
+        lengthParams.polylines = [geometry];
+        lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
+        lengthParams.geodesic = true;
+       
+        geometryService.lengths(lengthParams);
+        var graphic = map.graphics.add(new esri.Graphic(geometry, new esri.symbol.SimpleLineSymbol()));
+      });
+      tb.activate(esri.toolbars.Draw.FREEHAND_POLYLINE);
+    }
+
+    function outputDistance(result) {
+      dojo.byId("distance").innerHTML = dojo.number.format(result.lengths[0] / 1000) + " kilometers";
+    }
+
+    dojo.ready(init);
+  </script>
+
+  </head>
+  <body>
+    Click and hold down on the map to draw a line that will be added to the map.  The application will then use the geometry service to project and compute the length of the line.
+    <div id="map" class="claro" style="width:1024px; height:512px; border:1px solid #000;"></div>
+    Distance: <span id="distance"></span>
+  </body>
+</html>

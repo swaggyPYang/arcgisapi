@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Dynamic Map Service Layer with Custom Projection and Extent</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+
+      function init() {
+        var customExtentAndSR = new esri.geometry.Extent(-20037506,-9823074,20037506,10214431,new esri.SpatialReference({"wkid":54052}));
+        //create map with new custom spatial reference and extent.  The map will be in the Goode Homolosine Land projection
+        var map = new esri.Map("map", { extent: customExtentAndSR });
+        //map service layer has a default spatial reference of 4326.
+        var mapServiceLayer = new esri.layers.ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Population_World/MapServer");
+        map.addLayer(mapServiceLayer);
+      }
+
+      dojo.ready(init);
+    </script>
+
+  </head>
+  <body>
+    <div id="map" class="claro" style="position:relative; width:1024px; height:512px; border:2px solid #000;background-color:#99CCFF;"></div>
+  </body>
+</html>

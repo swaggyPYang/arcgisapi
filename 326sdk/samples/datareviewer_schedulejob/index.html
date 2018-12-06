@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Schedule Job Sample</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css" />
+<script src="https://js.arcgis.com/3.26/"></script>
+<style>
+.reviewerForm {
+	width: 530px;
+	font-size: .7em;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+.submitButton {
+	float: right;
+	padding: 5px;
+	width: 150px;
+	font-size: 1.1em;
+	border: 2px solid #CCC;
+	margin: 0px 0px 10px 0px;
+}	
+h1
+{
+	width:100%; 
+	background: #f1f1f1; 
+	padding:10px;
+	font-size:1.1em; 
+	margin: 0 0 15px 0;
+}
+input, textarea{
+	padding: 5px;
+	width: 371px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}	
+select{
+	padding: 5px;
+	width: 385px;
+	margin: 0px 0px 10px 0px;
+	border: 2px solid #CCC;
+}
+
+label {
+	float: left;
+	text-align: right;
+	margin-right: 15px;
+	width: 130px;
+	padding-top: 5px;
+}
+#scheduledDetailsDiv,
+#createReviewerSessionDiv {
+    position: absolute;
+}
+
+#createReviewerSessionDiv {
+    z-index: 10;
+}
+
+.message {
+	float: right;
+	padding: 5px;
+	width: 280px;
+}
+.successMessage {
+	float: right;
+	padding: 5px;
+	width: 280px;
+	color: #048313;
+}
+.errorMessage{
+	float: right;
+	padding: 5px;
+	width: 280px;
+	color: #C41111;
+}
+</style>
+
+  <script type="text/javascript">
+  var bvTask;
+  var drsSoeUrl="https://datareviewer.arcgisonline.com/arcgis/rest/services/Samples/reviewerWriteResults/MapServer/exts/DataReviewerServer"
+  require(
+  [
+     "dojo/dom",
+     "dojo/on", 
+     "esri/tasks/datareviewer/BatchValidationTask",
+     "esri/tasks/datareviewer/BatchValidationParameters",
+     "esri/tasks/datareviewer/SessionOptions",
+     "dojo/domReady!"
+  ], 
+  function(dom, on, BatchValidationTask, BatchValidationParameters,SessionOptions) {
+
+    // specify proxy for request with URL lengths > 2k characters
+     esriConfig.defaults.io.proxyUrl = "/proxy/";
+     on(dom.byId("scheduleJobBtn"), "click", scheduleJob);
+     on(dom.byId("getScheduledDetailBtn"), "click", getScheduledJobDetails);
+     on(dom.byId("linkToCreateSession"), "click", openCreateNewSessionDiv);
+     on(dom.byId("selectSession"), "change", hideCreateNewSessionDiv);
+     on(dom.byId("btnCreateReviewerSession"), "click", createNewSession);
+     //Create BatchValidationTask using the SOE url
+     bvTask = new BatchValidationTask(drsSoeUrl);
+     getReviewerSessions();
+     //Get a list of reviewer sessions in Reviewer workspace
+     function getReviewerSessions(session)
+     {
+         var deferred=bvTask.getReviewerSessions();
+         deferred.then(function(response) {
+            var reviewerSessions = response.reviewerSessions;
+            for (var i = 0; i < reviewerSessions.length; i++) {
+                dom.byId("selectSession")[i+1] = new Option(reviewerSessions[i].toString(), reviewerSessions[i].toString());
+                if (session!=null ||session!=undefined)
+                {
+                    if (reviewerSessions[i].sessionName==session)
+                    {
+                        dom.byId("selectSession")[i+1].selected=true;
+                    }
+                }
+            }
+          }, function(error) {
+               showMessage("ScheduleJobMessages", "Error getting Sessions Lsit " + error.message, "errorMessage");
+               dom.byId("scheduledDetailsDiv").style.visibility = "hidden";
+          });
+    }
+    function scheduleJob() {
+        //clear any existing schedule details
+        dom.byId("jobIdValue").value = "";
+        dom.byId("textarea").value = "";
+        dom.byId("scheduledDetailsDiv").style.visibility = "hidden";
+        dom.byId("createReviewerSessionDiv").style.visibility = "hidden";
+        showMessage("ScheduleJobMessages", "", "successMessage");
+
+        // check the form inputs
+        //1. Title (Optional)
+        //2. Session (Required)
+        //3. File Item ID (Required)
+        //4. CreatedBy (Optional)
+        if((!dom.byId("selectSession").value) || (!(dom.byId("inputFileItemId").value))) {
+           alert("Please fill out Schedule Job inputs");
+           return;
+        }
+        //Set up BatchValidation Parameters based on user input
+        var bvParameters = new BatchValidationParameters();
+        bvParameters.fileItemId = dom.byId("inputFileItemId").value;
+        bvParameters.sessionString = dom.byId("selectSession").value;
+        bvParameters.changedFeaturesOnly = false;
+        bvParameters.analysisArea = null;
+        bvParameters.createdBy = dom.byId("inputCreatedBy").value;
+        bvParameters.cronExpression = dom.byId("recurrenceOption").value;
+        bvParameters.endDate = undefined;
+        //Setting max number of executions to 3 to minimize server load
+        bvParameters.maxNumberOfExecutions = dom.byId("inputMaxExecutions").value !=null && dom.byId("inputMaxExecutions").value<3 ? dom.byId("inputMaxExecutions").value: 1;
+        bvParameters.title = dom.byId("inputTitle").value;
+
+        //Schedule Job using BatchValidationTask
+        var deferred = bvTask.scheduleJob(bvParameters);
+
+        //Enable Schedule Job Details Panel
+        dom.byId("scheduledDetailsDiv").style.visibility = "visible";
+
+        //Deferred callback and errback function
+        deferred.then(function(response) {
+           dom.byId("jobIdValue").value = response.jobId;
+        }, function(error) {
+           showMessage("ScheduleJobMessages", "Error scheduling Job " + error.message, "errorMessage");
+           dom.byId("scheduledDetailsDiv").style.visibility = "hidden";
+        });
+     }
+
+     function getScheduledJobDetails() {
+        var deferred = bvTask.getScheduledJobsList();
+        deferred.then(function(response) {
+           for( i = 0; i < response.scheduledJobs.length; i++) {
+              if(response.scheduledJobs[i].jobId === dom.byId("jobIdValue").value) {
+                 dom.byId("textarea").value = dojo.toJson(response.scheduledJobs[i]);
+                 break;
+              }
+           }
+        });
+     }
+
+    // Create New Reviewer Session
+     function createNewSession(){
+         if((!dom.byId("sessionName").value) || (!(dom.byId("userName").value))) {
+           alert("Please fill out Create Reviewer Session inputs");
+           return;
+         }
+         var sessionOptions=new SessionOptions();
+         //The user account to associate with a session.
+         sessionOptions.userName=dom.byId("userName").value;
+         //Indicates an enterprise geodatabase version to associate with the session. 
+         sessionOptions.versionName=dom.byId("versionName").value;
+         //Indicates how to handle duplicate results when writing the results to the Reviewer workspace.
+         sessionOptions.duplicateFilter=dom.byId("duplicateFilter").value;
+         //Indicates if validation result geometries are stored in the Reviewer workspace.
+         sessionOptions.storeGeometry=dom.byId("chkStoreGeometry").checked;
+         //Create a new Reviewer Session that will store sessions in a reviewer workspace. The function accepts two parameters. Session Name and Session Properties
+         var newSessionDeferred=bvTask.createReviewerSession(dom.byId("sessionName").value,sessionOptions);
+         newSessionDeferred.then(function(response) {
+           // Populate Session list with the updated sesison list
+           getReviewerSessions(response.reviewerSession.sessionName);
+           //Hide Create Reviewer Session Div
+           dom.byId("createReviewerSessionDiv").style.visibility = "hidden";
+        }, function(error) {
+           showMessage("createReviewerSessionMessages", "Error Creating New Session " + error.message, "errorMessage");
+           dom.byId("scheduledDetailsDiv").style.visibility = "hidden";
+        });
+     }
+     function showMessage(divName, text, className) {
+        var messageDiv = dom.byId(divName);
+        messageDiv.innerHTML = "";
+        messageDiv.className = className || "";
+        messageDiv.innerHTML = text;
+     }
+    function openCreateNewSessionDiv(){
+        dom.byId("scheduledDetailsDiv").style.visibility = "hidden";
+        dom.byId("createReviewerSessionDiv").style.visibility = "visible";
+        dom.byId("duplicateFilter").value= "None";
+        return false;
+     }
+     function hideCreateNewSessionDiv(){
+        dom.byId("createReviewerSessionDiv").style.visibility = "hidden";
+     }
+  });
+  function uploadPopup() {
+      var uploadsUrl = "../datareviewer_helper/SelectBatchJob.html"
+      //When using a local Data Reviewer Server replace above line with  
+      //var uploadsUrl = "https://<drsSoeServerName>:6080/arcgis/rest/services/reviewer/MapServer/uploads/upload"
+      newwindow = window.open(uploadsUrl, 'name', 'height=400,width=600');
+      if(window.focus) {
+           newwindow.focus();
+      }
+      return false;
+  }
+  
+</script>
+</head>
+<body class="claro">
+  <h2 align="center">Schedule Job Sample</h2>
+  <div style="width: 100%;  overflow-x: auto;">
+     <div style="padding: 0px 20px 0px 20px; float:left; margin-bottom: 20px">
+        <div id="" class="reviewerForm" >
+           <h1>Schedule Job Inputs:</h1>
+           <label for="inputTitle"> Title</label>
+           <input id="inputTitle" type="text" value="" placeholder="a title for this Scheduled job" />
+           <label for="inputSessionString">Session</label>
+            <select id="selectSession" style="width:230px"><option value="">Select Session</option>
+            </select>
+            <a id="linkToCreateSession" title="Create Reviewer Session." href="#" target="_self">Create Reviewer Session</a>
+           
+           <label for="inputFileItemId"> File Item ID</label>
+           <input type="text" id="inputFileItemId" style="width:275px" placeholder="e.g. i3d87e200-490d-44fb-838b-17558cca16dc" placeholder="Uploaded batch job file item ID"/>
+           <a id="linkToRestUploads" title="Use REST endpoint to upload a batch job." onclick="return uploadPopup()" href="#" target="_blank">Click to select</a>
+           <label for="inputCreatedBy" > Created By</label>
+           <input type="text" id="inputCreatedBy" value="" placeholder="Schedule Created By" />
+           <label for="recurrenceOption">Recurrence</label>
+           <select id="recurrenceOption"  placeholder="Select a recurrence option to schedule a job">
+              <option value="0 0/15 * * * ?">15 Minutes</option>
+              <option value="0 0/30 * * * ?"> 30 Minutes</option>
+              <option value="0 0 12 1 1 ? *">Hourly</option>
+           </select>
+           <label for="inputMaxExecutions"> No. of Executions </label>
+           <input type="number" id="inputMaxExecutions"  min="1" max="3" placeholder="maximum number of scheduled execution" value="1"/>
+           <button id="scheduleJobBtn" class="submitButton">
+              Schedule Job
+           </button>
+          <div id="ScheduleJobMessages" class="message"></div>
+        </div>
+     </div>
+     <div style="padding: 0px 20px 0px 20px; float:left; visibility: hidden">
+        <div id="scheduledDetailsDiv" class="reviewerForm" >
+           <label for="jobIdValue"> Scheduled Job Id </label>
+           <input type="text" id="jobIdValue" disabled="true" value=""/>
+           <label for="textarea">Scheduled Job Details</label>
+           <textarea id="textarea" rows="15" cols="48" ></textarea>
+           <button id="getScheduledDetailBtn" class="submitButton">
+              Get Scheduled Job Details
+           </button>
+           <div id="scheduledJobDetailsMessage" class="message"></div>
+        </div>
+         <div id="createReviewerSessionDiv"  class="reviewerForm" >
+              <h1>Create Reviewer Session Inputs:</h1>
+           <label for="sessionName"> Session Name </label>
+           <input type="text" id="sessionName" value="" placeholder="The name of the Reviewer Session to create."/>
+             <label for="userName"> User Name </label>
+           <input type="text" id="userName" placeholder="The user name when writing results to the session."/>
+           <label for="versionName"> Version Name </label>
+           <input type="text" id="versionName" value="Default" disabled="true"/>
+            <label for="duplicateFilter"> Duplicate Filter </label>
+           <select id="duplicateFilter">
+            <option value="None" selected="true">None</option>
+            <option value="Session">Session</option>
+            <option value="Database">Database</option>
+           </select>
+           <label for="chkStoreGeometry"> Store Geometry </label> <input type="checkbox" id="chkStoreGeometry" checked="true" style="margin:5px 0px 0px -178px; border:0px none;">
+           <button id="btnCreateReviewerSession" class="submitButton" style="width:160px;">
+              Create Reviewer Session
+           </button>
+           <div id="createReviewerSessionMessages" class="message"></div>
+        </div>
+     </div>
+  </div>
+</body>
+</html>

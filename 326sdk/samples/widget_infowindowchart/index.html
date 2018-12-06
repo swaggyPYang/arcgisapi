@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Info Window with Chart</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .chart {
+        width:200px;
+        height:200px;
+        padding:0px !important;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      // Try other themes: Julie, CubanShirts, PrimaryColors, Charged, BlueDusk, Bahamation, Harmony, Shrooms
+      var theme = "Wetland";
+      require([
+        "esri/map", "esri/layers/FeatureLayer",
+        "esri/dijit/InfoWindow", "esri/InfoTemplate",
+        "esri/symbols/SimpleFillSymbol", "esri/renderers/SimpleRenderer",
+        "dijit/layout/ContentPane", "dijit/layout/TabContainer",
+        "dojox/charting/Chart2D", "dojox/charting/plot2d/Pie",
+        "dojox/charting/action2d/Highlight", "dojox/charting/action2d/MoveSlice", "dojox/charting/action2d/Tooltip",
+        "dojox/charting/themes/" + theme,
+        "dojo/dom-construct", "dojo/dom-class",
+        "dojo/number", "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer,
+        InfoWindow, InfoTemplate,
+        SimpleFillSymbol, SimpleRenderer,
+        ContentPane, TabContainer,
+        Chart2D, Pie,
+        Highlight, MoveSlice, Tooltip,
+        dojoxTheme,
+        domConstruct, domClass,
+        number, parser
+      ) {
+        // Use the info window instead of the popup.
+        var infoWindow = new InfoWindow(null, domConstruct.create("div"));
+        infoWindow.startup();
+
+        map = new Map("map", {
+          basemap: "streets",
+          center: [-113.405, 43.521],
+          infoWindow: infoWindow,
+          zoom: 6
+        });
+        map.infoWindow.resize(275, 275);
+
+        var template = new esri.InfoTemplate();
+        // Flag icons are from http://twitter.com/thefella, released under creative commons.
+        template.setTitle("<b><img src='flags/${STATE_ABBR}.png'>  ${STATE_NAME}</b>");
+        template.setContent(getWindowContent);
+
+        var statesLayer = new FeatureLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/5", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          infoTemplate: template,
+          outFields: ["*"]
+        });
+        var symbol = new SimpleFillSymbol();
+        statesLayer.setRenderer(new SimpleRenderer(symbol));
+
+        map.addLayer(statesLayer);
+
+        function getWindowContent(graphic) {
+          // Make a tab container.
+          var tc = new TabContainer({
+            style: "width:100%;height:100%;"
+          }, domConstruct.create("div"));
+
+          // Display attribute information.
+          var cp1 = new ContentPane({
+            title: "Details",
+            content: "<a target='_blank' href='https://en.wikipedia.org/wiki/" +
+              graphic.attributes.STATE_NAME + "'>Wikipedia Entry</a><br><br>Median Age: " +
+              graphic.attributes.MED_AGE + "<br>Median Age (Male): " +
+              graphic.attributes.MED_AGE_M + "<br>Median Age (Female): " +
+              graphic.attributes.MED_AGE_F
+          });
+          // Display a dojo pie chart for the male/female percentage.
+          var cp2 = new ContentPane({
+            title: "Pie Chart"
+          });
+          tc.addChild(cp1);
+          tc.addChild(cp2);
+
+          // Create the chart that will display in the second tab.
+          var c = domConstruct.create("div", {
+            id: "demoChart"
+          }, domConstruct.create("div"));
+          var chart = new Chart2D(c);
+          domClass.add(chart, "chart");
+
+          // Apply a color theme to the chart.
+          chart.setTheme(dojoxTheme);
+          chart.addPlot("default", {
+            type: "Pie",
+            radius: 70,
+            htmlLabels: true
+          });
+          tc.watch("selectedChildWidget", function(name, oldVal, newVal){
+            if ( newVal.title === "Pie Chart" ) {
+              chart.resize(180,180);
+            }
+          });
+
+          // Calculate percent male/female.
+          var total = graphic.attributes.POP2000;
+          var male = number.round(graphic.attributes.MALES / total * 100, 2);
+          var female = number.round(graphic.attributes.FEMALES / total * 100, 2);
+          chart.addSeries("PopulationSplit", [{
+            y: male,
+            tooltip: male,
+            text: "Male"
+          }, {
+            y: female,
+            tooltip: female,
+            text: "Female"
+          }]);
+          //highlight the chart and display tooltips when you mouse over a slice.
+          new Highlight(chart, "default");
+          new Tooltip(chart, "default");
+          new MoveSlice(chart, "default");
+
+          cp2.set("content", chart.node);
+          return tc.domNode;
+        }
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="map"></div>
+  </body>
+</html>

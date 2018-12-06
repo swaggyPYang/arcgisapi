@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Generate renderer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{ margin: 0; padding: 0; }
+      #feedback {
+        position: absolute;
+        height: 400px;
+        font-family: arial;
+        margin: 5px;
+        padding: 10px;
+        z-index: 40;
+        background: #fff;
+        color: #444;
+        width: 300px;
+        left: 30px;
+        top: 30px;
+        -moz-box-shadow: 0 0 5px #888;
+        -webkit-box-shadow: 0 0 5px #888;
+        box-shadow: 0 0 5px #888;
+      }
+      #county { 
+        padding: 5px 0 0 0;
+        font-weight: 700;
+      }
+      #legendWrapper { padding: 20px 0 0 0; }
+      #note { font-size: 80%; font-weight: 700; padding: 0 0 10px 0; }
+      h3 { margin: 0 0 5px 0; border-bottom: 1px solid #444; }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      // one global for persistent app variables
+      var app = {};
+      require([
+        "esri/map", 
+        "esri/layers/ArcGISTiledMapServiceLayer", "esri/layers/FeatureLayer", 
+        "esri/tasks/ClassBreaksDefinition", "esri/tasks/AlgorithmicColorRamp",
+        "esri/tasks/GenerateRendererParameters", "esri/tasks/GenerateRendererTask",
+        "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", 
+        "esri/dijit/PopupTemplate", "esri/dijit/Legend",
+        "dojo/parser", "dojo/_base/array", "esri/Color",
+        "dojo/dom", "dojo/dom-construct", "dojo/number",
+        "dojo/data/ItemFileReadStore", "dijit/form/FilteringSelect",
+        
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane",
+        "dojo/domReady!"
+      ], function(
+        Map, 
+        ArcGISTiledMapServiceLayer, FeatureLayer, 
+        ClassBreaksDefinition, AlgorithmicColorRamp,
+        GenerateRendererParameters, GenerateRendererTask,
+        SimpleLineSymbol, SimpleFillSymbol, 
+        PopupTemplate, Legend,
+        parser, arrayUtils, Color, 
+        dom, domConstruct, number,
+        ItemFileReadStore, FilteringSelect
+      ) {
+        parser.parse();
+        // the counties map service uses the actual field name as the field alias
+        // set up an object to use as a lookup table to convert from terse field
+        // names to more user friendly field names
+        app.fields = { 
+          "POP2007": "Population(2007)", "POP07_SQMI": "Population/Square Mile(2007)", 
+          "WHITE": "White", "BLACK": "Black", "AMERI_ES": "Native Americans", 
+          "HISPANIC": "Hispanic", "ASIAN": "Asian", "HAWN_PI": "Native Hawaiian/Pacific Islander", 
+          "MULT_RACE": "Multiple Races", "OTHER": "Other" 
+        };
+        
+        app.map = new Map("map", { 
+          center: [-123.113, 47.035],
+          zoom: 7,
+          slider: false
+        });
+        var basemap = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer");
+        app.map.addLayer(basemap);
+        var ref = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Reference_Overlay/MapServer");
+        app.map.addLayer(ref);
+
+        // various info for the feature layer
+        app.countiesUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2";
+        app.layerDef = "STATE_NAME = 'Washington'";
+        app.outFields = ["POP2007", "POP07_SQMI", "WHITE", "BLACK", "AMERI_ES", "ASIAN", "HAWN_PI", "OTHER", "MULT_RACE", "HISPANIC", "STATE_NAME", "NAME"];
+        app.currentAttribute = "POP2007";
+        app.popupTemplate = new PopupTemplate({
+          title: "{NAME} County",
+          fieldInfos: [{ 
+            "fieldName": app.currentAttribute, 
+            "label": app.fields[app.currentAttribute],
+            "visible": true, 
+            "format": { places: 0, digitSeparator: true } 
+          }],
+          showAttachments: true
+        });
+        
+        // create a feature layer 
+        // wait for map to load so the map's extent is available
+        app.map.on("load", function() {
+          app.wash = new FeatureLayer(app.countiesUrl, {
+            "id": "Washington",
+            "infoTemplate": app.popupTemplate,
+            "maxAllowableOffset": maxOffset(),
+            "mode": FeatureLayer.MODE_SNAPSHOT,
+            "outFields": app.outFields,
+            "opacity": 0.8
+          });
+          // apply a layer def to show only counties in Washington
+          app.wash.setDefinitionExpression(app.layerDef);
+
+          // show selected attribute on click
+          app.mapClick = app.wash.on("click", function(evt) {
+            var name = evt.graphic.attributes.NAME + " County",
+                ca = app.currentAttribute,
+                content = app.fields[ca] + ": " + number.format(evt.graphic.attributes[ca]);
+            app.map.infoWindow.setTitle(name);
+            app.map.infoWindow.setContent(content);
+            // show info window at correct location based on the event's properties
+            (evt) ? app.map.infoWindow.show(evt.screenPoint, app.map.getInfoWindowAnchor(evt.screenPoint)) : null;
+          }); 
+          
+          app.map.addLayer(app.wash);
+
+          // colors for the renderer
+          app.defaultFrom = Color.fromHex("#998ec3");
+          app.defaultTo = Color.fromHex("#f1a340");
+          
+          createRenderer("POP2007");
+        });
+        
+        app.map.on("zoom-end", updateMaxOffset);
+
+        // create a store and a filtering select for the county layer's fields
+        var fieldNames, fieldStore, fieldSelect;
+        fieldNames = { "identifier": "value", "label": "name", "items": []};
+        arrayUtils.forEach(app.outFields, function(f) {
+          if ( arrayUtils.indexOf(f.split("_"), "NAME") == -1 ) { // exclude attrs that contain "NAME"
+            fieldNames.items.push({ "name": app.fields[f], "value": f });
+          }
+        });
+        
+        fieldStore = new ItemFileReadStore({ data: fieldNames });
+        fieldSelect = new FilteringSelect({
+          displayedValue: fieldNames.items[0].name,
+          value: fieldNames.items[0].value,
+          name: "fieldsFS", 
+          required: false,
+          store: fieldStore, 
+          searchAttr: "name",
+          style: { "width": "290px", "fontSize": "12pt", "color": "#444" }
+        }, domConstruct.create("div", null, dom.byId("fieldWrapper")));
+        fieldSelect.on("change", updateAttribute);
+
+        function createRenderer(field) {
+          app.sfs = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(
+              SimpleLineSymbol.STYLE_SOLID,
+              new Color([0, 0, 0]), 
+              0.5 
+            ),
+            null
+          );
+          var classDef = new ClassBreaksDefinition();
+          classDef.classificationField = app.currentAttribute;
+          classDef.classificationMethod = "quantile";
+          classDef.breakCount = 5;
+          classDef.baseSymbol = app.sfs; 
+
+          var colorRamp = new AlgorithmicColorRamp();
+          colorRamp.fromColor = app.defaultFrom;
+          colorRamp.toColor = app.defaultTo;
+          colorRamp.algorithm = "hsv"; // options are:  "cie-lab", "hsv", "lab-lch"
+          classDef.colorRamp = colorRamp;
+
+          var params = new GenerateRendererParameters();
+          params.classificationDefinition = classDef;
+          // limit the renderer to data being shown by the feature layer
+          params.where = app.layerDef; 
+          var generateRenderer = new GenerateRendererTask(app.countiesUrl);
+          generateRenderer.execute(params, applyRenderer, errorHandler);
+        }
+
+        function applyRenderer(renderer) {
+          app.wash.setRenderer(renderer);
+          app.wash.redraw();
+          createLegend(app.map, app.wash);
+        }
+
+        function updateAttribute(ch) {
+          app.map.infoWindow.hide();
+          delete app.popupTemplate;
+          app.popupTemplate = new PopupTemplate({
+            title: "{NAME} County",
+            fieldInfos: [{ 
+              "fieldName": ch, 
+              "label": app.fields[ch], 
+              "visible": true, 
+              "format": { places: 0, digitSeparator: true } 
+            }],
+            showAttachments: false
+          });
+          app.wash.setInfoTemplate(app.popupTemplate);
+          app.currentAttribute = ch;
+          createRenderer(ch);
+          createLegend(app.map, app.wash);
+        }
+
+        function createLegend(map, fl) {
+          // destroy previous legend, if present
+          if ( app.hasOwnProperty("legend") ) {
+            app.legend.destroy();
+            domConstruct.destroy(dojo.byId("legendDiv"));
+          }
+          // create a new div for the legend
+          var legendDiv = domConstruct.create("div", {
+            id: "legendDiv"
+          }, dom.byId("legendWrapper"));
+
+          app.legend = new Legend({
+            map : map,
+            layerInfos : [{
+              layer : fl,
+              title : "Census Attribute: " + app.fields[app.currentAttribute]
+            }]
+          }, legendDiv);
+          app.legend.startup();
+        }
+
+        function updateMaxOffset() {
+          var offset = maxOffset();
+          app.wash.setMaxAllowableOffset(offset);
+        }
+
+        function maxOffset() {
+          return (app.map.extent.getWidth() / app.map.width);
+        }
+
+        function errorHandler(err) {
+          console.log('Oops, error: ', err);
+        }
+      });
+    </script>
+  </head>
+
+  <body class="tundra">
+    <div data-dojo-type="dijit.layout.BorderContainer"
+         data-dojo-props="design:'headline',gutters:false"
+         style="width: 100%; height: 100%; margin: 0;">
+      <div id="map"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+
+        <div id="feedback">
+          <h3>Washington State</h3>
+          <div id="info">
+            <div id="note">
+              Note:  This sample requires an ArcGIS Server version 10.1 map service to generate a renderer.
+            </div>
+            Select a field to use to create a renderer for the counties in Washington state.
+          </div>
+          <div id="legendWrapper"></div>
+          <div id="fieldWrapper">
+            Currently selected attribute:
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

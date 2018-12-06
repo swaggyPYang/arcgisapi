@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+<title>GeoRSS</title>
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+<link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+<style>
+  html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+  #map { height: 100%; margin: 0; padding: 0; }
+  #meta {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 20em;
+    height: 5em;
+    z-index: 40;
+    background: #fff;
+    color: #777;
+    padding: 5px;
+    border: 2px solid #666;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-family: arial;
+    font-size: 0.9em;
+  }
+  #meta h3 {
+    color: #666;
+    font-size: 1.1em;
+    padding: 0px;
+    margin: 0px;
+    display: inline-block;
+  }
+  #loading {
+    float: right;
+  }
+</style>
+
+<script src="https://js.arcgis.com/3.26/"></script>
+<script>
+  var map;
+  require([
+    "esri/map", "esri/layers/GeoRSSLayer", "esri/InfoTemplate",
+    "dojo/parser", "dojo/_base/array", "dojo/dom-style",
+    "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+  ], function(
+    Map, GeoRSSLayer, InfoTemplate,
+    parser, arrayUtils, domStyle
+  ) {
+    map = new esri.Map("map",{
+      basemap: "oceans",
+      center: [-107, 42],
+      zoom: 5
+    });
+
+    // create layout dijits
+    parser.parse();
+
+    var georssUrl = "https://esri.box.com/shared/static/ko99d42udctfv8z0ja2j6dz6q5tzbzu4.xml";
+    var georss = new GeoRSSLayer(georssUrl);
+    georss.on("load", function() {
+      // create an info template
+      var template = new InfoTemplate("${name}", "${description}");
+      // set the info template for the feature layers that make up the GeoRSS layer
+      // the GeoRSS layer contains one feature layer for each geometry type
+      var layers = georss.getFeatureLayers();
+      arrayUtils.forEach(layers, function(l) {
+        l.setInfoTemplate(template);
+      });
+    });
+    map.addLayer(georss);
+  });
+</script>
+</head>
+
+<body class="tundra">
+<div data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline',gutters:false"
+     style="width: 100%; height: 100%; margin: 0;">
+  <div id="map"
+       data-dojo-type="dijit/layout/ContentPane"
+       data-dojo-props="region:'center'">
+    <div id="meta">
+      <h3>Display GeoRSS on a map</h3>
+      <br>
+      The map displays a simple GeoRSS file with a point and a polygon.
+    </div>
+  </div>
+</div>
+</body>
+</html>
+

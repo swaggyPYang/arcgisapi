@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Select with feature layer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
+      #messages{
+        background-color: #fff;
+        box-shadow: 0 0 5px #888;
+        font-size: 1.1em;
+        max-width: 15em;
+        padding: 0.5em;
+        position: absolute;
+        display: inline;
+        right: 20px;
+        top: 20px;
+        z-index: 40;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script src="buffer.js"></script>
+  </head>
+
+  <body>
+    <div id="messages">
+      <div>Click on the map for information about wells within a 1/2 mile.</div>
+    </div>
+    <div id="mapDiv"></div>
+  </body>
+</html>

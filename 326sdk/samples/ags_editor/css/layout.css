@@ -1,0 +1,64 @@
+  html,body {
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+  }
+
+  body {
+    background-color:#FFF;
+    color:#333;
+    font-size:14px;
+    overflow:hidden;
+    font-family:Helvetica, "Trebuchet MS", Arial, sans-serif;
+  }
+
+  #header {
+    border:solid 1px #224a54;
+    height:80px;
+    margin:2px;
+  }
+
+  #title {
+    color:#369;
+    font-size:30px;
+    text-align:left;
+    font-weight:bolder;
+    padding-top:10px;
+    padding-left:15px;
+  }
+
+  #snippet {
+    font-size:14px;
+    color:#444;
+    padding-left:15px;
+  }
+
+  #leftPane {
+    border:solid 1px #224a54;
+    width:28%;
+    margin:5px;
+  }
+
+  #footer {
+    border:solid 1px #224a54;
+    background-color:#ecefe4;
+    color:#3f3f3f;
+    font-size:10pt;
+    text-align:center;
+    height:40px;
+    margin:2px;
+  }
+
+  #editorDiv {
+    width:98%;
+    border:0;
+    height:98%;
+  }
+
+  #map {
+    border:solid 1px #224a54;
+    margin:5px;
+  }
+  .dj_ie .infowindow .window .top .right .user .content { position: relative; }
+  .dj_ie .simpleInfoWindow .content {position: relative;}

@@ -1,0 +1,4 @@
+arcgis-js-sdk.git
+origin/master
+924f4ebd9bc7be00139e6fd4a462e356965b2f4f
+JS SDK 3.26 build date: Friday 2018-09-21 11:27:56 by fang7211

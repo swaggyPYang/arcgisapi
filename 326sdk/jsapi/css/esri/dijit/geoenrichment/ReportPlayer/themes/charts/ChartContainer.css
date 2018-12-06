@@ -1,0 +1,63 @@
+﻿/* Chart Container */
+
+.esriGEReportPlayer_chartContainer {
+    position: relative;
+    display: inline-block;
+}
+
+    .esriGEReportPlayer_chartContainer svg {
+        touch-action: auto !important;
+    }
+
+.chartContainer_chartContainerWithAxis {
+    position: relative;
+}
+
+.esriGEReportPlayer_chartContainer .chartContainer_chartLabel {
+    text-align: center;
+    line-height: 26px;
+}
+
+/* Level Line */
+
+.esriGEReportPlayer_chartContainerLevelLineH {
+    position: absolute;
+    border-top: 1px solid #AAAAAA;
+    height: 1px;
+    pointer-events: none;
+}
+
+.esriGEReportPlayer_chartContainerLevelLineV {
+    position: absolute;
+    border-left: 1px solid #AAAAAA;
+    width: 1px;
+    pointer-events: none;
+}
+
+/* Chart Icons */
+
+.esriGEReportPlayer_chartContainer .chartContainer_chartIcon {
+    position: absolute;
+    background-size: contain;
+    cursor: pointer;
+}
+
+/* Floating Texts */
+
+.esriGEReportPlayer_chartContainer .chartContainer_textSection {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 0px !important;
+    height: 0px !important;
+}
+
+/* Floating Icons */
+
+.esriGEReportPlayer_chartContainer .chartContainer_floatingIconSection {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 0px !important;
+    height: 0px !important;
+}

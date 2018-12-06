@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Basemap Toggle</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #map {
+      padding:0;
+      margin:0;
+      height:100%;
+    }
+    #BasemapToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 50;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+var map;
+    require([
+      "esri/map", 
+      "esri/dijit/BasemapToggle",
+      "dojo/domReady!"
+    ], function(
+      Map, BasemapToggle
+    )  {
+
+      map = new Map("map", {
+        center: [-70.6508, 43.1452],
+        zoom: 16,
+        basemap: "topo"
+      });
+            
+      var toggle = new BasemapToggle({
+        map: map,
+        basemap: "satellite"
+      }, "BasemapToggle");
+      toggle.startup();
+
+    });
+  </script>
+</head>
+<body>
+  <div id="map" class="map">
+    <div id="BasemapToggle"></div>
+  </div>
+</body>
+</html>

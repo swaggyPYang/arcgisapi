@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>UndoManager</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow:hidden;
+      }
+      .instructions{
+        padding-top:20px;
+        font-size:12px;
+      }
+      .undoButtons{
+        width:60%;
+        margin-left:auto;
+        margin-right:auto;
+        padding-top:4px;
+      }
+      #map{
+        padding:0px;
+        border:solid 2px #1A84AD;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+      }
+      #rightPane{
+        border:none;
+        width:300px;
+      }
+      .templatePicker {
+        border:solid 2px #1A84AD !important;
+      }
+      .undoIcon { background-image:url(images/undo.png); width:16px; height:16px; }
+      .redoIcon { background-image:url(images/redo.png); width:16px; height:16px;}
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map, undoManager, attInspector;
+      require([
+        "esri/map",
+        "esri/layers/FeatureLayer",
+        "esri/undoManager",
+        "esri/dijit/AttributeInspector",
+        "esri/dijit/editing/TemplatePicker",
+
+        "esri/dijit/editing/Add",
+        "esri/dijit/editing/Delete",
+        "esri/dijit/editing/Update",
+        "esri/dijit/editing/Editor",
+        "esri/tasks/query",
+        "esri/toolbars/draw",
+        "esri/graphic",
+
+        "dojo/parser",
+        "dojo/_base/event",
+        "dijit/registry",
+        "dojo/_base/array",
+
+        "dijit/form/Button",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, UndoManager, AttributeInspector, TemplatePicker,
+        Add, Delete, Update, Editor, Query, Draw, Graphic,
+        parser, event, registry, array
+      ) {
+        parser.parse();
+
+
+        // specify the number of undo operations allowed using the maxOperations parameter
+        undoManager = new UndoManager({maxOperations: 8});
+
+        // listen for the undo/redo button click events
+        registry.byId("undo").on("click", function(e) {
+          undoManager.undo();
+        });
+        registry.byId("redo").on("click", function(e) {
+          undoManager.redo();
+        });
+
+        map = new Map("map", {
+          basemap: "topo",
+          center: [-97.367, 37.691],
+          zoom: 14
+        });
+
+        var landuseLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Military/FeatureServer/6", {
+          mode: FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+
+        map.addLayers([landuseLayer]);
+        map.on("layers-add-result", initEditing);
+
+        function initEditing(results) {
+          var layer = results.layers[0].layer;
+          var layers = array.map(results.layers, function(result) {
+            return result.layer;
+          });
+
+          var layerInfos = array.map(results.layers, function(result) {
+            return {featureLayer: results.layers[0].layer, isEditable: true, showAttachments: false};
+          });
+
+          //Ctrl+click to delete features and add this delete operation to undomanager
+          layer.on("click", function(evt) {
+            event.stop(evt);
+
+            if (evt.ctrlKey === true || evt.metaKey === true) {  //delete feature if ctrl key is depressed
+              layer.applyEdits(null, null, [evt.graphic], function() {
+                var operation = new Delete({
+                  featureLayer: layer,
+                  deletedGraphics: [evt.graphic]
+                });
+                undoManager.add(operation);
+                checkUI();
+              });
+            }
+          });
+
+          layer.on("before-apply-edits", function() {
+            dijit.byId("undo").set("disabled", true);
+            dijit.byId("redo").set("disabled", true);
+          });
+
+          layer.on("edits-complete", function(evt) {
+            //display attribute inspector for newly created features
+            if (evt.adds.length > 0) {
+              var query = new Query();
+              query.objectIds = [evt.adds[0].objectId];
+              layer.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features
+                ) {
+                if (features.length > 0) {
+                  var screenPoint = map.toScreen(features[0].geometry);
+                  //display the attribute window for newly created features
+                  map.infoWindow.setTitle("");
+                  map.infoWindow.show(screenPoint, map.getInfoWindowAnchor(screenPoint));
+                }
+                else {
+                  map.infoWindow.hide();
+                }
+              });
+            }
+            if (evt.deletes.length > 0) {
+              //hide the info window if features are deleted.
+              map.infoWindow.hide();
+            }
+            checkUI();
+          });
+
+          //Add the attribute inspector and listen for events to update feature layer
+          //when attributes are modified.
+          attInspector = new AttributeInspector({layerInfos: layerInfos}, "attributesDiv");
+
+          //display the attribute inspector in the info window.
+          map.infoWindow.setContent(attInspector.domNode);
+          map.infoWindow.resize(300, 190);
+
+          //delete the feature and close the info window if displayed.
+          attInspector.on("delete",function(evt){
+            var feature = evt.feature;
+            var layer = feature.getLayer();
+            layer.applyEdits(null, null, [feature], function() {
+              var operation = new Delete({
+                featureLayer: layer,
+                deletedGraphics: [feature]
+              });
+              undoManager.add(operation);
+              checkUI();
+            });
+            layer.clearSelection();
+            map.infoWindow.hide();
+          });
+
+          //show the info window for the next selected feature
+          attInspector.on("next", function(evt) {
+            var feature = evt.feature;
+            var screenPoint = map.toScreen(feature.geometry.getExtent().getCenter());
+            map.infoWindow.show(screenPoint, map.getInfoWindowAnchor(screenPoint));
+          });
+
+          //Update the feature service attributes and add each attribute change to
+          //the undo manager for undo/redo capability
+          attInspector.on("attribute-change", function(evt) {
+            var feature = evt.feature;
+            feature.attributes[evt.fieldName] = evt.newFieldValue;
+
+            var layer = feature.getLayer();
+            layer.applyEdits(null, [feature], null, function() {
+              var operation = new Update({
+                featureLayer: layer,
+                preUpdatedGraphics: [new Graphic(originalFeature)],
+                postUpdatedGraphics: [feature]
+              });
+
+              undoManager.add(operation);
+              checkUI();
+            });
+          });
+
+          var templatePicker = new TemplatePicker({
+            featureLayers: layers,
+            rows: "auto",
+            columns: 3,
+            grouping: true
+          }, "templatePickerDiv");
+
+          templatePicker.startup();
+
+          var drawToolbar = new Draw(map);
+
+          var selectedTemplate;
+
+          //when users select an item from the template picker activate the draw toolbar
+          //with the geometry type of the selected template item.
+          templatePicker.on("selection-change", function() {
+            if (templatePicker.getSelected()) {
+              selectedTemplate = templatePicker.getSelected();
+            }
+            drawToolbar.activate(Draw.POINT);
+          });
+
+          //once the geometry is drawn - call applyEdits to update the feature service with the new geometry
+          drawToolbar.on("draw-complete", function(evt) {
+            drawToolbar.deactivate();
+            var newAttributes = dojo.mixin({}, selectedTemplate.template.prototype.attributes);
+            var newGraphic = new Graphic(evt.geometry, null, newAttributes);
+            //when features are added - add them to the undo manager
+            selectedTemplate.featureLayer.applyEdits([newGraphic], null, null, function() {
+              var operation = new Add({
+                featureLayer: selectedTemplate.featureLayer,
+                addedGraphics: [newGraphic]
+              });
+              undoManager.add(operation);
+              checkUI();
+            });
+          });
+        }
+
+        //disable or enable undo/redo buttons depending on current app state
+        function checkUI() {
+          if (undoManager.canUndo) {
+            dijit.byId("undo").set("disabled", false);
+          }
+          else {
+            dijit.byId("undo").set("disabled", true);
+          }
+
+          if (undoManager.canRedo) {
+            dijit.byId("redo").set("disabled", false);
+          }
+          else {
+            dijit.byId("redo").set("disabled", true);
+          }
+        }
+
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:true, design:'sidebar'" style="width:100%;height:100%;">
+      <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+      <div id="rightPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'right'">
+        <div id="templatePickerDiv"></div>
+        <div class="undoButtons">
+         <button id="undo"  data-dojo-type="dijit/form/Button" data-dojo-props="disabled:true, iconClass:'undoIcon'" >Undo</button>
+         <button id="redo"  data-dojo-type="dijit/form/Button" data-dojo-props="disabled:true, iconClass:'redoIcon'" >Redo</button>
+        </div>
+        <div class='instructions'>
+          <ul style="list-style:none;padding-left:4px;">
+            <li><b>Create Features:</b> Select template then click on map.</li>
+            <li><b>Delete Features:</b> Ctrl or Cmd + Click feature.</li>
+          </ul>
+          The undo/redo buttons will become enabled after editing the feature attributes or geometry.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

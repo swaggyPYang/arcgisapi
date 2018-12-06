@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Well completion dates for the Hugoton Gas Field Over Time</title>
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+
+      #mapDiv {
+        position: relative;
+      }
+
+      #bottomPanel {
+        left: 50%;
+        margin: 0 auto;
+        margin-left: -500px;
+        position: absolute; 
+        bottom: 2.5em;
+      }
+
+      #timeInfo{
+        border-radius: 4px;
+        border: solid 2px #ccc;
+        background-color: #fff;
+        display: block;
+        padding: 5px;
+        position: relative;
+        text-align: center;
+        width: 1000px;
+        z-index: 99;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/ArcGISDynamicMapServiceLayer", 
+        "esri/TimeExtent", "esri/dijit/TimeSlider",
+        "dojo/_base/array", "dojo/dom", "dojo/domReady!"
+      ], function(
+        Map, ArcGISDynamicMapServiceLayer, 
+        TimeExtent, TimeSlider,
+        arrayUtils, dom
+      ) {
+        map = new Map("mapDiv", {
+          basemap: "streets",
+          center: [-101.15, 37.604],
+          zoom: 9
+        });
+        
+        var opLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/KSWells/MapServer");
+        opLayer.setVisibleLayers([0]);
+
+        //apply a definition expression so only some features are shown 
+        var layerDefinitions = [];
+        layerDefinitions[0] = "FIELD_KID=1000148164";
+        opLayer.setLayerDefinitions(layerDefinitions);
+
+        //add the gas fields layer to the map 
+        map.addLayers([opLayer]);
+
+        map.on("layers-add-result", initSlider);
+
+        function initSlider() {
+          var timeSlider = new TimeSlider({
+            style: "width: 100%;"
+          }, dom.byId("timeSliderDiv"));
+          map.setTimeSlider(timeSlider);
+          
+          var timeExtent = new TimeExtent();
+          timeExtent.startTime = new Date("1/1/1921 UTC");
+          timeExtent.endTime = new Date("12/31/2009 UTC");
+          timeSlider.setThumbCount(2);
+          timeSlider.createTimeStopsByTimeInterval(timeExtent, 2, "esriTimeUnitsYears");
+          timeSlider.setThumbIndexes([0,1]);
+          timeSlider.setThumbMovingRate(2000);
+          timeSlider.startup();
+          
+          //add labels for every other time stop
+          var labels = arrayUtils.map(timeSlider.timeStops, function(timeStop, i) { 
+            if ( i % 2 === 0 ) {
+              return timeStop.getUTCFullYear(); 
+            } else {
+              return "";
+            }
+          }); 
+          
+          timeSlider.setLabels(labels);
+          
+          timeSlider.on("time-extent-change", function(evt) {
+            var startValString = evt.startTime.getUTCFullYear();
+            var endValString = evt.endTime.getUTCFullYear();
+            dom.byId("daterange").innerHTML = "<i>" + startValString + " and " + endValString  + "<\/i>";
+          });
+        }
+      });
+    </script>
+  </head>
+  <body class="claro">
+
+    <div id="mapDiv">
+      <div id="bottomPanel">
+        <div id="timeInfo">
+          <div>Hugoton Gas Field Wells from <span id="daterange">1921 to 2009</span> (Completion date)</div>
+          <div id="timeSliderDiv"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

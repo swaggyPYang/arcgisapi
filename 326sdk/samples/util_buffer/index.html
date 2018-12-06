@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Buffer</title>
+  
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    dojo.require("esri.map");
+    dojo.require("esri.tasks.geometry");
+
+    var map = null;
+    var gsvc = null;
+
+    function initialize() {
+      map = new esri.Map("map", {
+        basemap: "streets",
+        center: [-96.935, 32.872],
+        zoom: 9
+      });
+
+      gsvc = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+ 
+      map.on("click", doBuffer);
+
+    }
+
+    function doBuffer(evt) {
+
+      map.graphics.clear();
+      var params = new esri.tasks.BufferParameters();
+      params.geometries = [ evt.mapPoint ];
+
+      //buffer in linear units such as meters, km, miles etc.
+      params.distances = [ 5, 10 ];
+      params.unit = esri.tasks.GeometryService.UNIT_KILOMETER;
+      params.outSpatialReference = map.spatialReference;
+
+      gsvc.buffer(params, showBuffer);
+    }
+
+    function showBuffer(geometries) {
+      var symbol = new esri.symbol.SimpleFillSymbol(
+        esri.symbol.SimpleFillSymbol.STYLE_SOLID,
+        new esri.symbol.SimpleLineSymbol(
+          esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+          new dojo.Color([0,0,255,0.65]), 2
+        ),
+        new dojo.Color([0,0,255,0.35])
+      );
+
+      dojo.forEach(geometries, function(geometry) {
+        var graphic = new esri.Graphic(geometry,symbol);
+        map.graphics.add(graphic);
+      });
+    }
+
+    dojo.ready(initialize);
+  </script>
+</head>
+
+<body class="claro">
+  <b>Click a location on the map to buffer. Click again on another location to buffer again.</b>
+  <div id="map" style="width:600px; height:400px; border:1px solid #000;"></div>
+</body>
+
+</html>

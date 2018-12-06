@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  
+  
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>ArcGIS dynamic and tile layers using Popup and InfoTemplates</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    html, body, #ui-esri-map {
+      width:   100%;
+      height:  100%;
+      margin:  0;
+      padding: 0;
+    }
+
+    #ui-esri-dijit-geocoder {
+      top:      20px;
+      left:     70px;
+      position: absolute;
+      z-index:  3;
+    }
+
+    .esriPopup .titlePane {
+      text-shadow: none;
+    }
+
+    .esriPopup .titleButton.next {
+      right: 40px;
+    }
+
+    .esriPopup .titleButton.prev {
+      right: 53px;
+    }
+
+    .demographicInfoContent {
+      padding-top: 10px;
+    }
+
+    .demographicInnerSpacing {
+      display: inline-block;
+      width:   8px;
+    }
+
+    .demographicNumericPadding {
+      width:      90px;
+      display:    inline-block;
+      text-align: right;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map;
+    require([
+      "dojo/dom-construct",
+      "esri/Color",
+      "esri/dijit/Geocoder",
+      "esri/dijit/Popup",
+      "esri/InfoTemplate",
+
+      "esri/layers/ArcGISDynamicMapServiceLayer",
+      "esri/map",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol", "dojo/domReady!"
+    ], function(
+      domConstruct, Color, Geocoder, Popup, InfoTemplate, 
+      ArcGISDynamicMapServiceLayer, Map, SimpleFillSymbol, SimpleLineSymbol
+    ) {
+      var sls = new SimpleLineSymbol("solid", new Color("#444444"), 3);
+      var sfs = new SimpleFillSymbol("solid", sls, new Color([68, 68, 68, 0.25]));
+
+      var popup = new Popup({
+        fillSymbol: sfs,
+        lineSymbol: null,
+        markerSymbol: null
+      }, domConstruct.create("div"));
+
+      map = new Map("ui-esri-map", {
+        basemap: "topo",
+        center: [-94.75290067627297, 39.034671990514816], // long, lat
+        zoom: 12,
+        sliderStyle: "small",
+        infoWindow: popup
+      });
+
+      var geocoder = new Geocoder({
+        arcgisGeocoder: {
+          placeholder: "Search "
+        },
+        map: map
+      }, "ui-esri-dijit-geocoder");
+
+      var _countyCensusInfoTemplate = new InfoTemplate();
+      _countyCensusInfoTemplate.setTitle("<b>Census Information</b>");
+
+      var _blockGroupInfoTemplate = new InfoTemplate();
+      _blockGroupInfoTemplate.setTitle("<b>Census Information</b>");
+
+      var _censusInfoContent =
+        "<div class=\"demographicInfoContent\">" +
+        "<div class='demographicNumericPadding'>${AGE_5_17:formatNumber}</div><div class=\"demographicInnerSpacing\"></div>people ages 5 - 17<br>" +
+        "<div class='demographicNumericPadding'>${AGE_40_49:formatNumber}</div><div class=\"demographicInnerSpacing\"></div>people ages 40 - 49<br>" +
+        "<div class='demographicNumericPadding'>${AGE_65_UP:formatNumber}</div><div class=\"demographicInnerSpacing\"></div>people ages 65 and older" +
+        "</div>";
+
+      _countyCensusInfoTemplate.setContent("Demographics for:<br>${NAME} ${STATE_NAME:getCounty}, ${STATE_NAME}<br>" + _censusInfoContent);
+      _blockGroupInfoTemplate.setContent("Demographics for:<br>Tract: ${TRACT:formatNumber} Blockgroup: ${BLKGRP}<br>" + _censusInfoContent);
+
+      var _oilAndGasInfoTemplate = new InfoTemplate();
+      _oilAndGasInfoTemplate.setTitle("<b>Oil and Gas data</b>");
+
+      var _oilAndGasInfoContent =
+        "<div class=\"demographicInfoContent\">" +
+        "Gas production: ${PROD_GAS}<br>Oil production: ${PROD_OIL:formatNumber}" +
+        "</div>";
+
+      _oilAndGasInfoTemplate.setContent("${FIELD_NAME} production field<br>" +
+        _oilAndGasInfoContent);
+
+      var demographicsLayerURL = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer";
+      var demographicsLayerOptions = {
+        "id": "demographicsLayer",
+        "opacity": 0.8,
+        "showAttribution": false
+      };
+      var demographicsLayer = new ArcGISDynamicMapServiceLayer(demographicsLayerURL, demographicsLayerOptions);
+      demographicsLayer.setInfoTemplates({
+        1: { infoTemplate: _blockGroupInfoTemplate },
+        2: { infoTemplate: _countyCensusInfoTemplate }
+      });
+      demographicsLayer.setVisibleLayers([1, 2]);
+      map.addLayer(demographicsLayer);
+
+      var oilAndGasLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Petroleum/KGS_OilGasFields_Kansas/MapServer", {
+        "id": "oilAndGasLayer",
+        "opacity": 0.75
+      });
+      oilAndGasLayer.setInfoTemplates({
+        0: { infoTemplate: _oilAndGasInfoTemplate }
+      });
+      map.addLayer(oilAndGasLayer);
+
+      geocoder.startup();
+    });
+
+    var formatNumber = function(value, key, data) {
+      var searchText = "" + value;
+      var formattedString = searchText.replace(/(\d)(?=(\d\d\d)+(?!\d))/gm, "$1,");
+      return formattedString;
+    };
+
+    var getCounty = function(value, key, data) {
+      if (value.toUpperCase() !== "LOUISIANA") {
+        return "County";
+      } else {
+        return "Parish";
+      }
+    };
+  </script>
+</head>
+<body>
+<div id="ui-esri-map"></div>
+<div id="ui-esri-dijit-geocoder"></div>
+</body>
+</html>

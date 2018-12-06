@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Proportional Symbols on Road Traffic</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/InfoTemplate",
+        "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, InfoTemplate
+      ){
+
+        map = new Map("map", {
+          basemap:"gray",
+          center: [-84.63,30.37],
+          zoom: 10
+        });
+
+        var template = new InfoTemplate("Florida Annual Average Traffic Count", "Traffic Count: <b>${AADT}</b><br>From: <b>${DESC_FRM}</b><br>To: <b>${DESC_TO}</b>");
+
+        var layer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Florida_Annual_Average_Daily_Traffic/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields:["AADT", "DESC_FRM", "DESC_TO"],
+          infoTemplate:template,
+          minScale:1155581.108577
+        });
+
+        var sizeInfo = {
+          field:"AADT",
+          minSize:1,
+          maxSize:10,
+          minDataValue:1000,
+          maxDataValue:100000
+        };
+        
+        layer.on("load", function() {
+          layer.renderer.setSizeInfo(sizeInfo);
+          layer.copyright = "Florida Department of Transportation, Transportation Statistics Office (TRANSTAT)";
+        });
+        
+        map.addLayers([layer]);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html> 

@@ -1,0 +1,84 @@
+﻿/* Grid */
+
+.esriGEAdjustableGrid {
+    position: absolute;
+}
+
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .adjustableGrid_emptyRow {
+        display: block;
+        background-color: transparent;
+        height: 1px;
+        margin-bottom: -1px;
+    }
+
+    /* Value Field */
+
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField {
+        vertical-align: top;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .esriGEAdjustableGrid.esriGEAdjustableGridSingleCell > .adjustableGridMainNode > .esriGEAdjustableGridValueField {
+        overflow: visible;
+    }
+
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField > .valueField_contentBlock {
+        box-sizing: border-box;
+    }
+
+        .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField > .valueField_contentBlock > .valueField_valueBlock {
+            display: table-cell;
+        }
+
+    /* Value Field Label */
+
+    .esriGEAdjustableGrid .valueField_valueLabel {
+        transform-origin: 50% 50%;
+        -webkit-transform-origin: 50% 50%;
+    }
+
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField > .valueField_contentBlock > .valueField_valueBlock > .valueField_valueLabel {
+        white-space: pre-wrap; /* preserve paragraphs and white spaces */
+        overflow-wrap: break-word; /* break words if overflows */
+    }
+
+    /* cell with a variable: all modes - break label to render the variable name/value better */
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField.hasNumericVariableFieldInfo > .valueField_contentBlock > .valueField_valueBlock > .valueField_valueLabel {
+        word-break: break-all;
+    }
+
+    /* cell with a variable: all modes - don't preserve white spaces */
+    .esriGEAdjustableGrid > .adjustableGridMainNode > .esriGEAdjustableGridValueField.hasStringVariableFieldInfo > .valueField_contentBlock > .valueField_valueBlock > .valueField_valueLabel {
+        white-space: normal;
+    }
+
+/* Hyperlink */
+
+.esriGEAdjustableGridValueFieldHyperLink:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.esriGEAdjustableGrid .esriGEAdjustableGridValueField a {
+    color: blue;
+}
+
+/* background section */
+
+.esriGEAdjustableGrid .adjustableGrid_backgroundSection {
+    pointer-events: none;
+}
+
+/* foreground section */
+
+.esriGEAdjustableGrid .adjustableGrid_foregroundSection {
+    pointer-events: none;
+}
+
+/* floating tables section */
+
+.esriGEAdjustableGrid .adjustableGrid_floatingTablesSection {
+    width: 0px !important;
+    height: 0px !important;
+}

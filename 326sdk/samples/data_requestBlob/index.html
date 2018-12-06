@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blob Content</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style>
+    #main {
+      font-family: "Arial Unicode MS, Arial, sans-serif";
+      font-size: 24px;
+    }
+    #info {
+      font-size: 16px;
+    }
+    #content {
+      width: 600px;
+      height: 275px;
+      padding: 5px;
+      overflow: auto;
+      border: solid 1px #AAAAAA;
+      background-color: #FFFFFF;
+    }
+    .failure {
+      color: red;
+    }
+    #status {
+      font-size: 12px;
+    }
+  </style>
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    require([
+      "dojo/dom",
+      "dojo/on",
+      "dojo/dom-class",
+      "esri/request",
+      "dojo/domReady!"
+    ], function (dom, on, domClass, esriRequest) {
+
+      on(dom.byId("rdoJson"), "change", change);
+      on(dom.byId("rdoImage"), "change", change);
+
+      on(dom.byId("submitRequest"), "click", getContent);
+
+      function getContent() {
+
+        var url = dom.byId("url").value;
+        var contentDiv = dom.byId("content");
+        contentDiv.value = "";
+        domClass.remove(contentDiv, "failure");
+        dom.byId("status").innerHTML = "Downloading...";
+
+        var params = {
+          url: url,
+          handleAs: "blob"
+        };
+
+        if (dom.byId("rdoJson").checked) {
+          params.content = {
+            f: "json"
+          };
+        }
+        var requestHandle = esriRequest(
+          params);
+        requestHandle.then(requestSucceeded, requestFailed);
+      }
+
+      function requestSucceeded(response, io) {
+
+        dom.byId("status").innerHTML = "";
+        var reader = new FileReader();
+
+        reader.addEventListener("loadend", function () {
+          if (response.type == "image/png") {
+            dom.byId("content").innerHTML = "<img src=' " + reader.result + " '/>";
+          } else {
+            dom.byId("content").innerHTML = "<div>" + reader.result + "</div>";
+          }
+        });
+
+        if (response.type == "image/png") {
+          //if working with image data
+          reader.readAsDataURL(response);
+        } else {
+          reader.readAsText(response);
+        }
+      }
+
+      function requestFailed(error, io) {
+        domClass.add(dom.byId("content"), "failure");
+        dom.byId("status").innerHTML = "";
+        dom.byId("content").innerHTML = error;
+      }
+
+      function change(evt) {
+        var url;
+        if (evt.target.id === "rdoJson") {
+          url = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/";
+        } else { // blob from image
+          url = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer/tile/1/0/0";
+        }
+        dom.byId("url").value = url;
+      }
+    });
+  </script>
+</head>
+<body>
+  <div id="main">Get <b>BLOB</b> content using esriRequest.</div>
+  <div id="info">
+    <p>This sample demonstrates how to get Blob content from an Image or JSON resource.</p>
+  </div>
+  <p>
+    Blob content :
+    <span id="blob_content">
+    <input type="radio" name="radioGrp"
+              id="rdoImage" checked/>
+    Blob from Image&nbsp;&nbsp;
+    <input type="radio" name="radioGrp"
+              id="rdoJson"/>
+    Blob from JSON resource&nbsp;&nbsp;
+
+    </span>
+    <br />
+    <br />
+    <input type="text" id="url" size="100" value="https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer/tile/1/0/0" readonly/>
+    <input id="submitRequest" type="button" value="GO" />
+    <span id="status"></span>
+  </p>
+  <h2>Content</h2>
+  <div id="content"></div>
+</body>
+</html>

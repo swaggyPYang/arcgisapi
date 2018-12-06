@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="content-language" content="en">
+  <meta name="product" content="js-api-arcgis">
+  <meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE">
+  <meta name="sub_category" content="JavaScript API">
+  <meta name="search-collection" content="help">
+  <meta name="search-category" content="help-api,help-api-guide">
+  <meta name="version" content="3.x">
+  <meta name="content_type" content="Help Topic"> 
+  <meta name="last-modified" content="2018-09-21"> 
+
+  <link rel="stylesheet" href="../styles/screen.css">
+  <link rel="stylesheet" href="../styles/jsdoc.css">
+  <link rel="stylesheet" href="../styles/hljs-github.css">
+  <link rel="stylesheet" href="../styles/homepage.css">
+  <link rel="stylesheet" href="../styles/grid.css">
+  <link rel="stylesheet" href="../styles/tree.css">
+  <link rel="stylesheet" href="../prettify/prettify.css">
+  <link rel="stylesheet" href="../styles/tailcoat-search.css">
+  <link rel="stylesheet" href="//fast.fonts.com/cssapi/23855eec-5fdf-4594-9898-0113a04bfef0.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+
+  <style>
+    html {
+      overflow-y: auto;
+    }
+    pre {
+      font-size: 1.1em;
+      line-height: normal;
+      margin: 0;
+    }
+    #header nav li a {
+      font-size: .875em;
+    }
+    #esri-logo {
+      margin-left: 0;
+    }
+    h1.light {
+      color: #fff;
+    }
+    .navigation-bar {
+      background-image: url("../graphics/tailcoat/navigation-bar-background.jpg");
+    }
+  </style>
+  <title>Using PhoneGap and the ArcGIS API for JavaScript | Guide | ArcGIS API for JavaScript 3.26</title>
+  
+  
+</head>
+
+<body>
+<header class="header">
+  <div class="container">
+    <nav class="site-nav trailer-half">
+        Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="navigation-bar ">
+    <div class="container">
+      <header>
+        <h1 class="light"><a href="..">ArcGIS API for JavaScript <sup>3.26</sup></a></h1>
+      </header>
+       <nav class="navigation-bar-nav">
+        <ul>
+            <li class=""><a href="../">Home</a></li>
+            <li class="current"><a href=".">Guide</a></li>
+            <li class=""><a href="../jsapi/">API Reference</a></li>
+            <li class=""><a href="../jssamples/">Sample Code</a></li>
+            <li class=""><a class="icon-share icon-link-external" href="https://community.esri.com/community/developers/web-developers/arcgis-api-for-javascript">Community</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+ 
+
+<div class="container_12">
+  <div class="grid_3 contentWrapper">
+    <div id="toggleToc">
+      <img src="../graphics/tochide.gif" alt=""> Hide Table of Contents
+    </div>
+    <div id="apiToc"><div class="treeDiv" id="tree" style="top: 35px; left: 0px;">
+  <div id="treeRoot">
+    <div class="treeNode">
+      <a class="treeUnselected" href="." onclick="clickAnchor(this)">Overview</a>
+    </div>
+    <div class="treeNode">
+      <a class="treeUnselected" href="whats_new.html" onclick="clickAnchor(this)">What's New in Version 3.26</a>
+    </div>
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Tutorials</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firstmap_amd.html" onclick="clickAnchor(this)">Build your first application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_agstemplate_amd.html" onclick="clickAnchor(this)">Use an ArcGIS.com webmap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_dev.html" onclick="clickAnchor(this)">Mobile-specific application</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions.html" onclick="clickAnchor(this)">Directions widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_search.html" onclick="clickAnchor(this)">Search widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_label_layer.html" onclick="clickAnchor(this)">Labeling features client-side</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_javascript_classes.html" onclick="clickAnchor(this)">Write a class</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_custom_dijit.html" onclick="clickAnchor(this)">Create a re-usable widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="tutorial_sharing_maps_secure_layers.html" onclick="clickAnchor(this)">Share maps with secure layers</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">About the API</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_gettingstarted.html" onclick="clickAnchor(this)">Get Started</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_accessapi.html" onclick="clickAnchor(this)">Get the API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="localization.html" onclick="clickAnchor(this)">Localization</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="css.html" onclick="clickAnchor(this)">Required CSS</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="supported_browsers.html" onclick="clickAnchor(this)">Supported Browsers</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="community.html" onclick="clickAnchor(this)">Community</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Dojo
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo.html" onclick="clickAnchor(this)">Work with Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoversion.html" onclick="clickAnchor(this)">Get Dojo</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojodijits.html" onclick="clickAnchor(this)">Dijits</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojo_amd.html" onclick="clickAnchor(this)">Dojo and AMD</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojoLayouts.html" onclick="clickAnchor(this)">Dojo Layouts</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_dojohelp.html" onclick="clickAnchor(this)">Additional resources</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="why_dojo.html" onclick="clickAnchor(this)">Why Dojo?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        Work with the API
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_defaults.html" onclick="clickAnchor(this)">Default API configurations</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bundle.html" onclick="clickAnchor(this)">Default API strings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_esri_request.html" onclick="clickAnchor(this)">Retrieve data from a web server</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_navigation.html" onclick="clickAnchor(this)">Map navigation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_events.html" onclick="clickAnchor(this)">Events</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_extents.html" onclick="clickAnchor(this)">Set Extents</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_editing.html" onclick="clickAnchor(this)">Editing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="arcade.html" onclick="clickAnchor(this)">Arcade</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_temporal.html" onclick="clickAnchor(this)">Time aware data</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_firsttask.html" onclick="clickAnchor(this)">Adding a task</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_querytask.html" onclick="clickAnchor(this)">Using QueryTask</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_custom_layers.html" onclick="clickAnchor(this)">Creating custom layer types</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_webmap.html" onclick="clickAnchor(this)">Web maps</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_analysiswidgets.html" onclick="clickAnchor(this)">Working with Analysis Widgets</a>
+        </div>
+        <div class="treeNode">
+        <a class="treeUnselected" href="intro_search_widget.html" onclick="clickAnchor(this)">Working with the Search Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_directions_widget.html" onclick="clickAnchor(this)">Working with the Directions Widget</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_geoenrichment.html" onclick="clickAnchor(this)">Working with GeoEnrichment Widgets</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_datareviewer.html" onclick="clickAnchor(this)">Working with DataReviewer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="intro_locationproviders.html" onclick="clickAnchor(this)">Location Providers (beta)</a>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Graphics and feature layers</span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_graphics.html" onclick="clickAnchor(this)">Graphics overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_feature_layers.html" onclick="clickAnchor(this)">Feature layer overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_renderers.html" onclick="clickAnchor(this)">Symbols and renderers</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_bettermaps.html" onclick="clickAnchor(this)">Data Visualization</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="inside_styling_svg.html" onclick="clickAnchor(this)">Styling features with CSS</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Popups and Info Windows
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_infowindow.html" onclick="clickAnchor(this)">Info windows and graphics</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_formatinfowindow.html" onclick="clickAnchor(this)">Format info window content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customize.html" onclick="clickAnchor(this)">Customize info windows</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_agspopup.html" onclick="clickAnchor(this)">Popup overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_popuptemplate.html" onclick="clickAnchor(this)">Format popup content</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_customizepopup.html" onclick="clickAnchor(this)">Customize popup</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Geoprocessor
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_overview.html" onclick="clickAnchor(this)">Geoprocessing overview</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_creating.html" onclick="clickAnchor(this)">Creating the geoprocessor</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_parameters.html" onclick="clickAnchor(this)">Geoprocessor parameters</a>
+            </div>
+            <div class="treeNode">
+              <a class="treeUnselected" href="intro_gp_running.html" onclick="clickAnchor(this)">Geoprocessing results</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="treeNode">
+          <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+          <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+            Operations Dashboard
+          </span>
+          <div class="treeSubnodesHidden">
+            <div class="treeNode">
+              <a class="treeUnselected" href="operations-dashboard-extensibility-overview.html" onclick="clickAnchor(this)">Overview</a>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Get started
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-setup-dev-env.html" onclick="clickAnchor(this)">Set up a development environment</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-getstarted-samples.html" onclick="clickAnchor(this)">Samples</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Create extensions
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-overview.html" onclick="clickAnchor(this)">Overview of widgets, map tools and feature actions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-widget.html" onclick="clickAnchor(this)">Create a widget</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-maptool.html" onclick="clickAnchor(this)">Create a map tool</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-configurable.html" onclick="clickAnchor(this)">Create a configurable extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-create-ext-manifest.html" onclick="clickAnchor(this)">Manifest</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Test and debug
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-test-debug.html" onclick="clickAnchor(this)">Test and debug in Operations Dashboard</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-troubleshooting.html" onclick="clickAnchor(this)">Troubleshooting</a>
+                </div>
+              </div>
+            </div>
+            <div class="treeNode">
+              <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+              <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+                Deploy
+              </span>
+              <div class="treeSubnodesHidden">
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-overview.html" onclick="clickAnchor(this)">Overview of deploying extensions</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-setup-web-server.html" onclick="clickAnchor(this)">Set up a web server</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-register-ext.html" onclick="clickAnchor(this)">Register an extension</a>
+                </div>
+                <div class="treeNode">
+                  <a class="treeUnselected" href="operations-dashboard-extensibility-deploy-update-ext.html" onclick="clickAnchor(this)">Update an extension</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">Mobile</span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_viewport.html" onclick="clickAnchor(this)">Viewport Settings</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_hardware.html" onclick="clickAnchor(this)">Device Detection and Browser Sniffing</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_orientation.html" onclick="clickAnchor(this)">Device Orientation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_geolocation.html" onclick="clickAnchor(this)">Geolocation</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_frameworks.html" onclick="clickAnchor(this)">Frameworks</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_phonegap.html" onclick="clickAnchor(this)">Using PhoneGap</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="mobile_references.html" onclick="clickAnchor(this)">References</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        ArcGIS Server Services
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_overview.html" onclick="clickAnchor(this)">Overview</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_rest.html" onclick="clickAnchor(this)">Services directory and the REST API</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_secureservices.html" onclick="clickAnchor(this)">Working with secure resources</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ags_proxy.html" onclick="clickAnchor(this)">Using the proxy page</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        References
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_web_optimizer.html" onclick="clickAnchor(this)">Using the Web Optimizer</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_bower_custom_builds.html" onclick="clickAnchor(this)">Using Bower for Custom Builds</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="limits_for_graphics.html" onclick="clickAnchor(this)">Determine limits for map graphics</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="best_practices_feature_layers.html" onclick="clickAnchor(this)">Feature layer best practices</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_guidelines.html" onclick="clickAnchor(this)">Coding guidelines</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="ref_coordsystems.html" onclick="clickAnchor(this)">Coordinate system IDs</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="licensing.html" onclick="clickAnchor(this)">Licensing & Attribution</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="inside_faq.html" onclick="clickAnchor(this)">Frequently asked questions</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="treeNode">
+      <img class="treeLinkImage" onclick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+      <span onclick="expandCollapse(this.parentNode)" style="cursor: pointer;">
+        What's New archive
+      </span>
+      <div class="treeSubnodesHidden">
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_30.html" onclick="clickAnchor(this)">Migrating to 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="migration_20.html" onclick="clickAnchor(this)">Migrating to 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v325.html" onclick="clickAnchor(this)">What's New in Version 3.25</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v324.html" onclick="clickAnchor(this)">What's New in Version 3.24</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v323.html" onclick="clickAnchor(this)">What's New in Version 3.23</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v322.html" onclick="clickAnchor(this)">What's New in Version 3.22</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v321.html" onclick="clickAnchor(this)">What's New in Version 3.21</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v320.html" onclick="clickAnchor(this)">What's New in Version 3.20</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v319.html" onclick="clickAnchor(this)">What's New in Version 3.19</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v318.html" onclick="clickAnchor(this)">What's New in Version 3.18</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v317.html" onclick="clickAnchor(this)">What's New in Version 3.17</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v316.html" onclick="clickAnchor(this)">What's New in Version 3.16</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v315.html" onclick="clickAnchor(this)">What's New in Version 3.15</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v314.html" onclick="clickAnchor(this)">What's New in Version 3.14</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v313.html" onclick="clickAnchor(this)">What's New in Version 3.13</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v312.html" onclick="clickAnchor(this)">What's New in Version 3.12</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v311.html" onclick="clickAnchor(this)">What's New in Version 3.11</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v310.html" onclick="clickAnchor(this)">What's New in Version 3.10</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v39.html" onclick="clickAnchor(this)">What's New in Version 3.9</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v38.html" onclick="clickAnchor(this)">What's New in Version 3.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v37.html" onclick="clickAnchor(this)">What's New in Version 3.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v36.html" onclick="clickAnchor(this)">What's New in Version 3.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v35.html" onclick="clickAnchor(this)">What's New in Version 3.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v34.html" onclick="clickAnchor(this)">What's New in Version 3.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v33.html" onclick="clickAnchor(this)">What's New in Version 3.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v32.html" onclick="clickAnchor(this)">What's New in Version 3.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v31.html" onclick="clickAnchor(this)">What's New in Version 3.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v30.html" onclick="clickAnchor(this)">What's New in Version 3.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v28.html" onclick="clickAnchor(this)">What's New in Version 2.8</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v27.html" onclick="clickAnchor(this)">What's New in Version 2.7</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v26.html" onclick="clickAnchor(this)">What's New in Version 2.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v25.html" onclick="clickAnchor(this)">What's New in Version 2.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v24.html" onclick="clickAnchor(this)">What's New in Version 2.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v23.html" onclick="clickAnchor(this)">What's New in Version 2.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v22.html" onclick="clickAnchor(this)">What's New in Version 2.2</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v21.html" onclick="clickAnchor(this)">What's New in Version 2.1</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v20.html" onclick="clickAnchor(this)">What's New in Version 2.0</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v16.html" onclick="clickAnchor(this)">What's New in Version 1.6</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v15.html" onclick="clickAnchor(this)">What's New in Version 1.5</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v14.html" onclick="clickAnchor(this)">What's New in Version 1.4</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v13.html" onclick="clickAnchor(this)">What's New in Version 1.3</a>
+        </div>
+        <div class="treeNode">
+          <a class="treeUnselected" href="new_v12.html" onclick="clickAnchor(this)">What's New in Version 1.2</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+</div> 
+  </div>
+  <div class="grid_9 contentWrapper">
+    <div id="topicPane" class="js-scroll-to-top"><div id="pageBanner">Using PhoneGap and the ArcGIS API for JavaScript</div>
+<div id="nstext">
+
+
+<h3>Table of Contents</h3>
+<ul>
+  <li><a href="#What_is_PhoneGap_4">What is PhoneGap?</a></li>
+  <li><a href="#Prerequisites_11">Prerequisites</a></li>
+  <li><a href="#Introduction_24">Introduction</a></li>
+  <li><a href="#Getting_started_34">Getting started</a></li>
+  <li><a href="#PhoneGap_Desktop_and_PhoneGap_Developer_55">PhoneGap Desktop and PhoneGap Developer</a></li><li><a href="#PhoneGap_Hello_Map_62">PhoneGap Hello Map</a></li>
+  <li>
+    <ul>
+      <li><a href="#Using_the_CDN_version_of_the_ArcGIS_API_for_JavaScript_77">Using the CDN version of the ArcGIS API for JavaScript</a></li>
+      <li><a href="#Using_a_local_copy_of_the_ArcGIS_API_for_JavaScript_179">Using a local copy of the ArcGIS API for JavaScript</a></li>
+    </ul>
+  </li>
+  <li><a href="#Apache_Cordova_CommandLine_Interface_CLI_322">Apache Cordova Command-Line Interface (CLI)</a></li>
+  <li><a href="#Debugging_414">Debugging</a></li>
+  <li><a href="#Privacy_Security_and_Whitelists_427">Privacy, Security, and Whitelists</a></li>
+  <li><a href="#Summary_473">Summary</a></li><li><a href="#Resources_482">Resources</a></li>
+</ul>
+
+<h3><a id="What_is_PhoneGap_4"></a>What is PhoneGap?</h3>
+<p>This technology allows developers to leverage their existing web development skills in HTML, CSS, and JavaScript
+to write ArcGIS API for JavaScript based mapping application once and deploy it to multiple mobile device platforms as a native application.
+<a href="http://phonegap.com/products/">Adobe PhoneGap</a> is the commercial supported version, whereas <a href="https://cordova.apache.org/">Apache Cordova</a>
+is the open-source project that PhoneGap uses behind the scenes. They are interchangeably often referred to as <strong>PhoneGap</strong>.</p>
+<h3><a id="Prerequisites_11"></a>Prerequisites</h3>
+<p>In order to deploy an application on the intended target platforms, you will need to setup and test those development environments and device platforms.
+Google Android and Apple iOS devices are very popular in the mobile device market and are a good start. For a full list of supported platforms,
+see the <a href="https://cordova.apache.org/#supported_platforms_section">Supported Platforms</a> section on the Apache Cordova website.
+It is beyond the scope of this help topic to begin covering how to setup the development environments necessary for each targeted
+device platform. Please see the Resources section for more information on setting up your development environment.</p>
+<p>Testing on simulators works for a proof-of-concept, but the only way to know if your application is really going to work is to test it
+on a real device. For internal applications it may be possible to only test on a given device, but if the application is to be deployed to the
+general public then it will need to be tested on as many devices as possible. Used devices for development purposes can be purchased used or some
+regions have <a href="https://opendevicelab.com">Open Device Labs</a> where it may be possible to testing an application on various devices.</p>
+<h3><a id="Introduction_24"></a>Introduction</h3>
+<ul>
+<li><b>Native Application</b> - Ready for deployment containing all application code and the PhoneGap container and plugins.</li>
+<li><b>Application Code</b> - HTML, CSS, JavaScript, Plugin code, 3rd-party libraries, application code, and the ArcGIS API for JavaScript.</li>
+<li><b>PhoneGap</b> - A framework that wraps a native web browser control for each deployment target and provides an interoperability layer between
+native device code (PhoneGap Plugins) and JavaScript code that allows the web application interact with the native device code (PhoneGap Plugins).</li>
+<li><b>PhoneGap Plugins</b> - Native code for each supported device platform including the JavaScript that allows the web application to make calls to the native code.</li>
+</ul>
+<p><img src="./images/phonegap/phonegap-architecture.png" alt="PhoneGap Architecture"></p>
+<h3><a id="Getting_started_34"></a>Getting started</h3>
+<p>Adobe PhoneGap provides a desktop application <a href="http://phonegap.com/products/#desktop-app-section">PhoneGap Desktop</a> that can create applications and serve
+them to connected devices. There is also a companion app <a href="http://phonegap.com/products/#mobile-app-section">PhoneGap Developer</a> that is available for
+iOS, Android, and Windows. Finally Adobe provides a hosted cloud service <a href="https://build.phonegap.com">PhoneGap Build</a> that developers can upload their application
+as a zip file or pull from a public Github repo.</p>
+<blockquote>
+<p><b>Note</b>: In order to sign your applications you will need to provide a provisioning key or publisher id with
+your Adobe PhoneGap Build account. An Adobe Create Cloud account is needed for using the PhoneGap Build service, for more information see the
+<a href="http://www.adobe.com/legal/terms.html">Terms of Use</a>.</p>
+</blockquote>
+<p>Apache Cordova provides a <a href="https://cordova.apache.org/docs/en/latest/guide/cli/index.html">Command-Line Interface (CLI)</a> workflow in addition to a
+<a href="http://cordova.apache.org/docs/en/latest/guide/overview/index.html#development-paths">Platform-centered worflow</a> to create, build, and deploy applications.
+Each <a href="https://cordova.apache.org/#supported_platforms_section">platform</a> that Apache Cordova supports has its own set of requirements and support, it is necessary
+to complete these requirements before attempting to develop applications for each platform.</p>
+<blockquote>
+<p><b>Note</b>: In order to use the <a href="https://cordova.apache.org/docs/en/latest/guide/cli/index.html">Command-Line Interface (CLI)</a> workflow in addition to the
+<a href="http://cordova.apache.org/docs/en/latest/guide/overview/index.html#development-paths">Platform-centered worflow</a> to create, build, and deploy applications there are additional
+configuration requirements. Before running any command-line tools, you need to install SDKs for each platform you wish to target.
+(For more information, see the Apache Cordova <a href="http://cordova.apache.org/docs/en/latest/guide/support/index.html">Platform Guides</a> for more details.)</p>
+</blockquote>
+<h3><a id="PhoneGap_Desktop_and_PhoneGap_Developer_55"></a>PhoneGap Desktop and PhoneGap Developer</h3>
+<p>The following screenshots are from the basic <strong>Hello World</strong> <a href="http://phonegap.com/getstarted/">PhoneGap tutorial</a> application. For more information about the
+details of this application see the <a href="http://docs.phonegap.com/develop/hello-world-explained/">Hello World Explained</a> article.</p>
+<p><img src="./images/phonegap/phonegap-hello.png" alt="PhoneGap Desktop"></p>
+<h3><a id="PhoneGap_Hello_Map_62"></a>PhoneGap Hello Map</h3>
+<p>The following screenshots are from modifying the basic <strong>Hello World</strong> <a href="http://phonegap.com/getstarted/">PhoneGap tutorial</a> application to replace the default
+PhoneGap screen content with a map using the ArcGIS API for JavaScript. The key to integrating the ArcGIS API for JavaScript library into a PhoneGap application
+is to understand the PhoneGap event lifecycle. For more information on the available events, see the <a href="http://cordova.apache.org/docs/en/latest/cordova/events/events.html">Apache Cordova events</a>
+documentation.</p>
+<p><img src="./images/phonegap/phonegap-hello-map.png" alt="PhoneGap Desktop"></p>
+<blockquote>
+<p><b>Note</b>: Attempting to load the map or other ArcGIS API for JavaScript components before the <code>onDeviceReady</code> event has fired generally causes most issues when
+the application is not loading properly.</p>
+<ul>
+<li>Load the ArcGIS API for JavaScript from the CDN or <code>dojoConfig</code> and local embedded reference</li>
+<li>Listen for the <code>onDeviceReady</code> event</li>
+<li>Load the application</li>
+</ul>
+</blockquote>
+<h4><a id="Using_the_CDN_version_of_the_ArcGIS_API_for_JavaScript_77"></a>Using the CDN version of the ArcGIS API for JavaScript</h4>
+<p>Contents of <code>/path-to-app/hello-phonegap/www/index.html</code></p>
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">charset</span>=<span class="hljs-value">"utf-8"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!--
+    Customize this policy to fit your own app's needs. For more guidance, see:
+        https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+    Some notes:
+      * gap: is required only on iOS (when using UIWebView) and is needed for JS-&gt;native communication
+      * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+      * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+      * Enable inline JS: add 'unsafe-inline' to default-src
+    --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">http-equiv</span>=<span class="hljs-value">"Content-Security-Policy"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"default-src 'self' http://basemaps.arcgis.com http://js.arcgis.com http://server.arcgisonline.com http://services.arcgisonline.com http://static.arcgis.com http://www.arcgis.com https://basemaps.arcgis.com https://js.arcgis.com https://server.arcgisonline.com https://services.arcgisonline.com https://static.arcgis.com https://www.arcgis.com blob:; connect-src 'self' http://basemaps.arcgis.com http://js.arcgis.com http://server.arcgisonline.com http://services.arcgisonline.com http://static.arcgis.com http://www.arcgis.com https://basemaps.arcgis.com https://js.arcgis.com https://server.arcgisonline.com https://services.arcgisonline.com https://static.arcgis.com https://www.arcgis.com; font-src 'self' http://js.arcgis.com https://js.arcgis.com data:; style-src 'self' http://js.arcgis.com https://js.arcgis.com 'unsafe-inline'; script-src 'self' http://js.arcgis.com https://js.arcgis.com 'unsafe-eval';"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"format-detection"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"telephone=no"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"msapplication-tap-highlight"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"no"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"viewport"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/css"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"css/index.css"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!--
+  Using the CDN:
+  Include the CDN ArcGIS API for JavaScript stylesheet
+  --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"https://js.arcgis.com/3.26/esri/css/esri.css"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">title</span>&gt;</span>PhoneGap Map<span class="hljs-tag">&lt;/<span class="hljs-title">title</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">style</span>&gt;</span><span class="css">
+  <span class="hljs-comment">/* Hide the default PhoneGap div */</span>
+  <span class="hljs-class">.app</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+  }</span>
+  <span class="hljs-comment">/* Set html, body height */</span>
+  <span class="hljs-tag">html</span>, <span class="hljs-tag">body</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100%</span></span></span>;
+  }</span>
+  <span class="hljs-comment">/* Set the map div height */</span>
+  <span class="hljs-id">#map</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100%</span></span></span>;
+  }</span>
+  </span><span class="hljs-tag">&lt;/<span class="hljs-title">style</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"app"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">h1</span>&gt;</span>PhoneGap<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"deviceready"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"blink"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"event listening"</span>&gt;</span>Connecting to Device<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"event received"</span>&gt;</span>Device is Ready!<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"map"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-comment">&lt;!--
+  Using the CDN:
+  Include the CDN ArcGIS API for JavaScript library
+  --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://js.arcgis.com/3.26/"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"cordova.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"js/index.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span>
+</code></pre>
+<p>Contents of <code>/path-to-app/hello-phonegap/www/js/index.js</code></p>
+<pre><code><span class="hljs-keyword">var</span> app = {
+  <span class="hljs-comment">// Application Constructor</span>
+  initialize: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">this</span>.bindEvents();
+  },
+  <span class="hljs-comment">// Bind Event Listeners</span>
+  <span class="hljs-comment">//</span>
+  <span class="hljs-comment">// Bind any events that are required on startup. Common events are:</span>
+  <span class="hljs-comment">// 'load', 'deviceready', 'offline', and 'online'.</span>
+  bindEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'deviceready'</span>, <span class="hljs-keyword">this</span>.onDeviceReady, <span class="hljs-literal">false</span>);
+  },
+  <span class="hljs-comment">// deviceready Event Handler</span>
+  <span class="hljs-comment">//</span>
+  <span class="hljs-comment">// The scope of 'this' is the event. In order to call the 'receivedEvent'</span>
+  <span class="hljs-comment">// function, we must explicitly call 'app.receivedEvent(...);'</span>
+  onDeviceReady: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    app.receivedEvent(<span class="hljs-string">'deviceready'</span>);
+  },
+  <span class="hljs-comment">// Update DOM on a Received Event</span>
+  receivedEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>) </span>{
+    <span class="hljs-keyword">var</span> parentElement = <span class="hljs-built_in">document</span>.getElementById(id);
+    <span class="hljs-keyword">var</span> listeningElement = parentElement.querySelector(<span class="hljs-string">'.listening'</span>);
+    <span class="hljs-keyword">var</span> receivedElement = parentElement.querySelector(<span class="hljs-string">'.received'</span>);
+
+    listeningElement.setAttribute(<span class="hljs-string">'style'</span>, <span class="hljs-string">'display:none;'</span>);
+    receivedElement.setAttribute(<span class="hljs-string">'style'</span>, <span class="hljs-string">'display:block;'</span>);
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Received Event: '</span> + id);
+    <span class="hljs-keyword">var</span> map;
+
+    <span class="hljs-built_in">require</span>([<span class="hljs-string">"esri/map"</span>, <span class="hljs-string">"dojo/domReady!"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">Map</span>) </span>{
+      map = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>(<span class="hljs-string">"map"</span>, {
+        basemap: <span class="hljs-string">"topo"</span>,  <span class="hljs-comment">//For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd</span>
+        center: [-<span class="hljs-number">116.5378380089957</span>, <span class="hljs-number">33.82446384713953</span>], <span class="hljs-comment">// longitude, latitude</span>
+        zoom: <span class="hljs-number">17</span>
+      });
+    });
+  }
+};
+app.initialize();
+</code></pre>
+<h4><a id="Using_a_local_copy_of_the_ArcGIS_API_for_JavaScript_179"></a>Using a local copy of the ArcGIS API for JavaScript</h4>
+<p>It is possible to locally embed the ArcGIS API for JavaScript library into the project. The best choice would be to use a custom build of the ArcGIS API for
+JavaScript in your application by using the Web Optimizer or Bower custom build. However you could use the Compact build also.
+In this example, a custom build from the ArcGIS API for JavaScript Web Optimizer will be demonstrated.</p>
+<p>The directory structure of the PhoneGap application looks like the following:</p>
+<pre><code>hello-cordova
+├── config<span class="hljs-class">.xml</span>
+├── hooks
+│   └── README<span class="hljs-class">.md</span>
+├── platforms
+│   ├── android
+│   ├── ios
+│   └── platforms<span class="hljs-class">.json</span>
+├── plugins
+│   ├── android<span class="hljs-class">.json</span>
+│   ├── cordova-plugin-whitelist
+│   ├── fetch<span class="hljs-class">.json</span>
+│   └── ios<span class="hljs-class">.json</span>
+└── www
+    ├── css
+    ├── <span class="hljs-tag">img</span>
+    ├── index<span class="hljs-class">.html</span>
+    └── js
+        └── esrijs-custom-build
+</code></pre>
+<p>Place the ArcGIS API for JavaScript library into <code>/path-to-app/hello-cordova/www/js/esrijs-custom-build/</code>.
+Then in the application <code>index.html</code> set the <code>baseUrl</code> in the <code>dojoConfig</code> settings.</p>
+<p>Contents of <code>/path-to-app/hello-phonegap/www/index.html</code></p>
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">charset</span>=<span class="hljs-value">"utf-8"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!--
+    Customize this policy to fit your own app's needs. For more guidance, see:
+        https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+    Some notes:
+        * gap: is required only on iOS (when using UIWebView) and is needed for JS-&gt;native communication
+        * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+        * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+    --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">http-equiv</span>=<span class="hljs-value">"Content-Security-Policy"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"default-src 'self' http://basemaps.arcgis.com http://js.arcgis.com http://server.arcgisonline.com http://services.arcgisonline.com http://static.arcgis.com http://www.arcgis.com https://basemaps.arcgis.com https://js.arcgis.com https://server.arcgisonline.com https://services.arcgisonline.com https://static.arcgis.com https://www.arcgis.com blob:; connect-src 'self' http://basemaps.arcgis.com http://js.arcgis.com http://server.arcgisonline.com http://services.arcgisonline.com http://static.arcgis.com http://www.arcgis.com https://basemaps.arcgis.com https://js.arcgis.com https://server.arcgisonline.com https://services.arcgisonline.com https://static.arcgis.com https://www.arcgis.com; font-src 'self' http://js.arcgis.com https://js.arcgis.com data:; style-src 'self' http://js.arcgis.com https://js.arcgis.com 'unsafe-inline'; script-src 'self' http://js.arcgis.com https://js.arcgis.com 'unsafe-eval';"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"format-detection"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"telephone=no"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"msapplication-tap-highlight"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"no"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"viewport"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/css"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"css/index.css"</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!--
+  Using a local (embedded) copy:
+  Syntax for using a local copy of the ArcGIS API for JavaScript
+  --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">link</span> <span class="hljs-attribute">rel</span>=<span class="hljs-value">"stylesheet"</span> <span class="hljs-attribute">href</span>=<span class="hljs-value">"./js/esrijs-custom-build/esri/css/esri.css"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">title</span>&gt;</span>PhoneGap Map<span class="hljs-tag">&lt;/<span class="hljs-title">title</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">style</span>&gt;</span><span class="css">
+  <span class="hljs-comment">/* Hide the default PhoneGap div */</span>
+  <span class="hljs-class">.app</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+  }</span>
+  <span class="hljs-comment">/* Set html, body height */</span>
+  <span class="hljs-tag">html</span>, <span class="hljs-tag">body</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100%</span></span></span>;
+  }</span>
+  <span class="hljs-comment">/* Set the map div height */</span>
+  <span class="hljs-id">#map</span> <span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100%</span></span></span>;
+  }</span>
+  </span><span class="hljs-tag">&lt;/<span class="hljs-title">style</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"app"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">h1</span>&gt;</span>PhoneGap<span class="hljs-tag">&lt;/<span class="hljs-title">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"deviceready"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"blink"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"event listening"</span>&gt;</span>Connecting to Device<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">p</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"event received"</span>&gt;</span>Device is Ready!<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"map"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-comment">&lt;!--
+  Using a local (embedded) copy:
+  Syntax for using a local copy of the ArcGIS API for JavaScript
+  This tells the Dojo loader that we are going to load it locally
+  instead of using a URL reference.
+  --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="kotlin">
+    <span class="hljs-variable"><span class="hljs-keyword">var</span> dojoConfig</span> = {
+      baseUrl: <span class="hljs-string">"./js/esrijs-custom-build/dojo"</span>
+    };
+  </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"./js/esrijs-custom-build/dojo/dojo.js"</span> <span class="hljs-attribute">data-dojo-config</span>=<span class="hljs-value">"async: true"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"cordova.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"js/index.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span>
+</code></pre>
+<p>Contents of <code>/path-to-app/hello-phonegap/www/js/index.js</code></p>
+<pre><code><span class="hljs-keyword">var</span> app = {
+  <span class="hljs-comment">// Application Constructor</span>
+  initialize: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">this</span>.bindEvents();
+  },
+  <span class="hljs-comment">// Bind Event Listeners</span>
+  <span class="hljs-comment">//</span>
+  <span class="hljs-comment">// Bind any events that are required on startup. Common events are:</span>
+  <span class="hljs-comment">// 'load', 'deviceready', 'offline', and 'online'.</span>
+  bindEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'deviceready'</span>, <span class="hljs-keyword">this</span>.onDeviceReady, <span class="hljs-literal">false</span>);
+  },
+  <span class="hljs-comment">// deviceready Event Handler</span>
+  <span class="hljs-comment">//</span>
+  <span class="hljs-comment">// The scope of 'this' is the event. In order to call the 'receivedEvent'</span>
+  <span class="hljs-comment">// function, we must explicitly call 'app.receivedEvent(...);'</span>
+  onDeviceReady: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    app.receivedEvent(<span class="hljs-string">'deviceready'</span>);
+  },
+  <span class="hljs-comment">// Update DOM on a Received Event</span>
+  receivedEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>) </span>{
+    <span class="hljs-keyword">var</span> parentElement = <span class="hljs-built_in">document</span>.getElementById(id);
+    <span class="hljs-keyword">var</span> listeningElement = parentElement.querySelector(<span class="hljs-string">'.listening'</span>);
+    <span class="hljs-keyword">var</span> receivedElement = parentElement.querySelector(<span class="hljs-string">'.received'</span>);
+
+    listeningElement.setAttribute(<span class="hljs-string">'style'</span>, <span class="hljs-string">'display:none;'</span>);
+    receivedElement.setAttribute(<span class="hljs-string">'style'</span>, <span class="hljs-string">'display:block;'</span>);
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Received Event: '</span> + id);
+
+    <span class="hljs-comment">// --------------------------------------------------------------------</span>
+    <span class="hljs-comment">// Load the Esri modules for creating a map and populate the</span>
+    <span class="hljs-comment">// map div element.</span>
+    <span class="hljs-comment">// --------------------------------------------------------------------</span>
+    <span class="hljs-keyword">var</span> map;
+    <span class="hljs-built_in">require</span>([<span class="hljs-string">"esri/map"</span>, <span class="hljs-string">"dojo/domReady!"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">Map</span>) </span>{
+      map = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>(<span class="hljs-string">"map"</span>, {
+        basemap: <span class="hljs-string">"topo"</span>,  <span class="hljs-comment">//For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd</span>
+        center: [-<span class="hljs-number">116.5378380089957</span>, <span class="hljs-number">33.82446384713953</span>], <span class="hljs-comment">// longitude, latitude</span>
+        zoom: <span class="hljs-number">17</span>
+      });
+    });
+  }
+};
+app.initialize();
+</code></pre>
+<h3><a id="Apache_Cordova_CommandLine_Interface_CLI_322"></a>Apache Cordova Command-Line Interface (CLI)</h3>
+<p>Follow the Cordova <a href="http://cordova.apache.org/#getstarted">Get Started Fast</a> guide:</p>
+<ol>
+<li>Install cordova: <code>npm install -g cordova</code></li>
+</ol>
+<ul>
+<li>If for some reason there are issues during installation, adding
+<code>loglevel</code> to the <code>install</code> command will provide more installation feedback.</li>
+<li><code>npm install cordova -g --loglevel info</code></li>
+</ul>
+<ol start="2">
+<li>Create the project: <code>cordova create hello-cordova</code></li>
+<li>Add Android platform: <code>cordova platform add android</code></li>
+</ol>
+<ul>
+<li>
+<pre><code>Adding android project...
+Creating Cordova project <span class="hljs-keyword">for</span> <span class="hljs-operator">the</span> Android <span class="hljs-built_in">platform</span>:
+  Path: platforms/android
+  Package: io.cordova.hellocordova
+  Name: HelloCordova
+  Activity: MainActivity
+  Android target: android-<span class="hljs-number">23</span>
+Android project created <span class="hljs-operator">with</span> cordova-android@<span class="hljs-number">5.1</span>.1
+Discovered plugin <span class="hljs-string">"cordova-plugin-whitelist"</span> <span class="hljs-operator">in</span> config.xml. Installing <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> project
+Fetching plugin <span class="hljs-string">"cordova-plugin-whitelist@1"</span> via npm
+Installing <span class="hljs-string">"cordova-plugin-whitelist"</span> <span class="hljs-keyword">for</span> android
+
+This plugin is only applicable <span class="hljs-keyword">for</span> versions <span class="hljs-operator">of</span> cordova-android greater than <span class="hljs-number">4.0</span>.
+If you have <span class="hljs-operator">a</span> previous <span class="hljs-built_in">platform</span> <span class="hljs-built_in">version</span>, you <span class="hljs-built_in">do</span> *<span class="hljs-operator">not</span>* need this plugin since <span class="hljs-operator">the</span> whitelist will be built <span class="hljs-operator">in</span>.
+</code></pre>
+</li>
+</ul>
+<ol start="4">
+<li>Run the app: <code>cordova run android</code></li>
+</ol>
+<ul>
+<li>
+<pre><code>cordova run android
+ANDROID_HOME=/Users/UserName/Library/Android/sdk
+JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home
+No target specified, deploying <span class="hljs-keyword">to</span> device <span class="hljs-comment">'04b76c5d3089fe44'.</span>
+:preBuild UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+:preDebugBuild UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+:checkDebugManifest
+...........
+:validateDebugSigning
+:packageDebug UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+:zipalignDebug UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+:assembleDebug UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+:cdvBuildDebug UP-<span class="hljs-keyword">TO</span>-<span class="hljs-built_in">DATE</span>
+
+BUILD SUCCESSFUL
+
+Total time: <span class="hljs-number">1.579</span> secs
+Built the following apk(s):
+    /path-<span class="hljs-keyword">to</span>-app/hello-cordova/platforms/android/build/outputs/apk/android-debug.apk
+<span class="hljs-keyword">Using</span> apk: /path-<span class="hljs-keyword">to</span>-app/hello-cordova/platforms/android/build/outputs/apk/android-debug.apk
+LAUNCH SUCCESS
+</code></pre>
+<ul>
+<li><b>Note</b>: If you receive an error similar to below, an update to the Android SDK is required.</li>
+<li>
+<pre><code><span class="hljs-keyword">ERROR</span> running <span class="hljs-keyword">one</span> or <span class="hljs-keyword">more</span> of the platforms: Please install Android target: <span class="hljs-string">"android-23"</span>.
+ Hint: <span class="hljs-keyword">Open</span> the SDK manager <span class="hljs-keyword">by</span> running: /Users/UserName/Library/Android/sdk/tools/android
+ You will require:
+ 1. <span class="hljs-string">"SDK Platform"</span> <span class="hljs-keyword">for</span> android-23
+ 2. "Android SDK Platform-tools (latest)
+ 3. <span class="hljs-string">"Android SDK Build-tools"</span> (latest)
+ You may not have the required environment or OS to <span class="hljs-keyword">run</span> this project
+</code></pre>
+</li>
+<li>
+<pre><code><span class="hljs-label">Installing</span> Archives:
+  Preparing to install archives
+  Installing Local Maven repository for Support Libraries, <span class="hljs-keyword">revision </span><span class="hljs-number">26</span>
+    Installed Local Maven repository for Support Libraries, <span class="hljs-keyword">revision </span><span class="hljs-number">26</span>
+  Installing Google Repository, <span class="hljs-keyword">revision </span><span class="hljs-number">24</span>
+    Installed Google Repository, <span class="hljs-keyword">revision </span><span class="hljs-number">24</span>
+  Installing Intel x86 Emulator Accelerator (HAXM installer), <span class="hljs-keyword">revision </span><span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>
+    Installed Intel x86 Emulator Accelerator (HAXM installer), <span class="hljs-keyword">revision </span><span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>
+  Installing <span class="hljs-keyword">Android </span>SDK Platform-tools, <span class="hljs-keyword">revision </span><span class="hljs-number">23</span>.<span class="hljs-number">1</span>.<span class="hljs-number">0</span>
+    Stopping ADB server succeeded.
+    Installed <span class="hljs-keyword">Android </span>SDK Platform-tools, <span class="hljs-keyword">revision </span><span class="hljs-number">23</span>.<span class="hljs-number">1</span>.<span class="hljs-number">0</span>
+  Installing Google APIs Intel x86 Atom System Image, Google Inc. API <span class="hljs-number">21</span>, <span class="hljs-keyword">revision </span><span class="hljs-number">10</span>
+    Installed Google APIs Intel x86 Atom System Image, Google Inc. API <span class="hljs-number">21</span>, <span class="hljs-keyword">revision </span><span class="hljs-number">10</span>
+  Installing <span class="hljs-keyword">Android </span>SDK Tools, <span class="hljs-keyword">revision </span><span class="hljs-number">24</span>.<span class="hljs-number">4</span>.<span class="hljs-number">1</span>
+    Installed <span class="hljs-keyword">Android </span>SDK Tools, <span class="hljs-keyword">revision </span><span class="hljs-number">24</span>.<span class="hljs-number">4</span>.<span class="hljs-number">1</span>
+    Stopping ADB server succeeded.
+    Starting ADB server succeeded.
+  Done. <span class="hljs-number">6</span> packages installed.
+</code></pre>
+</li>
+</ul>
+</li>
+<li><img src="./images/phonegap/cordova-hello-android.png" alt="cordova hello Android"></li>
+</ul>
+<ol start="5">
+<li>Add iOS platform: <code>cordova platform add ios</code></li>
+</ol>
+<ul>
+<li>
+<pre><code>Adding ios <span class="hljs-keyword">project</span>...
+iOS <span class="hljs-keyword">project</span> created with cordova-ios@<span class="hljs-number">4.0</span>.<span class="hljs-number">1</span>
+Installing <span class="hljs-string">"cordova-plugin-whitelist"</span> <span class="hljs-keyword">for</span> ios
+</code></pre>
+</li>
+</ul>
+<ol start="6">
+<li>Open the project in Xcode: <code>path-to-app/hello-cordova/platforms/ios/HelloCordova.xcodeproj</code></li>
+</ol>
+<ul>
+<li>Verify code signing</li>
+<li><img src="./images/phonegap/cordova-hello-xcode.png" alt="Xcode code signing"></li>
+<li><img src="./images/phonegap/cordova-hello-ios.png" alt="Apache Cordova Hello iOS"></li>
+</ul>
+<h3><a id="Debugging_414"></a>Debugging</h3>
+<p>For more information on remote debugging with Android see the <a href="https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging">Remote Debugging Devices</a>
+topic on the Google Developers site.</p>
+<p><img src="./images/phonegap/cordova-remote-debug-chrome.png" alt="Remote Debug Chrome"></p>
+<p>For more information on remote debugging with iOS see the <a href="https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging#remote-debugging-on-ios-with-safari-web-inspector">Remote Debugging Devices</a>
+topic on the Google Developers site, and the <a href="https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/Web_Inspector_Tutorial/Introduction/Introduction.html#//apple_ref/doc/uid/TP40017576">Safari Web Inspector Tutorial</a>
+on the Apple Developer website.</p>
+<p><img src="./images/phonegap/cordova-remote-debug-safari.png" alt="Remote Debug Safari"></p>
+<h3><a id="Privacy_Security_and_Whitelists_427"></a>Privacy, Security, and Whitelists</h3>
+<p>It is important to declare what type of information an application collects, uses, or is required for an app to function properly. The application will likely
+prompt the device owner when installed and ask their permission to certain functionality on the device such as geolocation, contacts, camera, etc. For more
+information see the Apache Cordova <a href="http://cordova.apache.org/docs/en/latest/guide/appdev/privacy/index.html">Privacy Guide</a>.</p>
+<p>Applications will need to access resources, some of those might be on the device, and others will come from resources such as web services. Hardening
+the PhoneGap application is achieved through a variety of best practices, for more information see the Apache Cordova
+<a href="http://cordova.apache.org/docs/en/latest/guide/appdev/security/index.html">Security Guide</a>. It is recommended by Apache Cordova to configure security through
+the <a href="https://github.com/apache/cordova-plugin-whitelist">cordova-plugin-whitelist</a> for Android and iOS (as of their 4.0 releases), and for other platforms
+use the <a href="https://github.com/apache/cordova-plugin-whitelist#network-request-whitelist">Network Request Whitelist</a> which follows
+the <a href="http://www.w3.org/TR/widgets-access/">W3C Widget Access</a> specification.</p>
+<p>Content Security Policy</p>
+<p>It is recommended on Android and iOS that in addition to the <a href="https://github.com/apache/cordova-plugin-whitelist#network-request-whitelist">network-request-whitelist</a>,
+developers also use a <a href="https://github.com/apache/cordova-plugin-whitelist#content-security-policy">Content Security Policy</a> <code>&lt;meta&gt;</code> tag on all pages.
+As a best practice, it is recommended to not use <code>'unsafe-inline'</code> or <code>'unsafe-eval'</code> when possible.
+For more information on <a href="https://github.com/apache/cordova-plugin-whitelist#navigation-whitelist">Navigation Whitelist</a>,
+<a href="https://github.com/apache/cordova-plugin-whitelist#intent-whitelist">Intent Whitelist</a>, and
+<a href="https://github.com/apache/cordova-plugin-whitelist#network-request-whitelist">Network Request Whitelist</a> see the
+<a href="https://github.com/apache/cordova-plugin-whitelist">cordova-plugin-whitelist</a> readme on Github. For more
+  information on Content Security policy see the HTML 5 Rocks tutorial on
+  <a href="http://www.html5rocks.com/en/tutorials/security/content-security-policy/">An Introduction to Content Security Policy</a> and the
+  <a href="http://content-security-policy.com/">Content Security Policy Reference</a>.
+</p>
+<pre><code class="xml">&lt;!-- NOTE:
+As a best practice <span class="hljs-keyword">for</span> security use a
+content security policy (CSP) header: http:<span class="hljs-comment">//content-security-policy.com/</span>
+Best practices <span class="hljs-keyword">for</span> mobile are to use SSL <span class="hljs-built_in">and</span> <span class="hljs-transposed_variable">CSP.</span>
+You can comment this out <span class="hljs-keyword">for</span> testing, however be aware that PhoneGap
+also may enforce additional security via the <span class="hljs-transposed_variable">config.</span>xml <span class="hljs-transposed_variable">file.</span>
+--&gt;
+&lt;meta http-equiv=<span class="hljs-string">"Content-Security-Policy"</span>
+  content=<span class="hljs-string">"
+    default-src
+      '</span><span class="hljs-transposed_variable">self'</span>
+      http:<span class="hljs-comment">//webserver.example.com</span>
+      http:<span class="hljs-comment">//basemaps.arcgis.com</span>
+      http:<span class="hljs-comment">//js.arcgis.com</span>
+      http:<span class="hljs-comment">//server.arcgisonline.com</span>
+      http:<span class="hljs-comment">//services.arcgisonline.com</span>
+      http:<span class="hljs-comment">//static.arcgis.com</span>
+      http:<span class="hljs-comment">//www.arcgis.com</span>
+      https:<span class="hljs-comment">//webserver.example.com</span>
+      https:<span class="hljs-comment">//basemaps.arcgis.com</span>
+      https:<span class="hljs-comment">//js.arcgis.com</span>
+      https:<span class="hljs-comment">//server.arcgisonline.com</span>
+      https:<span class="hljs-comment">//services.arcgisonline.com</span>
+      https:<span class="hljs-comment">//static.arcgis.com</span>
+      https:<span class="hljs-comment">//www.arcgis.com</span>
+      blob:;
+    connect-src
+      <span class="hljs-string">'self'</span>
+      http:<span class="hljs-comment">//webserver.example.com</span>
+      http:<span class="hljs-comment">//basemaps.arcgis.com</span>
+      http:<span class="hljs-comment">//js.arcgis.com</span>
+      http:<span class="hljs-comment">//server.arcgisonline.com</span>
+      http:<span class="hljs-comment">//services.arcgisonline.com</span>
+      http:<span class="hljs-comment">//static.arcgis.com</span>
+      http:<span class="hljs-comment">//www.arcgis.com</span>
+      https:<span class="hljs-comment">//webserver.example.com</span>
+      https:<span class="hljs-comment">//basemaps.arcgis.com</span>
+      https:<span class="hljs-comment">//js.arcgis.com</span>
+      https:<span class="hljs-comment">//server.arcgisonline.com</span>
+      https:<span class="hljs-comment">//services.arcgisonline.com</span>
+      https:<span class="hljs-comment">//static.arcgis.com</span>
+      https:<span class="hljs-comment">//www.arcgis.com</span>
+      https:<span class="hljs-comment">//dojotoolkit.org;</span>
+    font-src
+      <span class="hljs-string">'self'</span>
+      http:<span class="hljs-comment">//webserver.example.com</span>
+      http:<span class="hljs-comment">//js.arcgis.com</span>
+      https:<span class="hljs-comment">//webserver.example.com</span>
+      https:<span class="hljs-comment">//js.arcgis.com</span>
+      data:;
+    style-src <span class="hljs-string">'self'</span>
+      http:<span class="hljs-comment">//webserver.example.com </span>
+      http:<span class="hljs-comment">//js.arcgis.com</span>
+      https:<span class="hljs-comment">//webserver.example.com </span>
+      https:<span class="hljs-comment">//js.arcgis.com</span>
+      <span class="hljs-string">'unsafe-inline'</span>;
+    script-src
+      <span class="hljs-string">'self'</span>
+      http:<span class="hljs-comment">//webserver.example.com </span>
+      http:<span class="hljs-comment">//js.arcgis.com</span>
+      https:<span class="hljs-comment">//webserver.example.com </span>
+      https:<span class="hljs-comment">//js.arcgis.com</span>
+      <span class="hljs-string">'unsafe-eval'</span>;
+<span class="hljs-string">"&gt;
+</span></code></pre>
+<h3><a id="Summary_473"></a>Summary</h3>
+<p>
+  Following this guide should decrease the time it takes for a developer to get started with PhoneGap and the ArcGIS API for JavaScript.
+  The ArcGIS API for JavaScript samples for use with PhoneGap/Cordova <a href="https://github.com/Esri/quickstart-map-phonegap">(quickstart-map-phonegap)</a>
+  build upon the content in this guide topic, use them as a resource following this article for more information.
+</p>
+<p>
+Developers that have experience with native application development will have an advantage over those that do not.
+The developer environment setup with installing <a href="http://developer.android.com/tools/studio/index.html">Android Studio</a>,
+<a href="https://developer.apple.com/xcode/">Apple Xcode</a>, joining the <a href="https://developer.apple.com/discover/">Apple Developer Program</a>, configuring the targeted
+devices for development, and provisioning the devices for deployment can take some time. First time developers without previous native application development
+experience are likely to get frustrated quickly as there is significant setup for a new development machine. Some advice would be to tackle the setup in pieces and
+do not try to do it all at once.</p>
+<h3><a id="Resources_482"></a>Resources</h3>
+<ul>
+<li>Esri
+  <ul>
+  <li><a href="https://developers.arcgis.com/documentation/guides/choosing-the-right-platform/">Choosing the Right Platform</a></li>
+  <li><a href="https://github.com/Esri/quickstart-map-phonegap">Quickstart PhoneGap Map</a></li>
+  <li><a href="https://github.com/Esri/jquery-mobile-map-js">jQuery Mobile Map</a></li>
+  <li><a href="https://github.com/lheberlie/phonegap-jquerym-js#resources">PhoneGap jQuery Mobile Technical Workshop</a> Resources</li>
+  <li><strong>Android Geolocation Plugin</strong>: GPS or NETWORK-based location providers - <a href="https://github.com/Esri/cordova-plugin-advanced-geolocation">GitHub</a>, <a href="https://www.npmjs.com/package/cordova-plugin-advanced-geolocation">NPM</a></li>
+  </ul>
+</li>
+<li>Smashing Magazine
+  <ul>
+  <li><a href="https://www.smashingmagazine.com/2014/02/four-ways-to-build-a-mobile-app-part3-phonegap/">Four Ways To Build A Mobile Application, Part 3: PhoneGap</a></li>
+  <li><a href="https://www.smashingmagazine.com/2014/10/providing-a-native-experience-with-web-technologies/">Hybrid Mobile Apps: Providing A Native Experience With Web Technologies</a></li>
+  <li><a href="https://www.smashingmagazine.com/2014/09/testing-mobile-emulators-simulators-remote-debugging/2/">Testing Mobile: Emulators, Simulators And Remote Debugging</a></li>
+  </ul>
+</li>
+<li>Development tools: Node, Adobe PhoneGap, Apache Cordova
+  <ul>
+  <li><a href="http://nodejs.org/">Node.js</a></li>
+  <li><a href="http://phonegap.com/">Adobe PhoneGap</a></li>
+  <li><a href="http://docs.phonegap.com">Adobe PhoneGap Documentation</a></li>
+  <li><a href="https://build.phonegap.com/">Adobe PhoneGap Build</a></li>
+  <li><a href="https://cordova.apache.org/">Apache Cordova</a></li>
+  <li><a href="http://cordova.apache.org/plugins/">Apache Cordova Plugins</a></li>
+  <li><a href="http://cordova.apache.org/docs/en/latest/index.html">Apache Cordova Documentation</a></li>
+  <li><a href="http://cordova.apache.org/docs/en/latest/guide/cli/index.html#updating-cordova-and-your-project">Updating Cordova and Your Project</a></li>
+  </ul>
+</li>
+<li>Mobile frameworks
+  <ul>
+    <li>AppGyver's <a href="http://www.appgyver.io/steroids">Steroids</a></li>
+    <li><a href="http://enyojs.com/">Enyo</a></li>
+    <li><a href="http://ionicframework.com/">Ionic</a></li>
+    <li><a href="http://jquerymobile.com/">jQuery Mobile</a></li>
+    <li><a href="http://www.telerik.com/kendo-ui">Kendo UI</a></li>
+    <li><a href="http://onsen.io/">Onsen UI</a></li>
+    <li><a href="http://www.idangero.us/framework7/">Framework7</a></li>
+    <li><a href="http://www.sencha.com/products/touch/">Sencha Touch</a></li>
+    <li><a href="http://topcoat.io/">TopCoat</a></li>
+  </ul>
+</li>
+<li>Android
+  <ul>
+  <li><a href="https://play.google.com/store/apps/details?id=com.adobe.phonegap.app">Adobe PhoneGap Developer</a></li>
+  <li><a href="http://developer.android.com/tools/studio/index.html">Android Studio</a></li>
+  <li><a href="http://developer.android.com/tools/device.html">Android Device Help</a></li>
+  <li><a href="http://developer.android.com/tools/publishing/app-signing.html">Android Signing Your Apps</a></li>
+  </ul>
+</li>
+<li>Apple
+  <ul>
+  <li><a href="https://developer.apple.com">Apple Developer Program</a></li>
+  <li><a href="https://developer.apple.com/library/content/navigation/#section=Platforms&topic=iOS">iOS Developer Documentation</a></li>
+  <li><a href="https://phonegap.com/products/#mobile-app-section">Adobe PhoneGap Developer</a></li>
+  </ul>
+</li>
+<li>Apple Safari
+  <ul>
+  <li><a href="https://developer.apple.com/safari/features/">Apple Safari Developer Center</a></li>
+  <li><a href="https://webkit.org/downloads/">WebKit Nightly</a> (Safari daily builds)</li>
+  </ul>
+</li>
+<li>Google Chrome
+  <ul>
+  <li><a href="https://www.google.com/chrome/browser/canary.html">Chrome Canary</a> (Chrome daily builds)</li>
+  <li><a href="https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging">Remote Debugging</a> with Google Chrome</li>
+  </ul>
+</li>
+</ul>
+
+
+</div>
+ <div id="wh_footer" class="footnote">
+  <!--<a href="mailto:js_feedback@esri.com?subject=Feedback%20on%203.26%20Guide:%20jshelp/inside_phonegap.html">Report an error on this page</a>.
+  <br>-->
+  <a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a>
+</div>
+</div> 
+  </div>
+</div> 
+
+
+<script src="../scripts/tree.js"></script>
+
+<script src="../prettify/prettify.js"></script>
+<script>
+  var dojoConfig = {
+    async: true,
+    packages: [{
+      "name": "js",
+      "location": location.pathname.replace(/\/[^/]+$/, "/") + "../scripts"
+    }]
+  };
+</script>
+<script src="../scripts/libs/tailcoat.js"></script>
+
+<script src="../scripts/libs/dojo-esri/dojo/dojo.js" data-dojo-config="async: true,locale: 'en-us'"></script>
+<script src="../scripts/esri-main-concepts.js"></script>
+<script src="../scripts/esri-keyboard-navigation.js"></script>
+<script>
+  require(["dojo/topic", "js/libs/mousetrap"], function(topic, Mousetrap) {
+    Mousetrap.bind([
+      // ${API_BINDINGS}
+      // ${SAMPLE_CODE_BINDINGS}
+      // Focus search
+      "/",
+      // Blur search
+      "esc",
+      // Go to Home
+      "g h",
+      // Go to Guide
+      "g g",
+      // Go to API Reference
+      "g a",
+      // Go to Sample Code
+      "g s",
+      // Show help
+      "?",
+      // Scroll to top of the page
+      "g t",
+      // Scroll to bottom of the page
+      "g b"
+    ], function (mousetrapEvent, keyboardCombination){
+      topic.publish("keyboard:mousetrap", {
+        event: mousetrapEvent,
+        combination: keyboardCombination,
+        navigation: {}
+      });
+
+    });
+  });
+</script>
+<a class="modal-show keyboard-shortcuts-hidden hide js-keyboard-shortcuts" data-modal="keyboard-shortcuts-modal" href="#">Show Modal</a>
+<div class="modal-overlay">
+  <div class="modal keyboard-shortcuts-modal js-keyboard-shortcuts-modal" data-modal="keyboard-shortcuts-modal">
+    <a class="modal-dismiss js-modal-dismiss icon-close right" href="#"></a>
+    <h3 class="keyboard-shortcuts-modal-title">Keyboard shortcuts</h3>
+    <hr class="leader-0 trailer-1">
+    
+    <div class="row">
+      
+      <div class="column-12 js-keyboard-mappings-first-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Site wide shortcuts</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>Bring up this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>esc</kbd></td>
+              <td>Dismiss this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>h</kbd></td>
+              <td>Go to Home</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>g</kbd></td>
+              <td>Go to Guide</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>a</kbd></td>
+              <td>Go to API Reference</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>s</kbd></td>
+              <td>Go to Sample Code</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>t</kbd></td>
+              <td>Scroll to top of page</td>
+            </tr>
+            <tr>
+              <td><kbd>spacebar</kbd></td>
+              <td>Scroll page down</td>
+            </tr>
+            <tr>
+              <td><kbd>shift spacebar</kbd></td>
+              <td>Scroll page up</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>b</kbd></td>
+              <td>Scroll to bottom of page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="column-12 js-keyboard-mappings-second-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Guide</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>Focus search</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>T.init();</script>
+
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+
+ 
+
+
+
+</body>
+</html>

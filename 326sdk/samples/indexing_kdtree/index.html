@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>FeatureLayer On Demand</title> 
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css"> 
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+      .simpleInfoWindow .close{
+        display: none;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26compact/"></script>
+    <script> 
+      var map, indexer, lastFeature, tolerance;
+      require([
+        "esri/map", "esri/lang", "esri/layers/FeatureLayer", "esri/dijit/InfoWindowLite",
+        "dojo/domReady!"
+      ], function(
+        Map, esriLang, FeatureLayer, InfoWindowLite
+      ) {
+        map = new Map("mapDiv", {
+          basemap: "national-geographic",
+          center: [-96.541, 38.34],
+          zoom: 6,
+          showInfoWindowOnClick: false
+        });
+
+        var featureLayer = new FeatureLayer("//sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ["*"],
+          plugins: [{
+            id: 'esri/plugins/spatialIndex',
+            options: {
+              indexType: 'kdtree'
+            }
+          }]
+        });
+
+        var infoWin = new InfoWindowLite(null, document.getElementById('results'));
+        infoWin.startup();
+        infoWin.setMap(map);
+        infoWin.setTitle("Nearest 3 Cities");
+        infoWin.resize(310, 110);
+
+        var tmpl = "<li>${areaname}, ${st} &mdash; Population:  ${pop2000:NumberFormat}</li>";
+        
+        featureLayer.on('load',function(){
+          map.on('mouse-move', getNearest);
+        });
+        
+        map.addLayer(featureLayer);
+        
+        function getNearest(evt) {
+          var pt = evt.mapPoint;
+          infoWin.show(pt);
+          featureLayer.spatialIndex.nearest({
+            point: pt,
+            count: 3
+          }).then(function(msg) {
+            var nearest = msg.results;
+            //returns an array of 2 member arrays. First member is the featureJ JSON for the point. 2nd member is the distance.
+            if (!lastFeature || (nearest[0] && nearest[0][0].id != lastFeature.id)) {
+              lastFeature = nearest[0][0];
+              var str = "<ul>";
+              for (var i = 0; i < nearest.length; i++) {
+                str += esriLang.substitute(nearest[i][0],tmpl);
+              }
+              str += "</ul>";
+              infoWin.setContent(str);
+            }
+          });
+        }
+      });
+    </script> 
+  </head> 
+  <body class="claro"> 
+    <div id="mapDiv">
+    </div>
+    <div id="results"></div>
+  </body> 
+</html>

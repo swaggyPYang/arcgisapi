@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Class Breaks Renderer</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.query");
+      dojo.require("esri.layers.FeatureLayer");
+
+      var map;
+      var stateName = "Florida";
+      var attributeField = "POP1990";
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-83.101, 27.753],
+          zoom: 7,
+          slider: false
+        });
+        dojo.connect(map, "onLoad", initOperationalLayer);
+      }
+
+      function initOperationalLayer() {
+        var featureLayer = new esri.layers.FeatureLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer/0", {
+          mode: esri.layers.FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["*"]
+        });
+
+        featureLayer.setDefinitionExpression("STATE_NAME = '" + stateName + "'");
+       
+        var query = new esri.tasks.Query();
+        query.where = "STATE_NAME = '" + stateName + "'";
+        featureLayer.queryFeatures(query, function(featureSet) {
+          var features = featureSet.features;
+          var min, max;
+          min = max = parseFloat(features[0].attributes[attributeField]);
+
+          dojo.forEach(features, function(feature) {
+            min = Math.min(min, feature.attributes[attributeField]);
+            max = Math.max(max, feature.attributes[attributeField]);
+          });
+            
+          //divide the range of values by the number of classes to find the interval
+          var numRanges = 7;
+          var breaks = (max - min) / numRanges;
+
+          var outline = new esri.symbol.SimpleLineSymbol().setWidth(1);
+          var fillColor = new dojo.Color([240, 150, 240, 0.75]);
+          var defaultSymbol = new esri.symbol.SimpleMarkerSymbol().setSize(1).setOutline(outline);
+
+          var renderer = new esri.renderer.ClassBreaksRenderer(defaultSymbol, attributeField);
+
+          //add the breaks using the interval calculated above
+          for (var i = 0; i < numRanges; i++) {
+            renderer.addBreak(parseFloat(min + (i * breaks)), parseFloat(min + ((i + 1) * breaks)), new esri.symbol.SimpleMarkerSymbol().setSize((i + 1) * 6).setColor(fillColor).setOutline(outline));
+          }
+          featureLayer.setRenderer(renderer);
+        });
+        map.addLayer(featureLayer);
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body>
+    <div id="map" class="claro" style="width:800px; height:600px; border:1px solid #000;">
+    </div>
+  </body>
+
+</html>

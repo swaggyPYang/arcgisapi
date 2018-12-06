@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Portland Tile Server</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+    
+      function init() {
+        initLayer();
+        var map = new esri.Map("map");
+        map.addLayer(new my.PortlandTiledMapServiceLayer()); 
+      } 
+      function initLayer(){
+        dojo.declare("my.PortlandTiledMapServiceLayer", esri.layers.TiledMapServiceLayer, {
+          constructor: function() {
+            this.spatialReference = new esri.SpatialReference({ wkid:4326 });
+            this.initialExtent = (this.fullExtent = new esri.geometry.Extent(-123.59, 44.29, -121.55, 46.36, this.spatialReference));
+
+            this.tileInfo = new esri.layers.TileInfo({
+              "rows" : 512,
+              "cols" : 512,
+              "dpi" : 96,
+              "format" : "PNG32",
+              "compressionQuality" : 0,
+              "origin" : {
+                "x" : -180,
+                "y" : 90
+              },
+              "spatialReference" : {
+              "wkid" : 4326
+            },
+              "lods" : [
+                {"level" : 0, "resolution" : 0.351562499999999, "scale" : 147748799.285417},
+                {"level" : 1, "resolution" : 0.17578125, "scale" : 73874399.6427087},
+                {"level" : 2, "resolution" : 0.0878906250000001, "scale" : 36937199.8213544},
+                {"level" : 3, "resolution" : 0.0439453125, "scale" : 18468599.9106772},
+                {"level" : 4, "resolution" : 0.02197265625, "scale" : 9234299.95533859},
+                {"level" : 5, "resolution" : 0.010986328125, "scale" : 4617149.97766929},
+                {"level" : 6, "resolution" : 0.0054931640625, "scale" : 2308574.98883465},
+                {"level" : 7, "resolution" : 0.00274658203124999, "scale" : 1154287.49441732},
+                {"level" : 8, "resolution" : 0.001373291015625, "scale" : 577143.747208662},
+                {"level" : 9, "resolution" : 0.0006866455078125, "scale" : 288571.873604331},
+                {"level" : 10, "resolution" : 0.000343322753906249, "scale" : 144285.936802165},
+                {"level" : 11, "resolution" : 0.000171661376953125, "scale" : 72142.9684010827},
+                {"level" : 12, "resolution" : 8.58306884765626E-05, "scale" : 36071.4842005414},
+                {"level" : 13, "resolution" : 4.29153442382813E-05, "scale" : 18035.7421002707},
+                {"level" : 14, "resolution" : 2.14576721191406E-05, "scale" : 9017.87105013534},
+                {"level" : 15, "resolution" : 1.07288360595703E-05, "scale" : 4508.93552506767}
+              ]
+            });
+
+            this.loaded = true;
+            this.onLoad(this);
+          },
+
+          getTileUrl: function(level, row, col) {
+            return "https://sampleserver1.arcgisonline.com/arcgiscache/Portland_Portland_ESRI_LandBase_AGO/Portland/_alllayers/" +
+              "L" + dojo.string.pad(level, 2, '0') + "/" +
+              "R" + dojo.string.pad(row.toString(16), 8, '0') + "/" +
+              "C" + dojo.string.pad(col.toString(16), 8, '0') + "." +
+              "png";
+        }
+      });
+    } 
+
+    dojo.ready(init);
+    </script>
+  </head>
+  <body>
+    <div id="map" class="claro" style="width:768px; height:512px; border:1px solid #000;"></div>
+  </body>
+</html>

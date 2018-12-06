@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="content-language" content="en">
+  <meta name="product" content="js-api-arcgis">
+  <meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE">
+  <meta name="sub_category" content="JavaScript API">
+  <meta name="search-collection" content="help">
+  <meta name="search-category" content="help-api,help-api-ref">
+  <meta name="version" content="3.x">
+  <meta name="content_type" content="API Reference"> 
+  <meta name="classname" content="ReportPlayer"> 
+  <meta name="last-modified" content="2018-09-21"> 
+
+  <link rel="stylesheet" href="../styles/screen.css">
+  <link rel="stylesheet" href="../styles/jsdoc.css">
+  <link rel="stylesheet" href="../styles/homepage.css">
+  <link rel="stylesheet" href="../styles/grid.css">
+  <link rel="stylesheet" href="../styles/tree.css">
+  <link rel="stylesheet" href="../prettify/prettify.css">
+  <link rel="stylesheet" href="../styles/tailcoat-search.css">
+  <link rel="stylesheet" href="//fast.fonts.com/cssapi/23855eec-5fdf-4594-9898-0113a04bfef0.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+
+  <style>
+    html {
+      overflow-y: auto;
+    }
+    .hidden{
+      display: none;
+    }
+    .eventDiv > .dtH4{
+      display: none;
+    }
+    .switch{
+      font-weight: bold;
+    }
+    .eventSwitch:not(.enabled){
+      color: #00629b;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    pre {
+      font-size: 1em;
+      line-height: normal;
+      margin: 0;
+    }
+    #header nav li a {
+      font-size: .875em;
+    }
+    #esri-logo {
+      margin-left: 0;
+    }
+    h1.light {
+      color: #fff;
+    }
+    .navigation-bar {
+      background-image: url("../graphics/tailcoat/navigation-bar-background.jpg");
+    }
+  </style>
+  <title>ReportPlayer (legacy) | API Reference | ArcGIS API for JavaScript 3.26</title> 
+  
+  
+</head>
+
+<body>
+<header class="header">
+  <div class="container">
+    <nav class="site-nav trailer-half">
+        Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="navigation-bar ">
+    <div class="container">
+      <header>
+        <h1 class="light"><a href="..">ArcGIS API for JavaScript <sup>3.26</sup></a></h1>
+      </header>
+       <nav class="navigation-bar-nav">
+        <ul>
+            <li class=""><a href="../">Home</a></li>
+            <li class=""><a href="../jshelp/">Guide</a></li>
+            <li class="current"><a href=".">API Reference</a></li>
+            <li class=""><a href="../jssamples/">Sample Code</a></li>
+            <li class=""><a class="icon-share icon-link-external" href="https://community.esri.com/community/developers/web-developers/arcgis-api-for-javascript">Community</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+ 
+
+<div class="container_12">
+  <div class="grid_3 contentWrapper">
+    <div id="toggleToc">
+      <img src="../graphics/tochide.gif" alt=""> Hide Table of Contents
+    </div>
+    <div id="apiToc">
+                <div class="treeDiv" id="tree" style="top: 35px; left: 0px;">
+                  <div id="treeRoot">
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="." onclick="clickAnchor(this)">API Reference Overview</a>
+                    </div>
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="api_devenv.html" onclick="clickAnchor(this)">Set up a development environment</a>
+                    </div>
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="argument_aliases.html" onclick="clickAnchor(this)">Preferred Argument Aliases</a>
+                    </div>
+                    
+                    
+
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.basemaps-amd.html" onClick="clickAnchor(this)">basemaps</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="color-amd.html" onClick="clickAnchor(this)">Color</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.config-amd.html" onClick="clickAnchor(this)">config</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="credential-amd.html" onClick="clickAnchor(this)">Credential</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.domutils-amd.html" onClick="clickAnchor(this)">domUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphic-amd.html" onClick="clickAnchor(this)">Graphic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.graphicsutils-amd.html" onClick="clickAnchor(this)">graphicsUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identitymanager-amd.html" onClick="clickAnchor(this)">IdentityManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identitymanagerbase-amd.html" onClick="clickAnchor(this)">IdentityManagerBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imagespatialreference-amd.html" onClick="clickAnchor(this)">ImageSpatialReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infotemplate-amd.html" onClick="clickAnchor(this)">InfoTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindowbase-amd.html" onClick="clickAnchor(this)">InfoWindowBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.kernel-amd.html" onClick="clickAnchor(this)">kernel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.lang-amd.html" onClick="clickAnchor(this)">lang</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="map-amd.html" onClick="clickAnchor(this)">Map</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="operationbase-amd.html" onClick="clickAnchor(this)">OperationBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.request-amd.html" onClick="clickAnchor(this)">request</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serverinfo-amd.html" onClick="clickAnchor(this)">ServerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="snappingmanager-amd.html" onClick="clickAnchor(this)">SnappingManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="spatialreference-amd.html" onClick="clickAnchor(this)">SpatialReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeextent-amd.html" onClick="clickAnchor(this)">TimeExtent</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="undomanager-amd.html" onClick="clickAnchor(this)">UndoManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="units-amd.html" onClick="clickAnchor(this)">units</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.urlutils-amd.html" onClick="clickAnchor(this)">urlUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/arcgis</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="oauthinfo-amd.html" onClick="clickAnchor(this)">OAuthInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portal-amd.html" onClick="clickAnchor(this)">Portal</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalcomment-amd.html" onClick="clickAnchor(this)">PortalComment</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalfolder-amd.html" onClick="clickAnchor(this)">PortalFolder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalgroup-amd.html" onClick="clickAnchor(this)">PortalGroup</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalitem-amd.html" onClick="clickAnchor(this)">PortalItem</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalqueryresult-amd.html" onClick="clickAnchor(this)">PortalQueryResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalrating-amd.html" onClick="clickAnchor(this)">PortalRating</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portaluser-amd.html" onClick="clickAnchor(this)">PortalUser</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.arcgis.utils-amd.html" onClick="clickAnchor(this)">utils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attributeinspector-amd.html" onClick="clickAnchor(this)">AttributeInspector</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attribution-amd.html" onClick="clickAnchor(this)">Attribution</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemap-amd.html" onClick="clickAnchor(this)">Basemap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemapgallery-amd.html" onClick="clickAnchor(this)">BasemapGallery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemaplayer-amd.html" onClick="clickAnchor(this)">BasemapLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemaptoggle-amd.html" onClick="clickAnchor(this)">BasemapToggle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bookmarkitem-amd.html" onClick="clickAnchor(this)">BookmarkItem</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bookmarks-amd.html" onClick="clickAnchor(this)">Bookmarks</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classedcolorslider-amd.html" onClick="clickAnchor(this)">ClassedColorSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classedsizeslider-amd.html" onClick="clickAnchor(this)">ClassedSizeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorinfoslider-amd.html" onClick="clickAnchor(this)">ColorInfoSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorpicker-amd.html" onClick="clickAnchor(this)">ColorPicker</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="directions-amd.html" onClick="clickAnchor(this)">Directions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="elevationprofile-amd.html" onClick="clickAnchor(this)">ElevationProfile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretable-amd.html" onClick="clickAnchor(this)">FeatureTable</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gallery-amd.html" onClick="clickAnchor(this)">Gallery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gauge-amd.html" onClick="clickAnchor(this)">Gauge</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geocoder-amd.html" onClick="clickAnchor(this)">Geocoder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="heatmapslider-amd.html" onClick="clickAnchor(this)">HeatmapSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="histogramtimeslider-amd.html" onClick="clickAnchor(this)">HistogramTimeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="homebutton-amd.html" onClick="clickAnchor(this)">HomeButton</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="horizontalslider-amd.html" onClick="clickAnchor(this)">HorizontalSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasure-amd.html" onClick="clickAnchor(this)">ImageServiceMeasure</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindow-amd.html" onClick="clickAnchor(this)">InfoWindow</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindowlite-amd.html" onClick="clickAnchor(this)">InfoWindowLite</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerlist-amd.html" onClick="clickAnchor(this)">LayerList</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerswipe-amd.html" onClick="clickAnchor(this)">LayerSwipe</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="legend-amd.html" onClick="clickAnchor(this)">Legend</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locatebutton-amd.html" onClick="clickAnchor(this)">LocateButton</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="measurement-amd.html" onClick="clickAnchor(this)">Measurement</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="obliqueviewer-amd.html" onClick="clickAnchor(this)">ObliqueViewer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="opacityslider-amd.html" onClick="clickAnchor(this)">OpacitySlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="overviewmap-amd.html" onClick="clickAnchor(this)">OverviewMap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popup-amd.html" onClick="clickAnchor(this)">Popup</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popupmobile-amd.html" onClick="clickAnchor(this)">PopupMobile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popuptemplate-amd.html" onClick="clickAnchor(this)">PopupTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="print-amd.html" onClick="clickAnchor(this)">Print</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rendererslider-amd.html" onClick="clickAnchor(this)">RendererSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="scalebar-amd.html" onClick="clickAnchor(this)">Scalebar</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="search-amd.html" onClick="clickAnchor(this)">Search</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="sizeinfoslider-amd.html" onClick="clickAnchor(this)">SizeInfoSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbolstyler-amd.html" onClick="clickAnchor(this)">SymbolStyler</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeslider-amd.html" onClick="clickAnchor(this)">TimeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="visiblescalerangeslider-amd.html" onClick="clickAnchor(this)">VisibleScaleRangeSlider</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/analysis</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="aggregatepoints-amd.html" onClick="clickAnchor(this)">AggregatePoints</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="analysisbase-amd.html" onClick="clickAnchor(this)">AnalysisBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="calculatedensity-amd.html" onClick="clickAnchor(this)">CalculateDensity</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="choosebestfacilities-amd.html" onClick="clickAnchor(this)">ChooseBestFacilities</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="connectoriginstodestinations-amd.html" onClick="clickAnchor(this)">ConnectOriginsToDestinations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createbuffers-amd.html" onClick="clickAnchor(this)">CreateBuffers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createdrivetimeareas-amd.html" onClick="clickAnchor(this)">CreateDriveTimeAreas</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createviewshed-amd.html" onClick="clickAnchor(this)">CreateViewshed</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createwatersheds-amd.html" onClick="clickAnchor(this)">CreateWatersheds</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="derivenewlocations-amd.html" onClick="clickAnchor(this)">DeriveNewLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dissolveboundaries-amd.html" onClick="clickAnchor(this)">DissolveBoundaries</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="enrichlayer-amd.html" onClick="clickAnchor(this)">EnrichLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extractdata-amd.html" onClick="clickAnchor(this)">ExtractData</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findexistinglocations-amd.html" onClick="clickAnchor(this)">FindExistingLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findhotspots-amd.html" onClick="clickAnchor(this)">FindHotSpots</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findnearest-amd.html" onClick="clickAnchor(this)">FindNearest</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findsimilarlocations-amd.html" onClick="clickAnchor(this)">FindSimilarLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="interpolatepoints-amd.html" onClick="clickAnchor(this)">InterpolatePoints</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mergelayers-amd.html" onClick="clickAnchor(this)">MergeLayers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="overlaylayers-amd.html" onClick="clickAnchor(this)">OverlayLayers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="planroutes-amd.html" onClick="clickAnchor(this)">PlanRoutes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="summarizenearby-amd.html" onClick="clickAnchor(this)">SummarizeNearby</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="summarizewithin-amd.html" onClick="clickAnchor(this)">SummarizeWithin</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tracedownstream-amd.html" onClick="clickAnchor(this)">TraceDownstream</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/editing</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="add-amd.html" onClick="clickAnchor(this)">Add</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attachmenteditor-amd.html" onClick="clickAnchor(this)">AttachmentEditor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="cut-amd.html" onClick="clickAnchor(this)">Cut</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="delete-amd.html" onClick="clickAnchor(this)">Delete</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="editor-amd.html" onClick="clickAnchor(this)">Editor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="templatepicker-amd.html" onClick="clickAnchor(this)">TemplatePicker</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="union-amd.html" onClick="clickAnchor(this)">Union</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="update-amd.html" onClick="clickAnchor(this)">Update</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/geoenrichment</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="databrowser-amd.html" onClick="clickAnchor(this)">DataBrowser</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographic-amd.html" onClick="clickAnchor(this)">Infographic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicscarousel-amd.html" onClick="clickAnchor(this)">InfographicsCarousel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicsoptions-amd.html" onClick="clickAnchor(this)">InfographicsOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicsoptionsitem-amd.html" onClick="clickAnchor(this)">InfographicsOptionsItem</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/geoenrichment/ReportPlayer</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dataproviderge-amd.html" onClick="clickAnchor(this)">DataProviderGE</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playercommands-amd.html" onClick="clickAnchor(this)">PlayerCommands</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerresizemodes-amd.html" onClick="clickAnchor(this)">PlayerResizeModes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerthemes-amd.html" onClick="clickAnchor(this)">PlayerThemes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerviewmodes-amd.html" onClick="clickAnchor(this)">PlayerViewModes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reportplayer-amd.html" onClick="clickAnchor(this)">ReportPlayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerzoombehaviors-amd.html" onClick="clickAnchor(this)">PlayerZoomBehaviors</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/util</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.dijit.util.busyindicator-amd.html" onClick="clickAnchor(this)">busyIndicator</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/geometry</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="circle-amd.html" onClick="clickAnchor(this)">Circle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.coordinateformatter-amd.html" onClick="clickAnchor(this)">coordinateFormatter</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extent-amd.html" onClick="clickAnchor(this)">Extent</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geodesicutils-amd.html" onClick="clickAnchor(this)">geodesicUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographictransformation-amd.html" onClick="clickAnchor(this)">GeographicTransformation</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographictransformationstep-amd.html" onClick="clickAnchor(this)">GeographicTransformationStep</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometry-amd.html" onClick="clickAnchor(this)">Geometry</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geometryengine-amd.html" onClick="clickAnchor(this)">geometryEngine</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geometryengineasync-amd.html" onClick="clickAnchor(this)">geometryEngineAsync</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.mathutils-amd.html" onClick="clickAnchor(this)">mathUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="multipoint-amd.html" onClick="clickAnchor(this)">Multipoint</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.normalizeutils-amd.html" onClick="clickAnchor(this)">normalizeUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="point-amd.html" onClick="clickAnchor(this)">Point</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="polygon-amd.html" onClick="clickAnchor(this)">Polygon</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="polyline-amd.html" onClick="clickAnchor(this)">Polyline</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.projection-amd.html" onClick="clickAnchor(this)">projection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.scaleutils-amd.html" onClick="clickAnchor(this)">scaleUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="screenpoint-amd.html" onClick="clickAnchor(this)">ScreenPoint</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.screenutils-amd.html" onClick="clickAnchor(this)">screenUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.webmercatorutils-amd.html" onClick="clickAnchor(this)">webMercatorUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/layer/pixelFilters</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="stretchfilter-amd.html" onClick="clickAnchor(this)">StretchFilter</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/layers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisdynamicmapservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISDynamicMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisimageservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISImageServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisimageservicevectorlayer-amd.html" onClick="clickAnchor(this)">ArcGISImageServiceVectorLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgistiledmapservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISTiledMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="codedvaluedomain-amd.html" onClick="clickAnchor(this)">CodedValueDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="csvlayer-amd.html" onClick="clickAnchor(this)">CSVLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dataadapterfeaturelayer-amd.html" onClick="clickAnchor(this)">DataAdapterFeatureLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datasource-amd.html" onClick="clickAnchor(this)">DataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dimensionaldefinition-amd.html" onClick="clickAnchor(this)">DimensionalDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="domain-amd.html" onClick="clickAnchor(this)">Domain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dynamiclayerinfo-amd.html" onClick="clickAnchor(this)">DynamicLayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dynamicmapservicelayer-amd.html" onClick="clickAnchor(this)">DynamicMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureeditresult-amd.html" onClick="clickAnchor(this)">FeatureEditResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featurelayer-amd.html" onClick="clickAnchor(this)">FeatureLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretemplate-amd.html" onClick="clickAnchor(this)">FeatureTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretype-amd.html" onClick="clickAnchor(this)">FeatureType</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="field-amd.html" onClick="clickAnchor(this)">Field</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="georsslayer-amd.html" onClick="clickAnchor(this)">GeoRSSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphicslayer-amd.html" onClick="clickAnchor(this)">GraphicsLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageparameters-amd.html" onClick="clickAnchor(this)">ImageParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceparameters-amd.html" onClick="clickAnchor(this)">ImageServiceParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="inheriteddomain-amd.html" onClick="clickAnchor(this)">InheritedDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="joindatasource-amd.html" onClick="clickAnchor(this)">JoinDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmlfolder-amd.html" onClick="clickAnchor(this)">KMLFolder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmlgroundoverlay-amd.html" onClick="clickAnchor(this)">KMLGroundOverlay</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmllayer-amd.html" onClick="clickAnchor(this)">KMLLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="labelclass-amd.html" onClick="clickAnchor(this)">LabelClass</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="labellayer-amd.html" onClick="clickAnchor(this)">LabelLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layer-amd.html" onClick="clickAnchor(this)">Layer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerdatasource-amd.html" onClick="clickAnchor(this)">LayerDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerdrawingoptions-amd.html" onClick="clickAnchor(this)">LayerDrawingOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerinfo-amd.html" onClick="clickAnchor(this)">LayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layermapsource-amd.html" onClick="clickAnchor(this)">LayerMapSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layersource-amd.html" onClick="clickAnchor(this)">LayerSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layertimeoptions-amd.html" onClick="clickAnchor(this)">LayerTimeOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="lod-amd.html" onClick="clickAnchor(this)">LOD</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapimage-amd.html" onClick="clickAnchor(this)">MapImage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapimagelayer-amd.html" onClick="clickAnchor(this)">MapImageLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mosaicrule-amd.html" onClick="clickAnchor(this)">MosaicRule</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="openstreetmaplayer-amd.html" onClick="clickAnchor(this)">OpenStreetMapLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="pixelblock-amd.html" onClick="clickAnchor(this)">PixelBlock</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querydatasource-amd.html" onClick="clickAnchor(this)">QueryDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rangedomain-amd.html" onClick="clickAnchor(this)">RangeDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterdatasource-amd.html" onClick="clickAnchor(this)">RasterDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterfunction-amd.html" onClick="clickAnchor(this)">RasterFunction</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterlayer-amd.html" onClick="clickAnchor(this)">RasterLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="streamlayer-amd.html" onClick="clickAnchor(this)">StreamLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tabledatasource-amd.html" onClick="clickAnchor(this)">TableDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tiledmapservicelayer-amd.html" onClick="clickAnchor(this)">TiledMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tileinfo-amd.html" onClick="clickAnchor(this)">TileInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeinfo-amd.html" onClick="clickAnchor(this)">TimeInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timereference-amd.html" onClick="clickAnchor(this)">TimeReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vectortilelayer-amd.html" onClick="clickAnchor(this)">VectorTileLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcsconnection-amd.html" onClick="clickAnchor(this)">WCSConnection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcscoveragedescription-amd.html" onClick="clickAnchor(this)">WCSCoverageDescription</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcslayer-amd.html" onClick="clickAnchor(this)">WCSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="webtiledlayer-amd.html" onClick="clickAnchor(this)">WebTiledLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wfslayer-amd.html" onClick="clickAnchor(this)">WFSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmslayer-amd.html" onClick="clickAnchor(this)">WMSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmslayerinfo-amd.html" onClick="clickAnchor(this)">WMSLayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmtslayer-amd.html" onClick="clickAnchor(this)">WMTSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmtslayerinfo-amd.html" onClick="clickAnchor(this)">WMTSLayerInfo</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/opsdashboard</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datasourceproxy-amd.html" onClick="clickAnchor(this)">DataSourceProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extensionbase-amd.html" onClick="clickAnchor(this)">ExtensionBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extensionconfigurationbase-amd.html" onClick="clickAnchor(this)">ExtensionConfigurationBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionconfigurationproxy-amd.html" onClick="clickAnchor(this)">FeatureActionConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionfeatures-amd.html" onClick="clickAnchor(this)">FeatureActionFeatures</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionproxy-amd.html" onClick="clickAnchor(this)">featureActionProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphicslayerproxy-amd.html" onClick="clickAnchor(this)">GraphicsLayerProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="maptoolconfigurationproxy-amd.html" onClick="clickAnchor(this)">MapToolConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="maptoolproxy-amd.html" onClick="clickAnchor(this)">MapToolProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapwidgetproxy-amd.html" onClick="clickAnchor(this)">MapWidgetProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="widgetconfigurationproxy-amd.html" onClick="clickAnchor(this)">WidgetConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="widgetproxy-amd.html" onClick="clickAnchor(this)">WidgetProxy</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/plugins</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featurelayerstatistics-amd.html" onClick="clickAnchor(this)">FeatureLayerStatistics</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.plugins.spatialindex-amd.html" onClick="clickAnchor(this)">spatialIndex</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/process</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="processor-amd.html" onClick="clickAnchor(this)">Processor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="spatialindex-amd.html" onClick="clickAnchor(this)">SpatialIndex</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/renderers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="blendrenderer-amd.html" onClick="clickAnchor(this)">BlendRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classbreaksrenderer-amd.html" onClick="clickAnchor(this)">ClassBreaksRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dotdensityrenderer-amd.html" onClick="clickAnchor(this)">DotDensityRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="heatmaprenderer-amd.html" onClick="clickAnchor(this)">HeatmapRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.renderers.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="renderer-amd.html" onClick="clickAnchor(this)">Renderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="scaledependentrenderer-amd.html" onClick="clickAnchor(this)">ScaleDependentRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplerenderer-amd.html" onClick="clickAnchor(this)">SimpleRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.renderers.smartmapping-amd.html" onClick="clickAnchor(this)">smartMapping</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbolager-amd.html" onClick="clickAnchor(this)">SymbolAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="temporalrenderer-amd.html" onClick="clickAnchor(this)">TemporalRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeclassbreaksager-amd.html" onClick="clickAnchor(this)">TimeClassBreaksAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timerampager-amd.html" onClick="clickAnchor(this)">TimeRampAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="uniquevaluerenderer-amd.html" onClick="clickAnchor(this)">UniqueValueRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vectorfieldrenderer-amd.html" onClick="clickAnchor(this)">VectorFieldRenderer</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/styles</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.basic-amd.html" onClick="clickAnchor(this)">basic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.choropleth-amd.html" onClick="clickAnchor(this)">choropleth</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.heatmap-amd.html" onClick="clickAnchor(this)">heatmap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.relationship-amd.html" onClick="clickAnchor(this)">relationship</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.size-amd.html" onClick="clickAnchor(this)">size</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.type-amd.html" onClick="clickAnchor(this)">type</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/support</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.support.expressionutils-amd.html" onClick="clickAnchor(this)">expressionUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/symbols</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="cartographiclinesymbol-amd.html" onClick="clickAnchor(this)">CartographicLineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="fillsymbol-amd.html" onClick="clickAnchor(this)">FillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="font-amd.html" onClick="clickAnchor(this)">Font</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.symbols.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="linesymbol-amd.html" onClick="clickAnchor(this)">LineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="markersymbol-amd.html" onClick="clickAnchor(this)">MarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="picturefillsymbol-amd.html" onClick="clickAnchor(this)">PictureFillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="picturemarkersymbol-amd.html" onClick="clickAnchor(this)">PictureMarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplefillsymbol-amd.html" onClick="clickAnchor(this)">SimpleFillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplelinesymbol-amd.html" onClick="clickAnchor(this)">SimpleLineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplemarkersymbol-amd.html" onClick="clickAnchor(this)">SimpleMarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbol-amd.html" onClick="clickAnchor(this)">Symbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="textsymbol-amd.html" onClick="clickAnchor(this)">TextSymbol</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="addresscandidate-amd.html" onClick="clickAnchor(this)">AddressCandidate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="algorithmiccolorramp-amd.html" onClick="clickAnchor(this)">AlgorithmicColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="areasandlengthsparameters-amd.html" onClick="clickAnchor(this)">AreasAndLengthsParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bufferparameters-amd.html" onClick="clickAnchor(this)">BufferParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classbreaksdefinition-amd.html" onClick="clickAnchor(this)">ClassBreaksDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classificationdefinition-amd.html" onClick="clickAnchor(this)">ClassificationDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilityparameters-amd.html" onClick="clickAnchor(this)">ClosestFacilityParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilitysolveresult-amd.html" onClick="clickAnchor(this)">ClosestFacilitySolveResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilitytask-amd.html" onClick="clickAnchor(this)">ClosestFacilityTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorramp-amd.html" onClick="clickAnchor(this)">ColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datafile-amd.html" onClick="clickAnchor(this)">DataFile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datalayer-amd.html" onClick="clickAnchor(this)">DataLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="date-amd.html" onClick="clickAnchor(this)">Date</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="densifyparameters-amd.html" onClick="clickAnchor(this)">DensifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="directionsfeatureset-amd.html" onClick="clickAnchor(this)">DirectionsFeatureSet</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="distanceparameters-amd.html" onClick="clickAnchor(this)">DistanceParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureset-amd.html" onClick="clickAnchor(this)">FeatureSet</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findparameters-amd.html" onClick="clickAnchor(this)">FindParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findresult-amd.html" onClick="clickAnchor(this)">FindResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findtask-amd.html" onClick="clickAnchor(this)">FindTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generalizeparameters-amd.html" onClick="clickAnchor(this)">GeneralizeParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generaterendererparameters-amd.html" onClick="clickAnchor(this)">GenerateRendererParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generaterenderertask-amd.html" onClick="clickAnchor(this)">GenerateRendererTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometryservice-amd.html" onClick="clickAnchor(this)">GeometryService</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geoprocessor-amd.html" onClick="clickAnchor(this)">Geoprocessor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gpmessage-amd.html" onClick="clickAnchor(this)">GPMessage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifyparameters-amd.html" onClick="clickAnchor(this)">IdentifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifyresult-amd.html" onClick="clickAnchor(this)">IdentifyResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifytask-amd.html" onClick="clickAnchor(this)">IdentifyTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifyparameters-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifyresult-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifytask-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasureparameters-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasuretask-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="jobinfo-amd.html" onClick="clickAnchor(this)">JobInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="legendlayer-amd.html" onClick="clickAnchor(this)">LegendLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="lengthsparameters-amd.html" onClick="clickAnchor(this)">LengthsParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="linearunit-amd.html" onClick="clickAnchor(this)">LinearUnit</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locator-amd.html" onClick="clickAnchor(this)">Locator</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="multipartcolorramp-amd.html" onClick="clickAnchor(this)">MultipartColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="namessage-amd.html" onClick="clickAnchor(this)">NAMessage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="naoutputline-amd.html" onClick="clickAnchor(this)">NAOutputLine</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="naoutputpolygon-amd.html" onClick="clickAnchor(this)">NAOutputPolygon</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="natraveldirection-amd.html" onClick="clickAnchor(this)">NATravelDirection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="natypes-amd.html" onClick="clickAnchor(this)">NATypes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="nauturn-amd.html" onClick="clickAnchor(this)">NAUTurn</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="offsetparameters-amd.html" onClick="clickAnchor(this)">OffsetParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="parametervalue-amd.html" onClick="clickAnchor(this)">ParameterValue</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printparameters-amd.html" onClick="clickAnchor(this)">PrintParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printtask-amd.html" onClick="clickAnchor(this)">PrintTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printtemplate-amd.html" onClick="clickAnchor(this)">PrintTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="projectparameters-amd.html" onClick="clickAnchor(this)">ProjectParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="query-amd.html" onClick="clickAnchor(this)">Query</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querytask-amd.html" onClick="clickAnchor(this)">QueryTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterdata-amd.html" onClick="clickAnchor(this)">RasterData</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="relationparameters-amd.html" onClick="clickAnchor(this)">RelationParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="relationshipquery-amd.html" onClick="clickAnchor(this)">RelationshipQuery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routeparameters-amd.html" onClick="clickAnchor(this)">RouteParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routeresult-amd.html" onClick="clickAnchor(this)">RouteResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routetask-amd.html" onClick="clickAnchor(this)">RouteTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareaparameters-amd.html" onClick="clickAnchor(this)">ServiceAreaParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareasolveresult-amd.html" onClick="clickAnchor(this)">ServiceAreaSolveResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareatask-amd.html" onClick="clickAnchor(this)">ServiceAreaTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="statisticdefinition-amd.html" onClick="clickAnchor(this)">StatisticDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="trimextendparameters-amd.html" onClick="clickAnchor(this)">TrimExtendParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="uniquevaluedefinition-amd.html" onClick="clickAnchor(this)">UniqueValueDefinition</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/datareviewer</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationjob-amd.html" onClick="clickAnchor(this)">BatchValidationJob</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationjobinfo-amd.html" onClick="clickAnchor(this)">BatchValidationJobInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationparameters-amd.html" onClick="clickAnchor(this)">BatchValidationParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationtask-amd.html" onClick="clickAnchor(this)">BatchValidationTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dashboardresult-amd.html" onClick="clickAnchor(this)">DashboardResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dashboardtask-amd.html" onClick="clickAnchor(this)">DashboardTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="getresultsqueryparameters-amd.html" onClick="clickAnchor(this)">GetResultsQueryParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerattributes-amd.html" onClick="clickAnchor(this)">ReviewerAttributes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerfilters-amd.html" onClick="clickAnchor(this)">ReviewerFilters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.tasks.datareviewer.reviewerlifecycle-amd.html" onClick="clickAnchor(this)">ReviewerLifecycle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerresultstask-amd.html" onClick="clickAnchor(this)">ReviewerResultsTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewersession-amd.html" onClick="clickAnchor(this)">ReviewerSession</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="sessionoptions-amd.html" onClick="clickAnchor(this)">SessionOptions</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/geoenrichment</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="addressstudyarea-amd.html" onClick="clickAnchor(this)">AddressStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="drivebuffer-amd.html" onClick="clickAnchor(this)">DriveBuffer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="driveunits-amd.html" onClick="clickAnchor(this)">DriveUnits</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographylevel-amd.html" onClick="clickAnchor(this)">GeographyLevel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographyquery-amd.html" onClick="clickAnchor(this)">GeographyQuery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographyquerybase-amd.html" onClick="clickAnchor(this)">GeographyQueryBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometrystudyarea-amd.html" onClick="clickAnchor(this)">GeometryStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="intersectinggeographies-amd.html" onClick="clickAnchor(this)">IntersectingGeographies</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="ringbuffer-amd.html" onClick="clickAnchor(this)">RingBuffer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographyquerytask-amd.html" onClick="clickAnchor(this)">StandardGeographyQueryTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographystudyarea-amd.html" onClick="clickAnchor(this)">StandardGeographyStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="studyarea-amd.html" onClick="clickAnchor(this)">StudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="subgeographyquery-amd.html" onClick="clickAnchor(this)">SubGeographyQuery</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/locationproviders</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="coordinateslocationprovider-amd.html" onClick="clickAnchor(this)">CoordinatesLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometrylocationprovider-amd.html" onClick="clickAnchor(this)">GeometryLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderbase-amd.html" onClick="clickAnchor(this)">LocationProviderBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderclientbase-amd.html" onClick="clickAnchor(this)">LocationProviderClientBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderremotebase-amd.html" onClick="clickAnchor(this)">LocationProviderRemoteBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locatorlocationprovider-amd.html" onClick="clickAnchor(this)">LocatorLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querytasklocationprovider-amd.html" onClick="clickAnchor(this)">QueryTaskLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographyquerylocationprovider-amd.html" onClick="clickAnchor(this)">StandardGeographyQueryLocationProvider</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/toolbars</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="draw-amd.html" onClick="clickAnchor(this)">Draw</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="edit-amd.html" onClick="clickAnchor(this)">Edit</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasuretool-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureTool</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="navigation-amd.html" onClick="clickAnchor(this)">Navigation</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/virtualearth</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="veaddress-amd.html" onClick="clickAnchor(this)">VEAddress</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vegeocoder-amd.html" onClick="clickAnchor(this)">VEGeocoder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vegeocoderesult-amd.html" onClick="clickAnchor(this)">VEGeocodeResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vetiledlayer-amd.html" onClick="clickAnchor(this)">VETiledLayer</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/workers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="workerclient-amd.html" onClick="clickAnchor(this)">WorkerClient</a>
+                        </div>
+                      </div>
+                </div>
+                      
+                      </div>
+                    </div></div> 
+  </div>
+  <div class="grid_9 contentWrapper">
+    <div id="topicPane" class="js-scroll-to-top">    <div id="printerFriendly" style="position: relative; float: right; font-size: 0.87em;">
+        <a href="#" onclick="printPage()" title="Print page">Print this page</a>
+    </div>
+    <div id="pageBanner">Class: ReportPlayer</div>
+    <div class="api-ref-module-links-container">
+        <div class="api-ref-module-require">[ <a href="reportplayer-amd.html">AMD Module Require</a> | <b>Legacy Module Require</b> ]</div>
+        <div class="api-ref-links"><a href="#constructors">Constructors</a> | <a href="#properties">Properties</a> | <a href="#methods">Methods</a></div>
+    </div>
+    <div id="nstext">
+      
+      <h4 class="dtH4 description">Description</h4>
+      <div class="detaildesc"><div> <i>(Added at v3.24)</i></div><p>The ReportPlayer widget runs infographic report templates for a provided analysis area. It works with the standard provided Esri infographic report templates or custom created infographic report templates. Infographics can be viewed in full page mode or as slides. Once the infographic report is generated it can be exported to a PDF, image, or dynamic HTML.</p>
+<p>The ReportPlayer requires an authenticated user in order to access ArcGIS items and make requests to Geoenrichment. It does not handle sign-in operations. The application has to authenticate the user before running the ReportPlayer. This code snippet shows how you can setup authentication prior to using the ReportPlayer:
+
+<pre class="prettyprint">
+// Required classes
+"esri/arcgis/OAuthInfo",
+"esri/IdentityManager"
+
+var info = new OAuthInfo({
+  appId: "[Application ID]",
+  portalUrl: "[Portal URL]",
+  popup: false
+});
+
+IdentityManager.registerOAuthInfos([info]);
+
+IdentityManager.checkSignInStatus(info.portalUrl).then(function () {
+  // Start Report Player
+}).otherwise(function () {
+  IdentityManager.getCredential(info.portalUrl, {
+    oAuthPopupConfirmation: false}).then(function () {
+    // Start Report Player
+    });
+  });
+});
+</pre>
+For more information on ArcGIS authentication see <a href="oauthinfo-amd.html">OAuthInfo</a>.</div>
+      <h4 class="dtH4 samples">Samples</h4>
+      Search for <a target="_top" href="../jssamples/#search/ReportPlayer">samples</a> that use this class.
+      
+      
+      <h4 class="dtH4 constructors"><a id="constructors"></a>Constructors</h4>
+      <table class="syntaxTABLE syntaxsummarytable">
+        <tr><th class="tableheader name">Name</th><th class="tableheader summary">Summary</th></tr>
+        <tr><td class="syntaxTABLE name"><a href="#reportplayer1">new esri.dijit.geoenrichment.ReportPlayer.ReportPlayer(params?, srcNode?)</a></td><td class="syntaxTABLE summary">Creates a new ReportPlayer dijit using the given DOM node.</td></tr>
+      </table>
+      
+      
+      
+      <h4 class="dtH4 properties"><a id="properties"></a>Properties</h4>
+      <table class="syntaxTABLE syntaxsummarytable">
+        <tr><th class="tableheader name">Name</th><th class="tableheader type">Type</th><th class="tableheader summary">Summary</th></tr>
+        <tr><td class="syntaxTABLE name"><a href="#allowkeyboardnavigation">allowKeyboardNavigation</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates whether left and right arrows key can be used to paginate when <code><a href="#viewmode">viewMode</a></code> is set to <code>PlayerViewModes.PANELS_IN_SLIDES</code>.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#config">config</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></td><td class="syntaxTABLE summary">Configuration to specify the location of the JavaScript API to use when exporting an Infographic to Dynamic HTML.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#dataprovider">dataProvider</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="dataproviderge-amd.html">DataProviderGE</a></code></span></td><td class="syntaxTABLE summary">Data Provider for the ReportPlayer which allows you to specify which export options are available when running the report.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#defaultzoombehavior">defaultZoomBehavior</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></td><td class="syntaxTABLE summary">Specifies how the ReportPlayer should zoom by default.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#enabledatadrilling">enableDataDrilling</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates whether interactive experience for panels should be enabled.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#resizemode">resizeMode</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></td><td class="syntaxTABLE summary">Specifies the resize mode of the ReportPlayer.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#scaleslidestofitwindow">scaleSlidesToFitWindow</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">If <code>true</code>, indicates that panels should scale to fit the window.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#showareatitle">showAreaTitle</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates whether the analysis area title will be shown in the toolbar.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#showtoolbarinpopup">showToolbarInPopup</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates whether the toolbar will be shown in a compact popup view.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#theme">theme</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></td><td class="syntaxTABLE summary">Specifies the theme of the ReportPlayer.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#viewmode">viewMode</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></td><td class="syntaxTABLE summary">Specifies the display of the report in full page view, slide view, or stacked panel view.</td></tr>
+      </table>
+      <h4 class="dtH4 methods"><a id="methods"></a>Methods</h4>
+      <table class="syntaxTABLE syntaxsummarytable">
+        <tr><th class='tableheader name'>Name</th><th class='tableheader return_type'>Return type</th><th class='tableheader summary'>Summary</th></tr>
+        <tr><td class="syntaxTABLE name"><a href="#playreport">playReport(dataProviderParams, playParams?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="http://dojotoolkit.org/reference-guide/1.10/dojo/Deferred.html">Deferred</a></code></span></td><td class="syntaxTABLE summary">Generates the report for the supplied parameters.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#resize">resize(width?, height?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="http://dojotoolkit.org/reference-guide/1.10/dojo/promise/Promise.html">Promise</a></code></span></td><td class="syntaxTABLE summary">Sets the width and height of the ReportPlayer when <code><a href="#resizemode">resizeMode</a></code> is set to <code>PlayerResizeModes.MANUAL</code>.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#setmaxheight">setMaxHeight(number)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Sets the maximum height for the Report Player.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#setmaxwidth">setMaxWidth(number)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Sets the maximum width for the Report Player.</td></tr>
+      </table>
+      
+      <div class="sectionDivider">Constructor Details</div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="reportplayer1"></a>new esri.dijit.geoenrichment.ReportPlayer.ReportPlayer(params?, srcNode?)</h4></div>
+        <div class="syntaxdetaildesc">Creates a new ReportPlayer dijit using the given DOM node.</div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-params"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; params</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Various parameters that can be used to configure the ReportPlayer. All properties can be passed into the constructor as options.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-srcnode"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/API/Node">Node</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; srcNode</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Reference or id of the HTML element where the widget should be rendered.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b><code>params</code> properties:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-allowkeyboardnavigation"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; allowKeyboardNavigation</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Indicates whether left and right arrows key can be used to paginate when <code><a href="#viewmode">viewMode</a></code> is set to <code>PlayerViewModes.PANELS_IN_SLIDES</code>. It defaults to <code>true</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-config"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; config</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description"><i>As of version 3.26</i> Configuration to specify the location of the JavaScript API to use when exporting an Infographic to Dynamic HTML. This is required if enabling <code>Export to Dynamic HTML</code>, otherwise it is not required. Please see the <a href="#config">config</a> property for its available Object properties.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-dataprovider"></a>&lt;<code><span class="return_type"><code><a href="dataproviderge-amd.html">DataProviderGE</a></code></span></code>&gt; dataProvider</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Specifies which export options are available for the report.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-defaultzoombehavior"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; defaultZoomBehavior</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Specifies how the ReportPlayer should zoom by default. It defaults to <code>FIT_PAGE</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-enabledatadrilling"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; enableDataDrilling</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Indicates whether interactive experience for panels should be enabled. It defaults to <code>true</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-resizemode"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; resizeMode</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Specifies the resize mode of the ReportPlayer. It defaults to <i>AUTO</i>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-scaleslidestofitwindow"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; scaleSlidesToFitWindow</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">If <code>true</code>, indicates that panels should scale to fit the window. Applicable when <code><a href="#viewmode">viewMode</a></code> is set to <code>PlayerViewModes.PANELS_IN_SLIDES</code>. It defaults to <code>true</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-showareatitle"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; showAreaTitle</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Indicates whether the analysis area title will be shown in the toolbar. It defaults to <code>true</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-showtoolbarinpopup"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; showToolbarInPopup</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Indicates whether the toolbar will be shown in a compact popup view. It defaults to <code>false</code>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-theme"></a>&lt;<code><span class="return_type"><code><a href="playerthemes-amd.html">PlayerThemes</a></code></span></code>&gt; theme</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Specifies the theme of the ReportPlayer.  It defaults to <i>DARK</i>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="reportplayer1-viewmode"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; viewMode</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Specifies the display of the report in full page view, slide view, or stacked panel view. Defaults to <code>PlayerViewModes.FULL_PAGES</code> for full page view. In version 3.24, you would have used the now deprecated property, <code>isSlidesView</code>. Please use the <code>viewMode</code> property in place of this.</td>
+      </tr>
+</table></div>
+      </div><div class="sectionDivider">Property Details</div>
+
+            <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="allowkeyboardnavigation"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; allowKeyboardNavigation</h4></div>
+        <div class="syntaxdetaildesc">Indicates whether left and right arrows key can be used to paginate when <code><a href="#viewmode">viewMode</a></code> is set to <code>PlayerViewModes.PANELS_IN_SLIDES</code>. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>true</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="config"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; config</h4></div>
+        <div class="syntaxdetaildesc">Configuration to specify the location of the JavaScript API to use when exporting an Infographic to Dynamic HTML. This is required if enabling <code>Export to Dynamic HTML</code>, otherwise it is not required. See the object specifications table below for the structure of the <code>config</code> object.  <i>(Added at v3.26)</i></div>        <div class="detaildesc"><b>Object Specifications:</b> <div class="esri-api-object-specifications"><b>&lt;<code>config</code>&gt;</b></div><table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="config-config-esricssurl"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; esriCssUrl</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">An optional string URL referencing the <code>esri.css</code> stylesheet in the Esri JavaScript API, e.g. e.g. "https://js.arcgis.com/3.26/esri/css/esri.css".</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="config-config-esridijitcssurl"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; esriDijitCssUrl</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">An optional string URL referencing the <code>claro.css</code> stylesheet in the Esri JavaScript API, e.g. "https://js.arcgis.com/3.26/dijit/themes/claro/claro.css".</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="config-config-playersourcerooturl"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; playerSourceRootUrl</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">An optional string URL referencing the Esri JavaScript API, e.g. "https://js.arcgis.com/3.26/".</td>
+      </tr>
+</table></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="dataprovider"></a>&lt;<code><span class="return_type"><code><a href="dataproviderge-amd.html">DataProviderGE</a></code></span></code>&gt; dataProvider</h4></div>
+        <div class="syntaxdetaildesc">Data Provider for the ReportPlayer which allows you to specify which export options are available when running the report.</div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="defaultzoombehavior"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; defaultZoomBehavior</h4></div>
+        <div class="syntaxdetaildesc">Specifies how the ReportPlayer should zoom by default. Please refer to <a href="playerzoombehaviors-amd.html">PlayerZoomBehaviors</a> for additional information on this. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>FIT_PAGE</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="enabledatadrilling"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; enableDataDrilling</h4></div>
+        <div class="syntaxdetaildesc">Indicates whether interactive experience for panels should be enabled. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>true</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="resizemode"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; resizeMode</h4></div>
+        <div class="syntaxdetaildesc">Specifies the resize mode of the ReportPlayer. Please refer to <a href="playerresizemodes-amd.html">PlayerResizeModes</a> for additional information on this.</div>        <div class="detaildesc"><b>Default value:</b> <code>AUTO</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="scaleslidestofitwindow"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; scaleSlidesToFitWindow</h4></div>
+        <div class="syntaxdetaildesc">If <code>true</code>, indicates that panels should scale to fit the window. Applicable when <code><a href="#viewmode">viewMode</a></code> is set to <code>PlayerViewModes.PANELS_IN_SLIDES</code>. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>true</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="showareatitle"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; showAreaTitle</h4></div>
+        <div class="syntaxdetaildesc">Indicates whether the analysis area title will be shown in the toolbar. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>true</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="showtoolbarinpopup"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; showToolbarInPopup</h4></div>
+        <div class="syntaxdetaildesc">Indicates whether the toolbar will be shown in a compact popup view. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>false</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="theme"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; theme</h4></div>
+        <div class="syntaxdetaildesc">Specifies the theme of the ReportPlayer. Please refer to <a href="playerthemes-amd.html">PlayerThemes</a> for additional information on this.</div>        <div class="detaildesc"><b>Default value:</b> <code>DARK</code></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="viewmode"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; viewMode</h4></div>
+        <div class="syntaxdetaildesc">Specifies the display of the report in full page view, slide view, or stacked panel view. Please refer to <a href="playerviewmodes-amd.html">PlayerViewModes</a> for additional information on this. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Default value:</b> <code>FULL_PAGES</code></div>
+      </div>
+      <div class="sectionDivider">Method Details</div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="playreport"></a>playReport(dataProviderParams, playParams?)</h4></div>
+        <div class="syntaxdetaildesc">Generates the report for the supplied parameters.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="http://dojotoolkit.org/reference-guide/1.10/dojo/Deferred.html">Deferred</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; dataProviderParams</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">See the object specifications table below for the structure of the <code>dataProviderParams</code> object.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-playparams"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; playParams</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">See the object specifications table below for the structure of the <code>playParams</code> object.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>Object Specifications:</b> <div class="esri-api-object-specifications"><b>&lt;<code>analysisJson</code>&gt;</b></div><table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-address"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; address</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">Address of location, can be displayed in the generated infographic.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-description"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; description</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">A description for the location, can be displayed in the generated infographic.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-feature"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; feature</td>
+        <td class="syntaxDetailTABLE optional">Required</td>
+        <td class="syntaxDetailTABLE description">Feature of the generated infographic. Geometry is required. Attributes, symbol, and infoTemplate are optional. See sample snippets below: </br> </br>
+<pre class="prettyprint">
+var analysisJson = [{
+  "name": "Area name",
+  "shortName": "Area name (short)",
+  "description": "Area description",
+  "address": "Area address",
+  "latitude": "Area Lat.",
+  "longitude": "Area Long.",
+  "feature": {
+    "geometry": {
+      "rings": [
+        [
+          [-8238372.646123883, 4971599.356069453],
+          [-8236117.753789412, 4970600.8973874515],
+          [-8235730.791333708, 4968556.206880769],
+          [-8240211.912117044, 4969607.216019718],
+          [-8238372.646123883, 4971599.356069453]
+        ]
+      ],
+      "spatialReference": {
+        "wkid": 102100
+      }
+    },
+    "attributes": {
+      "ATTR_1": 1000.12345,
+      "ATTR_2": 2000.12345,
+      "ATTR_3": 3000.12345
+    },
+    "symbol": {
+      "color": [
+        64,
+        128,
+        194,
+        50
+      ],
+      "outline": {
+        "color": [
+          64,
+          128,
+          194,
+          255
+        ],
+        "width": 1.5,
+        "type": "esriSLS",
+        "style": "esriSLSSolid"
+      },
+      "type": "esriSFS",
+      "style": "esriSFSSolid"
+    },
+    "infoTemplate": {
+      "fieldInfos": [
+        {
+          "fieldName": "ATTR_1",
+          "label": "Attribute 1",
+          "format": { places: 1 },
+          "visible": true
+        },
+        {
+          "fieldName": "ATTR_2",
+          "label": "Attribute 2",
+          "format": { places: 2 },
+          "visible": true
+        },
+        {
+          "fieldName": "ATTR_3",
+          "label": "Attribute 3",
+          "format": { places: 3 },
+          "visible": true
+        }
+      ]
+    }
+  }
+}];
+</pre>
+</br>
+The following shows how to specify the location information. This will appear in the UI and in the infographic.
+<pre class="prettyprint">
+var analysisArea = {
+  // Optional. Specify if an area is related to a location point
+  // (e.g. a ring around a location).
+  // Will populate SITE_NAME & STORE_NAME attributes in the report.
+  "locationName": "New York site",
+  "name": "New York site (1 mile)",
+  // Full area name. If locationName is missing,
+  // will populate SITE_NAME & STORE_NAME attributes
+  // in the report.
+  "shortName": "1 mile",
+  // Will be shown in drop downs for quick
+  // area selection.
+  "description": "Ring of 1 mile",
+  // Will populate AREA_DESC2 in the report. 
+  "address": "Apple st. 32, CA",
+  "latitude": "Area Lat.",
+  "longitude": "Area Long."
+}
+</pre>
+</br>
+The analysis area's geometry can be set three various ways:
+<pre class="prettyprint">
+// 1 - Using a Graphic
+
+// Can also use Graphic's Json.
+// Attributes can optionally contain STORE_LAT
+// and STORE_LONG to specify
+// the point of reference used for locator reports.
+
+analysisArea.feature = new Graphic(geometry, symbol, attributes) 
+</pre>
+<pre class="prettyprint">
+// 2 - Geographies. This is used to enrich by geography
+// ids instead of the feature geometry. STORE_LAT and
+// STORE_LONG are optional and are used as a point of
+// reference for locator reports.
+
+analysisArea.geographies = [{ 
+  id: "01",  // Required
+  levelId: "US.States",  // Required
+  attributes: { STORE_LAT: Number, STORE_LONG: Number, ... other attributes },  // Optional
+  symbol: Symbol or Json // Optional, use this to apply custom symbolization.
+}]
+</pre>
+<pre class="prettyprint">
+// 3 - Buffer - Will be enriched with a geometry to build
+// a buffer ring.
+
+analysisArea.buffer = {
+  // e.g. {x: -8259520.139751502, y: 4974476.975557825,
+  // spatialReference: {wkid: 102100}
+  point: Geometry or Json,
+  units: String,  // e.g. "esriMiles"
+  radius: Number, // e.g. 1
+  // Optional, to pass attributes to the enriched polygon
+  attributes: Object,
+  // Optional, to apply custom symbolization to the enriched polygon
+  symbol: Symbol or Json
+}
+</pre></td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-geographies"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object[]</a></code></span></code>&gt; geographies</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">An array of geographies to be used instead of a feature geometry.
+<pre class="prettyprint">
+"geographies": {
+  {"id":"32", "levelId":"US.States"},
+  {"id":"06", "levelId":"US.States"}
+}
+</pre></td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-latitude"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; latitude</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">Latitude of location, can be displayed in the generated infographic.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-longitude"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; longitude</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">Longitude of location, can be displayed in the generated infographic.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-name"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; name</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">The name of the location, this is often displayed in the generated infographic.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-analysisjson-shortname"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; shortName</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">A short name for the location, can be displayed in the generated infographic.</td>
+      </tr>
+</table><div class="esri-api-object-specifications"><b>&lt;<code>dataProviderParams</code>&gt;</b></div><table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams-analysisareas"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code>&gt; analysisAreas</td>
+        <td class="syntaxDetailTABLE optional">Required</td>
+        <td class="syntaxDetailTABLE description">An array of <code>analysisJson</code> objects which detail the location that the infographic will run on. See the additional information regarding the <code>analysisJson</code> object.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams-countryid"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; countryID</td>
+        <td class="syntaxDetailTABLE optional">Required</td>
+        <td class="syntaxDetailTABLE description">Two-digit country code. For example: "US".</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams-geoenrichmenturl"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; geoenrichmentUrl</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">The URL of the Geoenrichment service. If not specified, it will be discovered via the portal helper services.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams-portalurl"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; portalUrl</td>
+        <td class="syntaxDetailTABLE optional">Required</td>
+        <td class="syntaxDetailTABLE description">URL of the ArcGIS Portal instance. For example, "https://www.arcgis.com".</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-dataproviderparams-reportid"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; reportID</td>
+        <td class="syntaxDetailTABLE optional">Required</td>
+        <td class="syntaxDetailTABLE description">The itemID of the Report Template to run. This is the ID of the ReportTemplate item in your content. Can also use one of the following strings to run an Eri infographic: <ul>
+<li>at-risk-population <i>(USA only)</i></li>
+<li>executive-summary-call-outs <i>(USA only)</i></li>
+<li>demographic-summary <i>(USA only)</i></li>
+<li>transportation-to-work <i>(USA only)</i></li>
+<li>health-care <i>(USA only)</i></li>
+<li>marketing-profile <i>(USA only)</i></li>
+<li>portrait-property-flyer <i>(USA only)</i></li>
+<li>tapestry-profile <i>(USA only)</i></li>
+<li>skyscraper <i>(USA only)</i></li>
+<li>nearby-restaurants <i>(USA only)</i></li>
+<li>key-facts <i>(USA, Canada, and MBR countries only)</i></li>
+</ul></td>
+      </tr>
+</table><div class="esri-api-object-specifications"><b>&lt;<code>playParams</code>&gt;</b></div><table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-playparams-disableanimation"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; disableAnimation</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">Indicates whether to disable the animation in the generated report. Defaults to <i>false</i>.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="playreport-playparams-waituntilallcontentisready"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; waitUntilAllContentIsReady</td>
+        <td class="syntaxDetailTABLE optional">Optional</td>
+        <td class="syntaxDetailTABLE description">Set this value to <i>true</i> if required to know when the report has finished loading all of its content. The default value is <i>false</i>.</td>
+      </tr>
+</table></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="resize"></a>resize(width?, height?)</h4></div>
+        <div class="syntaxdetaildesc">Sets the width and height of the ReportPlayer when <code><a href="#resizemode">resizeMode</a></code> is set to <code>PlayerResizeModes.MANUAL</code>. If in any other <code><a href="#resizemode">resizeMode</a></code>, call this without setting any parameters to resize to the specified <code><a href="#resizeMode">resizeMode</a></code>. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="http://dojotoolkit.org/reference-guide/1.10/dojo/promise/Promise.html">Promise</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="resize-width"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; width</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">The width in pixels.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="resize-height"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; height</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">The height in pixels.</td>
+      </tr>
+</table></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="setmaxheight"></a>setMaxHeight(number)</h4></div>
+        <div class="syntaxdetaildesc">Sets the maximum height for the Report Player. This is applicable when <code><a href="#resizemode">resizeMode</a></code> is set to <code>PlayerResizeModes.MANUAL</code>. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="setmaxheight-number"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; number</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The height in pixels.</td>
+      </tr>
+</table></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="setmaxwidth"></a>setMaxWidth(number)</h4></div>
+        <div class="syntaxdetaildesc">Sets the maximum width for the Report Player. This is applicable when <code><a href="#resizemode">resizeMode</a></code> is set to <code>PlayerResizeModes.MANUAL</code>. <i>(Added at v3.25)</i></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="setmaxwidth-number"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; number</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The width in pixels.</td>
+      </tr>
+</table></div>
+      </div>
+      
+    </div>
+ <div id="wh_footer" class="footnote">
+  <!--<a href="mailto:js_feedback@esri.com?subject=Feedback%20on%203.26%20API%20Reference:%20jsapi/reportplayer.html">Report an error on this page</a>.
+  <br>-->
+  <a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a>
+</div>
+</div> 
+  </div>
+</div> 
+
+
+<script src="../scripts/tree.js"></script>
+
+<script src="../prettify/prettify.js"></script>
+<script>
+  var dojoConfig = {
+    async: true,
+    packages: [{
+      "name": "js",
+      "location": location.pathname.replace(/\/[^/]+$/, "/") + "../scripts"
+    }]
+  };
+</script>
+<script src="../scripts/libs/tailcoat.js"></script>
+
+<script src="../scripts/libs/dojo-esri/dojo/dojo.js" data-dojo-config="async: true,locale: 'en-us'"></script>
+<script src="../scripts/esri-main-apiref.js"></script>
+<script src="../scripts/print-format.js"></script>
+<script>
+require(["dojo/on", "dojo/query", "dojo/NodeList-dom"], function(on, query) {
+  on(query(".eventSwitch"), "click", function(evt){
+    if (evt.target.classList[1] !== "enabled") {
+      query(".eventDiv").toggleClass("hidden");
+      query(".eventSwitch").toggleClass("enabled");
+    }
+  });
+});
+</script>
+<script src="../scripts/classList.js"></script>
+
+<script src="../scripts/esri-keyboard-navigation.js"></script>
+<script>
+  require(["dojo/topic", "js/libs/mousetrap"], function(topic, Mousetrap) {
+    Mousetrap.bind([
+              "c",
+// Go to Properties
+"p",
+// Go to Methods
+"m",
+// Go to Type definitions
+"t",
+// Go to Events
+"e",
+      // ${SAMPLE_CODE_BINDINGS}
+      // Focus search
+      "/",
+      // Blur search
+      "esc",
+      // Go to Home
+      "g h",
+      // Go to Guide
+      "g g",
+      // Go to API Reference
+      "g a",
+      // Go to Sample Code
+      "g s",
+      // Show help
+      "?",
+      // Scroll to top of the page
+      "g t",
+      // Scroll to bottom of the page
+      "g b"
+    ], function (mousetrapEvent, keyboardCombination){
+      topic.publish("keyboard:mousetrap", {
+        event: mousetrapEvent,
+        combination: keyboardCombination,
+        navigation: {}
+      });
+
+    });
+  });
+</script>
+<a class="modal-show keyboard-shortcuts-hidden hide js-keyboard-shortcuts" data-modal="keyboard-shortcuts-modal" href="#">Show Modal</a>
+<div class="modal-overlay">
+  <div class="modal keyboard-shortcuts-modal js-keyboard-shortcuts-modal" data-modal="keyboard-shortcuts-modal">
+    <a class="modal-dismiss js-modal-dismiss icon-close right" href="#"></a>
+    <h3 class="keyboard-shortcuts-modal-title">Keyboard shortcuts</h3>
+    <hr class="leader-0 trailer-1">
+    
+    <div class="row">
+      
+      <div class="column-12 js-keyboard-mappings-first-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Site wide shortcuts</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>Bring up this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>esc</kbd></td>
+              <td>Dismiss this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>h</kbd></td>
+              <td>Go to Home</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>g</kbd></td>
+              <td>Go to Guide</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>a</kbd></td>
+              <td>Go to API Reference</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>s</kbd></td>
+              <td>Go to Sample Code</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>t</kbd></td>
+              <td>Scroll to top of page</td>
+            </tr>
+            <tr>
+              <td><kbd>spacebar</kbd></td>
+              <td>Scroll page down</td>
+            </tr>
+            <tr>
+              <td><kbd>shift spacebar</kbd></td>
+              <td>Scroll page up</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>b</kbd></td>
+              <td>Scroll to bottom of page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="column-12 js-keyboard-mappings-second-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>API Reference</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>Focus search</td></tr><tr><td><kbd>c</kbd></td><td>Go to Constructors</td></tr><tr><td><kbd>p</kbd></td><td>Go to Properties</td></tr><tr><td><kbd>m</kbd></td><td>Go to Methods</td></tr><tr><td><kbd>e</kbd></td><td>Go to Events</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>T.init();</script>
+
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+
+ 
+
+
+
+</body>
+</html>

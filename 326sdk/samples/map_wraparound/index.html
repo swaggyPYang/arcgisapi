@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Continuous pan across dateline</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+      #map{
+        padding:0;
+        border:solid 2px; #656868;
+      }
+      .details{
+        font-size:14px;
+        font-weight:700;
+      }
+       #coordsInfo{
+        position:absolute;
+        left:5px;
+        bottom:5px;
+        font-family:"Helvetica";
+        font-weight:800;
+        color:#333399;
+        z-index:50;
+        font-size:14pt;
+      }
+    </style>
+    <script>var dojoConfig = {parseOnLoad: true};</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("dijit.Tooltip");
+
+      
+      var map;
+      var geodesicGraphic;
+      var drawGeodesic = false;
+      var startLoc, endLoc;
+      var inputSymbol,resultSymbol,markerSymbol;
+      var geometryService;
+      
+      function init() {
+        esri.config.defaults.io.proxyUrl = "/proxy/";
+        geometryService = new esri.tasks.GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+        map = new esri.Map("map",{
+          basemap: "streets",
+          center: [52.815, 40.977],
+          zoom: 4
+        });
+        
+        inputSymbol = new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASH, new dojo.Color([255, 0, 0]), 2);
+        resultSymbol = new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255, 0, 0]), 2);
+        markerSymbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 10, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255, 0, 0, 0.5]), 6), new dojo.Color([255, 0, 0, 0.9]));
+        
+       
+        dojo.connect(map, "onLoad", function() {          
+          //setup the drawing events
+          dojo.connect(map,"onMouseDragStart",onMouseDragStart);
+          dojo.connect(map,"onMouseDrag",onMouseDrag);
+          dojo.connect(map,"onMouseMove", showCoordinates);
+          dojo.connect(map,"onMouseDragEnd",onMouseDragEnd);
+        });
+      }
+
+      
+      function drawFeedback(enabled) {
+        if (enabled) {
+          map.disablePan();
+          map.setMapCursor('crosshair');
+          drawGeodesic = true;
+        } else {
+          map.enablePan();
+          map.setMapCursor('default');
+          drawGeodesic = false;
+        }
+      }
+
+      function onMouseDragStart(event) {        
+        if (drawGeodesic) {       
+          startLoc = new esri.Graphic(event.mapPoint, markerSymbol);
+          map.graphics.add(startLoc);
+          geodesicGraphic = null;
+        }
+      }
+
+      function onMouseDrag(evt) {     
+        showCoordinates(evt);
+        if (drawGeodesic) {
+          var geodesicGeom = createLine(startLoc.geometry, evt.mapPoint);         
+          if (geodesicGraphic == null) {
+            geodesicGraphic = new esri.Graphic(geodesicGeom, inputSymbol);
+            map.graphics.add(geodesicGraphic);
+            geodesicGraphic.getDojoShape().moveToBack();
+          } else {
+            geodesicGraphic.setGeometry(geodesicGeom);
+          }
+        }
+      }
+
+      function onMouseDragEnd(event) {        
+        if (drawGeodesic) {
+          geodesicGraphic.setSymbol(resultSymbol);
+          endLoc = new esri.Graphic(event.mapPoint,markerSymbol );
+          map.graphics.add(endLoc);
+          drawFeedback(false);
+        }
+      }
+
+      function createLine(start, end) {
+        //create polyline
+        var polyline = new esri.geometry.Polyline(map.spatialReference);
+        polyline.addPath([start, end]);
+
+        //convert to wgs84 and densify to show shortest great circle path
+        var geodesicGeomGeo = esri.geometry.geodesicDensify(esri.geometry.webMercatorToGeographic(polyline), 100000);
+        
+        //convert from wgs84 to web mercator for display
+        var geodesicGeom = esri.geometry.geographicToWebMercator(geodesicGeomGeo);
+        
+        return geodesicGeom;
+      }
+
+      function clearGraphics() {
+        map.graphics.clear();
+        drawGeodesic = false;
+      }
+
+      function showCoordinates(evt) {
+        var mp = esri.geometry.webMercatorToGeographic(evt.mapPoint);
+        dojo.byId("coordsInfo").innerHTML = "Lat:" + mp.y.toFixed(2) + " Lon:" + mp.x.toFixed(2);
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="claro">
+    <div data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'sidebar', gutters:false" 
+         style="width: 100%; height: 100%; margin: 0;">
+
+      <div id="map" 
+           data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'center'">
+
+        <div style="position:absolute; right:20px; top:10px; z-Index:999;">
+          <div data-dojo-type="dijit.form.Button" id="drawGraphics" showlabel="true" label="Draw Graphic" onclick="drawFeedback(true);"></div>
+          <div data-dojo-type="dijit.Tooltip" connectId="drawGraphics">Click map and drag to draw great circle</div>
+          <div data-dojo-type="dijit.form.Button" id="clearGraphics" showlabel="true" label="Clear Graphics" onclick="clearGraphics();"></div>
+        </div>
+        <div  id="coordsInfo"></div>
+
+     </div>
+    </div>
+  </body>
+
+  </html>

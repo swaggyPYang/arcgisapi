@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="content-language" content="en">
+  <meta name="product" content="js-api-arcgis">
+  <meta name="subject" content="DEVELOPER,WEB,WEB APPLICATIONS,MOBILE">
+  <meta name="sub_category" content="JavaScript API">
+  <meta name="search-collection" content="help">
+  <meta name="search-category" content="help-api,help-api-ref">
+  <meta name="version" content="3.x">
+  <meta name="content_type" content="API Reference"> 
+  <meta name="classname" content="esri/geometry/geometryEngine"> 
+  <meta name="last-modified" content="2018-09-21"> 
+
+  <link rel="stylesheet" href="../styles/screen.css">
+  <link rel="stylesheet" href="../styles/jsdoc.css">
+  <link rel="stylesheet" href="../styles/homepage.css">
+  <link rel="stylesheet" href="../styles/grid.css">
+  <link rel="stylesheet" href="../styles/tree.css">
+  <link rel="stylesheet" href="../prettify/prettify.css">
+  <link rel="stylesheet" href="../styles/tailcoat-search.css">
+  <link rel="stylesheet" href="//fast.fonts.com/cssapi/23855eec-5fdf-4594-9898-0113a04bfef0.css">
+  <link rel="shortcut icon" href="../graphics/favicon.ico">
+
+  <style>
+    html {
+      overflow-y: auto;
+    }
+    .hidden{
+      display: none;
+    }
+    .eventDiv > .dtH4{
+      display: none;
+    }
+    .switch{
+      font-weight: bold;
+    }
+    .eventSwitch:not(.enabled){
+      color: #00629b;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    pre {
+      font-size: 1em;
+      line-height: normal;
+      margin: 0;
+    }
+    #header nav li a {
+      font-size: .875em;
+    }
+    #esri-logo {
+      margin-left: 0;
+    }
+    h1.light {
+      color: #fff;
+    }
+    .navigation-bar {
+      background-image: url("../graphics/tailcoat/navigation-bar-background.jpg");
+    }
+  </style>
+  <title>esri/geometry/geometryEngine | API Reference | ArcGIS API for JavaScript 3.26</title> 
+  
+  
+</head>
+
+<body>
+<header class="header">
+  <div class="container">
+    <nav class="site-nav trailer-half">
+        Go to <a href="https://developers.arcgis.com/javascript/">Latest version (official documentation)</a>
+    </nav>
+  </div>
+</header>
+
+  <div class="navigation-bar ">
+    <div class="container">
+      <header>
+        <h1 class="light"><a href="..">ArcGIS API for JavaScript <sup>3.26</sup></a></h1>
+      </header>
+       <nav class="navigation-bar-nav">
+        <ul>
+            <li class=""><a href="../">Home</a></li>
+            <li class=""><a href="../jshelp/">Guide</a></li>
+            <li class="current"><a href=".">API Reference</a></li>
+            <li class=""><a href="../jssamples/">Sample Code</a></li>
+            <li class=""><a class="icon-share icon-link-external" href="https://community.esri.com/community/developers/web-developers/arcgis-api-for-javascript">Community</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+ 
+
+<div class="container_12">
+  <div class="grid_3 contentWrapper">
+    <div id="toggleToc">
+      <img src="../graphics/tochide.gif" alt=""> Hide Table of Contents
+    </div>
+    <div id="apiToc">
+                <div class="treeDiv" id="tree" style="top: 35px; left: 0px;">
+                  <div id="treeRoot">
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="." onclick="clickAnchor(this)">API Reference Overview</a>
+                    </div>
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="api_devenv.html" onclick="clickAnchor(this)">Set up a development environment</a>
+                    </div>
+                    <div class="treeNode">
+                      <a class="treeUnselected" href="argument_aliases.html" onclick="clickAnchor(this)">Preferred Argument Aliases</a>
+                    </div>
+                    
+                    
+
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.basemaps-amd.html" onClick="clickAnchor(this)">basemaps</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="color-amd.html" onClick="clickAnchor(this)">Color</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.config-amd.html" onClick="clickAnchor(this)">config</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="credential-amd.html" onClick="clickAnchor(this)">Credential</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.domutils-amd.html" onClick="clickAnchor(this)">domUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphic-amd.html" onClick="clickAnchor(this)">Graphic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.graphicsutils-amd.html" onClick="clickAnchor(this)">graphicsUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identitymanager-amd.html" onClick="clickAnchor(this)">IdentityManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identitymanagerbase-amd.html" onClick="clickAnchor(this)">IdentityManagerBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imagespatialreference-amd.html" onClick="clickAnchor(this)">ImageSpatialReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infotemplate-amd.html" onClick="clickAnchor(this)">InfoTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindowbase-amd.html" onClick="clickAnchor(this)">InfoWindowBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.kernel-amd.html" onClick="clickAnchor(this)">kernel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.lang-amd.html" onClick="clickAnchor(this)">lang</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="map-amd.html" onClick="clickAnchor(this)">Map</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="operationbase-amd.html" onClick="clickAnchor(this)">OperationBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.request-amd.html" onClick="clickAnchor(this)">request</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serverinfo-amd.html" onClick="clickAnchor(this)">ServerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="snappingmanager-amd.html" onClick="clickAnchor(this)">SnappingManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="spatialreference-amd.html" onClick="clickAnchor(this)">SpatialReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeextent-amd.html" onClick="clickAnchor(this)">TimeExtent</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="undomanager-amd.html" onClick="clickAnchor(this)">UndoManager</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="units-amd.html" onClick="clickAnchor(this)">units</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.urlutils-amd.html" onClick="clickAnchor(this)">urlUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/arcgis</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="oauthinfo-amd.html" onClick="clickAnchor(this)">OAuthInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portal-amd.html" onClick="clickAnchor(this)">Portal</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalcomment-amd.html" onClick="clickAnchor(this)">PortalComment</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalfolder-amd.html" onClick="clickAnchor(this)">PortalFolder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalgroup-amd.html" onClick="clickAnchor(this)">PortalGroup</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalitem-amd.html" onClick="clickAnchor(this)">PortalItem</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalqueryresult-amd.html" onClick="clickAnchor(this)">PortalQueryResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portalrating-amd.html" onClick="clickAnchor(this)">PortalRating</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="portaluser-amd.html" onClick="clickAnchor(this)">PortalUser</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.arcgis.utils-amd.html" onClick="clickAnchor(this)">utils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attributeinspector-amd.html" onClick="clickAnchor(this)">AttributeInspector</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attribution-amd.html" onClick="clickAnchor(this)">Attribution</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemap-amd.html" onClick="clickAnchor(this)">Basemap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemapgallery-amd.html" onClick="clickAnchor(this)">BasemapGallery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemaplayer-amd.html" onClick="clickAnchor(this)">BasemapLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="basemaptoggle-amd.html" onClick="clickAnchor(this)">BasemapToggle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bookmarkitem-amd.html" onClick="clickAnchor(this)">BookmarkItem</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bookmarks-amd.html" onClick="clickAnchor(this)">Bookmarks</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classedcolorslider-amd.html" onClick="clickAnchor(this)">ClassedColorSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classedsizeslider-amd.html" onClick="clickAnchor(this)">ClassedSizeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorinfoslider-amd.html" onClick="clickAnchor(this)">ColorInfoSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorpicker-amd.html" onClick="clickAnchor(this)">ColorPicker</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="directions-amd.html" onClick="clickAnchor(this)">Directions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="elevationprofile-amd.html" onClick="clickAnchor(this)">ElevationProfile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretable-amd.html" onClick="clickAnchor(this)">FeatureTable</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gallery-amd.html" onClick="clickAnchor(this)">Gallery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gauge-amd.html" onClick="clickAnchor(this)">Gauge</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geocoder-amd.html" onClick="clickAnchor(this)">Geocoder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="heatmapslider-amd.html" onClick="clickAnchor(this)">HeatmapSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="histogramtimeslider-amd.html" onClick="clickAnchor(this)">HistogramTimeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="homebutton-amd.html" onClick="clickAnchor(this)">HomeButton</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="horizontalslider-amd.html" onClick="clickAnchor(this)">HorizontalSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasure-amd.html" onClick="clickAnchor(this)">ImageServiceMeasure</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindow-amd.html" onClick="clickAnchor(this)">InfoWindow</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infowindowlite-amd.html" onClick="clickAnchor(this)">InfoWindowLite</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerlist-amd.html" onClick="clickAnchor(this)">LayerList</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerswipe-amd.html" onClick="clickAnchor(this)">LayerSwipe</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="legend-amd.html" onClick="clickAnchor(this)">Legend</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locatebutton-amd.html" onClick="clickAnchor(this)">LocateButton</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="measurement-amd.html" onClick="clickAnchor(this)">Measurement</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="obliqueviewer-amd.html" onClick="clickAnchor(this)">ObliqueViewer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="opacityslider-amd.html" onClick="clickAnchor(this)">OpacitySlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="overviewmap-amd.html" onClick="clickAnchor(this)">OverviewMap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popup-amd.html" onClick="clickAnchor(this)">Popup</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popupmobile-amd.html" onClick="clickAnchor(this)">PopupMobile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="popuptemplate-amd.html" onClick="clickAnchor(this)">PopupTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="print-amd.html" onClick="clickAnchor(this)">Print</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rendererslider-amd.html" onClick="clickAnchor(this)">RendererSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="scalebar-amd.html" onClick="clickAnchor(this)">Scalebar</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="search-amd.html" onClick="clickAnchor(this)">Search</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="sizeinfoslider-amd.html" onClick="clickAnchor(this)">SizeInfoSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbolstyler-amd.html" onClick="clickAnchor(this)">SymbolStyler</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeslider-amd.html" onClick="clickAnchor(this)">TimeSlider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="visiblescalerangeslider-amd.html" onClick="clickAnchor(this)">VisibleScaleRangeSlider</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/analysis</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="aggregatepoints-amd.html" onClick="clickAnchor(this)">AggregatePoints</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="analysisbase-amd.html" onClick="clickAnchor(this)">AnalysisBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="calculatedensity-amd.html" onClick="clickAnchor(this)">CalculateDensity</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="choosebestfacilities-amd.html" onClick="clickAnchor(this)">ChooseBestFacilities</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="connectoriginstodestinations-amd.html" onClick="clickAnchor(this)">ConnectOriginsToDestinations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createbuffers-amd.html" onClick="clickAnchor(this)">CreateBuffers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createdrivetimeareas-amd.html" onClick="clickAnchor(this)">CreateDriveTimeAreas</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createviewshed-amd.html" onClick="clickAnchor(this)">CreateViewshed</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="createwatersheds-amd.html" onClick="clickAnchor(this)">CreateWatersheds</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="derivenewlocations-amd.html" onClick="clickAnchor(this)">DeriveNewLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dissolveboundaries-amd.html" onClick="clickAnchor(this)">DissolveBoundaries</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="enrichlayer-amd.html" onClick="clickAnchor(this)">EnrichLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extractdata-amd.html" onClick="clickAnchor(this)">ExtractData</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findexistinglocations-amd.html" onClick="clickAnchor(this)">FindExistingLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findhotspots-amd.html" onClick="clickAnchor(this)">FindHotSpots</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findnearest-amd.html" onClick="clickAnchor(this)">FindNearest</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findsimilarlocations-amd.html" onClick="clickAnchor(this)">FindSimilarLocations</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="interpolatepoints-amd.html" onClick="clickAnchor(this)">InterpolatePoints</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mergelayers-amd.html" onClick="clickAnchor(this)">MergeLayers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="overlaylayers-amd.html" onClick="clickAnchor(this)">OverlayLayers</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="planroutes-amd.html" onClick="clickAnchor(this)">PlanRoutes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="summarizenearby-amd.html" onClick="clickAnchor(this)">SummarizeNearby</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="summarizewithin-amd.html" onClick="clickAnchor(this)">SummarizeWithin</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tracedownstream-amd.html" onClick="clickAnchor(this)">TraceDownstream</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/editing</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="add-amd.html" onClick="clickAnchor(this)">Add</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="attachmenteditor-amd.html" onClick="clickAnchor(this)">AttachmentEditor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="cut-amd.html" onClick="clickAnchor(this)">Cut</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="delete-amd.html" onClick="clickAnchor(this)">Delete</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="editor-amd.html" onClick="clickAnchor(this)">Editor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="templatepicker-amd.html" onClick="clickAnchor(this)">TemplatePicker</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="union-amd.html" onClick="clickAnchor(this)">Union</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="update-amd.html" onClick="clickAnchor(this)">Update</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/geoenrichment</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="databrowser-amd.html" onClick="clickAnchor(this)">DataBrowser</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographic-amd.html" onClick="clickAnchor(this)">Infographic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicscarousel-amd.html" onClick="clickAnchor(this)">InfographicsCarousel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicsoptions-amd.html" onClick="clickAnchor(this)">InfographicsOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="infographicsoptionsitem-amd.html" onClick="clickAnchor(this)">InfographicsOptionsItem</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/geoenrichment/ReportPlayer</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dataproviderge-amd.html" onClick="clickAnchor(this)">DataProviderGE</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playercommands-amd.html" onClick="clickAnchor(this)">PlayerCommands</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerresizemodes-amd.html" onClick="clickAnchor(this)">PlayerResizeModes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerthemes-amd.html" onClick="clickAnchor(this)">PlayerThemes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerviewmodes-amd.html" onClick="clickAnchor(this)">PlayerViewModes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reportplayer-amd.html" onClick="clickAnchor(this)">ReportPlayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="playerzoombehaviors-amd.html" onClick="clickAnchor(this)">PlayerZoomBehaviors</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/dijit/util</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.dijit.util.busyindicator-amd.html" onClick="clickAnchor(this)">busyIndicator</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/geometry</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="circle-amd.html" onClick="clickAnchor(this)">Circle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.coordinateformatter-amd.html" onClick="clickAnchor(this)">coordinateFormatter</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extent-amd.html" onClick="clickAnchor(this)">Extent</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geodesicutils-amd.html" onClick="clickAnchor(this)">geodesicUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographictransformation-amd.html" onClick="clickAnchor(this)">GeographicTransformation</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographictransformationstep-amd.html" onClick="clickAnchor(this)">GeographicTransformationStep</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometry-amd.html" onClick="clickAnchor(this)">Geometry</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geometryengine-amd.html" onClick="clickAnchor(this)">geometryEngine</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.geometryengineasync-amd.html" onClick="clickAnchor(this)">geometryEngineAsync</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.mathutils-amd.html" onClick="clickAnchor(this)">mathUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="multipoint-amd.html" onClick="clickAnchor(this)">Multipoint</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.normalizeutils-amd.html" onClick="clickAnchor(this)">normalizeUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="point-amd.html" onClick="clickAnchor(this)">Point</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="polygon-amd.html" onClick="clickAnchor(this)">Polygon</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="polyline-amd.html" onClick="clickAnchor(this)">Polyline</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.projection-amd.html" onClick="clickAnchor(this)">projection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.scaleutils-amd.html" onClick="clickAnchor(this)">scaleUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="screenpoint-amd.html" onClick="clickAnchor(this)">ScreenPoint</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.screenutils-amd.html" onClick="clickAnchor(this)">screenUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.geometry.webmercatorutils-amd.html" onClick="clickAnchor(this)">webMercatorUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/layer/pixelFilters</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="stretchfilter-amd.html" onClick="clickAnchor(this)">StretchFilter</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/layers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisdynamicmapservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISDynamicMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisimageservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISImageServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgisimageservicevectorlayer-amd.html" onClick="clickAnchor(this)">ArcGISImageServiceVectorLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="arcgistiledmapservicelayer-amd.html" onClick="clickAnchor(this)">ArcGISTiledMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="codedvaluedomain-amd.html" onClick="clickAnchor(this)">CodedValueDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="csvlayer-amd.html" onClick="clickAnchor(this)">CSVLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dataadapterfeaturelayer-amd.html" onClick="clickAnchor(this)">DataAdapterFeatureLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datasource-amd.html" onClick="clickAnchor(this)">DataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dimensionaldefinition-amd.html" onClick="clickAnchor(this)">DimensionalDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="domain-amd.html" onClick="clickAnchor(this)">Domain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dynamiclayerinfo-amd.html" onClick="clickAnchor(this)">DynamicLayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dynamicmapservicelayer-amd.html" onClick="clickAnchor(this)">DynamicMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureeditresult-amd.html" onClick="clickAnchor(this)">FeatureEditResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featurelayer-amd.html" onClick="clickAnchor(this)">FeatureLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretemplate-amd.html" onClick="clickAnchor(this)">FeatureTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featuretype-amd.html" onClick="clickAnchor(this)">FeatureType</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="field-amd.html" onClick="clickAnchor(this)">Field</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="georsslayer-amd.html" onClick="clickAnchor(this)">GeoRSSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphicslayer-amd.html" onClick="clickAnchor(this)">GraphicsLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageparameters-amd.html" onClick="clickAnchor(this)">ImageParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceparameters-amd.html" onClick="clickAnchor(this)">ImageServiceParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="inheriteddomain-amd.html" onClick="clickAnchor(this)">InheritedDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="joindatasource-amd.html" onClick="clickAnchor(this)">JoinDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmlfolder-amd.html" onClick="clickAnchor(this)">KMLFolder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmlgroundoverlay-amd.html" onClick="clickAnchor(this)">KMLGroundOverlay</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="kmllayer-amd.html" onClick="clickAnchor(this)">KMLLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="labelclass-amd.html" onClick="clickAnchor(this)">LabelClass</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="labellayer-amd.html" onClick="clickAnchor(this)">LabelLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layer-amd.html" onClick="clickAnchor(this)">Layer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerdatasource-amd.html" onClick="clickAnchor(this)">LayerDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerdrawingoptions-amd.html" onClick="clickAnchor(this)">LayerDrawingOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layerinfo-amd.html" onClick="clickAnchor(this)">LayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layermapsource-amd.html" onClick="clickAnchor(this)">LayerMapSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layersource-amd.html" onClick="clickAnchor(this)">LayerSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="layertimeoptions-amd.html" onClick="clickAnchor(this)">LayerTimeOptions</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="lod-amd.html" onClick="clickAnchor(this)">LOD</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapimage-amd.html" onClick="clickAnchor(this)">MapImage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapimagelayer-amd.html" onClick="clickAnchor(this)">MapImageLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mosaicrule-amd.html" onClick="clickAnchor(this)">MosaicRule</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="openstreetmaplayer-amd.html" onClick="clickAnchor(this)">OpenStreetMapLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="pixelblock-amd.html" onClick="clickAnchor(this)">PixelBlock</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querydatasource-amd.html" onClick="clickAnchor(this)">QueryDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rangedomain-amd.html" onClick="clickAnchor(this)">RangeDomain</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterdatasource-amd.html" onClick="clickAnchor(this)">RasterDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterfunction-amd.html" onClick="clickAnchor(this)">RasterFunction</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterlayer-amd.html" onClick="clickAnchor(this)">RasterLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="streamlayer-amd.html" onClick="clickAnchor(this)">StreamLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tabledatasource-amd.html" onClick="clickAnchor(this)">TableDataSource</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tiledmapservicelayer-amd.html" onClick="clickAnchor(this)">TiledMapServiceLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="tileinfo-amd.html" onClick="clickAnchor(this)">TileInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeinfo-amd.html" onClick="clickAnchor(this)">TimeInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timereference-amd.html" onClick="clickAnchor(this)">TimeReference</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vectortilelayer-amd.html" onClick="clickAnchor(this)">VectorTileLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcsconnection-amd.html" onClick="clickAnchor(this)">WCSConnection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcscoveragedescription-amd.html" onClick="clickAnchor(this)">WCSCoverageDescription</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wcslayer-amd.html" onClick="clickAnchor(this)">WCSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="webtiledlayer-amd.html" onClick="clickAnchor(this)">WebTiledLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wfslayer-amd.html" onClick="clickAnchor(this)">WFSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmslayer-amd.html" onClick="clickAnchor(this)">WMSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmslayerinfo-amd.html" onClick="clickAnchor(this)">WMSLayerInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmtslayer-amd.html" onClick="clickAnchor(this)">WMTSLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="wmtslayerinfo-amd.html" onClick="clickAnchor(this)">WMTSLayerInfo</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/opsdashboard</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datasourceproxy-amd.html" onClick="clickAnchor(this)">DataSourceProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extensionbase-amd.html" onClick="clickAnchor(this)">ExtensionBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="extensionconfigurationbase-amd.html" onClick="clickAnchor(this)">ExtensionConfigurationBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionconfigurationproxy-amd.html" onClick="clickAnchor(this)">FeatureActionConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionfeatures-amd.html" onClick="clickAnchor(this)">FeatureActionFeatures</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureactionproxy-amd.html" onClick="clickAnchor(this)">featureActionProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="graphicslayerproxy-amd.html" onClick="clickAnchor(this)">GraphicsLayerProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="maptoolconfigurationproxy-amd.html" onClick="clickAnchor(this)">MapToolConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="maptoolproxy-amd.html" onClick="clickAnchor(this)">MapToolProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="mapwidgetproxy-amd.html" onClick="clickAnchor(this)">MapWidgetProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="widgetconfigurationproxy-amd.html" onClick="clickAnchor(this)">WidgetConfigurationProxy</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="widgetproxy-amd.html" onClick="clickAnchor(this)">WidgetProxy</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/plugins</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featurelayerstatistics-amd.html" onClick="clickAnchor(this)">FeatureLayerStatistics</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.plugins.spatialindex-amd.html" onClick="clickAnchor(this)">spatialIndex</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/process</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="processor-amd.html" onClick="clickAnchor(this)">Processor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="spatialindex-amd.html" onClick="clickAnchor(this)">SpatialIndex</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/renderers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="blendrenderer-amd.html" onClick="clickAnchor(this)">BlendRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classbreaksrenderer-amd.html" onClick="clickAnchor(this)">ClassBreaksRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dotdensityrenderer-amd.html" onClick="clickAnchor(this)">DotDensityRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="heatmaprenderer-amd.html" onClick="clickAnchor(this)">HeatmapRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.renderers.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="renderer-amd.html" onClick="clickAnchor(this)">Renderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="scaledependentrenderer-amd.html" onClick="clickAnchor(this)">ScaleDependentRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplerenderer-amd.html" onClick="clickAnchor(this)">SimpleRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.renderers.smartmapping-amd.html" onClick="clickAnchor(this)">smartMapping</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbolager-amd.html" onClick="clickAnchor(this)">SymbolAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="temporalrenderer-amd.html" onClick="clickAnchor(this)">TemporalRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timeclassbreaksager-amd.html" onClick="clickAnchor(this)">TimeClassBreaksAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="timerampager-amd.html" onClick="clickAnchor(this)">TimeRampAger</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="uniquevaluerenderer-amd.html" onClick="clickAnchor(this)">UniqueValueRenderer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vectorfieldrenderer-amd.html" onClick="clickAnchor(this)">VectorFieldRenderer</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/styles</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.basic-amd.html" onClick="clickAnchor(this)">basic</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.choropleth-amd.html" onClick="clickAnchor(this)">choropleth</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.heatmap-amd.html" onClick="clickAnchor(this)">heatmap</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.relationship-amd.html" onClick="clickAnchor(this)">relationship</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.size-amd.html" onClick="clickAnchor(this)">size</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.styles.type-amd.html" onClick="clickAnchor(this)">type</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/support</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.support.expressionutils-amd.html" onClick="clickAnchor(this)">expressionUtils</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/symbols</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="cartographiclinesymbol-amd.html" onClick="clickAnchor(this)">CartographicLineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="fillsymbol-amd.html" onClick="clickAnchor(this)">FillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="font-amd.html" onClick="clickAnchor(this)">Font</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.symbols.jsonutils-amd.html" onClick="clickAnchor(this)">jsonUtils</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="linesymbol-amd.html" onClick="clickAnchor(this)">LineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="markersymbol-amd.html" onClick="clickAnchor(this)">MarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="picturefillsymbol-amd.html" onClick="clickAnchor(this)">PictureFillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="picturemarkersymbol-amd.html" onClick="clickAnchor(this)">PictureMarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplefillsymbol-amd.html" onClick="clickAnchor(this)">SimpleFillSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplelinesymbol-amd.html" onClick="clickAnchor(this)">SimpleLineSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="simplemarkersymbol-amd.html" onClick="clickAnchor(this)">SimpleMarkerSymbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="symbol-amd.html" onClick="clickAnchor(this)">Symbol</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="textsymbol-amd.html" onClick="clickAnchor(this)">TextSymbol</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="addresscandidate-amd.html" onClick="clickAnchor(this)">AddressCandidate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="algorithmiccolorramp-amd.html" onClick="clickAnchor(this)">AlgorithmicColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="areasandlengthsparameters-amd.html" onClick="clickAnchor(this)">AreasAndLengthsParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="bufferparameters-amd.html" onClick="clickAnchor(this)">BufferParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classbreaksdefinition-amd.html" onClick="clickAnchor(this)">ClassBreaksDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="classificationdefinition-amd.html" onClick="clickAnchor(this)">ClassificationDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilityparameters-amd.html" onClick="clickAnchor(this)">ClosestFacilityParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilitysolveresult-amd.html" onClick="clickAnchor(this)">ClosestFacilitySolveResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="closestfacilitytask-amd.html" onClick="clickAnchor(this)">ClosestFacilityTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="colorramp-amd.html" onClick="clickAnchor(this)">ColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datafile-amd.html" onClick="clickAnchor(this)">DataFile</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="datalayer-amd.html" onClick="clickAnchor(this)">DataLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="date-amd.html" onClick="clickAnchor(this)">Date</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="densifyparameters-amd.html" onClick="clickAnchor(this)">DensifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="directionsfeatureset-amd.html" onClick="clickAnchor(this)">DirectionsFeatureSet</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="distanceparameters-amd.html" onClick="clickAnchor(this)">DistanceParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="featureset-amd.html" onClick="clickAnchor(this)">FeatureSet</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findparameters-amd.html" onClick="clickAnchor(this)">FindParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findresult-amd.html" onClick="clickAnchor(this)">FindResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="findtask-amd.html" onClick="clickAnchor(this)">FindTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generalizeparameters-amd.html" onClick="clickAnchor(this)">GeneralizeParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generaterendererparameters-amd.html" onClick="clickAnchor(this)">GenerateRendererParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="generaterenderertask-amd.html" onClick="clickAnchor(this)">GenerateRendererTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometryservice-amd.html" onClick="clickAnchor(this)">GeometryService</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geoprocessor-amd.html" onClick="clickAnchor(this)">Geoprocessor</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="gpmessage-amd.html" onClick="clickAnchor(this)">GPMessage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifyparameters-amd.html" onClick="clickAnchor(this)">IdentifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifyresult-amd.html" onClick="clickAnchor(this)">IdentifyResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="identifytask-amd.html" onClick="clickAnchor(this)">IdentifyTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifyparameters-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifyresult-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageserviceidentifytask-amd.html" onClick="clickAnchor(this)">ImageServiceIdentifyTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasureparameters-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasuretask-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="jobinfo-amd.html" onClick="clickAnchor(this)">JobInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="legendlayer-amd.html" onClick="clickAnchor(this)">LegendLayer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="lengthsparameters-amd.html" onClick="clickAnchor(this)">LengthsParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="linearunit-amd.html" onClick="clickAnchor(this)">LinearUnit</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locator-amd.html" onClick="clickAnchor(this)">Locator</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="multipartcolorramp-amd.html" onClick="clickAnchor(this)">MultipartColorRamp</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="namessage-amd.html" onClick="clickAnchor(this)">NAMessage</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="naoutputline-amd.html" onClick="clickAnchor(this)">NAOutputLine</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="naoutputpolygon-amd.html" onClick="clickAnchor(this)">NAOutputPolygon</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="natraveldirection-amd.html" onClick="clickAnchor(this)">NATravelDirection</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="natypes-amd.html" onClick="clickAnchor(this)">NATypes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="nauturn-amd.html" onClick="clickAnchor(this)">NAUTurn</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="offsetparameters-amd.html" onClick="clickAnchor(this)">OffsetParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="parametervalue-amd.html" onClick="clickAnchor(this)">ParameterValue</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printparameters-amd.html" onClick="clickAnchor(this)">PrintParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printtask-amd.html" onClick="clickAnchor(this)">PrintTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="printtemplate-amd.html" onClick="clickAnchor(this)">PrintTemplate</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="projectparameters-amd.html" onClick="clickAnchor(this)">ProjectParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="query-amd.html" onClick="clickAnchor(this)">Query</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querytask-amd.html" onClick="clickAnchor(this)">QueryTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="rasterdata-amd.html" onClick="clickAnchor(this)">RasterData</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="relationparameters-amd.html" onClick="clickAnchor(this)">RelationParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="relationshipquery-amd.html" onClick="clickAnchor(this)">RelationshipQuery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routeparameters-amd.html" onClick="clickAnchor(this)">RouteParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routeresult-amd.html" onClick="clickAnchor(this)">RouteResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="routetask-amd.html" onClick="clickAnchor(this)">RouteTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareaparameters-amd.html" onClick="clickAnchor(this)">ServiceAreaParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareasolveresult-amd.html" onClick="clickAnchor(this)">ServiceAreaSolveResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="serviceareatask-amd.html" onClick="clickAnchor(this)">ServiceAreaTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="statisticdefinition-amd.html" onClick="clickAnchor(this)">StatisticDefinition</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="trimextendparameters-amd.html" onClick="clickAnchor(this)">TrimExtendParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="uniquevaluedefinition-amd.html" onClick="clickAnchor(this)">UniqueValueDefinition</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/datareviewer</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationjob-amd.html" onClick="clickAnchor(this)">BatchValidationJob</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationjobinfo-amd.html" onClick="clickAnchor(this)">BatchValidationJobInfo</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationparameters-amd.html" onClick="clickAnchor(this)">BatchValidationParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="batchvalidationtask-amd.html" onClick="clickAnchor(this)">BatchValidationTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dashboardresult-amd.html" onClick="clickAnchor(this)">DashboardResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="dashboardtask-amd.html" onClick="clickAnchor(this)">DashboardTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="getresultsqueryparameters-amd.html" onClick="clickAnchor(this)">GetResultsQueryParameters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerattributes-amd.html" onClick="clickAnchor(this)">ReviewerAttributes</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerfilters-amd.html" onClick="clickAnchor(this)">ReviewerFilters</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="esri.tasks.datareviewer.reviewerlifecycle-amd.html" onClick="clickAnchor(this)">ReviewerLifecycle</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewerresultstask-amd.html" onClick="clickAnchor(this)">ReviewerResultsTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="reviewersession-amd.html" onClick="clickAnchor(this)">ReviewerSession</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="sessionoptions-amd.html" onClick="clickAnchor(this)">SessionOptions</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/geoenrichment</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="addressstudyarea-amd.html" onClick="clickAnchor(this)">AddressStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="drivebuffer-amd.html" onClick="clickAnchor(this)">DriveBuffer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="driveunits-amd.html" onClick="clickAnchor(this)">DriveUnits</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographylevel-amd.html" onClick="clickAnchor(this)">GeographyLevel</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographyquery-amd.html" onClick="clickAnchor(this)">GeographyQuery</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geographyquerybase-amd.html" onClick="clickAnchor(this)">GeographyQueryBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometrystudyarea-amd.html" onClick="clickAnchor(this)">GeometryStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="intersectinggeographies-amd.html" onClick="clickAnchor(this)">IntersectingGeographies</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="ringbuffer-amd.html" onClick="clickAnchor(this)">RingBuffer</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographyquerytask-amd.html" onClick="clickAnchor(this)">StandardGeographyQueryTask</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographystudyarea-amd.html" onClick="clickAnchor(this)">StandardGeographyStudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="studyarea-amd.html" onClick="clickAnchor(this)">StudyArea</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="subgeographyquery-amd.html" onClick="clickAnchor(this)">SubGeographyQuery</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/tasks/locationproviders</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="coordinateslocationprovider-amd.html" onClick="clickAnchor(this)">CoordinatesLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="geometrylocationprovider-amd.html" onClick="clickAnchor(this)">GeometryLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderbase-amd.html" onClick="clickAnchor(this)">LocationProviderBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderclientbase-amd.html" onClick="clickAnchor(this)">LocationProviderClientBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locationproviderremotebase-amd.html" onClick="clickAnchor(this)">LocationProviderRemoteBase</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="locatorlocationprovider-amd.html" onClick="clickAnchor(this)">LocatorLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="querytasklocationprovider-amd.html" onClick="clickAnchor(this)">QueryTaskLocationProvider</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="standardgeographyquerylocationprovider-amd.html" onClick="clickAnchor(this)">StandardGeographyQueryLocationProvider</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/toolbars</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="draw-amd.html" onClick="clickAnchor(this)">Draw</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="edit-amd.html" onClick="clickAnchor(this)">Edit</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="imageservicemeasuretool-amd.html" onClick="clickAnchor(this)">ImageServiceMeasureTool</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="navigation-amd.html" onClick="clickAnchor(this)">Navigation</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/virtualearth</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="veaddress-amd.html" onClick="clickAnchor(this)">VEAddress</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vegeocoder-amd.html" onClick="clickAnchor(this)">VEGeocoder</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vegeocoderesult-amd.html" onClick="clickAnchor(this)">VEGeocodeResult</a>
+                        </div>
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="vetiledlayer-amd.html" onClick="clickAnchor(this)">VETiledLayer</a>
+                        </div>
+                      </div>
+                </div>
+                <div class="treeNode">
+                  <img class="treeLinkImage" onClick="expandCollapse(this.parentNode)" src="../graphics/treenodeplus.gif" alt=""/>
+                    <span onClick="expandCollapse(this.parentNode)" style="cursor: pointer;">esri/workers</span>
+                      <div class="treeSubnodesHidden">
+                        <div class="treeNode">
+                          <a class="treeUnselected" href="workerclient-amd.html" onClick="clickAnchor(this)">WorkerClient</a>
+                        </div>
+                      </div>
+                </div>
+                      
+                      </div>
+                    </div></div> 
+  </div>
+  <div class="grid_9 contentWrapper">
+    <div id="topicPane" class="js-scroll-to-top">    <div id="printerFriendly" style="position: relative; float: right; font-size: 0.87em;">
+        <a href="#" onclick="printPage()" title="Print page">Print this page</a>
+    </div>
+    <div id="pageBanner">Object: esri/geometry/geometryEngine</div>
+    <div class="api-ref-module-links-container">
+        <div class="api-ref-module-require">[ <b>AMD Module Require</b> | <a href="esri.geometry.geometryengine.html">Legacy Module Require</a> ]</div>
+        <div class="api-ref-links"><a href="#methods">Methods</a></div>
+    </div>
+    <div id="nstext">
+      <p><pre class="prettyprint esri-require">require(["esri/geometry/geometryEngine"], function(geometryEngine) { /* code goes here */ });</pre></p>
+      <h4 class="dtH4 description">Description</h4>
+      <div class="detaildesc"><div> <i>(Added at v3.13)</i></div>A client-side geometry engine. If more than one geometry is required for any of the methods below, all geometries must have the same spatial reference for the method to work as expected. See the <a href="#union"><code>union</code></a> method for a code sample.
+<br><br><b>Known limitation:</b> This class is only supported using AMD-style coding syntax.</div>
+      <h4 class="dtH4 samples">Samples</h4>
+      Search for <a target="_top" href="../jssamples/#search/geometryEngine">samples</a> that use this class.
+      
+      
+      
+      
+      
+      
+      
+      <h4 class="dtH4 methods"><a id="methods"></a>Methods</h4>
+      <table class="syntaxTABLE syntaxsummarytable">
+        <tr><th class='tableheader name'>Name</th><th class='tableheader return_type'>Return type</th><th class='tableheader summary'>Summary</th></tr>
+        <tr><td class="syntaxTABLE name"><a href="#buffer">buffer(geometry, distance, unit, unionResults?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="polygon-amd.html">Polygon</a></code></span> | <span class="return_type"><code><a href="polygon-amd.html">Polygon[]</a></code></span></td><td class="syntaxTABLE summary">Creates planar (or Euclidean) buffer polygons at a specified distance around the input geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#clip">clip(geometry, envelope)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Calculates the clipped geometry from a target geometry by an envelope.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#contains">contains(containerGeometry, insideGeometry)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry contains another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#convexhull">convexHull(geometry, merge?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">Calculates the convex hull of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#crosses">crosses(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry crosses another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#cut">cut(geometry, cutter)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">Split the input Polyline or Polygon where it crosses a cutting Polyline.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#densify">densify(geometry, maxSegmentLength, maxSegmentLengthUnit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Densify geometries by plotting points between existing vertices.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#difference">difference(inputGeometry, subtractor)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">Creates the difference of two geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#disjoint">disjoint(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry is disjoint (doesn't intersect in any way) with another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#distance">distance(geometry1, geometry2, distanceUnit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Calculates the shortest planar distance between two geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#equals">equals(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if two geometries are equal.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#extendedspatialreferenceinfo">extendedSpatialReferenceInfo(spatialReference)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></td><td class="syntaxTABLE summary">Returns an object containing additional information about the input spatial reference.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#fliphorizontal">flipHorizontal(geometry, flipOrigin?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Flips a geometry on the horizontal axis.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#flipvertical">flipVertical(geometry, flipOrigin?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Flips a geometry on the vertical axis.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#generalize">generalize(geometry, maxDeviation, removeDegenerateParts?, maxDeviationUnit?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Performs the generalize operation on the geometries in the cursor.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#geodesicarea">geodesicArea(geometry, unit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Calculates the area of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#geodesicbuffer">geodesicBuffer(geometry, distance, unit, unionResults?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="polygon-amd.html">Polygon</a></code></span> | <span class="return_type"><code><a href="polygon-amd.html">Polygon[]</a></code></span></td><td class="syntaxTABLE summary">Creates geodesic buffer polygons at a specified distance around the input geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#geodesicdensify">geodesicDensify(geometry, maxSegmentLength, maxSegmentLengthUnit?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Returns a geodesically densified version of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#geodesiclength">geodesicLength(geometry, unit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Calculates the length of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#intersect">intersect(geometry, intersector)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">Creates a new geometry through intersection between two geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#intersects">intersects(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry intersects another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#issimple">isSimple(geometry)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if the given geometry is topologically simple.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#nearestcoordinate">nearestCoordinate(geometry, inputPoint)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></td><td class="syntaxTABLE summary">Finds the coordinate of the geometry which is closest to the specified point.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#nearestvertex">nearestVertex(geometry, inputPoint)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></td><td class="syntaxTABLE summary">Finds vertex on the geometry nearest to the specified point.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#nearestvertices">nearestVertices(geometry, inputPoint, searchRadius, maxVertexCountToReturn)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object[]</a></code></span></td><td class="syntaxTABLE summary">Finds all vertices in the given distance from the specified point, sorted from the closest to the furthest and returns them as an array of objects.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#offset">offset(geometry, offsetDistance, offsetUnit, joinType, bevelRatio?, flattenError?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">The offset operation creates a geometry that is a constant planar distance from an input polyline or polygon.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#overlaps">overlaps(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry  overlaps another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#planararea">planarArea(geometry, unit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Calculates the area of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#planarlength">planarLength(geometry, unit)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></td><td class="syntaxTABLE summary">Calculates the length of the input geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#relate">relate(geometry1, geometry2, relation)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if the given DE-9IM relation holds for the two geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#rotate">rotate(geometry, angle, rotationOrigin?)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Rotates a geometry by a specified angle.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#simplify">simplify(geometry)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">Performs the simplify operation on the geometry which alters the given geometries to make their definitions topologically legal with respect to their geometry type.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#symmetricdifference">symmetricDifference(leftGeometry, rightGeometry)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></td><td class="syntaxTABLE summary">Creates the symmetric difference of two geometries.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#touches">touches(geometry1, geometry2)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry touches another geometry.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#union">union(geometries)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></td><td class="syntaxTABLE summary">All inputs must be of the same type of geometries and share one spatial reference.</td></tr>
+        <tr><td class="syntaxTABLE name"><a href="#within">within(innerGeometry, outerGeometry)</a></td><td class="syntaxTABLE return_type"><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></td><td class="syntaxTABLE summary">Indicates if one geometry is within another geometry.</td></tr>
+      </table>
+      
+      
+      
+      <div class="sectionDivider">Method Details</div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="buffer"></a>buffer(geometry, distance, unit, unionResults?)</h4></div>
+        <div class="syntaxdetaildesc">Creates planar (or Euclidean) buffer polygons at a specified distance around the input geometries. <br><br>The GeometryEngine has two methods for buffering geometries client-side: buffer and <a href="#geodesicbuffer">geodesicBuffer()</a>. Use caution when deciding which method to use. As a general rule, use <a href="#geodesicbuffer">geodesicBuffer()</a> if the input geometries have a spatial reference of either WGS-84 (wkid: 4326) or Web Mercator Auxiliary Sphere (wkid: 3857). Only use buffer (this method) when attempting to buffer geometries with a <a href="https://developers.arcgis.com/rest/services-reference/projected-coordinate-systems.htm">projected coordinate system</a> other than Web Mercator. If you need to buffer geometries with a <a href="https://developers.arcgis.com/rest/services-reference/geographic-coordinate-systems.htm">geographic coordinate system</a> other than WGS-84 (wkid: 4326), use <a href="./geometryservice-amd.html#buffer">GeometryService.buffer()</a>.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="polygon-amd.html">Polygon</a></code></span> | <span class="return_type"><code><a href="polygon-amd.html">Polygon[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="buffer-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The buffer input geometry. The geometry and distance parameters must be specified as either both arrays or both non-arrays. Never specify one as an array and the other a non-array.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="buffer-distance"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number[]</a></code></span></code>&gt; distance</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The specified distance(s) for buffering. NOTE: The <code>geometry</code> and <code>distance</code> parameters cannot be mixed. They must either both be specified as arrays, non-arrays, but never both. <br><br>When using an array of geometries as input, the length of the geometry array does not have to equal the length of the <code>distance</code> array. For example, if you pass an array of four geometries: <code>[g1, g2, g3, g4]</code> and an array with one distance: <code>[d1]</code>, all four geometries will be buffered by the single distance value. If instead you use an array of three distances: <code>[d1, d2, d3]</code>, <code>g1</code> will be buffered by <code>d1</code>, <code>g2</code> by <code>d2</code>, and <code>g3</code> and <code>g4</code> will both be buffered by <code>d3</code>. The value of the geometry array will be matched one to one with those in the distance array until the final value of the distance array is reached, in which case that value will be applied to the remaining geometries. </td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="buffer-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for the distance(s). Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> and <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="buffer-unionresults"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; unionResults</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Whether the output geometries should be unioned into a single polygon.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#buffer">esri/geometry/geometryEngineAsync.buffer()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="clip"></a>clip(geometry, envelope)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the clipped geometry from a target geometry by an envelope.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="clip-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be clipped.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="clip-envelope"></a>&lt;<code><span class="return_type"><code><a href="extent-amd.html">Extent</a></code></span></code>&gt; envelope</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The envelope used to clip.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#clip">esri/geometry/geometryEngineAsync.clip()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="contains"></a>contains(containerGeometry, insideGeometry)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry contains another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="contains-containergeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; containerGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry that is tested for the "contains" relationship to the other geometry. Think of this geometry as the potential container of the insideGeometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="contains-insidegeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; insideGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry that is tested for the "within" relationship to the containerGeometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#contains">esri/geometry/geometryEngineAsync.contains()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="convexhull"></a>convexHull(geometry, merge?)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the convex hull of the input geometry. A convex hull is the smallest convex polygon that encloses a group of objects, such as points. The input geometry can be a point, multipoint, polyline or polygon. The hull is typically a polygon but can also be a polyline or point in degenerate cases.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="convexhull-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="convexhull-merge"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; merge</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Whether to merge output geometries.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#convexhull">esri/geometry/geometryEngineAsync.convexHull()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="crosses"></a>crosses(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry crosses another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="crosses-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to cross.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="crosses-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry being crossed.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#crosses">esri/geometry/geometryEngineAsync.crosses()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="cut"></a>cut(geometry, cutter)</h4></div>
+        <div class="syntaxdetaildesc">Split the input Polyline or Polygon where it crosses a cutting Polyline. For Polylines, all left cuts are grouped together in the first Geometry. Right cuts and coincident cuts are grouped in the second Geometry and each undefined cut, along with any uncut parts, are output as separate Polylines. For Polygons, all left cuts are grouped in the first Polygon, all right cuts are grouped in the second Polygon, and each undefined cut, along with any left-over parts after cutting, are output as a separate Polygon. If no cuts are returned then the array will be empty. An undefined cut will only be produced if a left cut or right cut was produced and there was a part left over after cutting, or a cut is bounded to the left and right of the cutter.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="cut-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be cut.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="cut-cutter"></a>&lt;<code><span class="return_type"><code><a href="polyline-amd.html">Polyline</a></code></span></code>&gt; cutter</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The polyline to cut the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#cut">esri/geometry/geometryEngineAsync.cut()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="densify"></a>densify(geometry, maxSegmentLength, maxSegmentLengthUnit)</h4></div>
+        <div class="syntaxdetaildesc">Densify geometries by plotting points between existing vertices.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="densify-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be densified.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="densify-maxsegmentlength"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxSegmentLength</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The maximum segment length allowed. Must be a positive value.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="densify-maxsegmentlengthunit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxSegmentLengthUnit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for maxSegmentLength. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#densify">esri/geometry/geometryEngineAsync.densify()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="difference"></a>difference(inputGeometry, subtractor)</h4></div>
+        <div class="syntaxdetaildesc">Creates the difference of two geometries. The resultant geometry is the part of inputGeometry not in the subtractor. The dimension of subtractor has to be equal to or greater than that of inputGeometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="difference-inputgeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; inputGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry to subtract from.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="difference-subtractor"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; subtractor</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry being subtracted from inputGeometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#difference">esri/geometry/geometryEngineAsync.difference()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="disjoint"></a>disjoint(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry is disjoint (doesn't intersect in any way) with another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="disjoint-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The base geometry that is tested for the "disjoint" relationship to the other geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="disjoint-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The comparison geometry that is tested for the disjoint relationship to the other geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#disjoint">esri/geometry/geometryEngineAsync.disjoint()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="distance"></a>distance(geometry1, geometry2, distanceUnit)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the shortest planar distance between two geometries. Distance is reported in the linear units specified by distanceUnit or, if distanceUnit is null, the units of the spatialReference of input geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="distance-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">First input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="distance-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Second input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="distance-distanceunit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; distanceUnit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit of the return value. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#distance">esri/geometry/geometryEngineAsync.distance()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="equals"></a>equals(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if two geometries are equal.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="equals-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">First input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="equals-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Second input geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#equals">esri/geometry/geometryEngineAsync.equals()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="extendedspatialreferenceinfo"></a>extendedSpatialReferenceInfo(spatialReference)</h4></div>
+        <div class="syntaxdetaildesc">Returns an object containing additional information about the input spatial reference. The returned object includes the following properties:
+
+<table class='detailTABLE'>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>tolerance</b></td>
+    <td class='detailTABLE'>The XY tolerance of the spatial reference.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>unitBaseFactor</b></td>
+    <td class='detailTABLE'>Base factor.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>unitID</b></td>
+    <td class='detailTABLE'>Unit ID.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>unitSquareDerivative</b></td>
+    <td class='detailTABLE'>Square derivative.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>unitType</b></td>
+    <td class='detailTABLE'>Type</td>
+  </tr>
+</table></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="extendedspatialreferenceinfo-spatialreference"></a>&lt;<code><span class="return_type"><code><a href="spatialreference-amd.html">SpatialReference</a></code></span></code>&gt; spatialReference</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The spatial Reference.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#extendedspatialreferenceinfo">esri/geometry/geometryEngineAsync.extendedSpatialReferenceInfo()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="fliphorizontal"></a>flipHorizontal(geometry, flipOrigin?)</h4></div>
+        <div class="syntaxdetaildesc">Flips a geometry on the horizontal axis. Can optionally be flipped around a point.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="fliphorizontal-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="fliphorizontal-fliporigin"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; flipOrigin</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Point to flip the geometry around. Defaults to the centroid of the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#fliphorizontal">esri/geometry/geometryEngineAsync.flipHorizontal()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="flipvertical"></a>flipVertical(geometry, flipOrigin?)</h4></div>
+        <div class="syntaxdetaildesc">Flips a geometry on the vertical axis. Can optionally be flipped around a point.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="flipvertical-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="flipvertical-fliporigin"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; flipOrigin</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Point to flip the geometry around. Defaults to the centroid of the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#flipvertical">esri/geometry/geometryEngineAsync.flipVertical()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="generalize"></a>generalize(geometry, maxDeviation, removeDegenerateParts?, maxDeviationUnit?)</h4></div>
+        <div class="syntaxdetaildesc">Performs the generalize operation on the geometries in the cursor. Point and Multipoint geometries are left unchanged. Envelope is converted to a Polygon and then generalized.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="generalize-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be generalized.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="generalize-maxdeviation"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxDeviation</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The maximum allowed deviation from the generalized geometry to the original geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="generalize-removedegenerateparts"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; removeDegenerateParts</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">When true, the degenerate parts of the geometry will be removed from the output (may be undesired for drawing).</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="generalize-maxdeviationunit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxDeviationUnit</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for maxDeviation. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#generalize">esri/geometry/geometryEngineAsync.generalize()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="geodesicarea"></a>geodesicArea(geometry, unit)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the area of the input geometry. As opposed to <a href='#planararea'>planarArea()</a>, geodesicArea takes into account the curvature of the earth when performing this calculation. Therefore, when using input geometries with a spatial reference of either WGS-84 (wkid: 4326) or Web Mercator Auxiliary Sphere (wkid: 3857), it is best practice to calculate areas using geodesicArea(). If the input geometries have a projected coordinate system other than Web Mercator, use <a href='#planararea'>planarArea()</a> instead. <br><br>This method only works with WGS-84 (wkid: 4326) and Web Mercator (wkid: 3857) spatial references.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicarea-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicarea-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit of the return value. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href='http://resources.arcgis.com/en/help/runtime-java/apiref/constant-values.html#com.esri.core.geometry.AreaUnit.Code.ACRE'>here</a>. <br><br><b>Possible Values:</b> acres | ares | hectares | square-feet | square-meters | square-yards | square-kilometers | square-miles
+ </td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#geodesicarea">esri/geometry/geometryEngineAsync.geodesicArea()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="geodesicbuffer"></a>geodesicBuffer(geometry, distance, unit, unionResults?)</h4></div>
+        <div class="syntaxdetaildesc">Creates geodesic buffer polygons at a specified distance around the input geometries. When calculating distances, this method takes the curvature of the earth into account, which provides highly accurate results when dealing with very large geometries and/or geometries that spatially vary widely on a global scale where one projected coordinate system could not accurately plot coordinates and measure distances for all the geometries. <br><br>This method only works with WGS-84 (wkid: 4326) and Web Mercator (wkid: 3857) spatial references. In general, if your input geometries are assigned one of those two spatial references, you should always use geodesicBuffer() to obtain the most accurate results for those geometries. If needing to buffer geometries assigned a <a href="https://developers.arcgis.com/rest/services-reference/projected-coordinate-systems.htm">projected coordinate system</a> other than Web Mercator, use <a href='#buffer'>buffer()</a> instead. If the input geometries have a <a href="https://developers.arcgis.com/rest/services-reference/geographic-coordinate-systems.htm">geographic coordinate system</a> other than WGS-84 (wkid: 4326), use <a href='./geometryservice-amd.html#buffer'>GeometryService.buffer()</a>.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="polygon-amd.html">Polygon</a></code></span> | <span class="return_type"><code><a href="polygon-amd.html">Polygon[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicbuffer-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The buffer input geometry. The geometry and distance parameters must be specified as either both arrays or both non-arrays. Never specify one as an array and the other a non-array.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicbuffer-distance"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number[]</a></code></span></code>&gt; distance</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The specified distance(s) for buffering. NOTE: The <code>geometry</code> and <code>distance</code> parameters cannot be mixed. They must either both be specified as arrays, non-arrays, but never both. <br><br>When using an array of geometries as input, the length of the geometry array does not have to equal the length of the <code>distance</code> array. For example, if you pass an array of four geometries: <code>[g1, g2, g3, g4]</code> and an array with one distance: <code>[d1]</code>, all four geometries will be buffered by the single distance value. If instead you use an array of three distances: <code>[d1, d2, d3]</code>, <code>g1</code> will be buffered by <code>d1</code>, <code>g2</code> by <code>d2</code>, and <code>g3</code> and <code>g4</code> will both be buffered by <code>d3</code>. The value of the geometry array will be matched one to one with those in the distance array until the final value of the distance array is reached, in which case that value will be applied to the remaining geometries. </td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicbuffer-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for the distance(s). Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicbuffer-unionresults"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code>&gt; unionResults</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Whether the output geometries should be unioned into a single polygon.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#geodesicbuffer">esri/geometry/geometryEngineAsync.geodesicBuffer()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="geodesicdensify"></a>geodesicDensify(geometry, maxSegmentLength, maxSegmentLengthUnit?)</h4></div>
+        <div class="syntaxdetaildesc">Returns a geodesically densified version of the input geometry. Use this function to draw the line(s) of the geometry along great circles. <i>(Added at v3.15)</i></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicdensify-geometry"></a>&lt;<code><span class="return_type"><code><a href="polyline-amd.html">Polyline</a></code></span> | <span class="return_type"><code><a href="polygon-amd.html">Polygon</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">A polyline or polygon geometry to densify.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicdensify-maxsegmentlength"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxSegmentLength</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The maximum segment length allowed. This must be a positive value.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesicdensify-maxsegmentlengthunit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxSegmentLengthUnit</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for <code>maxSegmentLength</code>. If a unit is not specified, the units are considered to be the same as the units of the <code>geometry</code>. Use any valid linear unit listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>Sample:</b> <pre class="prettyprint">
+//lineGeom is a line geometry
+var densifiedGeom = geometryEngine.geodesicDensify(lineGeom, 10000);</pre></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="geodesiclength"></a>geodesicLength(geometry, unit)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the length of the input geometry. As opposed to <a href='#planarlength'>planarLength()</a>, geodesicLength() takes into account the curvature of the earth when performing this calculation. Therefore, when using input geometries with a spatial reference of either WGS-84 (wkid: 4326) or Web Mercator Auxiliary Sphere (wkid: 3857), it is best practice to calculate lengths using geodesicLength(). If the input geometries have a projected coordinate system other than Web Mercator, use <a href='#planarlength'>planarLength()</a> instead. <br><br>This method only works with WGS-84 (wkid: 4326) and Web Mercator (wkid: 3857) spatial references.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesiclength-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="geodesiclength-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit of the return value. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#geodesiclength">esri/geometry/geometryEngineAsync.geodesicLength()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="intersect"></a>intersect(geometry, intersector)</h4></div>
+        <div class="syntaxdetaildesc">Creates a new geometry through intersection between two geometries.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="intersect-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="intersect-intersector"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; intersector</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry being intersected.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#intersect">esri/geometry/geometryEngineAsync.intersect()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="intersects"></a>intersects(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry intersects another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="intersects-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry that is tested for the intersects relationship to the other geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="intersects-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry being intersected.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#intersects">esri/geometry/geometryEngineAsync.intersects()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="issimple"></a>isSimple(geometry)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if the given geometry is topologically simple.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="issimple-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Geometry</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#issimple">esri/geometry/geometryEngineAsync.isSimple()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="nearestcoordinate"></a>nearestCoordinate(geometry, inputPoint)</h4></div>
+        <div class="syntaxdetaildesc">Finds the coordinate of the geometry which is closest to the specified point. Returns an object with the following properties:
+
+<table class='detailTABLE'>
+  <tr>
+    <td class='detailTABLE'>&lt;Point&gt; <b>coordinate</b></td>
+    <td class='detailTABLE'>The point geometry of the coordinate. Includes x, y, and spatialReference properties.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>distance</b></td>
+    <td class='detailTABLE'>The distance from the coordinate to the input point</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isRightSide</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the coordinate is to the right of the geometry.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>vertexIndex</b></td>
+    <td class='detailTABLE'>The index of the coordinate.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isEmpty</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the result is empty.</td>
+  </tr>
+</table></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestcoordinate-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to consider.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestcoordinate-inputpoint"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; inputPoint</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The point used to search the nearest coordinate in the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#nearestcoordinate">esri/geometry/geometryEngineAsync.nearestCoordinate()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="nearestvertex"></a>nearestVertex(geometry, inputPoint)</h4></div>
+        <div class="syntaxdetaildesc">Finds vertex on the geometry nearest to the specified point. Returns an object with the following properties:
+
+<table class='detailTABLE'>
+  <tr>
+    <td class='detailTABLE'>&lt;Point&gt; <b>coordinate</b></td>
+    <td class='detailTABLE'>The point geometry of the vertex. Includes x, y, and spatialReference properties.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>distance</b></td>
+    <td class='detailTABLE'>The distance from the vertex to the input point</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isRightSide</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the vertex is to the right of the geometry.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>vertexIndex</b></td>
+    <td class='detailTABLE'>The index of the vertex.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isEmpty</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the result is empty.</td>
+  </tr>
+</table></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertex-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to consider.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertex-inputpoint"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; inputPoint</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The point used to search the nearest vertex in the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#nearestvertex">esri/geometry/geometryEngineAsync.nearestVertex()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="nearestvertices"></a>nearestVertices(geometry, inputPoint, searchRadius, maxVertexCountToReturn)</h4></div>
+        <div class="syntaxdetaildesc">Finds all vertices in the given distance from the specified point, sorted from the closest to the furthest and returns them as an array of objects. Each object (representing one vertex) has the following properties:
+
+<table class='detailTABLE'>
+  <tr>
+    <td class='detailTABLE'>&lt;Point&gt; <b>coordinate</b></td>
+    <td class='detailTABLE'>The point geometry of the vertex. Includes x, y, and spatialReference properties.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>distance</b></td>
+    <td class='detailTABLE'>The distance from the vertex to the input point</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isRightSide</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the vertex is to the right of the geometry.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Number&gt; <b>vertexIndex</b></td>
+    <td class='detailTABLE'>The index of the vertex.</td>
+  </tr>
+  <tr>
+    <td class='detailTABLE'>&lt;Boolean&gt; <b>isEmpty</b></td>
+    <td class='detailTABLE'>When <code>true</code>, the result is empty.</td>
+  </tr>
+</table></div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertices-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to consider.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertices-inputpoint"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; inputPoint</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The point from which to measure.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertices-searchradius"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; searchRadius</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The search radius.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="nearestvertices-maxvertexcounttoreturn"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; maxVertexCountToReturn</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The maximum number number of vertices to return.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#nearestvertices">esri/geometry/geometryEngineAsync.nearestVertices()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="offset"></a>offset(geometry, offsetDistance, offsetUnit, joinType, bevelRatio?, flattenError?)</h4></div>
+        <div class="syntaxdetaildesc">The offset operation creates a geometry that is a constant planar distance from an input polyline or polygon. 
+It is similar to buffering, but produces a one-sided result. 
+If offsetDistance > 0, then the offset geometry is constructed to the right of the oriented input geometry, otherwise it is constructed to the left. 
+For a simple polygon, the orientation of outer rings is clockwise and for inner rings it is counter clockwise. 
+So the "right side" of a simple polygon is always its inside. 
+The bevelRatio is multiplied by the offset distance and the result determines how far a mitered offset intersection can be from the input curve before it is beveled.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometries to offset.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-offsetdistance"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; offsetDistance</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The planar distance to offset from the input geometry. If offsetDistance > 0, then the offset geometry is constructed to the right of the oriented input geometry, if offsetDistance = 0, then there is no change in the geometries, otherwise it is constructed to the left.  For a simple polygon, the orientation of outer rings is clockwise and for inner rings it is counter clockwise. So the "right side" of a simple polygon is always its inside. </td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-offsetunit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; offsetUnit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit for the offset. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-jointype"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; joinType</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The join type. <br><br><b>Possible Values:</b> round | bevel | miter | square</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-bevelratio"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; bevelRatio</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Applicable to MITER, bevelRatio is multiplied by the offset distance and the result determines how far a mitered offset intersection can be located before it is beveled.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="offset-flattenerror"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; flattenError</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Applicable to ROUND, flattenError determines the maximum distance of the resulting segments compared to the true circular arc. The algorithm never produces more than around 180 vertices for each round join.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#offset">esri/geometry/geometryEngineAsync.offset()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="overlaps"></a>overlaps(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry  overlaps another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="overlaps-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The base geometry that is tested for overlaps relationship to the other geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="overlaps-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The comparison geometry that is tested for the overlaps relationship to the other geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#overlaps">esri/geometry/geometryEngineAsync.overlaps()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="planararea"></a>planarArea(geometry, unit)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the area of the input geometry. As opposed to <a href='#geodesicarea'>geodesicArea()</a>, planarArea() performs this calculation using projected coordinates and does not take into account the earth's curvature. When using input geometries with a spatial reference of either WGS-84 (wkid: 4326) or Web Mercator Auxiliary Sphere (wkid: 3857), it is best practice to calculate areas using <a href='#geodesicarea'>geodesicArea()</a>. If the input geometries have a projected coordinate system other than Web Mercator, use planarArea() instead.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="planararea-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="planararea-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit of the return value. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href='http://resources.arcgis.com/en/help/runtime-java/apiref/constant-values.html#com.esri.core.geometry.AreaUnit.Code.ACRE'>here</a>. <br><br><b>Possible Values:</b> acres | ares | hectares | square-feet | square-meters | square-yards | square-kilometers | square-miles
+</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#planararea">esri/geometry/geometryEngineAsync.planarArea()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="planarlength"></a>planarLength(geometry, unit)</h4></div>
+        <div class="syntaxdetaildesc">Calculates the length of the input geometry. As opposed to <a href='#geodesiclength'>geodesicLength()</a>, planarLength() uses projected coordinates and does not take into account the curvature of the earth when performing this calculation. When using input geometries with a spatial reference of either WGS-84 (wkid: 4326) or Web Mercator Auxiliary Sphere (wkid: 3857), it is best practice to calculate lengths using <a href='#geodesiclength'>geodesicLength()</a>. If the input geometries have a projected coordinate system other than Web Mercator, use planarLength() instead.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="planarlength-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="planarlength-unit"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span> | <span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; unit</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">Measurement unit of the return value. Defaults to the units of the input geometries. Use one of the possible values listed below or any of the numeric codes listed <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnitType.htm">here</a> or <a href="https://desktop.arcgis.com/en/arcobjects/latest/net/webframe.htm#esriSRUnit2Type.htm">here</a>.<br><br><b>Possible Values:</b> meters | feet | kilometers | miles | nautical-miles | yards</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#planarlength">esri/geometry/geometryEngineAsync.planarLength()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="relate"></a>relate(geometry1, geometry2, relation)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if the given DE-9IM relation holds for the two geometries.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="relate-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The first geometry for the relation.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="relate-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The second geometry for the relation.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="relate-relation"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code></span></code>&gt; relation</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The Dimensionally Extended 9 Intersection Model (DE-9IM) matrix relation (encoded as a string) to test against the relationship of the two geometries. This string contains the test result of each intersection represented in the DE-9IM matrix. Each result is one character of the string and may be represented as either a number (maximum dimension returned: '0','1','2'), a Boolean value ('T' or 'F'), or a mask character (for ignoring results: '*'). <br><br><b>Example: </b> Each of the following DE-9IM string codes are valid for testing whether a polygon geometry completely contains a line geometry: <code>"TTTFFTFFT"</code> (Boolean), <code>"T*****FF*"</code> (ignore irrelevant intersections), or <code>"102FF*FF*"</code> (dimension form). Each returns the same result.<br><br>See <a href="https://en.wikipedia.org/wiki/DE-9IM">this article</a> and <a href="https://desktop.arcgis.com/en/arcmap/latest/manage-data/using-sql-with-gdbs/relational-functions-for-st-geometry.htm">this ArcGIS help page</a> for more information about the DE-9IM model and how string codes are constructed.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#relate">esri/geometry/geometryEngineAsync.relate()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="rotate"></a>rotate(geometry, angle, rotationOrigin?)</h4></div>
+        <div class="syntaxdetaildesc">Rotates a geometry by a specified angle. Rotation is around the centroid, or a given rotation point.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="rotate-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The input geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="rotate-angle"></a>&lt;<code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code></span></code>&gt; angle</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The rotation angle</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="rotate-rotationorigin"></a>&lt;<code><span class="return_type"><code><a href="point-amd.html">Point</a></code></span></code>&gt; rotationOrigin</td>
+        <td class="syntaxDetailTABLE required">Optional</td>
+        <td class="syntaxDetailTABLE description">Point to rotate the geometry around. Defaults to the centroid of the geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#rotate">esri/geometry/geometryEngineAsync.rotate()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="simplify"></a>simplify(geometry)</h4></div>
+        <div class="syntaxdetaildesc">Performs the simplify operation on the geometry which alters the given geometries to make their definitions topologically legal with respect to their geometry type. </div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="simplify-geometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be simplified.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#simplify">esri/geometry/geometryEngineAsync.simplify()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="symmetricdifference"></a>symmetricDifference(leftGeometry, rightGeometry)</h4></div>
+        <div class="syntaxdetaildesc">Creates the symmetric difference of two geometries. 
+The symmetric difference includes the parts which are in either of the sets, but not in both.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="symmetricdifference-leftgeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span> | <span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; leftGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">One of the Geometry instances in the XOR operation.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="symmetricdifference-rightgeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; rightGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">One of the Geometry instances in the XOR operation.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#symmetricdifference">esri/geometry/geometryEngineAsync.symmetricDifference()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="touches"></a>touches(geometry1, geometry2)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry touches another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="touches-geometry1"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry1</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry which may be touching another geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="touches-geometry2"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; geometry2</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometry to be touched.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#touches">esri/geometry/geometryEngineAsync.touches()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="union"></a>union(geometries)</h4></div>
+        <div class="syntaxdetaildesc">All inputs must be of the same type of geometries and share one spatial reference.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="union-geometries"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry[]</a></code></span></code>&gt; geometries</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The geometries to union.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>Sample:</b> <pre class="prettyprint">
+require([
+  "esri/geometry/Point",
+  "esri/geometry/geometryEngine",
+  "esri/SpatialReference"
+], function (Point, geometryEngine, SpatialReference){
+
+  var pt1 = new Point(-118.15, 33.80, new SpatialReference({wkid: 4326}));
+  var pt2 = new Point(-119.15, 32.80, new SpatialReference({wkid: 4326}));
+
+  // Using Module to Union
+  var union = geometryEngine.union([pt1, pt2]);
+  console.log("geometryEngine.union: %o", union);
+});
+</pre></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#union">esri/geometry/geometryEngineAsync.union()</a></div>
+      </div>
+      <div class="syntaxdetaildiv">
+        <div class="syntaxdetailname"><h4 class="syntaxdetailheadername"><a id="within"></a>within(innerGeometry, outerGeometry)</h4></div>
+        <div class="syntaxdetaildesc">Indicates if one geometry is within another geometry.</div>        <div class="detaildesc"><b>Return type:</b> <code><span class="return_type"><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a></code></span></code></div>        <div class="detaildesc"><b>Parameters:</b> <table class="syntaxTABLE syntaxdetailstable">
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="within-innergeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; innerGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The base geometry that is tested for within relationship to the other geometry.</td>
+      </tr>
+      <tr>
+        <td class="syntaxDetailTABLE name"><a id="within-outergeometry"></a>&lt;<code><span class="return_type"><code><a href="geometry-amd.html">Geometry</a></code></span></code>&gt; outerGeometry</td>
+        <td class="syntaxDetailTABLE required">Required</td>
+        <td class="syntaxDetailTABLE description">The comparison geometry that is tested for the contains relationship to the other geometry.</td>
+      </tr>
+</table></div>        <div class="detaildesc"><b>See also:</b> <a href="esri.geometry.geometryengineasync-amd.html#within">esri/geometry/geometryEngineAsync.within()</a></div>
+      </div>
+      
+    </div>
+ <div id="wh_footer" class="footnote">
+  <!--<a href="mailto:js_feedback@esri.com?subject=Feedback%20on%203.26%20API%20Reference:%20jsapi/esri.geometry.geometryengine-amd.html">Report an error on this page</a>.
+  <br>-->
+  <a href="http://www.esri.com/legal/copyright-trademarks">Copyright &copy; 2018 Esri</a>. All rights reserved. | <a href="http://www.esri.com/legal/privacy">Privacy</a> | <a href="https://developers.arcgis.com/en/terms/faq/">Terms of use</a>
+</div>
+</div> 
+  </div>
+</div> 
+
+
+<script src="../scripts/tree.js"></script>
+
+<script src="../prettify/prettify.js"></script>
+<script>
+  var dojoConfig = {
+    async: true,
+    packages: [{
+      "name": "js",
+      "location": location.pathname.replace(/\/[^/]+$/, "/") + "../scripts"
+    }]
+  };
+</script>
+<script src="../scripts/libs/tailcoat.js"></script>
+
+<script src="../scripts/libs/dojo-esri/dojo/dojo.js" data-dojo-config="async: true,locale: 'en-us'"></script>
+<script src="../scripts/esri-main-apiref.js"></script>
+<script src="../scripts/print-format.js"></script>
+<script>
+require(["dojo/on", "dojo/query", "dojo/NodeList-dom"], function(on, query) {
+  on(query(".eventSwitch"), "click", function(evt){
+    if (evt.target.classList[1] !== "enabled") {
+      query(".eventDiv").toggleClass("hidden");
+      query(".eventSwitch").toggleClass("enabled");
+    }
+  });
+});
+</script>
+<script src="../scripts/classList.js"></script>
+
+<script src="../scripts/esri-keyboard-navigation.js"></script>
+<script>
+  require(["dojo/topic", "js/libs/mousetrap"], function(topic, Mousetrap) {
+    Mousetrap.bind([
+              "c",
+// Go to Properties
+"p",
+// Go to Methods
+"m",
+// Go to Type definitions
+"t",
+// Go to Events
+"e",
+      // ${SAMPLE_CODE_BINDINGS}
+      // Focus search
+      "/",
+      // Blur search
+      "esc",
+      // Go to Home
+      "g h",
+      // Go to Guide
+      "g g",
+      // Go to API Reference
+      "g a",
+      // Go to Sample Code
+      "g s",
+      // Show help
+      "?",
+      // Scroll to top of the page
+      "g t",
+      // Scroll to bottom of the page
+      "g b"
+    ], function (mousetrapEvent, keyboardCombination){
+      topic.publish("keyboard:mousetrap", {
+        event: mousetrapEvent,
+        combination: keyboardCombination,
+        navigation: {}
+      });
+
+    });
+  });
+</script>
+<a class="modal-show keyboard-shortcuts-hidden hide js-keyboard-shortcuts" data-modal="keyboard-shortcuts-modal" href="#">Show Modal</a>
+<div class="modal-overlay">
+  <div class="modal keyboard-shortcuts-modal js-keyboard-shortcuts-modal" data-modal="keyboard-shortcuts-modal">
+    <a class="modal-dismiss js-modal-dismiss icon-close right" href="#"></a>
+    <h3 class="keyboard-shortcuts-modal-title">Keyboard shortcuts</h3>
+    <hr class="leader-0 trailer-1">
+    
+    <div class="row">
+      
+      <div class="column-12 js-keyboard-mappings-first-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>Site wide shortcuts</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>Bring up this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>esc</kbd></td>
+              <td>Dismiss this help dialog</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>h</kbd></td>
+              <td>Go to Home</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>g</kbd></td>
+              <td>Go to Guide</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>a</kbd></td>
+              <td>Go to API Reference</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>s</kbd></td>
+              <td>Go to Sample Code</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>t</kbd></td>
+              <td>Scroll to top of page</td>
+            </tr>
+            <tr>
+              <td><kbd>spacebar</kbd></td>
+              <td>Scroll page down</td>
+            </tr>
+            <tr>
+              <td><kbd>shift spacebar</kbd></td>
+              <td>Scroll page up</td>
+            </tr>
+            <tr>
+              <td><kbd>g</kbd><kbd>b</kbd></td>
+              <td>Scroll to bottom of page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      
+      <div class="column-12 js-keyboard-mappings-second-div">
+        <table class="table-plain keyboard-mappings">
+          <thead>
+            <tr><th></th><th>API Reference</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>/</kbd></td><td>Focus search</td></tr><tr><td><kbd>c</kbd></td><td>Go to Constructors</td></tr><tr><td><kbd>p</kbd></td><td>Go to Properties</td></tr><tr><td><kbd>m</kbd></td><td>Go to Methods</td></tr><tr><td><kbd>e</kbd></td><td>Go to Events</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>T.init();</script>
+
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NJGGV5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJGGV5');</script>
+
+ 
+
+
+
+</body>
+</html>

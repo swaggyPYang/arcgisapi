@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>GeoEnrichment Variable Query</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/dijit/geoenrichment/themes/common/main.css">
+    <link rel="shortcut icon" href="../../graphics/favicon.ico">
+    <style>
+      body { font-family: arial; max-width: 40em; margin: 0 auto; }
+      p table, p table td, p table th { border: none; }
+      p table td { padding: 0.2em; text-align: center; border-top: 1px solid #888; }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "esri/tasks/geoenrichment/GeoenrichmentTask", 
+        "dojo/_base/array",
+        "dojo/store/Memory",
+        "dijit/form/FilteringSelect", 
+        "dojo/dom",
+        "dojo/dom-construct", 
+        "dijit/registry", 
+        "dojo/domReady!"
+      ], function(
+        GeoenrichmentTask, arrayUtils, Memory, FilteringSelect, dom, domConstruct, registry
+      ) {
+        var task = new GeoenrichmentTask();
+        
+        task.onGetAvailableCountriesComplete = function(countries) {
+          var countriesArray = arrayUtils.map(countries, function(country) {
+            return { name: country.name, id: country.id };
+          });
+          var countriesStore = new Memory({ data: countriesArray });
+          // create a drop down showing available countires, give it focus
+          // and show the available countires
+          //
+          // setting an event listener for focus also shows the available 
+          // countries without any lag when tabbing between drop downs
+          var countries = new FilteringSelect({ 
+            id: "country",
+            maxHeight: -1, // keep the drop down within the viewport
+            store: countriesStore 
+          }, "country");
+          countries.on("focus", countries.loadDropDown);
+          countries.focus();
+          countries.on("change", function(selectedCountry) {
+            // clear out previously loaded collections
+            var collections = registry.byId("dataset");
+            if ( collections ) {
+              collections.destroy();
+            }
+            domConstruct.empty("result");
+            task.getDataCollections(selectedCountry);
+          });
+        };
+        
+        task.onGetDataCollectionsComplete = function(dataCollections) {
+          var currentDataCollections = {};
+
+          var collectionsArray = arrayUtils.map(dataCollections, function(col) {
+            currentDataCollections[col.id] = col.variables;
+            return { name: col.id, id: col.id };
+          });
+          var collectionsStore = new Memory({ data: collectionsArray });
+          // create the drop down for the available collections a little differently
+          // instead of using an existing dom node, create a child of an existing node
+          // this allows the drop down to be destroyed and re-created when the country 
+          // drop down changes
+          var collections = new FilteringSelect({
+            id: "dataset",
+            maxHeight: -1, // keep the drop down within the viewport
+            store: collectionsStore
+          }, domConstruct.create("input", null, "dataset"));
+          collections.on("focus", collections.loadDropDown);
+          collections.focus();
+          // build table of available variables and descriptions when something is selected
+          collections.on("change", function (selectedDataCollection) {
+            var variables = currentDataCollections[selectedDataCollection];
+            var variablesTable = "<table border=\"1\"><tr><th>Name</th><th>Description</th></tr>";
+            for (var i = 0; i < variables.length; i++) {
+              variablesTable += "<tr><td>" + selectedDataCollection + "." + variables[i].id + "</td><td>" + variables[i].alias + "</td></tr>";
+            };
+            variablesTable += "</table>";
+            dom.byId("result").innerHTML = variablesTable;
+          });
+        };
+        
+        task.getAvailableCountries();
+      });
+    </script>
+  </head>
+  <body class="nihilo">
+    <p>GeoEnrichment Variable Query</p>
+    <ol>
+      <li>Select country:</li>
+      <input id="country"></span>
+      <li>Select data collection:</li>
+      <span id="dataset"></span>
+    </ol>
+    <p>Available Variables:</p>
+    <p id="result"></p>
+  </body>
+</html>

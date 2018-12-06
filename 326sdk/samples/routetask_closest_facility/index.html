@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Closest Facilities</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+  <style> 
+    body,html,#main{margin:0;padding:0;height:100%;width:100%;}
+    .panel {
+      border-radius: 6px;
+      box-shadow: 0px 6px 3px -3px #888;
+      border: 2px solid #86942A;
+      margin: 5px;
+    }
+  </style> 
+
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+    var map, params;
+    require([
+      "dojo/dom",
+      "dojo/_base/array",
+      "esri/Color",
+      "dojo/parser",
+      "dijit/registry",
+      
+      "esri/urlUtils",
+      "esri/map",
+      "esri/lang",
+      "esri/graphic",
+      "esri/InfoTemplate",
+      "esri/layers/GraphicsLayer",
+      "esri/renderers/SimpleRenderer",
+
+      "esri/geometry/Point",
+      "esri/tasks/FeatureSet",
+
+      "esri/tasks/ClosestFacilityTask",
+      "esri/tasks/ClosestFacilityParameters",
+
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      
+      "dijit/form/ComboBox",
+      "dijit/layout/BorderContainer",
+      "dijit/layout/ContentPane"
+    ], function(
+      dom, array, Color, parser, registry,
+      urlUtils, Map, esriLang, Graphic, InfoTemplate, GraphicsLayer, SimpleRenderer, 
+      Point, FeatureSet, 
+      ClosestFacilityTask, ClosestFacilityParameters, 
+      SimpleMarkerSymbol, SimpleLineSymbol
+    ) {
+      var incidentsGraphicsLayer, routeGraphicLayer, closestFacilityTask;
+   
+      parser.parse();
+      
+      urlUtils.addProxyRule({
+        urlPrefix: "route.arcgis.com",  
+        proxyUrl: "/sproxy/"
+      });
+        
+      map = new Map("map", { 
+        basemap: "streets", 
+        center: [-122.4, 37.785],
+        zoom: 14, 
+        showInfoWindowOnClick: false 
+      });
+
+      map.on("click", mapClickHandler);
+      
+      params = new ClosestFacilityParameters();
+      params.impedenceAttribute= "Miles";      
+      params.defaultCutoff= 7.0;      
+      params.returnIncidents=false;
+      params.returnRoutes=true;
+      params.returnDirections=true;
+      
+      map.on("load", function(evtObj) {
+        var map = evtObj.target;
+        var facilityPointSymbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_SQUARE, 
+          20,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([89,95,35]), 2
+          ),
+          new Color([130,159,83,0.40])
+        ); 
+
+        var incidentPointSymbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_CIRCLE, 
+          16,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([89,95,35]), 2
+          ),
+          new Color([130,159,83,0.40])
+        );  
+
+        incidentsGraphicsLayer = new GraphicsLayer();
+        
+        var incidentsRenderer = new SimpleRenderer(incidentPointSymbol);
+        incidentsGraphicsLayer.setRenderer(incidentsRenderer);
+        map.addLayer(incidentsGraphicsLayer);
+
+        routeGraphicLayer = new GraphicsLayer();
+        
+        var routePolylineSymbol = new SimpleLineSymbol(
+          SimpleLineSymbol.STYLE_SOLID, 
+          new Color([89,95,35]), 
+          4.0
+        );
+        var routeRenderer = new SimpleRenderer(routePolylineSymbol);
+        routeGraphicLayer.setRenderer(routeRenderer);
+
+        map.addLayer(routeGraphicLayer);
+
+        var facilitiesGraphicsLayer = new GraphicsLayer();
+        var facilityRenderer = new SimpleRenderer(facilityPointSymbol);
+        facilitiesGraphicsLayer.setRenderer(facilityRenderer);
+       
+        map.addLayer(facilitiesGraphicsLayer);
+        
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13625960,4549921,map.spatialReference)));
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13626184,4549247,map.spatialReference)));
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13626477,4549415,map.spatialReference)));
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13625385,4549659,map.spatialReference))); 
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13624374,4548254,map.spatialReference))); 
+        facilitiesGraphicsLayer.add(new Graphic(new Point(-13624891,4548565,map.spatialReference))); 
+   
+        var facilities = new FeatureSet();
+        facilities.features = facilitiesGraphicsLayer.graphics;
+        
+        params.facilities = facilities;
+        params.outSpatialReference = map.spatialReference;
+       
+      });
+      
+      closestFacilityTask = new ClosestFacilityTask("https://route.arcgis.com/arcgis/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World");
+
+      registry.byId("numLocations").on("change", function() {
+        params.defaultTargetFacilityCount = this.value;
+        clearGraphics();
+      });
+
+      function clearGraphics() {
+        //clear graphics
+        dom.byId("directionsDiv").innerHTML= "";
+        map.graphics.clear();
+        routeGraphicLayer.clear();
+        incidentsGraphicsLayer.clear();    
+      } 
+
+      function mapClickHandler(evt) {
+        clearGraphics();
+        dom.byId("directionsDiv").innerHTML= "";
+        var inPoint = new Point(evt.mapPoint.x, evt.mapPoint.y, map.spatialReference);
+        var location = new Graphic(inPoint);
+        incidentsGraphicsLayer.add(location);
+        
+        var features = [];
+        features.push(location);
+        var incidents = new FeatureSet();
+        incidents.features = features;
+        params.incidents = incidents;
+        
+        map.graphics.enableMouseEvents();
+       
+        routeGraphicLayer.on("mouse-over", function(evt){
+          //clear existing directions and highlight symbol
+          map.graphics.clear();
+          dom.byId("directionsDiv").innerHTML= "Hover over the route to view directions";
+          
+          var highlightSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,255,255],0.25), 4.5);
+          var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
+          
+          map.graphics.add(highlightGraphic);
+          dom.byId("directionsDiv").innerHTML = esriLang.substitute(evt.graphic.attributes,"${*}");
+        });
+
+        //solve 
+        closestFacilityTask.solve(params, function(solveResult){
+          array.forEach(solveResult.routes, function(route, index){
+            //build an array of route info
+            var attr = array.map(solveResult.directions[index].features, function(feature){
+              return feature.attributes.text;
+            });
+            var infoTemplate = new InfoTemplate("Attributes", "${*}");
+            
+            route.setInfoTemplate(infoTemplate);
+            route.setAttributes(attr);
+            
+            routeGraphicLayer.add(route);
+            dom.byId("directionsDiv").innerHTML = "Hover over the route to view directions";
+          });
+          
+          //display any messages
+          if(solveResult.messages.length > 0){
+            dom.byId("directionsDiv").innerHTML = "<b>Error:</b> " + solveResult.messages[0];
+          }      
+        });
+      }
+    });
+  </script>
+</head>
+
+<body class="claro">      
+  <div data-dojo-type="dijit/layout/BorderContainer" 
+       data-dojo-props="design:'headline', gutters:false" 
+       style="width:100%;height:100%;margin:0px;">
+
+    <div id="map" 
+         data-dojo-type="dijit/layout/ContentPane" 
+         data-dojo-props="region:'center'" class="panel">
+    </div>
+
+    <div id="directions" 
+         data-dojo-type="dijit/layout/ContentPane" 
+         data-dojo-props="region:'bottom'" class="panel" 
+         style="height:250px;">
+
+      <b>Click the map to find routes for the
+      <select id="numLocations" name="numLocations" data-dojo-type="dijit/form/ComboBox" value="1" style="width:60px;">
+          <option selected="selected">1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+      </select> closest facilities to the input point.</b> 
+      <div id="directionsDiv"></div>
+
+    </div>
+ </div>
+</body>
+</html>

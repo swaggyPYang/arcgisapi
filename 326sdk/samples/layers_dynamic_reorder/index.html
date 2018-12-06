@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+   <title>Reorder layers in map service</title>
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+   <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+   <style>
+      html,
+      body,
+      #map {
+         height: 100%;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+      }
+      h3 {
+         margin: 0 0 5px 0;
+         border-bottom: 1px solid #444;
+      }
+      .shadow {
+         box-shadow: 0 0 5px #888;
+      }
+      #map {
+         margin: 0;
+         padding: 0;
+      }
+      #feedback {
+         background: #fff;
+         color: #444;
+         position: absolute;
+         font-family: arial;
+         height: 300px;
+         left: 30px;
+         margin: 5px;
+         padding: 10px;
+         top: 30px;
+         width: 300px;
+         z-index: 40;
+      }
+      #note,
+      #hint {
+         font-size: 80%;
+      }
+      #note {
+         font-weight: 700;
+         padding: 0 0 10px 0;
+      }
+      #layerList {
+         width: 200px;
+      }
+      .dojoDndItemOver {
+         background: #ccc;
+      }
+   </style>
+
+   <script src="https://js.arcgis.com/3.26/"></script>
+   <script>
+      // the infos object is used to track layer visibility and position
+      var map, usaLayer, infos = {};
+
+      require([
+      "esri/map", "esri/layers/ArcGISDynamicMapServiceLayer",
+      "esri/layers/DynamicLayerInfo", "esri/layers/LayerDataSource",
+      "esri/layers/LayerDrawingOptions", "esri/layers/TableDataSource",
+      "esri/Color", "esri/renderers/SimpleRenderer",
+      "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+      "dojo/dom", "dojo/dom-construct", "dojo/dom-style",
+      "dojo/query", "dojo/on",
+      "dojo/parser", "dojo/_base/array", "dojo/dnd/Source", "dijit/registry",
+
+      "dijit/form/Button", "dojo/domReady!"
+    ], function (
+         Map, ArcGISDynamicMapServiceLayer,
+         DynamicLayerInfo, LayerDataSource,
+         LayerDrawingOptions, TableDataSource,
+         Color, SimpleRenderer,
+         SimpleFillSymbol, SimpleLineSymbol,
+         dom, domConstruct, domStyle,
+         query, on,
+         parser, arrayUtils, Source, registry
+      ) {
+         parser.parse();
+
+         var dynamicLayerInfos;
+
+         map = new Map("map", {
+            basemap: "topo",
+            center: [-93.636, 46.882],
+            zoom: 7,
+            slider: false
+         });
+
+         var dndSource = new Source("layerList");
+         dndSource.on("DndDrop", reorderLayers);
+
+         usaLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer", {
+            "id": "usa"
+         });
+         usaLayer.on("load", function (e) {
+            dynamicLayerInfos = e.target.createDynamicLayerInfosFromLayerInfos();
+            arrayUtils.forEach(dynamicLayerInfos, function (info) {
+               var i = {
+                  id: info.id,
+                  name: info.name,
+                  position: info.id
+               };
+               if (arrayUtils.indexOf(usaLayer.visibleLayers, info.id) > -1) {
+                  i.visible = true;
+               } else {
+                  i.visible = false;
+               }
+               infos[info.id] = i;
+            });
+            infos.total = dynamicLayerInfos.length;
+            e.target.setDynamicLayerInfos(dynamicLayerInfos, true);
+         });
+         // only create the layer list the first time update-end fires
+         on.once(usaLayer, "update-end", buildLayerList);
+         map.addLayer(usaLayer);
+
+         // add the lakes layer to the existing map service
+         registry.byId("lakes").on("click", addLakes);
+
+         function buildLayerList() {
+            dndSource.clearItems();
+            domConstruct.empty(dom.byId("layerList"));
+
+            var layerNames = [];
+            for (var info in infos) {
+               if (!infos[info].hasOwnProperty("id")) {
+                  continue;
+               }
+               // only want the layer's name, don't need the db name and owner name
+               var nameParts = infos[info].name.split(".");
+               var layerName = nameParts[nameParts.length - 1];
+               var layerDiv = createToggle(layerName, infos[info].visible);
+               layerNames[infos[info].position] = layerDiv;
+            }
+
+            dndSource.insertNodes(false, layerNames);
+         }
+
+         function toggleLayer(e) {
+            for (var info in infos) {
+               var i = infos[info];
+               if (i.name === e.target.name) {
+                  i.visible = !i.visible;
+               }
+            }
+            var visible = getVisibleLayers();
+            if (visible.length === 0) {
+               usaLayer.setVisibleLayers([-1]);
+            } else {
+               usaLayer.setDynamicLayerInfos(visible);
+            }
+         }
+
+         function reorderLayers() {
+            var newOrder = getVisibleLayers();
+            usaLayer.setDynamicLayerInfos(newOrder);
+         }
+
+         function addLakes() {
+            var lakes = "Lakes";
+            registry.byId(lakes.toLowerCase()).set("disabled", true);
+
+            // update global object with layer info
+            infos[infos.total] = {
+               id: infos.total,
+               name: lakes,
+               position: infos.total,
+               visible: true
+            };
+            infos.total += 1;
+            buildLayerList();
+
+            // layer name in the workspace
+            var layerName = "ss6.gdb." + lakes;
+            // create a new dynamic layer info object for the lakes layer
+            var dynamicLayerInfo = new DynamicLayerInfo();
+            dynamicLayerInfo.id = dynamicLayerInfos.length;
+            dynamicLayerInfo.name = layerName;
+            // can also set things like min/max scale
+
+            // create a table data source to access the lakes layer
+            var dataSource = new TableDataSource();
+            dataSource.workspaceId = "MyDatabaseWorkspaceIDSSR2"; // not exposed via REST :(
+            dataSource.dataSourceName = layerName;
+            // and now a layer source
+            var layerSource = new LayerDataSource();
+            layerSource.dataSource = dataSource;
+            dynamicLayerInfo.source = layerSource;
+            dynamicLayerInfos.push(dynamicLayerInfo);
+            // set new infos, but don't refresh
+            // map will be updated when the drawing options are set
+            var layers = getVisibleLayers();
+            usaLayer.setDynamicLayerInfos(layers, true);
+
+            var drawingOptions = new LayerDrawingOptions();
+            drawingOptions.renderer = new SimpleRenderer(
+               new SimpleFillSymbol("solid", null,
+                  new Color([0, 150, 255, 1])
+               ));
+            var options = [];
+            options[4] = drawingOptions;
+
+            usaLayer.setLayerDrawingOptions(options);
+         }
+
+         function getVisibleLayers() {
+            // get layer name nodes, build an array corresponding to new layer order
+            var layerOrder = [];
+            query("#layerList .dojoDndItem label").forEach(function (n, idx) {
+               for (var info in infos) {
+                  var i = infos[info];
+                  if (i.name === n.innerHTML) {
+                     layerOrder[idx] = i.id;
+                     // keep track of a layer's position in the layer list
+                     i.position = idx;
+                     break;
+                  }
+               }
+            });
+            // find the layer IDs for visible layer
+            var ids = arrayUtils.filter(layerOrder, function (l) {
+               return infos[l].visible;
+            });
+            // get the dynamicLayerInfos for visible layers
+            var visible = arrayUtils.map(ids, function (id) {
+               return dynamicLayerInfos[id];
+            });
+            return visible;
+         }
+
+         function createToggle(name, visible) {
+            var div = domConstruct.create("div");
+            var layerVis = domConstruct.create("input", {
+               checked: visible,
+               id: name,
+               name: name,
+               type: "checkbox"
+            }, div);
+            on(layerVis, "click", toggleLayer);
+            var layerSpan = domConstruct.create("label", {
+               for: name,
+               innerHTML: name
+            }, div);
+            return div;
+         }
+      });
+   </script>
+</head>
+
+<body class="tundra">
+   <div style="width: 100%; height: 100%; margin: 0;">
+      <div id="map">
+
+         <div id="feedback" class="shadow">
+            <h3>Add and Re-order Layers</h3>
+            <div id="info">
+               <div id="note">
+                  Note: This sample requires an ArcGIS Server version 10.1 or later map service.
+               </div>
+
+               <div id="hint">
+                  Click and drag a map layer name below to re-order layers. The first layer in the list will be drawn on top.
+               </div>
+
+               <div><strong>Map Layers</strong></div>
+               
+               <div id="layerList"></div>
+
+               <button id="lakes" data-dojo-type="dijit/form/Button">
+                  Add Lakes
+               </button>
+
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+</html>

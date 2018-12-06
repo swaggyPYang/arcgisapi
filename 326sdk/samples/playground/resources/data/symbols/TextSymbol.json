@@ -1,0 +1,192 @@
+{
+  "name": "TextSymbol",
+  "type": "class",
+  "baseClass": "Symbol",
+  "baseLocation": "symbols/Symbol.json",
+  "variable": "textSym",
+  "description": "Text symbols are used to add text on the graphics layer.",
+  "summary": "display labels for points, polylines and polygons",
+  "path": "esri/symbols/TextSymbol",
+  "toolbar": true,
+  "constructorArgs": ["text","font","color"],
+  "properties": [
+    {
+      "name": "text",
+      "type": "String",
+      "required": true,
+      "method": "setText",
+      "summary": "Text string for display in the graphics layer"
+    },
+    {
+      "name": "font",
+      "type": "Font",
+      "method": "setFont",
+      "summary": "Font for displaying text",
+      "class": true,
+      "location": "symbols/Font.json"
+    },
+    {
+      "name": "angle",
+      "type": "Number",
+      "default": 0,
+      "method": "setAngle",
+      "summary": "Text angle"
+    },
+    {
+      "name": "horizontalAlignment",
+      "type": "String",
+      "default": "center",
+      "method": "setHorizontalAlignment",
+      "summary": "Horizontal alignment of the text with respect to the graphic",
+      "options": {
+        "type": "String",
+        "values": [
+          "left",
+          "right",
+          "center",
+          "justify"
+        ]
+      }
+    },
+    {
+      "name": "verticalAlignment",
+      "type": "String",
+      "default": "baseline",
+      "method": "setVerticalAlignment",
+      "summary": "Vertical alignment of the text with respect to the graphic",
+      "options": {
+        "type": "String",
+        "values": [
+          "baseline",
+          "top",
+          "middle",
+          "bottom"
+        ]
+      }
+    },
+    {
+      "name": "kerning",
+      "type": "Boolean",
+      "default": true,
+      "method": "setKerning",
+      "summary": "Determines whether to adjust the spacing between characters in the text string"
+    },
+    {
+      "name": "rotated",
+      "type": "Boolean",
+      "default": false,
+      "method": "setRotated",
+      "summary": "Determines whether every character in the text string is rotated"
+    },
+    {
+      "name": "xoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the x-axis in pixels"
+    },
+    {
+      "name": "yoffset",
+      "type": "Number",
+      "default": 0,
+      "method": "setOffset",
+      "summary": "The offset on the y-axis in pixels"
+    }
+  ],
+  "methods":[
+    {
+      "name": "setAlign",
+      "parameters": [
+        {
+          "name": "align",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the alignment of the text"
+    },
+    {
+      "name": "setAngle",
+      "parameters": [
+        {
+          "name": "angle",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the angle of the text"
+    },
+    {
+      "name": "setFont",
+      "parameters": [
+        {
+          "name": "font",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the text font"
+    },
+    {
+      "name": "setHorizontalAlignment",
+      "parameters": [
+        {
+          "name": "horizontalAlignment",
+          "type": "property"
+        }
+      ],
+      "summary": "Updates the horizontal alignment of the text symbol"
+    },
+    {
+      "name": "setVerticalAlignment",
+      "parameters": [
+        {
+          "name": "verticalAlignment",
+          "type": "property"
+        }
+      ],
+      "summary": "Updates the vertical alignment of the text symbol"
+    },
+    {
+      "name": "setKerning",
+      "parameters": [
+        {
+          "name": "kerning",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets whether to adjust the spacing between characters in the text string"
+    },
+    {
+      "name": "setOffset",
+      "parameters": [
+        {
+          "name": "xoffset",
+          "type": "property"
+        },
+        {
+          "name": "yoffset",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the x and y offset of the text"
+    },
+    {
+      "name": "setRotated",
+      "parameters": [
+        {
+          "name": "rotated",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets whether every character in the text string is rotated"
+    },
+    {
+      "name": "setText",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "property"
+        }
+      ],
+      "summary": "Sets the text string"
+    }
+  ]
+}

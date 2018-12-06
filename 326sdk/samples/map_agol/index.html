@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Display Multiple ArcGIS Online Services</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <style>
+      html,body,#map{
+        padding:0;
+        margin:0;
+        height:100%;
+        width:100%;
+      }
+
+    </style>
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("esri.map");
+      dojo.require("dijit.form.Button");
+      dojo.require("esri.dijit.BasemapGallery");
+      dojo.require("dijit.form.Button");
+      dojo.require("dijit.Menu");
+      
+      var map;
+      var basemapGallery;
+
+      function init() {
+        map = new esri.Map("map", {
+          center: [-31.036, 42.747],
+          zoom: 3
+        });
+       
+        basemapGallery = new esri.dijit.BasemapGallery({
+          showArcGISBasemaps: true,
+          map: map
+        });
+        
+        dojo.connect(basemapGallery, "onLoad", function(){
+          dojo.forEach(basemapGallery.basemaps, function(basemap) {            
+            //Add a menu item for each basemap, when the menu items are selected
+            dijit.byId("basemapMenu").addChild(
+              new dijit.MenuItem({
+                label: basemap.title,
+                onClick: dojo.hitch(this, function() {
+                  this.basemapGallery.select(basemap.id);
+                })
+              })
+            );
+          });
+        });
+      }
+    dojo.ready(init);
+    </script>
+  </head>
+  <body class="claro">
+      
+      <div id="map">
+        <div style="position:absolute; right:50px; top:10px; z-Index:99;">
+          <button id="dropdownButton" label="Basemaps"  data-dojo-type="dijit.form.DropDownButton">
+            <div data-dojo-type="dijit.Menu" id="basemapMenu">
+              
+            </div>
+          </button>
+        </div>
+      </div>
+
+  </body>
+</html>

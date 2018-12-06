@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>StreamLayer using ArcGIS API for JavaScript and ArcGIS Server Stream Service</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style type="text/css">
+      html, body {
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      }
+      body{
+        background-color: #fff; overflow:hidden;
+        font-family: sans-serif;
+      }
+      p {
+        margin: 2px;
+      }
+      .controls {
+        margin-left: 10px;
+        padding-top: 10px;
+      }
+      #map {
+        width: 100%;
+        height: 80%;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+  </head>
+  <body class="tundra">
+    <div id="map"></div>
+    <div class="controls">
+      <span>Stream service url: </span><input type="text" id="txtStreamUrl" value="https://geoeventsample1.esri.com:6443/arcgis/rest/services/LABus/StreamServer" style="color:#ffffff; width:600px; background-color: #8b0000"/><br>
+      <input type="button" id="cmdToggleStreamLayer" value="Make Stream Layer" />
+    </div>
+    <div id="divFilterControls" class="controls" style="display: none">
+      <p>Draw extent to filter messages by a bounding box</p>
+      <input type="button" id="cmdToggleSpatialFilter" value="Draw Extent" /><br>
+    </div>
+  </body>
+  <script>
+    require(["esri/map",
+      "esri/toolbars/draw",
+      "esri/layers/StreamLayer",
+      "esri/InfoTemplate",
+      "esri/graphic",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "dojo/_base/Color",
+      "dojo/on",
+      "dojo/domReady!"
+    ], function(Map, Draw, StreamLayer, InfoTemplate, Graphic, SimpleFillSymbol,
+                SimpleLineSymbol, Color, on) {
+      var map,
+          drawTools,
+          streamLayer;
+
+      function init(){
+        map = new Map("map", {
+          basemap: "gray",
+          center: [-117.98118, 34.00679],
+          zoom: 10
+        });
+
+        drawTools = new Draw(map);
+
+        //connect click events to UI buttons
+        on(dojo.byId("cmdToggleStreamLayer"), "click", toggleStreamLayer);
+        on(dojo.byId("cmdToggleSpatialFilter"), "click", toggleSpatialFilter);
+
+        on(drawTools, "draw-end", function(evt){
+          drawTools.deactivate();
+          setSpatialFilter(evt.geometry);
+          dojo.byId("cmdToggleSpatialFilter").value = "Clear Spatial Filter";
+        });
+      }
+
+      /*************************************************
+       *
+       * Functions to add and remove Stream Layer
+       *
+       *************************************************/
+      function toggleStreamLayer(){
+        if(streamLayer){
+          removeStreamLayer();
+        }
+        else{
+          addStreamLayer();
+        }
+      }
+      function addStreamLayer(){
+        //url to stream service
+        var svcUrl = dojo.byId("txtStreamUrl").value;
+
+        //construct Stream Layer
+        streamLayer = new StreamLayer(svcUrl, {
+          purgeOptions: { displayCount: 10000 },
+          infoTemplate: new InfoTemplate("Attributes", "${*}")
+        });
+
+        //When layer loads, register listeners for layer events and add layer to map
+        streamLayer.on("load", function(){
+          //Connect and Disconnect events
+          streamLayer.on("connect", processConnect);
+          streamLayer.on("disconnect", processDisconnect);
+
+          //FilterChange event
+          streamLayer.on("filter-change", processFilterChange);
+
+          //Add layer to map
+          map.addLayer(streamLayer);
+        });
+      }
+
+      function removeStreamLayer(){
+        if (streamLayer){
+          map.removeLayer(streamLayer);
+          streamLayer = null;
+          map.graphics.clear();
+        }
+      }
+
+      /*********************************************************
+       *
+       * Stream layer event handlers
+       *
+       *********************************************************/
+      function processConnect(){
+        dojo.byId("cmdToggleStreamLayer").value = "Remove Stream Layer";
+        dojo.byId("txtStreamUrl").style.backgroundColor = "#008000";
+        dojo.byId("cmdToggleSpatialFilter").value = "Draw Extent";
+        dojo.byId("divFilterControls").style.display = "block";
+      }
+
+      function processDisconnect(){
+        dojo.byId("cmdToggleStreamLayer").value = "Add Stream Layer";
+        dojo.byId("txtStreamUrl").style.backgroundColor = "#8b0000";
+        dojo.byId("divFilterControls").style.display = "none";
+      }
+
+      function processFilterChange(evt){
+        //clear layer graphics
+        streamLayer.clear();
+
+        //the event contains a filter property that is the current filter set on the service
+        //update map graphic to show current spatial filter
+        var bbox = evt.filter.geometry;
+        map.graphics.clear();
+        if(bbox){
+          map.graphics.add(new Graphic(bbox,
+              new SimpleFillSymbol(SimpleFillSymbol.STYLE_NULL,
+                  new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                      new Color( [5, 112, 176] ), 2),
+                  new Color( [5, 112, 176, 0] ))));
+        }
+      }
+
+      /************************************************
+       *
+       * Functions to set and clear spatial filter
+       *
+       ************************************************/
+      function toggleSpatialFilter(){
+        var currentSpatialFilter = null;
+        if(streamLayer){
+          currentSpatialFilter = streamLayer.getFilter().geometry;
+        }
+        if (!currentSpatialFilter){
+          drawTools.activate(Draw.EXTENT);
+        }
+        else{
+          setSpatialFilter(null);
+          dojo.byId("cmdToggleSpatialFilter").value = "Draw Extent";
+        }
+      }
+
+      //Set spatial filter on stream layer. Setting to null clears filter
+      function setSpatialFilter(bbox){
+        if (streamLayer){
+          streamLayer.setGeometryDefinition(bbox);
+        }
+      }
+
+      init();
+    });
+  </script>
+</html>

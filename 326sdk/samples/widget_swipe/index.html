@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Layer Swipe</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/dijit/calcite.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/themes/calcite/esri/esri.css">
+  <style>
+    html, body, #map {
+      padding:0;
+      margin:0;
+      height:100%;
+      position:relative;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.26/"></script>
+  <script>
+
+    require([
+      "esri/map", 
+      "esri/dijit/LayerSwipe",
+      "esri/arcgis/utils",
+      "dojo/_base/array",
+      "dojo/domReady!"
+    ], function(
+      Map, LayerSwipe, arcgisUtils, array 
+    )  {
+
+      var mapDeferred = arcgisUtils.createMap("62702544d70648e593bc05d65180fd64", "map");
+      mapDeferred.then(function(response){
+
+        var id;
+        var map = response.map;
+        var title = "2009 Obesity Rates";
+        
+        //loop through all the operational layers in the web map 
+        //to find the one with the specified title;
+        var layers = response.itemInfo.itemData.operationalLayers;
+        array.some(layers, function(layer){
+          if(layer.title === title){
+            id = layer.id;
+            if(layer.featureCollection && layer.featureCollection.layers.length){
+              id = layer.featureCollection.layers[0].id;
+            }
+            return true;  
+          }else{
+            return false;
+          }
+        });
+        //get the layer from the map using the id and set it as the swipe layer. 
+        if(id){
+          var swipeLayer = map.getLayer(id);
+          var swipeWidget = new LayerSwipe({
+            type: "vertical",  //Try switching to "scope" or "horizontal"
+            map: map,
+            layers: [swipeLayer]
+          }, "swipeDiv");
+          swipeWidget.startup();
+        }
+      });
+
+    });
+  </script>
+
+</head>
+<body class="calcite">
+  <div id="map" class="map">
+    <div id="swipeDiv"></div>
+  </div>
+</body>
+</html>

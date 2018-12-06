@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>QueryTask with geometry, results as an InfoWindow onHover</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
+
+      require([
+        "esri/map",
+        "esri/graphic",
+        "esri/InfoTemplate",
+        "esri/SpatialReference",
+        "esri/geometry/Extent",
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/tasks/query",
+        "esri/tasks/QueryTask",
+        "esri/Color",
+        "dojo/domReady!"
+      ],
+        function (
+          Map, Graphic, InfoTemplate, SpatialReference, Extent, GraphicsLayer,
+          SimpleFillSymbol, SimpleLineSymbol, Query, QueryTask, Color
+        ) {
+
+          map = new Map("mapDiv", {
+              basemap: "streets",
+              center: [-80.94, 33.646],
+              zoom: 8
+            });
+
+          map.on("load", setUpQuery);
+
+          function setUpQuery () {
+            var queryTask = new QueryTask("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/3");
+
+            //build query filter
+            var query = new Query();
+            query.returnGeometry = true;
+            query.outFields = ["NAME", "POP2000", "POP2007", "POP00_SQMI", "POP07_SQMI"];
+            query.outSpatialReference = { "wkid": 102100 };
+            query.where = "STATE_NAME = 'South Carolina'";
+
+            var infoTemplate = new InfoTemplate();
+            var content = "<b>2000 Population: </b>${POP2000}<br/>" +
+                          "<b>2000 Population per Sq. Mi.: </b>${POP00_SQMI}<br/>" +
+                          "<b>2007 Population: </b>${POP2007}<br/>" +
+                          "<b>2007 Population per Sq. Mi.: </b>${POP07_SQMI}";
+            infoTemplate.setTitle("${NAME}");
+            infoTemplate.setContent(content);
+
+            map.infoWindow.resize(245, 125);
+
+            //Can listen for complete event to process results
+            //or can use the callback option in the queryTask.execute method.
+            queryTask.on("complete", function (event) {
+              map.graphics.clear();
+              var highlightSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                  new Color([255, 0, 0]), 3), new Color([125, 125, 125, 0.35]));
+
+              var symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                  new Color([255, 255, 255, 0.35]), 1), new Color([125, 125, 125, 0.35]));
+
+              var features = event.featureSet.features;
+              var countiesGraphicsLayer = new GraphicsLayer();
+              //QueryTask returns a featureSet.
+              //Loop through features in the featureSet and add them to the map.
+              var featureCount = features.length;
+              for (var i = 0; i < featureCount; i++) {
+                //Get the current feature from the featureSet.
+                var graphic = features[i]; //Feature is a graphic
+                graphic.setSymbol(symbol);
+                graphic.setInfoTemplate(infoTemplate);
+
+                countiesGraphicsLayer.add(graphic);
+              }
+              map.addLayer(countiesGraphicsLayer);
+              map.graphics.enableMouseEvents();
+              //listen for when the mouse-over event fires on the countiesGraphicsLayer
+              //when fired, create a new graphic with the geometry from event.graphic
+              //and add it to the maps graphics layer
+              countiesGraphicsLayer.on("mouse-over",function (event) {
+                map.graphics.clear();  //use the maps graphics layer as the highlight layer
+                var graphic = event.graphic;
+                map.infoWindow.setContent(graphic.getContent());
+                map.infoWindow.setTitle(graphic.getTitle());
+                var highlightGraphic = new Graphic(graphic.geometry, highlightSymbol);
+                map.graphics.add(highlightGraphic);
+                map.infoWindow.show(event.screenPoint,
+                  map.getInfoWindowAnchor(event.screenPoint));
+              });
+
+              //listen for when map.graphics mouse-out event is fired
+              //and then clear the highlight graphic
+              //and hide the info window
+              map.graphics.on("mouse-out", function () {
+                map.graphics.clear();
+                map.infoWindow.hide();
+              });
+            });
+
+            queryTask.execute(query);
+          }
+        });
+    </script>
+  </head>
+
+  <body class="claro">
+    Hover over a county in South Carolina to get more information.
+    <div id="mapDiv" style="width:900px; height:600px; border:1px solid #000;"></div>
+  </body>
+</html>

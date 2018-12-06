@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Geoenrichment - InfographicsCarousel</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/dijit/geoenrichment/themes/common/main.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+      }
+      #infographics {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      require([
+        "esri/map", "esri/urlUtils", "esri/graphic", "esri/dijit/geoenrichment/InfographicsCarousel", "esri/dijit/geoenrichment/InfographicsOptions", "esri/tasks/geoenrichment/DriveBuffer",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleFillSymbol", "esri/tasks/geoenrichment/GeometryStudyArea", "dojo/domReady!"
+      ], function(Map, urlUtils, Graphic, InfographicsCarousel, InfographicsOptions, DriveBuffer, SimpleMarkerSymbol, SimpleFillSymbol, GeometryStudyArea){
+        // all requests to geoenrich.arcgis.com will proxy to the proxyUrl defined in this object.
+        urlUtils.addProxyRule({
+          urlPrefix: "geoenrich.arcgis.com",
+          proxyUrl: "/sproxy/"
+        });     
+        var map = new Map("map", {
+          basemap: "topo",
+          center: [-118.25,34.06],
+          zoom: 12
+        });
+        
+        var infographicsCarousel = new InfographicsCarousel({
+          returnGeometry: true
+        }, "infographics");
+        dijit.byId("infographics").domNode.style.display = "none"; //hide the infographicsCarousel until first click
+
+        var options = new InfographicsOptions();
+        options.studyAreaOptions = new DriveBuffer({ radius: 5 });
+        options.getItems("US").then(function(items){
+          for (var i = 0; i < items.length; i++) {
+            items[i].isVisible = false; //make all default infographics invisible
+          }
+          var item1 = new InfographicsOptions.Item("OneVar", ["Wealth.PCI_CY"]);
+          item1.title = "2013 Per Capita Income";
+          var item2 = new InfographicsOptions.Item("AgePyramid", ["Age.*"]);
+          item2.title = "Age breakdown";
+          items.push(item1, item2); //add two new items to the infographicsCarousel
+          infographicsCarousel.set("options", options);
+        });
+        
+        var studyAreaGraphic;
+        map.on("click", function(evt){
+          map.graphics.clear(); //clear existing graphics on map
+          studyAreaGraphic = undefined; //set studyAreaGraphic as undefined
+          map.graphics.add(new Graphic(evt.mapPoint, new SimpleMarkerSymbol()));
+
+          dijit.byId("infographics").domNode.style.display = "inline-block"; //show the infographicsCarousel
+          infographicsCarousel.set("studyArea", new GeometryStudyArea({ geometry: evt.mapPoint }));
+          infographicsCarousel.startup();
+        });
+        
+        infographicsCarousel.on("data-ready", function(evt){
+          if (!studyAreaGraphic) {
+            studyAreaGraphic = new Graphic(evt.provider.getGeometry(), new SimpleFillSymbol());
+            map.graphics.add(studyAreaGraphic);
+          }
+        });
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div id="map"></div>
+    <div id="infographics"></div>
+  </body>
+</html>

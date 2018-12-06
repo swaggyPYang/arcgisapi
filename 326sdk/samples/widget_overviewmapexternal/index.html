@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html> 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Overview Map - External</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.26/esri/css/esri.css" />
+    
+    <style>
+      html,body {
+      height:100%;
+      width:100%;
+      margin:0;
+      }
+
+      body {
+      background-color:#FFF;
+      overflow:hidden;
+      font-family:"Trebuchet MS";
+      }
+
+      .roundedCorners {
+      -moz-border-radius:4px;
+      }
+
+      #header {
+      border:solid 2px #7EABCD;
+      background-color:#FFF;
+      color:#CD853F;
+      font-size:18pt;
+      text-align:center;
+      font-weight:700;
+      height:60px;
+      }
+
+      #subheader {
+      font-size:small;
+      color:#CD853F;
+      }
+
+      #rightPane {
+      background-color:#FFF;
+      color:#CD853F;
+      border:solid 2px #6495ED;
+      width:30%;
+      overflow:hidden;
+      }
+      #map {
+      background-color:#FFF;
+      border:solid 2px #6495ED;
+      }
+    </style>
+    
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("esri.dijit.OverviewMap");
+      dojo.require("esri.dijit.Scalebar");
+      
+      var map;
+
+      function init() {
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [-90.12, 30.065],
+          zoom: 10
+        });
+        
+        dojo.connect(map, "onLoad", function(map) {
+          var scalebar = new esri.dijit.Scalebar({
+            map: map
+          });
+          
+          //add the overview map 
+          overviewMapDijit = new esri.dijit.OverviewMap({
+            map: map
+          }, dojo.byId('overviewMapDiv'));
+          overviewMapDijit.startup();
+        });
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+  
+  <body class="claro">
+    <div id="mainWindow" dojotype="dijit.layout.BorderContainer" design="headline"
+    gutters="true" style="width:100%; height:100%;">
+      <div id="header" dojotype="dijit.layout.ContentPane" class="roundedCorners"
+      region="top">
+        Overview Map Sample
+      </div>
+      <div id="map" dojotype="dijit.layout.ContentPane" class="roundedCorners"
+      region="center">
+      </div>
+      <div dojotype="dijit.layout.BorderContainer" id="rightPane" class="roundedCorners"
+      region="right">
+        <div dojotype="dijit.layout.ContentPane" style="height:60%;" region="center">
+          This sample demonstrates how to display the OverviewMap outside the main
+          map in a Dojo ContentPane.
+        </div>
+        <div dojotype="dijit.layout.ContentPane" style="height:40%;overflow:hidden;"
+        region="bottom">
+          <div id="overviewMapDiv" style="height:100%;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>
